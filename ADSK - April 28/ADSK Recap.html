@@ -1,0 +1,1801 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>ADSK · Recap FY '26</title>
+<link rel="stylesheet" href="ds/colors_and_type.css" />
+<style>
+/* ============================================================
+   Autodesk recap — drafting / blueprint metaphor system
+   Mobile-only, vertical scroll only.
+   ============================================================ */
+
+:root {
+  /* Page-specific tokens — built ON the design system */
+  --adsk-ink:       #0E1116;          /* drafting ink */
+  --adsk-ink-2:     #2A2F38;
+  --adsk-ink-3:     #6B6F76;
+  --adsk-paper:     #FBFAF7;
+  --adsk-paper-2:   #F4F1E9;          /* aged drafting vellum */
+  --adsk-paper-3:   #E9E3D2;
+  --adsk-grid:      rgba(20, 30, 50, 0.07);
+  --adsk-grid-strong: rgba(20, 30, 50, 0.14);
+  --adsk-blue:      #0A4FA8;          /* blueprint / signal */
+  --adsk-blue-deep: #062E61;
+  --adsk-blue-paper:#0E5BD1;
+  --adsk-cyan:      #6FB3FF;          /* blueprint stroke on dark */
+  --adsk-amber:     #C77B2A;          /* drafting-pencil red, but warmer */
+
+  /* Cost colors as supplied (locked) */
+  --c-cor:   #4F86C6;
+  --c-rd:    #E8734A;
+  --c-sm:    #6DBF82;
+  --c-ga:    #A97DC9;
+  --c-sbc:   #F2C14E;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--adsk-paper);
+  color: var(--adsk-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+body { overflow-x: hidden; }
+
+/* ---------- the page is a vertical document ~390-440px wide ---------- */
+.page {
+  max-width: 440px;
+  margin: 0 auto;
+  position: relative;
+  background: var(--adsk-paper);
+  overflow: hidden;
+}
+
+/* ---------- persistent chrome ---------- */
+.chrome {
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  background: rgba(251, 250, 247, 0.78);
+  border-bottom: 1px solid var(--line);
+}
+.chrome-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px 12px;
+  gap: 12px;
+}
+.chrome-left {
+  display: flex; align-items: baseline; gap: 10px; min-width: 0;
+}
+.ticker {
+  font-family: var(--font-mono);
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--adsk-ink);
+}
+.ticker-dot {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--adsk-blue); margin-right: 8px; vertical-align: middle;
+  transform: translateY(-1px);
+}
+.co {
+  font-family: var(--font-sans);
+  font-size: 13px; font-weight: 500;
+  color: var(--adsk-ink-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.recap-tag {
+  font-family: var(--font-mono);
+  font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--adsk-ink-3);
+}
+.progress-track {
+  height: 1.5px; background: transparent; position: relative;
+}
+.progress-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0%;
+  background: var(--adsk-blue);
+  transition: width 90ms linear;
+}
+
+/* ---------- generic ---------- */
+section { position: relative; }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px; font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--adsk-ink-3);
+}
+.eyebrow .num {
+  color: var(--adsk-blue);
+  font-weight: 500;
+}
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  color: var(--adsk-ink);
+}
+.display em, .it {
+  font-family: var(--font-display);
+  font-style: italic;
+}
+.body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--adsk-ink-2);
+}
+.body em, .body .it {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.08em;
+  color: var(--adsk-blue);
+  font-weight: 400;
+}
+.mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+.caption {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--adsk-ink-3);
+}
+
+/* ---------- HERO — drafting scene ---------- */
+.hero {
+  position: relative;
+  padding: 36px 24px 60px;
+  min-height: 660px;
+  background:
+    linear-gradient(180deg, rgba(251,250,247,0) 0%, rgba(244,241,233,0.5) 80%, var(--adsk-paper-2) 100%),
+    var(--adsk-paper);
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--adsk-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--adsk-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: -1px -1px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 55%, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 55%, black 30%, transparent 80%);
+  pointer-events: none;
+}
+.hero-grid-2 {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--adsk-grid-strong) 1px, transparent 1px),
+    linear-gradient(90deg, var(--adsk-grid-strong) 1px, transparent 1px);
+  background-size: 96px 96px;
+  background-position: -1px -1px;
+  pointer-events: none;
+  opacity: 0.7;
+}
+.hero-tag-row {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 28px;
+}
+.hero-tag-row .pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.6);
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--adsk-ink-3);
+}
+.hero-tag-row .pill .blip {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--adsk-blue);
+  box-shadow: 0 0 0 3px rgba(10,79,168,0.15);
+}
+
+.hero-headline {
+  position: relative; z-index: 2;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 56px;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  color: var(--adsk-ink);
+  margin: 0;
+}
+.hero-headline .draw-here {
+  display: inline-block;
+  position: relative;
+  font-style: italic;
+  color: var(--adsk-blue);
+  padding: 0 2px;
+}
+.hero-headline .draw-here::after {
+  /* underline that draws in */
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 2px;
+  background: var(--adsk-blue);
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: drawIn 1400ms 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes drawIn { to { transform: scaleX(1); } }
+
+.hero-sub {
+  position: relative; z-index: 2;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--adsk-ink-2);
+  margin-top: 24px;
+  max-width: 30ch;
+}
+.hero-sub em {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--adsk-blue);
+  font-size: 1.08em;
+}
+
+/* drafting svg under the type */
+.hero-svg {
+  position: relative; z-index: 1;
+  margin-top: 36px;
+  width: 100%;
+  display: block;
+}
+.hero-svg .ink { stroke: var(--adsk-ink); fill: none; stroke-width: 1; }
+.hero-svg .blue { stroke: var(--adsk-blue); fill: none; stroke-width: 1.2; }
+.hero-svg .ghost { stroke: var(--adsk-ink-3); fill: none; stroke-width: 0.6; stroke-dasharray: 2 3; opacity: 0.6; }
+.hero-svg .draw {
+  stroke-dasharray: var(--len, 1000);
+  stroke-dashoffset: var(--len, 1000);
+}
+
+/* spec callouts */
+.hero-meta {
+  position: relative; z-index: 2;
+  margin-top: 30px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+.hero-meta > div {
+  padding: 14px 0 0;
+  border-right: 1px solid var(--line);
+}
+.hero-meta > div:last-child { border-right: 0; padding-left: 12px; }
+.hero-meta > div:first-child { padding-right: 12px; }
+.hero-meta > div:nth-child(2) { padding-left: 12px; padding-right: 12px; }
+.hero-meta .label {
+  font-family: var(--font-mono); font-size: 9.5px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--adsk-ink-3); margin-bottom: 4px;
+}
+.hero-meta .val {
+  font-family: var(--font-display);
+  font-size: 22px; line-height: 1;
+  color: var(--adsk-ink);
+}
+.hero-meta .val.it { font-style: italic; color: var(--adsk-blue); }
+.hero-meta .unit {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--adsk-ink-3); margin-left: 2px;
+  letter-spacing: 0.06em;
+}
+
+/* ---------- reset beat ---------- */
+.reset {
+  padding: 56px 28px;
+  background: var(--adsk-paper-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.reset .corner {
+  position: absolute;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--adsk-ink-3); letter-spacing: 0.14em;
+}
+.reset .c-tl { top: 12px; left: 16px; }
+.reset .c-tr { top: 12px; right: 16px; }
+.reset .c-bl { bottom: 12px; left: 16px; }
+.reset .c-br { bottom: 12px; right: 16px; }
+.reset .text {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: var(--adsk-ink);
+  text-align: left;
+}
+.reset .text .blue { color: var(--adsk-blue); }
+
+/* ---------- sections ---------- */
+.beat {
+  padding: 64px 24px 56px;
+  position: relative;
+}
+.beat-eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 22px;
+}
+.beat-eyebrow .tick {
+  width: 8px; height: 8px;
+  border: 1.5px solid var(--adsk-blue);
+  background: transparent;
+  transform: rotate(45deg);
+}
+.beat-h {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 38px;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--adsk-ink);
+  margin-bottom: 18px;
+}
+.beat-h em { font-style: italic; color: var(--adsk-blue); }
+.beat-body { font-family: var(--font-sans); font-size: 15px; line-height: 1.55; color: var(--adsk-ink-2); max-width: 38ch; }
+.beat-body em, .beat-body .it { font-family: var(--font-display); font-style: italic; color: var(--adsk-blue); font-size: 1.08em; }
+
+/* ---------- BUSINESS — subscription pulse grid ---------- */
+.business {
+  background: var(--adsk-paper);
+}
+.subgrid {
+  margin-top: 28px;
+  position: relative;
+  height: 280px;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(var(--adsk-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--adsk-grid) 1px, transparent 1px),
+    #fff;
+  background-size: 16px 16px;
+  overflow: hidden;
+}
+.subgrid .axis-y {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 32px;
+  border-right: 1px solid var(--line);
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 8px 0; align-items: center;
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--adsk-ink-3); letter-spacing: 0.06em;
+}
+.subgrid .axis-x {
+  position: absolute; left: 32px; right: 0; bottom: 0; height: 22px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 8px;
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--adsk-ink-3); letter-spacing: 0.06em;
+}
+.subgrid svg { position: absolute; left: 32px; right: 0; top: 0; bottom: 22px; width: calc(100% - 32px); height: calc(100% - 22px); }
+.subgrid .legend {
+  position: absolute; top: 8px; right: 10px;
+  display: flex; flex-direction: column; gap: 4px;
+  font-family: var(--font-mono); font-size: 9.5px;
+  color: var(--adsk-ink-2); letter-spacing: 0.04em;
+  background: rgba(255,255,255,0.85);
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+}
+.subgrid .legend .row { display: flex; align-items: center; gap: 6px; }
+.subgrid .legend .sw { width: 10px; height: 2px; }
+
+.kv {
+  margin-top: 18px;
+  display: grid; grid-template-columns: auto 1fr; gap: 6px 14px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--adsk-ink-2); letter-spacing: 0.04em;
+}
+.kv .k { color: var(--adsk-ink-3); }
+.kv .v { color: var(--adsk-ink); text-align: right; }
+.kv .v .b { color: var(--adsk-blue); }
+
+/* ---------- SCALE — big number editorial ---------- */
+.scale {
+  background: var(--adsk-paper-2);
+  padding: 80px 24px 80px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.scale .figure {
+  font-family: var(--font-display);
+  font-size: 132px;
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+  color: var(--adsk-ink);
+  margin: 0;
+}
+.scale .figure .it { font-style: italic; color: var(--adsk-blue); }
+.scale .figure-cap {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--adsk-ink-3);
+  margin-top: 10px;
+}
+.scale .stack {
+  margin-top: 56px;
+  display: flex; flex-direction: column; gap: 28px;
+}
+.scale .stat {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 12px; align-items: end;
+  border-top: 1px solid var(--line-strong);
+  padding-top: 14px;
+}
+.scale .stat .label {
+  font-family: var(--font-mono); font-size: 10.5px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--adsk-ink-3);
+}
+.scale .stat .v {
+  font-family: var(--font-display);
+  font-size: 56px; line-height: 0.9;
+  color: var(--adsk-ink);
+  letter-spacing: -0.02em;
+}
+.scale .stat .v.it { font-style: italic; color: var(--adsk-blue); }
+.scale .stat .sub {
+  font-family: var(--font-sans); font-size: 13px;
+  color: var(--adsk-ink-2);
+  margin-top: 6px;
+  max-width: 36ch;
+}
+
+/* ---------- COSTS — building elevation, blueprint ---------- */
+.costs {
+  background: var(--adsk-blue-deep);
+  color: #E9F1FF;
+  padding: 80px 24px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.costs::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 16px 16px;
+  pointer-events: none;
+}
+.costs::after {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.costs .eyebrow { color: rgba(232,241,255,0.7); }
+.costs .eyebrow .num { color: var(--adsk-cyan); }
+.costs .beat-eyebrow .tick { border-color: var(--adsk-cyan); }
+.costs .beat-h { color: #F4F8FF; }
+.costs .beat-h em { color: var(--adsk-cyan); }
+.costs .beat-body { color: rgba(232,241,255,0.85); }
+.costs .beat-body em, .costs .beat-body .it { color: var(--adsk-cyan); }
+.costs .corner {
+  position: absolute; font-family: var(--font-mono); font-size: 10px;
+  color: rgba(232,241,255,0.5); letter-spacing: 0.14em;
+}
+.costs .c-tl { top: 14px; left: 16px; }
+.costs .c-tr { top: 14px; right: 16px; }
+
+.elevation {
+  position: relative; z-index: 2;
+  margin: 32px auto 0;
+  width: 100%;
+  max-width: 360px;
+}
+.elevation svg { width: 100%; height: auto; display: block; }
+
+.cost-rows {
+  margin-top: 28px;
+  display: flex; flex-direction: column;
+  border-top: 1px solid rgba(255,255,255,0.18);
+}
+.cost-row {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.cost-row .sw {
+  width: 14px; height: 14px;
+}
+.cost-row .lbl {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: #F4F8FF;
+}
+.cost-row .lbl .sub {
+  display: block; font-family: var(--font-mono);
+  font-size: 9.5px; color: rgba(232,241,255,0.5);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-top: 2px;
+}
+.cost-row .pct {
+  font-family: var(--font-display);
+  font-size: 28px; line-height: 1;
+  color: #F4F8FF;
+}
+.cost-row .pct .u {
+  font-family: var(--font-mono); font-size: 11px;
+  color: rgba(232,241,255,0.55); margin-left: 2px;
+}
+.cost-foot {
+  margin-top: 20px;
+  font-family: var(--font-mono); font-size: 10.5px;
+  letter-spacing: 0.06em; color: rgba(232,241,255,0.55);
+  display: flex; justify-content: space-between;
+}
+
+/* ---------- REVENUE MIX — floor plan ---------- */
+.mix {
+  background: var(--adsk-paper);
+  padding: 72px 24px 64px;
+}
+.floorplan {
+  margin-top: 30px;
+  border: 1px solid var(--adsk-ink);
+  position: relative;
+  background:
+    linear-gradient(var(--adsk-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--adsk-grid) 1px, transparent 1px),
+    #fff;
+  background-size: 12px 12px;
+  aspect-ratio: 1 / 1;
+}
+.fp-room {
+  position: absolute;
+  border: 1px solid var(--adsk-ink);
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.7);
+}
+.fp-room .name {
+  font-family: var(--font-sans); font-size: 12px; font-weight: 500;
+  color: var(--adsk-ink); line-height: 1.15;
+}
+.fp-room .sub {
+  font-family: var(--font-mono); font-size: 9.5px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--adsk-ink-3);
+  margin-top: 2px;
+}
+.fp-room .pct {
+  font-family: var(--font-display); font-size: 28px; line-height: 1;
+  color: var(--adsk-ink); align-self: flex-end;
+}
+.fp-room .rev {
+  font-family: var(--font-mono); font-size: 9.5px;
+  letter-spacing: 0.06em; color: var(--adsk-ink-3);
+  margin-top: 2px;
+}
+.fp-room.aeco { left: 0; top: 0; width: 64%; height: 60%; background: rgba(10,79,168,0.08); }
+.fp-room.acad { left: 64%; top: 0; width: 36%; height: 60%; background: rgba(10,79,168,0.04); }
+.fp-room.mfg  { left: 0; top: 60%; width: 56%; height: 40%; background: rgba(10,79,168,0.06); }
+.fp-room.me   { left: 56%; top: 60%; width: 44%; height: 40%; background: rgba(10,79,168,0.02); }
+
+.fp-room.aeco .pct { color: var(--adsk-blue); }
+.fp-tag {
+  position: absolute;
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.1em; color: var(--adsk-ink-3);
+  text-transform: uppercase;
+}
+.fp-tag.t-top { top: -18px; left: 0; }
+.fp-tag.t-right { top: -18px; right: 0; }
+
+.fp-foot {
+  margin-top: 14px; display: flex; justify-content: space-between;
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--adsk-ink-3); letter-spacing: 0.06em;
+}
+
+/* ---------- FOOTPRINT — wireframe globe ---------- */
+.foot {
+  background: var(--adsk-paper-2);
+  padding: 72px 24px 64px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+}
+.globe {
+  margin: 30px auto 0;
+  width: 320px; max-width: 100%;
+  position: relative;
+}
+.globe svg { width: 100%; height: auto; display: block; }
+.foot-rows {
+  margin-top: 24px;
+  display: flex; flex-direction: column;
+  border-top: 1px solid var(--line-strong);
+}
+.foot-row {
+  display: grid; grid-template-columns: 16px 1fr auto auto;
+  gap: 10px; align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line-strong);
+}
+.foot-row .marker {
+  width: 9px; height: 9px; border: 1.5px solid var(--adsk-blue);
+  background: rgba(10,79,168,0.1);
+  transform: rotate(45deg);
+  margin-left: 2px;
+}
+.foot-row .region {
+  font-family: var(--font-sans); font-size: 14px; color: var(--adsk-ink);
+}
+.foot-row .bar {
+  width: 80px; height: 4px;
+  background: var(--adsk-paper-3);
+  position: relative; overflow: hidden;
+}
+.foot-row .bar > i {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--adsk-blue);
+  width: 0;
+  transition: width 600ms var(--ease-out);
+}
+.foot-row .pct {
+  font-family: var(--font-display); font-size: 24px;
+  color: var(--adsk-ink);
+  letter-spacing: -0.01em;
+  min-width: 56px; text-align: right;
+}
+
+/* ---------- BET — capital allocation ---------- */
+.bet {
+  background: var(--adsk-paper);
+  padding: 72px 24px 64px;
+}
+.flow {
+  margin-top: 30px;
+  position: relative;
+  background:
+    linear-gradient(var(--adsk-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--adsk-grid) 1px, transparent 1px),
+    #fff;
+  background-size: 16px 16px;
+  border: 1px solid var(--line);
+  padding: 24px 18px 20px;
+}
+.flow svg { width: 100%; display: block; }
+.flow-rows {
+  margin-top: 18px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+}
+.flow-rows > div {
+  padding: 14px 14px;
+  border: 1px solid var(--line);
+  margin-left: -1px; margin-top: -1px;
+}
+.flow-rows .lbl {
+  font-family: var(--font-mono); font-size: 9.5px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--adsk-ink-3);
+}
+.flow-rows .v {
+  font-family: var(--font-display); font-size: 30px;
+  line-height: 1; color: var(--adsk-ink); margin-top: 6px;
+  letter-spacing: -0.01em;
+}
+.flow-rows .v.it { font-style: italic; color: var(--adsk-blue); }
+.flow-rows .nx {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--adsk-ink-3); margin-top: 4px;
+}
+
+/* ---------- COMPETITION — drafted blocks at scale ---------- */
+.comp {
+  background: var(--adsk-paper-2);
+  padding: 72px 24px 64px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.comp-board {
+  margin-top: 28px;
+  position: relative;
+  height: 380px;
+  border: 1px solid var(--adsk-ink);
+  background:
+    linear-gradient(var(--adsk-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--adsk-grid) 1px, transparent 1px),
+    #fff;
+  background-size: 12px 12px;
+  overflow: hidden;
+}
+.cube {
+  position: absolute;
+  border: 1.5px solid var(--adsk-ink);
+  background: rgba(255,255,255,0.8);
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 10px 12px;
+}
+.cube .tk {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.1em; color: var(--adsk-ink-3);
+  text-transform: uppercase;
+}
+.cube .nm {
+  font-family: var(--font-sans); font-size: 14px; font-weight: 500;
+  color: var(--adsk-ink); margin-top: 2px;
+  line-height: 1.15;
+}
+.cube .mc {
+  font-family: var(--font-display); font-size: 22px;
+  line-height: 1; color: var(--adsk-ink);
+  letter-spacing: -0.01em;
+}
+.cube .mc .u { font-family: var(--font-mono); font-size: 10px; color: var(--adsk-ink-3); }
+.cube.adsk {
+  border-color: var(--adsk-blue);
+  border-width: 2px;
+  background: rgba(10,79,168,0.07);
+}
+.cube.adsk .nm { color: var(--adsk-blue); }
+.cube.adsk .mc { color: var(--adsk-blue); }
+.comp-foot {
+  margin-top: 18px;
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--adsk-ink-3); letter-spacing: 0.06em;
+  display: flex; justify-content: space-between;
+}
+
+/* ---------- CLOSE ---------- */
+.close {
+  background: var(--adsk-paper);
+  padding: 90px 24px 80px;
+  position: relative;
+}
+.close .figure {
+  font-family: var(--font-display);
+  font-size: 96px; line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--adsk-ink);
+}
+.close .figure .it { font-style: italic; color: var(--adsk-blue); }
+.close .figure-cap {
+  margin-top: 12px;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--adsk-ink-3);
+}
+.close .body { margin-top: 32px; max-width: 36ch; font-size: 16px; }
+.close-foot {
+  margin-top: 60px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--font-mono); font-size: 10.5px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--adsk-ink-3);
+}
+.close-foot .l { color: var(--adsk-blue); }
+
+/* ---------- reveal-on-scroll ---------- */
+.reveal {
+  opacity: 0; transform: translateY(14px);
+  transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+}
+.reveal.in { opacity: 1; transform: none; }
+
+/* delays */
+.reveal.d1 { transition-delay: 60ms; }
+.reveal.d2 { transition-delay: 120ms; }
+.reveal.d3 { transition-delay: 180ms; }
+.reveal.d4 { transition-delay: 240ms; }
+
+/* count-up tweak — light pulse */
+.pulse-blue {
+  position: relative;
+}
+.pulse-blue::before {
+  content: ""; position: absolute; left: -8px; top: 0.18em;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--adsk-blue);
+  box-shadow: 0 0 0 4px rgba(10,79,168,0.15);
+}
+
+/* utility */
+.row-between { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.gap-s { gap: 14px; }
+.mt-s { margin-top: 14px; }
+.mt-m { margin-top: 24px; }
+.mt-l { margin-top: 40px; }
+
+/* draw line keyframe utility */
+.draw-stroke { stroke-dasharray: var(--len, 600); stroke-dashoffset: var(--len, 600); transition: stroke-dashoffset 1200ms var(--ease-out); }
+.draw-stroke.in { stroke-dashoffset: 0; }
+
+/* Title block (drafting cartouche) under hero svg */
+.cartouche {
+  margin-top: 14px;
+  border: 1px solid var(--adsk-ink);
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+}
+.cartouche > div {
+  padding: 8px 10px;
+  border-right: 1px solid var(--adsk-ink);
+}
+.cartouche > div:last-child { border-right: 0; }
+.cartouche .k {
+  font-family: var(--font-mono); font-size: 8.5px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--adsk-ink-3);
+}
+.cartouche .v {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--adsk-ink); margin-top: 2px;
+}
+.cartouche .v.it {
+  font-family: var(--font-display); font-style: italic;
+  color: var(--adsk-blue); font-size: 14px;
+}
+
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <!-- ===== persistent chrome ===== -->
+  <div class="chrome">
+    <div class="chrome-row">
+      <div class="chrome-left">
+        <span class="ticker"><span class="ticker-dot"></span>ADSK</span>
+        <span class="co">Autodesk</span>
+      </div>
+      <span class="recap-tag">Recap · FY ’26</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+  </div>
+
+  <!-- ===== HERO — drafting scene ===== -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="hero-grid"></div>
+    <div class="hero-grid-2"></div>
+
+    <div class="hero-tag-row">
+      <span class="pill"><span class="blip"></span>NASDAQ · ADSK</span>
+      <span class="pill">SF, CA · est. 1982</span>
+    </div>
+
+    <h1 class="hero-headline">
+      The world<br/>
+      gets <span class="draw-here">drawn</span><br/>
+      here.
+    </h1>
+
+    <p class="hero-sub">
+      Autodesk built the software that <em>builders build with</em> — from the AutoCAD line that taught the PC to draft, to the cloud platforms now stitching architecture, manufacturing, and film into one continuous file.
+    </p>
+
+    <!-- drafting svg: a structure being drawn out of a coordinate origin -->
+    <svg class="hero-svg" viewBox="0 0 360 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <!-- origin crosshair -->
+      <g class="ghost">
+        <line x1="20" y1="180" x2="340" y2="180"/>
+        <line x1="40" y1="20" x2="40" y2="200"/>
+      </g>
+      <!-- subtle grid extents -->
+      <g class="ghost">
+        <line x1="40" y1="60" x2="340" y2="60"/>
+        <line x1="40" y1="100" x2="340" y2="100"/>
+        <line x1="40" y1="140" x2="340" y2="140"/>
+        <line x1="100" y1="20" x2="100" y2="180"/>
+        <line x1="180" y1="20" x2="180" y2="180"/>
+        <line x1="260" y1="20" x2="260" y2="180"/>
+      </g>
+
+      <!-- isometric building footprint, drawn -->
+      <g class="ink draw" id="iso1" style="--len: 720;">
+        <!-- floor outline -->
+        <polygon points="80,170 200,170 240,150 120,150" fill="rgba(10,79,168,0.04)" stroke-width="1.2"/>
+        <!-- walls up -->
+        <line x1="80" y1="170" x2="80" y2="100"/>
+        <line x1="200" y1="170" x2="200" y2="100"/>
+        <line x1="240" y1="150" x2="240" y2="80"/>
+        <line x1="120" y1="150" x2="120" y2="80"/>
+        <!-- roof -->
+        <polygon points="80,100 200,100 240,80 120,80" fill="rgba(10,79,168,0.03)" stroke-width="1.2"/>
+      </g>
+
+      <!-- second mass, blue overlay -->
+      <g class="blue draw" id="iso2" style="--len: 540;">
+        <polygon points="200,170 280,170 320,150 240,150" fill="rgba(10,79,168,0.08)" stroke-width="1.2"/>
+        <line x1="200" y1="170" x2="200" y2="120"/>
+        <line x1="280" y1="170" x2="280" y2="120"/>
+        <line x1="320" y1="150" x2="320" y2="100"/>
+        <line x1="240" y1="150" x2="240" y2="100"/>
+        <polygon points="200,120 280,120 320,100 240,100" fill="rgba(10,79,168,0.04)" stroke-width="1.2"/>
+      </g>
+
+      <!-- dimension lines -->
+      <g class="ink draw" id="dim1" style="--len: 380;" stroke-width="0.8">
+        <line x1="80" y1="195" x2="320" y2="195"/>
+        <line x1="80" y1="190" x2="80" y2="200"/>
+        <line x1="320" y1="190" x2="320" y2="200"/>
+      </g>
+      <text x="200" y="210" text-anchor="middle" font-family="Geist Mono" font-size="8.5" fill="#6B6F76" letter-spacing="0.5">14 300 EMP · 100M USERS · 7.21B FY26</text>
+
+      <!-- corner tag -->
+      <g font-family="Geist Mono" font-size="8" fill="#6B6F76" letter-spacing="0.5">
+        <text x="44" y="32">A1</text>
+        <text x="46" y="44">ORIGIN</text>
+      </g>
+      <circle cx="40" cy="180" r="3" fill="#0A4FA8"/>
+    </svg>
+
+    <!-- drafting cartouche -->
+    <div class="cartouche">
+      <div><div class="k">Sheet</div><div class="v">A · 01</div></div>
+      <div><div class="k">Scale</div><div class="v it">1 : ∞</div></div>
+      <div><div class="k">Date</div><div class="v">FY 2026</div></div>
+    </div>
+
+  </section>
+
+  <!-- ===== reset beat ===== -->
+  <div class="reset">
+    <span class="corner c-tl">+</span><span class="corner c-tr">+</span>
+    <span class="corner c-bl">+</span><span class="corner c-br">+</span>
+    <p class="text">
+      The line begins as <span class="blue">a subscription</span> —<br/>
+      and renews, quarter after quarter, until it’s a platform.
+    </p>
+  </div>
+
+  <!-- ===== BUSINESS — subscription pulse grid ===== -->
+  <section class="beat business" data-screen-label="02 Business">
+    <div class="beat-eyebrow">
+      <span class="tick"></span>
+      <span class="eyebrow">02 · The model · <span class="num">$7.21B</span></span>
+    </div>
+    <h2 class="beat-h">A <em>subscription</em> drawn at <em>91%</em> gross margin.</h2>
+    <p class="beat-body">
+      Autodesk’s revenue is a recurring line item. Direct sales — <span class="it">Enterprise Business Agreements</span> and the Autodesk Store — drove ~40% of the FY2026 print. The cloud is the substrate now; the seats just keep renewing.
+    </p>
+
+    <div class="subgrid" id="subgrid">
+      <div class="axis-y">
+        <span>2.0B</span><span>1.5B</span><span>1.0B</span><span>0</span>
+      </div>
+      <div class="axis-x">
+        <span>Q1</span><span>Q2</span><span>Q3</span><span>Q4</span>
+      </div>
+      <svg viewBox="0 0 320 220" preserveAspectRatio="none">
+        <!-- horizontal mid lines -->
+        <line x1="0" y1="55"  x2="320" y2="55"  stroke="rgba(20,30,50,0.08)" stroke-dasharray="2 3"/>
+        <line x1="0" y1="110" x2="320" y2="110" stroke="rgba(20,30,50,0.08)" stroke-dasharray="2 3"/>
+        <line x1="0" y1="165" x2="320" y2="165" stroke="rgba(20,30,50,0.08)" stroke-dasharray="2 3"/>
+
+        <!-- subscription pulse area, draw-on -->
+        <path id="revArea" d="M0,160 L80,140 L160,120 L240,90 L320,55 L320,220 L0,220 Z"
+              fill="rgba(10,79,168,0.10)" stroke="none" opacity="0"/>
+        <path id="revLine" d="M0,160 L80,140 L160,120 L240,90 L320,55"
+              fill="none" stroke="#0A4FA8" stroke-width="1.6"
+              class="draw-stroke" style="--len: 380;"/>
+
+        <!-- direct (~40%) baseline -->
+        <path id="directLine" d="M0,180 L80,170 L160,160 L240,148 L320,135"
+              fill="none" stroke="#2A2F38" stroke-width="1" stroke-dasharray="3 3"
+              class="draw-stroke" style="--len: 360;"/>
+
+        <!-- markers -->
+        <g id="dots" opacity="0">
+          <circle cx="0" cy="160" r="2.5" fill="#0A4FA8"/>
+          <circle cx="80" cy="140" r="2.5" fill="#0A4FA8"/>
+          <circle cx="160" cy="120" r="2.5" fill="#0A4FA8"/>
+          <circle cx="240" cy="90" r="2.5" fill="#0A4FA8"/>
+          <circle cx="320" cy="55" r="3.5" fill="#0A4FA8"/>
+        </g>
+
+        <!-- Q4 callout -->
+        <g id="q4Tag" opacity="0">
+          <line x1="320" y1="55" x2="280" y2="30" stroke="#0A4FA8" stroke-width="0.8"/>
+          <text x="276" y="26" text-anchor="end" font-family="Geist Mono" font-size="9" fill="#0A4FA8">Q4 · $1.96B</text>
+          <text x="276" y="38" text-anchor="end" font-family="Geist Mono" font-size="8" fill="#6B6F76">EPS $2.85</text>
+        </g>
+      </svg>
+      <div class="legend">
+        <div class="row"><span class="sw" style="background:#0A4FA8"></span>Total revenue</div>
+        <div class="row"><span class="sw" style="background:#2A2F38; border-top: 1px dashed #2A2F38;"></span>Direct (~40%)</div>
+      </div>
+    </div>
+
+    <div class="kv">
+      <div class="k">FY2026 revenue</div><div class="v"><span class="b">$7.21B</span></div>
+      <div class="k">Gross margin</div><div class="v">91.0%</div>
+      <div class="k">Operating margin</div><div class="v">21.9%</div>
+      <div class="k">Q4 revenue · EPS</div><div class="v">$1.96B · $2.85</div>
+    </div>
+  </section>
+
+  <!-- ===== SCALE ===== -->
+  <section class="scale" data-screen-label="03 Scale">
+    <div class="beat-eyebrow">
+      <span class="tick"></span>
+      <span class="eyebrow">03 · The scale</span>
+    </div>
+
+    <p class="figure">
+      <span class="it">100</span><br/>million.
+    </p>
+    <p class="figure-cap">Users on Autodesk software, worldwide</p>
+
+    <p class="body mt-l" style="max-width: 36ch;">
+      A hundred million people — architects, engineers, machinists, animators, students learning to draft — open Autodesk to do their work. <em>One file format becomes a planet.</em>
+    </p>
+
+    <div class="stack">
+      <div class="stat">
+        <div>
+          <div class="label">Market cap</div>
+          <div class="sub">As of FY2026</div>
+        </div>
+        <div class="v">$51.07<span style="font-size:0.55em; vertical-align: 0.45em; letter-spacing: 0.02em;">B</span></div>
+      </div>
+      <div class="stat">
+        <div>
+          <div class="label">FY26 revenue</div>
+          <div class="sub">91% gross margin · 21.9% op. margin</div>
+        </div>
+        <div class="v it">$7.21B</div>
+      </div>
+      <div class="stat">
+        <div>
+          <div class="label">Employees</div>
+          <div class="sub">Globally, January 31, 2026</div>
+        </div>
+        <div class="v">14,300</div>
+      </div>
+      <div class="stat">
+        <div>
+          <div class="label">Founded</div>
+          <div class="sub">By John Walker · San Francisco</div>
+        </div>
+        <div class="v it">1982</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== reset beat ===== -->
+  <div class="reset">
+    <span class="corner c-tl">+</span><span class="corner c-tr">+</span>
+    <span class="corner c-bl">+</span><span class="corner c-br">+</span>
+    <p class="text">
+      A dollar comes in. <span class="blue">Nine cents</span> pay the cost of revenue.<br/>
+      The rest is reinvested — and a <span class="blue">third</span> of it goes to making the next sale.
+    </p>
+  </div>
+
+  <!-- ===== COSTS — blueprint elevation ===== -->
+  <section class="costs" data-screen-label="04 Costs">
+    <span class="corner c-tl">A · 04</span>
+    <span class="corner c-tr">SCALE 1 : 100</span>
+
+    <div class="beat-eyebrow">
+      <span class="tick"></span>
+      <span class="eyebrow">04 · Where the dollar goes</span>
+    </div>
+    <h2 class="beat-h">Stacked, like <em>floors of a building</em>.</h2>
+    <p class="beat-body">
+      Every cost line is a course of bricks under the operating margin. <em>Sales & Marketing is the load-bearing wall.</em> R&D is the next floor up. The roof is what survives.
+    </p>
+
+    <!-- elevation: each cost is a floor on a building, width = pct -->
+    <div class="elevation">
+      <svg viewBox="0 0 360 360" aria-hidden="true">
+        <!-- ground line -->
+        <line x1="20" y1="340" x2="340" y2="340" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <line x1="20" y1="345" x2="340" y2="345" stroke="rgba(255,255,255,0.2)" stroke-width="0.6"/>
+        <!-- ground hatching -->
+        <g stroke="rgba(255,255,255,0.18)" stroke-width="0.6">
+          <line x1="22" y1="350" x2="14" y2="358"/>
+          <line x1="42" y1="350" x2="34" y2="358"/>
+          <line x1="62" y1="350" x2="54" y2="358"/>
+          <line x1="82" y1="350" x2="74" y2="358"/>
+          <line x1="102" y1="350" x2="94" y2="358"/>
+          <line x1="122" y1="350" x2="114" y2="358"/>
+          <line x1="142" y1="350" x2="134" y2="358"/>
+          <line x1="162" y1="350" x2="154" y2="358"/>
+          <line x1="182" y1="350" x2="174" y2="358"/>
+          <line x1="202" y1="350" x2="194" y2="358"/>
+          <line x1="222" y1="350" x2="214" y2="358"/>
+          <line x1="242" y1="350" x2="234" y2="358"/>
+          <line x1="262" y1="350" x2="254" y2="358"/>
+          <line x1="282" y1="350" x2="274" y2="358"/>
+          <line x1="302" y1="350" x2="294" y2="358"/>
+          <line x1="322" y1="350" x2="314" y2="358"/>
+        </g>
+
+        <!--
+          Floor stack. Total = 78%. Floor heights scaled.
+          Each floor: x=70, width based on pct, height proportional to pct
+          Stack from bottom up: COR (9%) → R&D (23%) → S&M (28%) → SBC (10%) → G&A (8%)
+        -->
+        <!-- floor heights: (pct/78)*220 base; min 18 -->
+        <!-- COR 9% -->
+        <g class="floor" data-pct="9">
+          <rect x="100" y="316" width="140" height="22" fill="#4F86C6" stroke="#0E1116" stroke-width="0.8"/>
+          <line x1="100" y1="320" x2="240" y2="320" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+          <line x1="100" y1="332" x2="240" y2="332" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+        </g>
+        <!-- R&D 23% -->
+        <g class="floor" data-pct="23">
+          <rect x="80" y="262" width="180" height="54" fill="#E8734A" stroke="#0E1116" stroke-width="0.8"/>
+          <!-- windows -->
+          <g fill="rgba(255,255,255,0.25)">
+            <rect x="92" y="274" width="24" height="14"/>
+            <rect x="124" y="274" width="24" height="14"/>
+            <rect x="156" y="274" width="24" height="14"/>
+            <rect x="188" y="274" width="24" height="14"/>
+            <rect x="220" y="274" width="24" height="14"/>
+            <rect x="92" y="294" width="24" height="14"/>
+            <rect x="124" y="294" width="24" height="14"/>
+            <rect x="156" y="294" width="24" height="14"/>
+            <rect x="188" y="294" width="24" height="14"/>
+            <rect x="220" y="294" width="24" height="14"/>
+          </g>
+        </g>
+        <!-- S&M 28% (widest, accent floor) -->
+        <g class="floor" data-pct="28">
+          <rect x="60" y="196" width="220" height="66" fill="#6DBF82" stroke="#0E1116" stroke-width="0.8"/>
+          <g fill="rgba(255,255,255,0.28)">
+            <rect x="70" y="208" width="30" height="18"/>
+            <rect x="106" y="208" width="30" height="18"/>
+            <rect x="142" y="208" width="30" height="18"/>
+            <rect x="178" y="208" width="30" height="18"/>
+            <rect x="214" y="208" width="30" height="18"/>
+            <rect x="250" y="208" width="22" height="18"/>
+            <rect x="70" y="232" width="30" height="18"/>
+            <rect x="106" y="232" width="30" height="18"/>
+            <rect x="142" y="232" width="30" height="18"/>
+            <rect x="178" y="232" width="30" height="18"/>
+            <rect x="214" y="232" width="30" height="18"/>
+            <rect x="250" y="232" width="22" height="18"/>
+          </g>
+        </g>
+        <!-- SBC 10% -->
+        <g class="floor" data-pct="10">
+          <rect x="92" y="170" width="156" height="26" fill="#F2C14E" stroke="#0E1116" stroke-width="0.8"/>
+          <g fill="rgba(255,255,255,0.25)">
+            <rect x="104" y="178" width="20" height="10"/>
+            <rect x="132" y="178" width="20" height="10"/>
+            <rect x="160" y="178" width="20" height="10"/>
+            <rect x="188" y="178" width="20" height="10"/>
+            <rect x="216" y="178" width="20" height="10"/>
+          </g>
+        </g>
+        <!-- G&A 8% -->
+        <g class="floor" data-pct="8">
+          <rect x="106" y="148" width="128" height="22" fill="#A97DC9" stroke="#0E1116" stroke-width="0.8"/>
+          <g fill="rgba(255,255,255,0.25)">
+            <rect x="118" y="154" width="18" height="10"/>
+            <rect x="142" y="154" width="18" height="10"/>
+            <rect x="166" y="154" width="18" height="10"/>
+            <rect x="190" y="154" width="18" height="10"/>
+            <rect x="214" y="154" width="14" height="10"/>
+          </g>
+        </g>
+        <!-- roof: surviving margin (operating 21.9% rounded) -->
+        <g>
+          <polygon points="106,148 234,148 220,128 120,128" fill="rgba(111,179,255,0.18)" stroke="rgba(111,179,255,0.7)" stroke-width="0.8"/>
+          <line x1="170" y1="128" x2="170" y2="106" stroke="rgba(111,179,255,0.7)" stroke-width="0.8"/>
+          <circle cx="170" cy="104" r="2.4" fill="#6FB3FF"/>
+        </g>
+
+        <!-- callout dim line on right -->
+        <g stroke="rgba(255,255,255,0.5)" stroke-width="0.6" fill="none">
+          <line x1="296" y1="316" x2="316" y2="316"/>
+          <line x1="296" y1="262" x2="316" y2="262"/>
+          <line x1="296" y1="196" x2="316" y2="196"/>
+          <line x1="296" y1="170" x2="316" y2="170"/>
+          <line x1="296" y1="148" x2="316" y2="148"/>
+          <line x1="296" y1="128" x2="316" y2="128"/>
+          <line x1="316" y1="316" x2="316" y2="128"/>
+        </g>
+        <!-- floor labels -->
+        <g font-family="Geist Mono" font-size="9" fill="rgba(232,241,255,0.85)" letter-spacing="0.4">
+          <text x="246" y="332" text-anchor="start">9%</text>
+          <text x="266" y="295" text-anchor="start">23%</text>
+          <text x="286" y="232" text-anchor="start">28%</text>
+          <text x="254" y="187" text-anchor="start">10%</text>
+          <text x="240" y="163" text-anchor="start">8%</text>
+        </g>
+        <!-- top tag -->
+        <g font-family="Geist Mono" font-size="9" fill="#6FB3FF" letter-spacing="0.6">
+          <text x="170" y="98" text-anchor="middle">21.9% op. margin</text>
+          <text x="170" y="115" text-anchor="middle" fill="rgba(232,241,255,0.5)" font-size="8">→ what survives</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="cost-rows">
+      <div class="cost-row">
+        <div class="sw" style="background: #6DBF82"></div>
+        <div class="lbl">Sales &amp; Marketing<span class="sub">load-bearing</span></div>
+        <div class="pct">28<span class="u">%</span></div>
+      </div>
+      <div class="cost-row">
+        <div class="sw" style="background: #E8734A"></div>
+        <div class="lbl">Research &amp; Development<span class="sub">cloud, AI, construction</span></div>
+        <div class="pct">23<span class="u">%</span></div>
+      </div>
+      <div class="cost-row">
+        <div class="sw" style="background: #F2C14E"></div>
+        <div class="lbl">Stock-Based Compensation<span class="sub">paying in equity</span></div>
+        <div class="pct">10<span class="u">%</span></div>
+      </div>
+      <div class="cost-row">
+        <div class="sw" style="background: #4F86C6"></div>
+        <div class="lbl">Cost of Revenue<span class="sub">deliver the bits</span></div>
+        <div class="pct">9<span class="u">%</span></div>
+      </div>
+      <div class="cost-row">
+        <div class="sw" style="background: #A97DC9"></div>
+        <div class="lbl">General &amp; Administrative<span class="sub">running the firm</span></div>
+        <div class="pct">8<span class="u">%</span></div>
+      </div>
+    </div>
+
+    <div class="cost-foot">
+      <span>Sum · 78%</span>
+      <span>Operating margin · 21.9%</span>
+    </div>
+  </section>
+
+  <!-- ===== REVENUE MIX — floor plan ===== -->
+  <section class="beat mix" data-screen-label="05 Mix">
+    <div class="beat-eyebrow">
+      <span class="tick"></span>
+      <span class="eyebrow">05 · The plan · <span class="num">$7.21B</span></span>
+    </div>
+    <h2 class="beat-h">Four rooms in <em>one floor plan</em>.</h2>
+    <p class="beat-body">
+      AECO is the biggest wing — the cloud platform for buildings, infrastructure, and the projects that get built on them. AutoCAD remains the front room. Manufacturing turns a corner. Media &amp; Entertainment is the smallest, but the loudest in cinema credits.
+    </p>
+
+    <div style="position: relative;">
+      <span class="fp-tag t-top mono">Plan A · scale 1:1</span>
+      <span class="fp-tag t-right mono">FY26 mix</span>
+      <div class="floorplan">
+        <div class="fp-room aeco">
+          <div>
+            <div class="name">Architecture, Engineering<br/>Construction &amp; Operations</div>
+            <div class="sub">AECO · cloud platform</div>
+          </div>
+          <div>
+            <div class="pct">49.7<span style="font-size:0.45em; letter-spacing: 0.02em;">%</span></div>
+            <div class="rev">$3.58B</div>
+          </div>
+        </div>
+        <div class="fp-room acad">
+          <div>
+            <div class="name">AutoCAD<br/>+ AutoCAD&nbsp;LT</div>
+            <div class="sub">flagship</div>
+          </div>
+          <div>
+            <div class="pct">24.8<span style="font-size:0.45em;">%</span></div>
+            <div class="rev">$1.79B</div>
+          </div>
+        </div>
+        <div class="fp-room mfg">
+          <div>
+            <div class="name">Manufacturing</div>
+            <div class="sub">Fusion · Inventor</div>
+          </div>
+          <div>
+            <div class="pct">19.1<span style="font-size:0.45em;">%</span></div>
+            <div class="rev">$1.38B</div>
+          </div>
+        </div>
+        <div class="fp-room me">
+          <div>
+            <div class="name">Media &amp; Ent.</div>
+            <div class="sub">Maya · Flame</div>
+          </div>
+          <div>
+            <div class="pct">4.6<span style="font-size:0.45em;">%</span></div>
+            <div class="rev">$332M</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fp-foot">
+      <span>4 segments</span><span>direct ≈ 40% · channel ≈ 60%</span>
+    </div>
+  </section>
+
+  <!-- ===== FOOTPRINT ===== -->
+  <section class="foot" data-screen-label="06 Footprint">
+    <div class="beat-eyebrow">
+      <span class="tick"></span>
+      <span class="eyebrow">06 · Footprint · global</span>
+    </div>
+    <h2 class="beat-h">A drafting table the <em>size of the planet</em>.</h2>
+    <p class="beat-body">
+      Direct sales and a channel of resellers carry Autodesk into <em>every region</em> with a building site or a soundstage.
+    </p>
+
+    <div class="globe">
+      <svg viewBox="0 0 320 320" aria-hidden="true">
+        <!-- outer circle -->
+        <circle cx="160" cy="160" r="140" fill="rgba(10,79,168,0.04)" stroke="#0A4FA8" stroke-width="1"/>
+        <!-- meridians -->
+        <g fill="none" stroke="rgba(10,79,168,0.35)" stroke-width="0.6">
+          <ellipse cx="160" cy="160" rx="46" ry="140"/>
+          <ellipse cx="160" cy="160" rx="92" ry="140"/>
+          <ellipse cx="160" cy="160" rx="130" ry="140"/>
+        </g>
+        <!-- parallels -->
+        <g fill="none" stroke="rgba(10,79,168,0.35)" stroke-width="0.6">
+          <ellipse cx="160" cy="160" rx="140" ry="14"/>
+          <ellipse cx="160" cy="160" rx="140" ry="46"/>
+          <ellipse cx="160" cy="160" rx="140" ry="92"/>
+          <ellipse cx="160" cy="160" rx="140" ry="130"/>
+        </g>
+        <!-- equator emphasized -->
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#0A4FA8" stroke-width="0.8" stroke-dasharray="2 3"/>
+        <line x1="160" y1="20" x2="160" y2="300" stroke="#0A4FA8" stroke-width="0.8" stroke-dasharray="2 3"/>
+
+        <!-- region nodes (approximate) -->
+        <!-- Americas -->
+        <g id="r-amer">
+          <circle cx="98" cy="146" r="22" fill="rgba(10,79,168,0.18)" stroke="#0A4FA8" stroke-width="1.2"/>
+          <circle cx="98" cy="146" r="3" fill="#0A4FA8"/>
+          <text x="98" y="116" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#0E1116" font-style="italic">44%</text>
+          <text x="98" y="106" text-anchor="middle" font-family="Geist Mono" font-size="8" fill="#6B6F76" letter-spacing="0.6">AMERICAS</text>
+        </g>
+        <!-- EMEA -->
+        <g id="r-emea">
+          <circle cx="178" cy="138" r="20" fill="rgba(10,79,168,0.16)" stroke="#0A4FA8" stroke-width="1.2"/>
+          <circle cx="178" cy="138" r="3" fill="#0A4FA8"/>
+          <text x="200" y="100" text-anchor="start" font-family="Instrument Serif" font-size="22" fill="#0E1116" font-style="italic">39%</text>
+          <text x="200" y="90" text-anchor="start" font-family="Geist Mono" font-size="8" fill="#6B6F76" letter-spacing="0.6">EMEA</text>
+          <line x1="190" y1="118" x2="200" y2="103" stroke="#0A4FA8" stroke-width="0.6"/>
+        </g>
+        <!-- APAC -->
+        <g id="r-apac">
+          <circle cx="232" cy="170" r="14" fill="rgba(10,79,168,0.10)" stroke="#0A4FA8" stroke-width="1.2"/>
+          <circle cx="232" cy="170" r="3" fill="#0A4FA8"/>
+          <text x="262" y="200" text-anchor="start" font-family="Instrument Serif" font-size="22" fill="#0E1116" font-style="italic">17%</text>
+          <text x="262" y="212" text-anchor="start" font-family="Geist Mono" font-size="8" fill="#6B6F76" letter-spacing="0.6">APAC</text>
+          <line x1="244" y1="178" x2="262" y2="195" stroke="#0A4FA8" stroke-width="0.6"/>
+        </g>
+
+        <!-- compass rose -->
+        <g transform="translate(40,260)">
+          <circle r="14" fill="#FBFAF7" stroke="#0E1116" stroke-width="0.8"/>
+          <line x1="0" y1="-12" x2="0" y2="12" stroke="#0E1116" stroke-width="0.6"/>
+          <line x1="-12" y1="0" x2="12" y2="0" stroke="#0E1116" stroke-width="0.6"/>
+          <polygon points="0,-12 -3,-3 0,0 3,-3" fill="#0A4FA8"/>
+          <text y="-18" text-anchor="middle" font-family="Geist Mono" font-size="8" fill="#0E1116">N</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="foot-rows" id="footRows">
+      <div class="foot-row">
+        <div class="marker"></div>
+        <div class="region">Americas</div>
+        <div class="bar"><i data-pct="100"></i></div>
+        <div class="pct">44%</div>
+      </div>
+      <div class="foot-row">
+        <div class="marker"></div>
+        <div class="region">EMEA</div>
+        <div class="bar"><i data-pct="89"></i></div>
+        <div class="pct">39%</div>
+      </div>
+      <div class="foot-row">
+        <div class="marker"></div>
+        <div class="region">Asia-Pacific</div>
+        <div class="bar"><i data-pct="39"></i></div>
+        <div class="pct">17%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== reset beat ===== -->
+  <div class="reset">
+    <span class="corner c-tl">+</span><span class="corner c-tr">+</span>
+    <span class="corner c-bl">+</span><span class="corner c-br">+</span>
+    <p class="text">
+      <span class="blue">$2.41B</span> walks out the door as free cash —<br/>
+      and most of it walks <span class="blue">straight back in</span>, as buybacks.
+    </p>
+  </div>
+
+  <!-- ===== BET — capital allocation ===== -->
+  <section class="beat bet" data-screen-label="07 Bet">
+    <div class="beat-eyebrow">
+      <span class="tick"></span>
+      <span class="eyebrow">07 · The bet · capital</span>
+    </div>
+    <h2 class="beat-h">An <em>asset-light</em> ledger, returning to itself.</h2>
+    <p class="beat-body">
+      Capex is a rounding error — <em>$43M against $2.45B of operating cash</em>. The plan: route <em>roughly half</em> of free cash flow back to shareholders through buybacks in FY27, and tuck-in acquisitions for cloud, construction, and AI.
+    </p>
+
+    <div class="flow">
+      <svg viewBox="0 0 360 220" aria-hidden="true">
+        <!-- nodes -->
+        <!-- OCF source -->
+        <g>
+          <rect x="16" y="20" width="98" height="42" fill="#fff" stroke="#0E1116" stroke-width="1"/>
+          <text x="65" y="36" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#6B6F76" letter-spacing="0.6">OPERATING CASH</text>
+          <text x="65" y="54" text-anchor="middle" font-family="Instrument Serif" font-size="18" fill="#0E1116">$2.45B</text>
+        </g>
+        <!-- minus capex -->
+        <g>
+          <rect x="16" y="78" width="98" height="38" fill="#fff" stroke="#0E1116" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="65" y="93" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#6B6F76" letter-spacing="0.6">– CAPEX</text>
+          <text x="65" y="108" text-anchor="middle" font-family="Geist Mono" font-size="11" fill="#0E1116">$43M</text>
+        </g>
+
+        <!-- arrow to FCF -->
+        <g stroke="#0A4FA8" fill="none" stroke-width="1.4" id="flowArrow1">
+          <path d="M114,82 L150,82 L150,110 L188,110" />
+          <polygon points="188,110 180,106 180,114" fill="#0A4FA8" stroke="none"/>
+        </g>
+
+        <!-- FCF central -->
+        <g>
+          <rect x="190" y="86" width="120" height="50" fill="rgba(10,79,168,0.10)" stroke="#0A4FA8" stroke-width="1.4"/>
+          <text x="250" y="104" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#0A4FA8" letter-spacing="0.6">FREE CASH FLOW</text>
+          <text x="250" y="126" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#0A4FA8" font-style="italic">$2.41B</text>
+        </g>
+
+        <!-- buyback split -->
+        <g stroke="#0E1116" fill="none" stroke-width="1.2" id="flowArrow2">
+          <path d="M250,136 L250,160 L120,160 L120,180" />
+          <polygon points="120,180 116,172 124,172" fill="#0E1116" stroke="none"/>
+          <path d="M250,160 L250,180" />
+          <polygon points="250,180 246,172 254,172" fill="#0E1116" stroke="none"/>
+        </g>
+
+        <!-- buyback target -->
+        <g>
+          <rect x="56" y="184" width="128" height="32" fill="#fff" stroke="#0E1116" stroke-width="1"/>
+          <text x="120" y="198" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#6B6F76" letter-spacing="0.6">→ BUYBACKS · ~50%</text>
+          <text x="120" y="212" text-anchor="middle" font-family="Geist Mono" font-size="10" fill="#0E1116">FY27 GUIDE</text>
+        </g>
+        <!-- reinvest target -->
+        <g>
+          <rect x="186" y="184" width="128" height="32" fill="#fff" stroke="#0E1116" stroke-width="1"/>
+          <text x="250" y="198" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#6B6F76" letter-spacing="0.6">→ REINVEST</text>
+          <text x="250" y="212" text-anchor="middle" font-family="Geist Mono" font-size="10" fill="#0E1116">PRODUCT · M&amp;A · CLOUD</text>
+        </g>
+
+        <!-- annotation: dividend = 0 -->
+        <g>
+          <text x="328" y="34" text-anchor="end" font-family="Geist Mono" font-size="9" fill="#6B6F76" letter-spacing="0.6">DIVIDEND</text>
+          <text x="328" y="52" text-anchor="end" font-family="Instrument Serif" font-size="22" fill="#0A4FA8" font-style="italic">0</text>
+          <line x1="298" y1="38" x2="320" y2="38" stroke="#0A4FA8" stroke-dasharray="2 3"/>
+        </g>
+      </svg>
+
+      <div class="flow-rows">
+        <div>
+          <div class="lbl">Total equity</div>
+          <div class="v">$3.04<span style="font-size:0.55em">B</span></div>
+        </div>
+        <div>
+          <div class="lbl">Cash &amp; eq.</div>
+          <div class="v">$2.25<span style="font-size:0.55em">B</span></div>
+        </div>
+        <div>
+          <div class="lbl">Long-term debt</div>
+          <div class="v">$2.3<span style="font-size:0.55em">B</span></div>
+        </div>
+        <div>
+          <div class="lbl">Buybacks · multi-yr</div>
+          <div class="v it">$2.19B</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="beat-body" style="margin-top: 22px;">
+      <span class="it">Total assets $12.47B · total liabilities $9.42B.</span> The leverage is comfortably covered by the operating cash that keeps showing up.
+    </p>
+  </section>
+
+  <!-- ===== COMPETITION ===== -->
+  <section class="comp" data-screen-label="08 Competition">
+    <div class="beat-eyebrow">
+      <span class="tick"></span>
+      <span class="eyebrow">08 · The board · competitors</span>
+    </div>
+    <h2 class="beat-h">Three rivals — sized by <em>market cap</em>.</h2>
+    <p class="beat-body">
+      One direct (Dassault). One convergent — Snowflake, the <em>data cloud</em> the same customers run alongside Autodesk’s. One non-obvious — Fortinet, competing for <em>the same enterprise budget line</em>.
+    </p>
+
+    <div class="comp-board">
+      <!-- corner ticks -->
+      <svg viewBox="0 0 320 380" preserveAspectRatio="none" style="position:absolute; inset:0; pointer-events:none;">
+        <!-- diagonal connector lines for "drafted board" feel -->
+        <line x1="20" y1="20" x2="40" y2="20" stroke="#0E1116" stroke-width="1"/>
+        <line x1="20" y1="20" x2="20" y2="40" stroke="#0E1116" stroke-width="1"/>
+        <line x1="300" y1="20" x2="280" y2="20" stroke="#0E1116" stroke-width="1"/>
+        <line x1="300" y1="20" x2="300" y2="40" stroke="#0E1116" stroke-width="1"/>
+        <line x1="20" y1="360" x2="40" y2="360" stroke="#0E1116" stroke-width="1"/>
+        <line x1="20" y1="360" x2="20" y2="340" stroke="#0E1116" stroke-width="1"/>
+        <line x1="300" y1="360" x2="280" y2="360" stroke="#0E1116" stroke-width="1"/>
+        <line x1="300" y1="360" x2="300" y2="340" stroke="#0E1116" stroke-width="1"/>
+      </svg>
+
+      <!--
+        Sized roughly by market cap.
+        FTNT 60.56B (largest)
+        ADSK 51.07B
+        SNOW 49.77B
+        DASTY: not given numerically — sized smaller, indicative
+      -->
+      <!-- ADSK center, blue -->
+      <div class="cube adsk" style="left: 22%; top: 18%; width: 56%; height: 38%;">
+        <div>
+          <div class="tk">ADSK</div>
+          <div class="nm">Autodesk</div>
+        </div>
+        <div>
+          <div class="mc">$51.07<span class="u">B</span></div>
+          <div class="tk" style="margin-top:4px">market cap</div>
+        </div>
+      </div>
+
+      <!-- FTNT — biggest, top right -->
+      <div class="cube" style="right: 5%; top: 4%; width: 38%; height: 30%;">
+        <div>
+          <div class="tk">FTNT</div>
+          <div class="nm">Fortinet</div>
+        </div>
+        <div>
+          <div class="mc">$60.56<span class="u">B</span></div>
+          <div class="tk" style="margin-top:4px">+14% YoY</div>
+        </div>
+      </div>
+
+      <!-- SNOW — bottom right -->
+      <div class="cube" style="right: 6%; bottom: 6%; width: 44%; height: 32%;">
+        <div>
+          <div class="tk">SNOW</div>
+          <div class="nm">Snowflake</div>
+        </div>
+        <div>
+          <div class="mc">$49.77<span class="u">B</span></div>
+          <div class="tk" style="margin-top:4px">+29% YoY</div>
+        </div>
+      </div>
+
+      <!-- DASTY — bottom left -->
+      <div class="cube" style="left: 5%; bottom: 8%; width: 38%; height: 26%;">
+        <div>
+          <div class="tk">DASTY</div>
+          <div class="nm">Dassault Systèmes</div>
+        </div>
+        <div>
+          <div class="mc">— <span class="u" style="font-size:9px">direct rival</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-foot">
+      <span>4 boxes · same board</span>
+      <span>scale: market cap</span>
+    </div>
+
+    <div style="margin-top: 22px;">
+      <p class="body" style="font-size: 13.5px; color: var(--adsk-ink-2);">
+        <span class="mono" style="font-size: 10.5px; letter-spacing: 0.1em; color: var(--adsk-ink-3); text-transform: uppercase; display: block; margin-bottom: 6px;">Snowflake · convergent</span>
+        Industry-specific data clouds — <span class="it">Forma, Fusion, Flow</span> — pull Autodesk into Snowflake’s lane: $4.68B revenue, +29% YoY.
+      </p>
+      <p class="body" style="font-size: 13.5px; color: var(--adsk-ink-2); margin-top: 18px;">
+        <span class="mono" style="font-size: 10.5px; letter-spacing: 0.1em; color: var(--adsk-ink-3); text-transform: uppercase; display: block; margin-bottom: 6px;">Fortinet · adjacent</span>
+        Not a CAD rival — a <span class="it">budget-line rival</span>. $6.80B revenue, P/E TTM 32.67, sharing the same AEC and manufacturing wallets.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== reset beat ===== -->
+  <div class="reset">
+    <span class="corner c-tl">+</span><span class="corner c-tr">+</span>
+    <span class="corner c-bl">+</span><span class="corner c-br">+</span>
+    <p class="text">
+      Every line on every drawing<br/>
+      is a <span class="blue">subscription</span>.<br/>
+      <span style="font-style: normal; font-family: var(--font-sans); font-size: 13px; color: var(--adsk-ink-3); display: block; margin-top: 14px; letter-spacing: 0.04em;">— and the drawing isn’t finished.</span>
+    </p>
+  </div>
+
+  <!-- ===== CLOSE ===== -->
+  <section class="close" data-screen-label="09 Close">
+    <div class="beat-eyebrow">
+      <span class="tick"></span>
+      <span class="eyebrow">09 · The takeaway</span>
+    </div>
+    <p class="figure">
+      <span class="it">91¢</span><br/>
+      survive<br/>
+      to gross.
+    </p>
+    <p class="figure-cap">Of every dollar Autodesk bills, 91¢ make it past the cost of revenue</p>
+
+    <p class="body">
+      The hero opened with <span class="it">100 million users</span> drawing the world. The page closes here, on the math: <span class="it">a 91% gross margin</span>, a <span class="it">21.9% operating margin</span>, and a <span class="it">$2.41B</span> river of free cash that bends back into the firm.
+    </p>
+
+    <p class="body" style="margin-top: 22px;">
+      Forty-four years after John Walker shipped a drafting program for the PC, the line is <em>still drawing</em> — only now it draws itself, every quarter, into the next subscription.
+    </p>
+
+    <div class="close-foot">
+      <span class="l">ADSK · End of recap</span>
+      <span>FY ’26 · 04 / 26</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   Scroll behaviors:
+   - progress bar
+   - reveal-on-scroll for elements with .reveal
+   - draw-on for SVG strokes
+   - foot bars width
+   ============================================================ */
+(function(){
+  const progress = document.getElementById('progress');
+  const page = document.getElementById('page');
+
+  // scroll progress, based on doc scroll
+  function onScroll(){
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const y = Math.min(Math.max(window.scrollY, 0), h);
+    const p = h > 0 ? (y / h) * 100 : 0;
+    progress.style.width = p + '%';
+  }
+  document.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ---------- IntersectionObserver: trigger draw + reveals ----------
+  const drawTargets = document.querySelectorAll('.draw-stroke, [id="iso1"], [id="iso2"], [id="dim1"]');
+  // measure path lengths and set CSS vars for the iso lines too
+  function measure(el){
+    if (!el.getTotalLength) return;
+    try {
+      // For groups with multiple paths, sum lengths via children
+      if (el.tagName.toLowerCase() === 'g') {
+        const lines = el.querySelectorAll('line, polygon, path');
+        let total = 0;
+        lines.forEach(l => { if (l.getTotalLength) total += l.getTotalLength(); });
+        el.style.setProperty('--len', total + 1);
+        // Apply dasharray to children for collective animation
+        lines.forEach(l => {
+          const len = l.getTotalLength ? l.getTotalLength() : 600;
+          l.style.strokeDasharray = len + 1;
+          l.style.strokeDashoffset = len + 1;
+          l.style.transition = 'stroke-dashoffset 1500ms cubic-bezier(0.22, 1, 0.36, 1)';
+        });
+      } else {
+        const len = el.getTotalLength();
+        el.style.setProperty('--len', len + 1);
+      }
+    } catch(e){}
+  }
+  document.querySelectorAll('#iso1, #iso2, #dim1').forEach(measure);
+  // Trigger hero iso draw on load (slight delay)
+  setTimeout(() => {
+    document.querySelectorAll('#iso1 line, #iso1 polygon, #iso2 line, #iso2 polygon, #dim1 line').forEach(l => {
+      l.style.strokeDashoffset = 0;
+    });
+  }, 800);
+
+  // generic reveal observer
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        // foot bars fill on entry
+        if (e.target.id === 'footRows') {
+          e.target.querySelectorAll('.bar > i').forEach(i => {
+            const pct = i.getAttribute('data-pct');
+            i.style.width = pct + '%';
+          });
+        }
+        // reveal subscription chart elements when subgrid enters
+        if (e.target.id === 'subgrid') {
+          const line = document.getElementById('revLine');
+          const direct = document.getElementById('directLine');
+          const area = document.getElementById('revArea');
+          const dots = document.getElementById('dots');
+          const tag = document.getElementById('q4Tag');
+          if (line && line.getTotalLength){
+            const len = line.getTotalLength();
+            line.style.strokeDasharray = len; line.style.strokeDashoffset = len;
+            line.getBoundingClientRect();
+            line.style.transition = 'stroke-dashoffset 1400ms cubic-bezier(0.22, 1, 0.36, 1)';
+            line.style.strokeDashoffset = 0;
+          }
+          if (direct && direct.getTotalLength){
+            const len = direct.getTotalLength();
+            direct.style.strokeDasharray = len; direct.style.strokeDashoffset = len;
+            direct.getBoundingClientRect();
+            direct.style.transition = 'stroke-dashoffset 1400ms 200ms cubic-bezier(0.22, 1, 0.36, 1)';
+            direct.style.strokeDashoffset = 0;
+          }
+          if (area){ area.style.transition = 'opacity 800ms 700ms ease-out'; area.style.opacity = 1; }
+          if (dots){ dots.style.transition = 'opacity 600ms 1100ms ease-out'; dots.style.opacity = 1; }
+          if (tag){ tag.style.transition = 'opacity 600ms 1500ms ease-out'; tag.style.opacity = 1; }
+        }
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('#footRows, #subgrid').forEach(el => io.observe(el));
+
+  // count-up for big numbers
+  const cuTargets = document.querySelectorAll('[data-count]');
+  const cuIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const el = e.target;
+        const target = parseFloat(el.getAttribute('data-count'));
+        const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+        const dur = 1100;
+        const t0 = performance.now();
+        function tick(now){
+          const k = Math.min((now - t0)/dur, 1);
+          const eased = 1 - Math.pow(1 - k, 3);
+          el.textContent = (target * eased).toFixed(decimals);
+          if (k < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        cuIO.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+  cuTargets.forEach(el => cuIO.observe(el));
+
+  // ---------- hero subtle parallax on the iso buildings ----------
+  const iso1 = document.getElementById('iso1');
+  const iso2 = document.getElementById('iso2');
+  function onScrollHero(){
+    const y = window.scrollY;
+    if (iso1) iso1.style.transform = `translateY(${y * -0.04}px)`;
+    if (iso2) iso2.style.transform = `translateY(${y * -0.07}px)`;
+  }
+  document.addEventListener('scroll', onScrollHero, { passive: true });
+  onScrollHero();
+
+})();
+</script>
+
+</body>
+</html>

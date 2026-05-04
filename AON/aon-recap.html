@@ -1,0 +1,1345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AON · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ---------- Tokens (Zair Naqvi DS, lightly extended for Aon) ---------- */
+:root{
+  --paper:        #FBFAF7;
+  --paper-2:      #F4F2ED;
+  --paper-3:      #ECEAE3;
+  --ink:          #141414;
+  --ink-2:        #3B3A37;
+  --ink-3:        #6B6A65;
+  --ink-4:        #A4A29C;
+  --line:         #E4E1D9;
+  --line-strong:  #CFCBC0;
+
+  /* Aon signal — derived from supplied compensation hex (#4F81BD) */
+  --aon-50:  #EDF2F8;
+  --aon-100: #D6E1ED;
+  --aon-200: #ADC2D9;
+  --aon-300: #7DA1C5;
+  --aon-400: #4F81BD;     /* primary signal */
+  --aon-500: #2E5E94;
+  --aon-600: #1D446F;
+  --aon-700: #0F2A48;
+  --aon-800: #0A1E33;
+  --aon-900: #050F1C;
+
+  /* One earned coral moment, reserved for "the bill" */
+  --coral-400: #FF7A57;
+  --coral-500: #F25A37;
+
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, monospace;
+
+  --maxw: 440px;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+html{background:#0A0A0A;}
+body{
+  font-family:var(--font-sans);
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+
+/* The mobile artifact column */
+.page{
+  max-width:var(--maxw);
+  margin:0 auto;
+  background:var(--paper);
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 0 80px rgba(0,0,0,0.18);
+  min-height:100vh;
+}
+
+/* ---------- Persistent chrome ---------- */
+.chrome{
+  position:sticky; top:0; z-index:40;
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  background: rgba(251,250,247,0.78);
+  border-bottom: 1px solid var(--line);
+}
+.chrome.dark{
+  background: rgba(10,15,28,0.72);
+  border-bottom-color: rgba(255,255,255,0.06);
+  color: var(--paper);
+}
+.chrome-row{
+  display:flex; align-items:center; gap:10px;
+  padding: 14px 20px 10px;
+}
+.tick{
+  font-family:var(--font-mono); font-size:13px; font-weight:500;
+  letter-spacing:0.04em;
+  padding: 3px 8px;
+  border:1px solid var(--line-strong);
+  border-radius: 4px;
+  color:var(--ink);
+}
+.chrome.dark .tick{ border-color: rgba(255,255,255,0.18); color:var(--paper);}
+.cname{ font-size:14px; font-weight:500; letter-spacing:-0.01em; }
+.recap{
+  margin-left:auto;
+  font-family:var(--font-mono); font-size:10px;
+  letter-spacing:0.16em; text-transform:uppercase;
+  color:var(--ink-3);
+}
+.chrome.dark .recap{ color: rgba(244,242,237,0.6);}
+.progress{
+  height:1.5px; width:100%;
+  background: transparent;
+  position:relative;
+}
+.progress::before{
+  content:""; position:absolute; left:0; top:0; bottom:0;
+  width: var(--p, 0%);
+  background: var(--aon-500);
+  transition: width 80ms linear;
+}
+.chrome.dark .progress::before{ background: var(--aon-300);}
+
+/* ---------- Section primitives ---------- */
+section{ position:relative; }
+.eye{
+  font-family:var(--font-mono); font-size:10.5px;
+  letter-spacing:0.18em; text-transform:uppercase;
+  color: var(--aon-500);
+  display:flex; align-items:center; gap:8px;
+}
+.eye::before{
+  content:""; width:14px; height:1px; background: currentColor; display:inline-block; opacity:.7;
+}
+.lede{
+  font-family: var(--font-display);
+  font-weight:400;
+  line-height:1.02;
+  letter-spacing:-0.02em;
+}
+.body{
+  font-size:15.5px; line-height:1.55; color: var(--ink-2);
+  font-family:var(--font-sans);
+}
+.body em{ font-family: var(--font-display); font-style: italic; font-size: 1.08em; }
+.body em.sig{ color: var(--aon-500); }
+.mono-meta{
+  font-family:var(--font-mono); font-size:10.5px;
+  letter-spacing:0.14em; text-transform:uppercase;
+  color: var(--ink-3);
+}
+
+/* ---------- Reset beat band ---------- */
+.reset{
+  padding: 56px 28px 56px;
+  position:relative;
+}
+.reset.tone{ background: var(--paper-2); }
+.reset.dark{ background: var(--aon-800); color: var(--paper); }
+.reset .quote{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+.reset.dark .quote{ color: var(--paper); }
+.reset .quote .sig{ color: var(--aon-500); }
+.reset.dark .quote .sig{ color: var(--coral-400); }
+.reset .quote em{ font-style: italic; }
+.reset .by{
+  margin-top:16px;
+  font-family:var(--font-mono); font-size:10px; letter-spacing:0.18em;
+  text-transform:uppercase; color: var(--ink-3);
+}
+.reset.dark .by{ color: rgba(244,242,237,0.45); }
+
+/* ---------- Hero ---------- */
+.hero{
+  position:relative;
+  padding: 36px 24px 64px;
+  background: var(--paper);
+  overflow:hidden;
+}
+.hero .eye{ margin-bottom: 18px; color: var(--aon-600); }
+.hero h1{
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 0.96;
+  letter-spacing: -0.022em;
+  font-weight: 400;
+  margin: 0 0 22px;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+.hero h1 em{ font-style: italic; color: var(--aon-500); }
+.hero .sub{
+  font-family: var(--font-sans); font-size: 14.5px; line-height: 1.5;
+  color: var(--ink-3); max-width: 32ch;
+}
+.hero-stats{
+  display:grid; grid-template-columns: 1fr 1fr; gap: 18px 24px;
+  margin-top: 34px;
+  border-top:1px solid var(--line);
+  padding-top: 20px;
+}
+.hs{ display:flex; flex-direction:column; gap:4px; }
+.hs .k{
+  font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em;
+  text-transform:uppercase; color: var(--ink-3);
+}
+.hs .v{
+  font-family: var(--font-display);
+  font-size: 30px; line-height:1; letter-spacing:-0.01em;
+}
+.hs .v small{ font-size: 13px; color: var(--ink-3); font-family: var(--font-sans); margin-left: 4px;}
+
+/* Hero scene: flow lines converging */
+.flow-scene{
+  position:relative;
+  margin: 30px -24px 0;
+  height: 280px;
+}
+.flow-scene svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+.flow-cap{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  text-align:center;
+  font-family: var(--font-mono); font-size:10px; letter-spacing:0.18em;
+  text-transform:uppercase; color:var(--ink-3);
+}
+.flow-cap .num{
+  display:block;
+  font-family: var(--font-display);
+  font-size: 44px; letter-spacing:-0.02em; color:var(--ink);
+  margin-bottom: 4px;
+}
+.flow-cap .num em{ font-style:italic; color: var(--aon-500); }
+
+/* ---------- Generic block padding ---------- */
+.block{ padding: 56px 24px; position:relative; }
+.block-tight{ padding: 40px 24px; }
+.block .eye{ margin-bottom: 16px; }
+.block h2{
+  font-family: var(--font-display);
+  font-size: 38px; line-height: 1.02; letter-spacing: -0.018em;
+  font-weight: 400;
+  margin: 0 0 16px;
+  text-wrap: pretty;
+}
+.block h2 em{ font-style: italic; color: var(--aon-500); }
+.block .body + .body{ margin-top: 14px; }
+
+/* ---------- Two ledgers (the business) ---------- */
+.ledgers{
+  margin-top: 28px;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.ledger{
+  padding: 18px 0 22px;
+  position:relative;
+}
+.ledger + .ledger{ border-top: 1px solid var(--line); }
+.ledger-head{
+  display:flex; align-items:baseline; justify-content:space-between;
+  gap: 12px;
+}
+.ledger-name{
+  font-family: var(--font-display); font-size: 26px; line-height:1;
+  letter-spacing: -0.01em;
+}
+.ledger-name em{ font-style:italic; color: var(--aon-500); }
+.ledger-share{
+  font-family: var(--font-mono); font-size: 11px; letter-spacing:0.14em;
+  color: var(--ink-3); text-transform:uppercase;
+}
+.ledger-bar{
+  margin-top: 14px;
+  height: 36px; position:relative;
+  background: var(--paper-2);
+  border:1px solid var(--line);
+  overflow:hidden;
+}
+.ledger-fill{
+  position:absolute; left:0; top:0; bottom:0;
+  width:0;
+  background: var(--aon-500);
+  transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
+}
+.ledger.b .ledger-fill{ background: var(--aon-300); }
+.ledger-row{
+  margin-top: 12px;
+  display:flex; gap: 14px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--ink-3); letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.ledger-row .v{
+  font-family: var(--font-display); font-size: 22px;
+  letter-spacing:-0.01em; color: var(--ink); text-transform:none;
+}
+.ledger-tax{
+  margin-top: 10px;
+  font-size: 14px; line-height:1.5; color: var(--ink-2);
+}
+.ledger-tax em{ font-family: var(--font-display); font-style: italic; color: var(--aon-500); }
+
+/* ---------- Scale (count-up) ---------- */
+.scale{
+  background: var(--paper-2);
+  padding: 64px 24px 56px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.scale .big{
+  font-family: var(--font-display);
+  font-size: 96px; line-height: 0.92;
+  letter-spacing: -0.03em;
+  margin: 6px 0 6px;
+  font-feature-settings: "tnum";
+}
+.scale .big em{ font-style:italic; color: var(--aon-500); }
+.scale .big .unit{ font-family: var(--font-display); font-style: italic; font-size: 0.5em; color: var(--ink-3); margin-left: 6px;}
+.scale .delta{
+  display:inline-flex; align-items:center; gap:8px;
+  font-family: var(--font-mono); font-size: 12px;
+  letter-spacing: 0.08em; text-transform:uppercase;
+  color: var(--aon-500);
+  background: var(--aon-50);
+  padding: 6px 10px; border-radius: 999px;
+  border:1px solid var(--aon-100);
+}
+.scale .delta::before{
+  content:""; width:0;height:0;
+  border-left:4px solid transparent; border-right:4px solid transparent;
+  border-bottom: 6px solid var(--aon-500);
+}
+.scale-grid{
+  margin-top: 36px;
+  display:grid; grid-template-columns: 1fr 1fr;
+  gap: 22px 24px;
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+}
+.scale-grid .sk{
+  font-family:var(--font-mono); font-size:10px; letter-spacing: 0.18em;
+  text-transform:uppercase; color:var(--ink-3); margin-bottom:4px;
+}
+.scale-grid .sv{
+  font-family: var(--font-display); font-size: 28px; line-height:1; letter-spacing:-0.01em;
+}
+.scale-grid .sv small{ font-family: var(--font-sans); font-size: 13px; color: var(--ink-3); margin-left:4px;}
+
+/* ---------- Cost breakdown — dollar grid ---------- */
+.cost{
+  padding: 64px 24px 56px;
+  background: var(--paper);
+}
+.cost-grid-wrap{
+  margin-top: 28px;
+  border:1px solid var(--ink);
+  padding: 14px;
+  background: var(--paper-2);
+  position:relative;
+}
+.cost-grid{
+  display:grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 3px;
+}
+.cent{
+  aspect-ratio: 1/1;
+  background: var(--paper-3);
+  position:relative;
+  transition: background 220ms ease, transform 220ms ease;
+}
+.cent::after{
+  content:""; position:absolute; inset:0;
+  background: currentColor;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 600ms cubic-bezier(0.22,1,0.36,1);
+  transition-delay: var(--d, 0ms);
+}
+.cost-grid.lit .cent::after{ transform: scaleY(1); }
+.cost-legend{
+  margin-top: 18px;
+  display:flex; flex-direction:column; gap: 8px;
+}
+.cl-row{
+  display:grid; grid-template-columns: 18px 1fr auto;
+  gap: 12px; align-items:center;
+  font-size: 13px;
+}
+.cl-sw{ width:14px; height:14px; border-radius: 2px; margin-left: 2px; }
+.cl-name{ color: var(--ink-2); }
+.cl-pct{ font-family: var(--font-mono); font-size: 12px; color: var(--ink); letter-spacing: 0.04em;}
+.cost-foot{
+  margin-top: 22px;
+  font-family: var(--font-display); font-style: italic; font-size: 20px;
+  line-height: 1.3; color: var(--ink); text-wrap: pretty;
+}
+.cost-foot .sig{ color: var(--aon-500); }
+
+/* ---------- Footprint ---------- */
+.foot{
+  padding: 64px 24px 56px;
+  background: var(--aon-800);
+  color: var(--paper);
+  position: relative;
+  overflow: hidden;
+}
+.foot .eye{ color: var(--aon-200); }
+.foot h2{ color: var(--paper); }
+.foot h2 em{ color: var(--coral-400); }
+.foot .body{ color: rgba(244,242,237,0.7); }
+.foot-globe{
+  margin: 28px -24px 24px;
+  height: 320px; position:relative;
+}
+.foot-globe svg{ position:absolute; inset:0; width:100%; height:100%; }
+.foot-list{
+  margin-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.10);
+}
+.fr{
+  display:grid; grid-template-columns: 44px 1fr 56px;
+  align-items:center;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  gap: 12px;
+}
+.fr .pct{
+  font-family: var(--font-display); font-size: 28px; line-height:1;
+  letter-spacing: -0.01em;
+  color: var(--paper);
+}
+.fr .pct em{ font-style:italic; color: var(--coral-400); }
+.fr .reg{ font-size: 13.5px; color: rgba(244,242,237,0.85); line-height:1.3;}
+.fr .bar-wrap{
+  height: 4px; background: rgba(255,255,255,0.10);
+  border-radius: 2px; overflow:hidden;
+}
+.fr .bar{
+  height: 100%; width: 0;
+  background: var(--aon-300);
+  transition: width 1.1s cubic-bezier(0.22,1,0.36,1);
+}
+.fr.us .bar{ background: var(--coral-400); }
+
+/* ---------- The bet ---------- */
+.bet{
+  padding: 64px 24px 56px;
+  background: var(--paper);
+}
+.scale-vis{
+  margin: 32px 0 22px;
+  position: relative;
+  height: 220px;
+}
+.scale-vis svg{ position:absolute; inset:0; width:100%; height:100%; }
+.bet-meta{
+  display:grid; grid-template-columns: 1fr 1fr; gap: 18px;
+  margin-top: 18px;
+  padding: 18px 0;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+.bet-meta .bk{ font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); margin-bottom:4px;}
+.bet-meta .bv{ font-family: var(--font-display); font-size: 22px; letter-spacing: -0.01em; line-height: 1.05; }
+.bet-meta .bv em{ font-style: italic; color: var(--aon-500); }
+
+.bet-list{
+  margin-top: 22px;
+  display:flex; flex-direction: column; gap: 0;
+}
+.bet-row{
+  display:grid; grid-template-columns: 28px 1fr;
+  gap: 14px; padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  transition: background 180ms ease;
+}
+.bet-row:hover{ background: var(--paper-2); }
+.bet-row .n{
+  font-family:var(--font-mono); font-size:10px; color: var(--aon-500); letter-spacing:0.16em;
+}
+.bet-row .t{ font-size: 14.5px; line-height: 1.4; color: var(--ink); font-weight: 500;}
+.bet-row .d{
+  font-size: 13.5px; line-height: 1.4; color: var(--ink-2);
+  margin-top: 4px;
+  max-height: 0; opacity: 0; overflow:hidden;
+  transition: max-height 320ms ease, opacity 240ms ease, margin-top 240ms ease;
+}
+.bet-row.open .d{ max-height: 200px; opacity: 1; margin-top: 6px; }
+.bet-row .chev{
+  display:inline-block;
+  font-family: var(--font-mono);
+  margin-left: 8px;
+  color: var(--ink-3);
+  transition: transform 220ms ease;
+}
+.bet-row.open .chev{ transform: rotate(45deg); color: var(--aon-500); }
+
+/* ---------- Competition ---------- */
+.comp{
+  padding: 64px 24px 56px;
+  background: var(--paper-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.comp-rivals{
+  margin-top: 28px;
+  display:flex; flex-direction: column; gap: 18px;
+}
+.rival{
+  position: relative;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 16px 16px 14px;
+  cursor: pointer;
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+.rival:hover{ border-color: var(--ink); }
+.rival.aon{
+  border-color: var(--aon-500);
+  background: var(--aon-50);
+}
+.rival-head{
+  display:flex; align-items:baseline; justify-content: space-between; gap: 10px;
+}
+.rival-name{ font-family: var(--font-display); font-size: 22px; letter-spacing:-0.01em; line-height: 1.05;}
+.rival-name em{ font-style:italic; }
+.rival-tick{
+  font-family: var(--font-mono); font-size: 10px; letter-spacing:0.14em;
+  color: var(--ink-3); text-transform:uppercase;
+  border:1px solid var(--line-strong);
+  border-radius: 3px; padding: 2px 6px;
+}
+.rival.aon .rival-tick{ color: var(--aon-700); border-color: var(--aon-300); }
+.rival-mc{
+  margin-top: 10px;
+  display:flex; align-items:flex-end; gap: 10px;
+}
+.rival-mc .v{ font-family: var(--font-display); font-size: 32px; letter-spacing:-0.01em; line-height: 1;}
+.rival-mc .v em{ font-style:italic; color: var(--aon-500);}
+.rival-mc .l{ font-family: var(--font-mono); font-size: 10px; letter-spacing:0.16em; text-transform:uppercase; color: var(--ink-3); margin-bottom:4px;}
+.rival-track{
+  margin-top: 12px;
+  height: 6px; background: var(--paper-3);
+  border-radius: 3px; overflow:hidden;
+}
+.rival-bar{
+  height:100%; width:0; background: var(--ink-2);
+  transition: width 1.1s cubic-bezier(0.22,1,0.36,1);
+}
+.rival.aon .rival-bar{ background: var(--aon-500); }
+.rival-stats{
+  margin-top: 12px;
+  display:grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  font-family:var(--font-mono); font-size: 11px;
+  color: var(--ink-3);
+}
+.rival-stats .sv{ font-family: var(--font-display); font-size: 18px; color: var(--ink); display:block; letter-spacing:-0.005em;}
+.rival-desc{
+  font-size: 13px; line-height: 1.5; color: var(--ink-2);
+  margin-top: 12px;
+  max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height 320ms ease, opacity 240ms ease, margin-top 240ms ease;
+}
+.rival.open .rival-desc{ max-height: 260px; opacity: 1; margin-top: 12px; }
+.rival-toggle{
+  margin-top: 10px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing:0.16em; text-transform:uppercase;
+  color: var(--aon-500);
+  display:inline-flex; align-items:center; gap: 6px;
+}
+.rival-toggle::after{ content: "+"; transition: transform 220ms; }
+.rival.open .rival-toggle::after{ transform: rotate(45deg); }
+
+/* ---------- Closing ---------- */
+.close{
+  padding: 80px 24px 96px;
+  background: var(--paper);
+  position:relative;
+  overflow:hidden;
+}
+.close .eye{ color: var(--aon-500); margin-bottom: 22px; }
+.close-stage{
+  position:relative; height: 360px;
+  margin: 0 -24px 28px;
+}
+.close-stage svg{ position:absolute; inset:0; width:100%; height:100%; }
+.close-num{
+  position:absolute; left:0; right:0; bottom: 0;
+  text-align:center;
+  font-family: var(--font-display);
+  letter-spacing:-0.025em;
+}
+.close-num .big{
+  font-size: 92px; line-height: 0.9;
+}
+.close-num .big em{ font-style: italic; color: var(--aon-500);}
+.close-num .lab{
+  display:block;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform:uppercase; color: var(--ink-3); margin-top: 8px;
+}
+.close h2{
+  font-family: var(--font-display);
+  font-size: 38px; line-height: 1.04; letter-spacing: -0.018em;
+  text-wrap: pretty;
+  margin: 0 0 16px;
+}
+.close h2 em{ font-style: italic; color: var(--aon-500); }
+.close .signoff{
+  margin-top: 36px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  display:flex; justify-content: space-between; align-items: baseline;
+}
+.close .signoff .l{ font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);}
+.close .signoff .r{ font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);}
+
+/* footer disclaimer */
+.disclaimer{
+  padding: 22px 24px 36px;
+  font-family: var(--font-mono);
+  font-size: 9.5px; letter-spacing: 0.08em;
+  color: var(--ink-4); line-height: 1.6;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+/* Reveal-on-scroll */
+.reveal{ opacity:0; transform: translateY(14px); transition: opacity 600ms ease, transform 600ms cubic-bezier(0.22,1,0.36,1);}
+.reveal.in{ opacity:1; transform: none; }
+
+/* Subtle paper noise for sections that need warmth */
+.noise{ position: relative; }
+.noise::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0 0.05 0 0 0 0.04 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity: 0.5; mix-blend-mode: multiply;
+}
+
+/* Tiny decorative "aon mark" — circular concentric — used as orientation glyph */
+.mk{
+  width:14px; height:14px; border-radius:50%;
+  border: 1.5px solid var(--aon-500);
+  display:inline-block; position:relative;
+  flex-shrink:0;
+}
+.mk::after{
+  content:""; position:absolute; inset:3px;
+  border-radius:50%;
+  background: var(--aon-500);
+}
+.chrome.dark .mk{ border-color: var(--aon-300);}
+.chrome.dark .mk::after{ background: var(--aon-300);}
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <!-- =================== PERSISTENT CHROME =================== -->
+  <header class="chrome" id="chrome" data-screen-label="Chrome">
+    <div class="chrome-row">
+      <span class="mk" aria-hidden="true"></span>
+      <span class="tick">AON</span>
+      <span class="cname">Aon plc</span>
+      <span class="recap">Recap · FY '25</span>
+    </div>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+  </header>
+
+  <!-- =================== HERO / THESIS =================== -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="eye">Thesis · NYSE: AON</div>
+    <h1>The world's <em>risk</em> runs through here.</h1>
+    <p class="sub">A 107-year-old broker for the things that can go wrong. 60,000 people in 120 countries, one ledger.</p>
+
+    <!-- Hero scene: lines flowing from edges into a single point -->
+    <div class="flow-scene" aria-hidden="true">
+      <svg viewBox="0 0 440 280" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="hub" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#2E5E94" stop-opacity="0.9"/>
+            <stop offset="60%" stop-color="#2E5E94" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="#2E5E94" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Subtle grid -->
+        <g stroke="#E4E1D9" stroke-width="0.5" opacity="0.7">
+          <line x1="0" y1="70" x2="440" y2="70"/>
+          <line x1="0" y1="140" x2="440" y2="140"/>
+          <line x1="0" y1="210" x2="440" y2="210"/>
+        </g>
+
+        <!-- The hub aura -->
+        <circle cx="220" cy="140" r="130" fill="url(#hub)"/>
+
+        <!-- 12 thin paths converging from edges to center -->
+        <g id="flow-lines" fill="none" stroke="#4F81BD" stroke-width="0.9" stroke-linecap="round">
+          <path d="M 10,30 C 100,60 160,110 220,140" />
+          <path d="M 10,90 C 90,110 160,130 220,140" />
+          <path d="M 10,160 C 90,150 160,150 220,140" />
+          <path d="M 10,230 C 100,210 160,180 220,140" />
+          <path d="M 430,30 C 340,60 280,110 220,140" />
+          <path d="M 430,90 C 350,110 280,130 220,140" />
+          <path d="M 430,160 C 350,150 280,150 220,140" />
+          <path d="M 430,230 C 340,210 280,180 220,140" />
+          <path d="M 100,10 C 140,60 180,100 220,140" />
+          <path d="M 340,10 C 300,60 260,100 220,140" />
+          <path d="M 100,270 C 140,220 180,180 220,140" />
+          <path d="M 340,270 C 300,220 260,180 220,140" />
+        </g>
+
+        <!-- Origin dots -->
+        <g fill="#2E5E94">
+          <circle cx="10" cy="30" r="1.6"/><circle cx="10" cy="90" r="1.6"/>
+          <circle cx="10" cy="160" r="1.6"/><circle cx="10" cy="230" r="1.6"/>
+          <circle cx="430" cy="30" r="1.6"/><circle cx="430" cy="90" r="1.6"/>
+          <circle cx="430" cy="160" r="1.6"/><circle cx="430" cy="230" r="1.6"/>
+          <circle cx="100" cy="10" r="1.6"/><circle cx="340" cy="10" r="1.6"/>
+          <circle cx="100" cy="270" r="1.6"/><circle cx="340" cy="270" r="1.6"/>
+        </g>
+
+        <!-- Hub -->
+        <circle cx="220" cy="140" r="22" fill="#FBFAF7" stroke="#2E5E94" stroke-width="1.2"/>
+        <circle cx="220" cy="140" r="6" fill="#2E5E94"/>
+      </svg>
+
+      <div class="flow-cap">
+        <span class="num"><em>120</em></span>
+        countries · one ledger
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hs">
+        <span class="k">Market cap</span>
+        <span class="v">$71.09<small>B</small></span>
+      </div>
+      <div class="hs">
+        <span class="k">Employees</span>
+        <span class="v">~60,000</span>
+      </div>
+      <div class="hs">
+        <span class="k">Founded</span>
+        <span class="v">1919</span>
+      </div>
+      <div class="hs">
+        <span class="k">HQ</span>
+        <span class="v" style="font-size:22px;">Dublin <small>· Chicago ops</small></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 1 =================== -->
+  <section class="reset tone" data-screen-label="02 Reset · the broker's bargain">
+    <div class="quote">
+      Brokers don't carry the risk. <span class="sig"><em>They carry the room</em></span> — and bill for the sound judgment inside it.
+    </div>
+    <div class="by">— the broker's bargain</div>
+  </section>
+
+  <!-- =================== THE BUSINESS — TWO LEDGERS =================== -->
+  <section class="block noise" data-screen-label="03 The business">
+    <div class="eye">The business · two ledgers</div>
+    <h2>Two columns. <em>One firm.</em></h2>
+    <p class="body">Aon books revenue through fees and commissions across two reportable segments. <em class="sig">Capital-light, recurring,</em> underpinned by proprietary data and the Aon Business Services platform.</p>
+
+    <div class="ledgers">
+      <div class="ledger a">
+        <div class="ledger-head">
+          <span class="ledger-name"><em>Risk</em> Capital</span>
+          <span class="ledger-share">66%</span>
+        </div>
+        <div class="ledger-bar"><div class="ledger-fill" data-w="66"></div></div>
+        <div class="ledger-row">
+          <span>FY '25 Rev</span>
+          <span class="v">$11.29B</span>
+        </div>
+        <p class="ledger-tax">Commercial brokerage, specialty solutions, <em>reinsurance,</em> captive management.</p>
+      </div>
+      <div class="ledger b">
+        <div class="ledger-head">
+          <span class="ledger-name"><em>Human</em> Capital</span>
+          <span class="ledger-share">34%</span>
+        </div>
+        <div class="ledger-bar"><div class="ledger-fill" data-w="34"></div></div>
+        <div class="ledger-row">
+          <span>FY '25 Rev</span>
+          <span class="v">$5.91B</span>
+        </div>
+        <p class="ledger-tax">Health solutions, retirement, <em>wealth advisory,</em> talent.</p>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top:22px;">Operating income for the year landed at <em class="sig">$4.34B</em> on a 25.3% margin — a fee business behaving like one.</p>
+  </section>
+
+  <!-- =================== SCALE =================== -->
+  <section class="scale" data-screen-label="04 Scale">
+    <div class="eye">A hundred-and-seven-year run · FY '25</div>
+    <div class="big" id="bigRev"><em>$17.18</em><span class="unit">B</span></div>
+    <div style="margin-top:6px;">
+      <span class="delta" id="deltaPill">+9.45% YoY</span>
+    </div>
+    <p class="body" style="margin-top:18px; max-width: 36ch;">
+      Total revenue, FY '25. Q4 alone delivered <em class="sig">$4.30B</em> at $4.85 EPS — the run-rate of a firm whose product is <em>steady judgment.</em>
+    </p>
+
+    <div class="scale-grid">
+      <div>
+        <div class="sk">Operating income</div>
+        <div class="sv">$4.34<small>B</small></div>
+      </div>
+      <div>
+        <div class="sk">Op. margin</div>
+        <div class="sv">25.3%</div>
+      </div>
+      <div>
+        <div class="sk">Q4 revenue</div>
+        <div class="sv">$4.30<small>B</small></div>
+      </div>
+      <div>
+        <div class="sk">Q4 EPS</div>
+        <div class="sv">$4.85</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 2 =================== -->
+  <section class="reset" data-screen-label="05 Reset · what does the dollar buy">
+    <div class="quote">
+      Sixty-thousand minds, one platform. <span class="sig"><em>Almost every dollar Aon spends</em></span> ends up paying a person to think.
+    </div>
+    <div class="by">— what the dollar buys</div>
+  </section>
+
+  <!-- =================== COSTS — DOLLAR GRID =================== -->
+  <section class="cost" data-screen-label="06 Costs · the dollar grid">
+    <div class="eye">Where the dollar goes · 100¢</div>
+    <h2>A hundred cents <em>in.</em></h2>
+    <p class="body">Operating costs as a share of operating expenses. Each square is one cent. The block of blue at the top is people.</p>
+
+    <div class="cost-grid-wrap">
+      <div class="cost-grid" id="costGrid" aria-hidden="true">
+        <!-- 100 cents injected via JS -->
+      </div>
+    </div>
+
+    <div class="cost-legend">
+      <div class="cl-row"><span class="cl-sw" style="background:#4F81BD"></span><span class="cl-name">Compensation &amp; benefits</span><span class="cl-pct">52¢</span></div>
+      <div class="cl-row"><span class="cl-sw" style="background:#C0504D"></span><span class="cl-name">Amortization of intangibles</span><span class="cl-pct">7¢</span></div>
+      <div class="cl-row"><span class="cl-sw" style="background:#9BBB59"></span><span class="cl-name">Information technology</span><span class="cl-pct">5¢</span></div>
+      <div class="cl-row"><span class="cl-sw" style="background:#8064A2"></span><span class="cl-name">Premises &amp; occupancy</span><span class="cl-pct">4¢</span></div>
+      <div class="cl-row"><span class="cl-sw" style="background:#F79646"></span><span class="cl-name">Depreciation &amp; other</span><span class="cl-pct">4¢</span></div>
+      <div class="cl-row"><span class="cl-sw" style="background:#ECEAE3; border:1px solid #CFCBC0"></span><span class="cl-name" style="color:var(--ink-3)">Other operating costs</span><span class="cl-pct" style="color:var(--ink-3)">28¢</span></div>
+    </div>
+
+    <p class="cost-foot">Aon's product is judgment. <span class="sig">Judgment has a payroll.</span></p>
+  </section>
+
+  <!-- =================== FOOTPRINT =================== -->
+  <section class="foot" data-screen-label="07 Footprint">
+    <div class="eye">Footprint · five regions</div>
+    <h2>One ledger, <em>five horizons.</em></h2>
+    <p class="body">Revenue mix runs broad — but the U.S. still does nearly half the work.</p>
+
+    <div class="foot-globe" aria-hidden="true">
+      <svg viewBox="0 0 440 320" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="globeGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#1D446F" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#0A1E33" stop-opacity="1"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Globe -->
+        <circle cx="220" cy="160" r="120" fill="url(#globeGrad)" stroke="#2E5E94" stroke-width="0.5"/>
+
+        <!-- Latitude/longitude lines (ellipses) -->
+        <g fill="none" stroke="#2E5E94" stroke-width="0.6" opacity="0.55">
+          <ellipse cx="220" cy="160" rx="120" ry="40"/>
+          <ellipse cx="220" cy="160" rx="120" ry="80"/>
+          <ellipse cx="220" cy="160" rx="120" ry="120"/>
+          <ellipse cx="220" cy="160" rx="40" ry="120"/>
+          <ellipse cx="220" cy="160" rx="80" ry="120"/>
+          <line x1="100" y1="160" x2="340" y2="160"/>
+          <line x1="220" y1="40" x2="220" y2="280"/>
+        </g>
+
+        <!-- Region "weight" dots — sized by % -->
+        <!-- US 48% — largest, hot coral -->
+        <g class="region us" data-pct="48">
+          <circle cx="170" cy="155" r="22" fill="#FF7A57" opacity="0.22"/>
+          <circle cx="170" cy="155" r="11" fill="#FF7A57"/>
+        </g>
+        <!-- EMEA ex-UK 20% -->
+        <g class="region emea" data-pct="20">
+          <circle cx="248" cy="148" r="14" fill="#7DA1C5" opacity="0.25"/>
+          <circle cx="248" cy="148" r="7" fill="#7DA1C5"/>
+        </g>
+        <!-- UK & Ireland 16% -->
+        <g class="region uk" data-pct="16">
+          <circle cx="228" cy="130" r="12" fill="#ADC2D9" opacity="0.28"/>
+          <circle cx="228" cy="130" r="6" fill="#ADC2D9"/>
+        </g>
+        <!-- Americas ex-US 9% -->
+        <g class="region am" data-pct="9">
+          <circle cx="178" cy="200" r="10" fill="#7DA1C5" opacity="0.25"/>
+          <circle cx="178" cy="200" r="4.5" fill="#7DA1C5"/>
+        </g>
+        <!-- Asia Pacific 7% -->
+        <g class="region ap" data-pct="7">
+          <circle cx="298" cy="170" r="9" fill="#7DA1C5" opacity="0.22"/>
+          <circle cx="298" cy="170" r="4" fill="#7DA1C5"/>
+        </g>
+
+        <!-- Pulse rings on US -->
+        <circle cx="170" cy="155" r="11" fill="none" stroke="#FF7A57" stroke-width="1" opacity="0.6">
+          <animate attributeName="r" from="11" to="34" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" from="0.6" to="0" dur="3s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+
+    <div class="foot-list" id="footList">
+      <div class="fr us">
+        <span class="pct"><em>48</em><small style="font-size:0.55em; color:rgba(244,242,237,0.55); font-family:var(--font-mono); margin-left:2px;">%</small></span>
+        <div>
+          <div class="reg">United States</div>
+          <div class="bar-wrap"><div class="bar" data-w="100"></div></div>
+        </div>
+        <span style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em; color:rgba(255,122,87,0.85); text-align:right;">HOME</span>
+      </div>
+      <div class="fr">
+        <span class="pct">20<small style="font-size:0.55em; color:rgba(244,242,237,0.55); font-family:var(--font-mono); margin-left:2px;">%</small></span>
+        <div>
+          <div class="reg">EMEA <span style="color:rgba(244,242,237,0.55);">(ex-UK/Ireland)</span></div>
+          <div class="bar-wrap"><div class="bar" data-w="42"></div></div>
+        </div>
+        <span></span>
+      </div>
+      <div class="fr">
+        <span class="pct">16<small style="font-size:0.55em; color:rgba(244,242,237,0.55); font-family:var(--font-mono); margin-left:2px;">%</small></span>
+        <div>
+          <div class="reg">United Kingdom &amp; Ireland</div>
+          <div class="bar-wrap"><div class="bar" data-w="33"></div></div>
+        </div>
+        <span></span>
+      </div>
+      <div class="fr">
+        <span class="pct">9<small style="font-size:0.55em; color:rgba(244,242,237,0.55); font-family:var(--font-mono); margin-left:2px;">%</small></span>
+        <div>
+          <div class="reg">Americas <span style="color:rgba(244,242,237,0.55);">(ex-US)</span></div>
+          <div class="bar-wrap"><div class="bar" data-w="19"></div></div>
+        </div>
+        <span></span>
+      </div>
+      <div class="fr">
+        <span class="pct">7<small style="font-size:0.55em; color:rgba(244,242,237,0.55); font-family:var(--font-mono); margin-left:2px;">%</small></span>
+        <div>
+          <div class="reg">Asia Pacific</div>
+          <div class="bar-wrap"><div class="bar" data-w="14"></div></div>
+        </div>
+        <span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 3 =================== -->
+  <section class="reset dark" data-screen-label="08 Reset · the bill">
+    <div class="quote">
+      You don't grow a broker by accident. <span class="sig"><em>You buy it</em></span> — and then you spend the next year writing down the bill.
+    </div>
+    <div class="by">— the bill, $15.25B of it</div>
+  </section>
+
+  <!-- =================== THE BET — BALANCE SCALE =================== -->
+  <section class="bet" data-screen-label="09 The bet">
+    <div class="eye">The bet · capital allocation</div>
+    <h2>Pay it down. <em>Then place it.</em></h2>
+    <p class="body">FY '25 brought <em class="sig">$1.9B</em> of debt repayment, $1.0B of buybacks, and $629M of dividends — funded by <em class="sig">$3.22B</em> of free cash flow. Leverage objective: met.</p>
+
+    <!-- Balance scale visual: debt vs equity weights -->
+    <div class="scale-vis" aria-hidden="true">
+      <svg viewBox="0 0 440 220" preserveAspectRatio="xMidYMid meet">
+        <!-- Fulcrum -->
+        <line x1="220" y1="40" x2="220" y2="200" stroke="#3B3A37" stroke-width="1.5"/>
+        <polygon points="220,200 200,210 240,210" fill="#3B3A37"/>
+
+        <!-- Beam (tilted slightly toward debt) -->
+        <g transform="rotate(8 220 60)">
+          <line x1="40" y1="60" x2="400" y2="60" stroke="#3B3A37" stroke-width="2"/>
+          <!-- Left chains -->
+          <line x1="80" y1="60" x2="80" y2="92" stroke="#A4A29C" stroke-width="0.8"/>
+          <line x1="360" y1="60" x2="360" y2="92" stroke="#A4A29C" stroke-width="0.8"/>
+        </g>
+
+        <!-- Left pan: DEBT $15.25B -->
+        <g transform="translate(0, 22)">
+          <rect x="20" y="92" width="130" height="56" fill="#0F2A48" stroke="#0F2A48"/>
+          <text x="85" y="118" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#ADC2D9">DEBT</text>
+          <text x="85" y="140" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#FBFAF7">$15.25B</text>
+        </g>
+
+        <!-- Right pan: EQUITY $9.35B -->
+        <g transform="translate(0, -8)">
+          <rect x="290" y="92" width="130" height="48" fill="#FBFAF7" stroke="#0F2A48" stroke-width="1.4"/>
+          <text x="355" y="116" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#6B6A65">EQUITY</text>
+          <text x="355" y="134" text-anchor="middle" font-family="Instrument Serif" font-size="20" fill="#0F2A48">$9.35B</text>
+        </g>
+
+        <!-- Cash drip on the debt side: -1.9B paid down -->
+        <g>
+          <text x="85" y="180" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="1.5" fill="#2E5E94">↓ −$1.9B PAID</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="bet-meta">
+      <div>
+        <div class="bk">Free cash flow</div>
+        <div class="bv"><em>$3.22B</em></div>
+      </div>
+      <div>
+        <div class="bk">CapEx</div>
+        <div class="bv">$263M</div>
+      </div>
+      <div>
+        <div class="bk">Buyback authorized</div>
+        <div class="bv"><em>$1.3B</em></div>
+      </div>
+      <div>
+        <div class="bk">Cash on hand</div>
+        <div class="bv">$1.20B</div>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top:24px;">Forward priorities, in order: <em class="sig">debt reduction · tuck-in M&amp;A · organic investment · shareholder returns.</em> 2026 target: double-digit FCF growth.</p>
+
+    <div class="bet-list">
+      <div class="bet-row" data-row="1">
+        <span class="n">01</span>
+        <div>
+          <div class="t">The NFP acquisition (2024)<span class="chev">+</span></div>
+          <div class="d">A defining bolt-on into the U.S. middle market — the single largest line item behind the goodwill and intangible amortization that sits on the balance sheet today. Tap to acknowledge.</div>
+        </div>
+      </div>
+      <div class="bet-row" data-row="2">
+        <span class="n">02</span>
+        <div>
+          <div class="t">The leverage objective<span class="chev">+</span></div>
+          <div class="d">$1.9B of debt repaid in FY '25; the leverage target was met in Q4 — the rare year where the broker takes its own advice on the cost of capital.</div>
+        </div>
+      </div>
+      <div class="bet-row" data-row="3">
+        <span class="n">03</span>
+        <div>
+          <div class="t">Forward FCF guide<span class="chev">+</span></div>
+          <div class="d">Management has telegraphed double-digit free-cash-flow growth for 2026, with capital recycled into tuck-in M&amp;A, organic investment, and continued buybacks against the remaining $1.3B authorization.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== COMPETITION =================== -->
+  <section class="comp" data-screen-label="10 Competition">
+    <div class="eye">The competition · three rivals</div>
+    <h2>Aon doesn't compete <em>with everyone.</em></h2>
+    <p class="body">Two brokers vie for the same room. A third is closing in from the data side.</p>
+
+    <div class="comp-rivals" id="rivals">
+      <!-- AON -->
+      <div class="rival aon" data-rival="aon">
+        <div class="rival-head">
+          <span class="rival-name"><em>Aon</em></span>
+          <span class="rival-tick">AON</span>
+        </div>
+        <div class="rival-mc">
+          <span class="v"><em>$71.09</em><small style="font-size:0.5em; color:var(--ink-3); margin-left:2px;">B</small></span>
+          <span class="l">market cap</span>
+        </div>
+        <div class="rival-track"><div class="rival-bar" data-w="83.5"></div></div>
+        <div class="rival-stats">
+          <div><span class="sv">9.45%</span> Rev YoY</div>
+          <div><span class="sv">25.3%</span> Op margin</div>
+          <div><span class="sv">$17.18B</span> FY rev</div>
+        </div>
+      </div>
+
+      <!-- Marsh -->
+      <div class="rival" data-rival="mrsh">
+        <div class="rival-head">
+          <span class="rival-name">Marsh &amp; McLennan</span>
+          <span class="rival-tick">MRSH</span>
+        </div>
+        <div class="rival-mc">
+          <span class="v">$85.11<small style="font-size:0.5em; color:var(--ink-3); margin-left:2px;">B</small></span>
+          <span class="l">market cap</span>
+        </div>
+        <div class="rival-track"><div class="rival-bar" data-w="100"></div></div>
+        <div class="rival-stats">
+          <div><span class="sv">9.87%</span> Rev YoY</div>
+          <div><span class="sv">21.68</span> P/E TTM</div>
+          <div><span class="sv">$7.60B</span> Q rev</div>
+        </div>
+        <div class="rival-toggle">Tap · same room </div>
+        <div class="rival-desc">Aon's most direct global rival, head-to-head across commercial brokerage, reinsurance, and human-capital consulting. The two firms vie for the same large corporate and institutional clients across every major geography.</div>
+      </div>
+
+      <!-- Gallagher -->
+      <div class="rival" data-rival="ajg">
+        <div class="rival-head">
+          <span class="rival-name">Arthur J. Gallagher</span>
+          <span class="rival-tick">AJG</span>
+        </div>
+        <div class="rival-mc">
+          <span class="v">$56.98<small style="font-size:0.5em; color:var(--ink-3); margin-left:2px;">B</small></span>
+          <span class="l">market cap</span>
+        </div>
+        <div class="rival-track"><div class="rival-bar" data-w="67"></div></div>
+        <div class="rival-stats">
+          <div><span class="sv">20.66%</span> Rev YoY</div>
+          <div><span class="sv">38.14</span> P/E TTM</div>
+          <div><span class="sv">$13.94B</span> FY rev</div>
+        </div>
+        <div class="rival-toggle">Tap · middle-market</div>
+        <div class="rival-desc">Direct rival in brokerage and risk management — particularly in the middle-market and specialty segments Aon expanded into via NFP. Growing more than twice as fast on the top line.</div>
+      </div>
+
+      <!-- Moody's -->
+      <div class="rival" data-rival="mco">
+        <div class="rival-head">
+          <span class="rival-name">Moody's</span>
+          <span class="rival-tick">MCO</span>
+        </div>
+        <div class="rival-mc">
+          <span class="v">$84.19<small style="font-size:0.5em; color:var(--ink-3); margin-left:2px;">B</small></span>
+          <span class="l">market cap</span>
+        </div>
+        <div class="rival-track"><div class="rival-bar" data-w="99"></div></div>
+        <div class="rival-stats">
+          <div><span class="sv">8.89%</span> Rev YoY</div>
+          <div><span class="sv">34.24</span> P/E TTM</div>
+          <div><span class="sv">$7.72B</span> FY rev</div>
+        </div>
+        <div class="rival-toggle">Tap · the data flank</div>
+        <div class="rival-desc">A converging threat — both firms increasingly sell data-driven risk analytics, credit and catastrophe modeling, and decision-intelligence tools to the same corporate and institutional clients.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== CLOSING =================== -->
+  <section class="close" data-screen-label="11 Closing">
+    <div class="eye">The takeaway · what survives</div>
+    <h2>The world's risk runs through here. <em>$3.22B</em> survives.</h2>
+    <p class="body" style="max-width:34ch;">If Aon's product is judgment, free cash flow is what's left after everyone — sixty-thousand minds, a continent of offices, a balance sheet of acquisitions — has been paid to <em>render it.</em></p>
+
+    <div class="close-stage" aria-hidden="true">
+      <svg viewBox="0 0 440 360" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="funnelGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#7DA1C5" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#2E5E94" stop-opacity="0.85"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Top wide bar = $17.18B revenue -->
+        <rect x="20" y="20" width="400" height="32" fill="#7DA1C5" opacity="0.5"/>
+        <text x="220" y="42" text-anchor="middle" font-family="Geist Mono" font-size="10" letter-spacing="2" fill="#0F2A48">$17.18B REVENUE</text>
+
+        <!-- Funnel -->
+        <path d="M 20,52 L 420,52 L 280,180 L 160,180 Z" fill="url(#funnelGrad)" opacity="0.7"/>
+
+        <!-- Operating income bar -->
+        <rect x="160" y="180" width="120" height="22" fill="#2E5E94"/>
+        <text x="220" y="196" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#FBFAF7">$4.34B OP INCOME</text>
+
+        <!-- Continued funnel -->
+        <path d="M 160,202 L 280,202 L 245,265 L 195,265 Z" fill="#2E5E94" opacity="0.85"/>
+
+        <!-- Free cash flow bar (the survivor) -->
+        <rect x="195" y="265" width="50" height="34" fill="#FF7A57"/>
+        <rect x="195" y="265" width="50" height="34" fill="none" stroke="#F25A37" stroke-width="1"/>
+
+        <!-- Drop shadow / glow -->
+        <ellipse cx="220" cy="320" rx="50" ry="6" fill="#FF7A57" opacity="0.18"/>
+
+        <!-- annotation lines -->
+        <line x1="245" y1="282" x2="320" y2="282" stroke="#3B3A37" stroke-width="0.8"/>
+        <text x="324" y="278" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#3B3A37">FCF</text>
+        <text x="324" y="290" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#3B3A37">$3.22B</text>
+      </svg>
+
+      <div class="close-num">
+        <div class="big"><em>19¢</em></div>
+        <span class="lab">of every revenue dollar · survives as free cash</span>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top:30px;">Open with revenue inbound. <em class="sig">Close on what stays.</em></p>
+
+    <div class="signoff">
+      <span class="l">AON · NYSE</span>
+      <span class="r">FY '25 · End</span>
+    </div>
+  </section>
+
+  <div class="disclaimer">
+    Recap synthesized from company-disclosed FY 2025 figures. For informational purposes only — not investment advice. Figures rounded; competitor data points reflect described comparators.
+  </div>
+
+</div>
+
+<script>
+  /* ---------- Sticky chrome: progress + dark inversion when over dark band ---------- */
+  const page = document.getElementById('page');
+  const chrome = document.getElementById('chrome');
+  const progress = document.getElementById('progress');
+
+  const darkSections = () => Array.from(document.querySelectorAll('.foot, .reset.dark'));
+
+  function updateChrome(){
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const p = Math.max(0, Math.min(1, window.scrollY / max));
+    progress.style.setProperty('--p', (p*100).toFixed(2) + '%');
+
+    // Switch chrome to dark when chrome bar overlaps a dark section
+    const chromeBottom = chrome.getBoundingClientRect().bottom;
+    let inDark = false;
+    for(const s of darkSections()){
+      const r = s.getBoundingClientRect();
+      if(r.top < chromeBottom && r.bottom > 0){ inDark = true; break; }
+    }
+    chrome.classList.toggle('dark', inDark);
+  }
+  window.addEventListener('scroll', updateChrome, { passive: true });
+  window.addEventListener('resize', updateChrome);
+  updateChrome();
+
+  /* ---------- Reveal-on-scroll ---------- */
+  const revealEls = [
+    ...document.querySelectorAll('.hero h1, .hero .sub, .hero-stats, .flow-scene, .block h2, .block .body, .ledgers, .scale .big, .scale .body, .scale-grid, .cost h2, .cost .body, .cost-grid-wrap, .cost-foot, .foot h2, .foot .body, .foot-globe, .foot-list, .reset .quote, .bet h2, .bet .body, .scale-vis, .bet-meta, .bet-list, .comp h2, .comp .body, .comp-rivals, .close h2, .close .body, .close-stage'),
+  ];
+  revealEls.forEach(el => el.classList.add('reveal'));
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  revealEls.forEach(el => io.observe(el));
+
+  /* ---------- Animated bars (ledger, footprint, rival) ---------- */
+  function animateBars(selector, prop = 'data-w'){
+    document.querySelectorAll(selector).forEach(el => {
+      const w = el.getAttribute(prop);
+      const parent = el.closest('section') || el.parentElement;
+      const obs = new IntersectionObserver(es => {
+        es.forEach(e => {
+          if(e.isIntersecting){
+            requestAnimationFrame(() => { el.style.width = w + '%'; });
+            obs.disconnect();
+          }
+        });
+      }, { threshold: 0.2 });
+      obs.observe(parent);
+    });
+  }
+  animateBars('.ledger-fill');
+  animateBars('.fr .bar');
+  animateBars('.rival-bar');
+
+  /* ---------- Cost grid: 100 cents in the order legend lists ---------- */
+  (function buildCostGrid(){
+    const grid = document.getElementById('costGrid');
+    // Order: comp 52 (blue), amort 7 (red), IT 5 (green), premises 4 (purple), depreciation 4 (orange), other 28 (paper-3)
+    const buckets = [
+      { c: '#4F81BD', n: 52 },
+      { c: '#C0504D', n: 7  },
+      { c: '#9BBB59', n: 5  },
+      { c: '#8064A2', n: 4  },
+      { c: '#F79646', n: 4  },
+      { c: '#ECEAE3', n: 28 } // remainder
+    ];
+    let i = 0;
+    buckets.forEach(b => {
+      for(let k=0;k<b.n;k++){
+        const cell = document.createElement('div');
+        cell.className = 'cent';
+        cell.style.color = b.c;
+        cell.style.setProperty('--d', (i*7) + 'ms');
+        grid.appendChild(cell);
+        i++;
+      }
+    });
+
+    // Light up when the grid section enters view
+    const obs = new IntersectionObserver(es => {
+      es.forEach(e => { if(e.isIntersecting){ grid.classList.add('lit'); obs.disconnect(); }});
+    }, { threshold: 0.25 });
+    obs.observe(grid);
+  })();
+
+  /* ---------- Count-up for the hero scale number ---------- */
+  (function countUp(){
+    const el = document.getElementById('bigRev');
+    const target = 17.18;
+    let started = false;
+    const obs = new IntersectionObserver(es => {
+      es.forEach(e => {
+        if(e.isIntersecting && !started){
+          started = true;
+          const dur = 1500; const t0 = performance.now();
+          function step(now){
+            const t = Math.min(1, (now - t0)/dur);
+            const eased = 1 - Math.pow(1-t, 3);
+            const v = (target * eased).toFixed(2);
+            el.innerHTML = `<em>$${v}</em><span class="unit">B</span>`;
+            if(t < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        }
+      });
+    }, { threshold: 0.4 });
+    obs.observe(el);
+  })();
+
+  /* ---------- Tap-to-deepen: bet rows + rivals ---------- */
+  document.querySelectorAll('.bet-row').forEach(r => {
+    r.addEventListener('click', () => r.classList.toggle('open'));
+  });
+  document.querySelectorAll('.rival').forEach(r => {
+    if(r.classList.contains('aon')) return; // AON card has no extra desc
+    r.addEventListener('click', () => r.classList.toggle('open'));
+  });
+</script>
+
+</body>
+</html>
