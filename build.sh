@@ -52,7 +52,6 @@ cat <<'HEAD' > index.html
       color: #fff;
     }
     .ticker { font-weight: 700; font-size: 1.15rem; }
-    .date { font-size: 0.8rem; color: #888; margin-top: 0.25rem; }
   </style>
 </head>
 <body>
@@ -63,30 +62,12 @@ HEAD
 for dir in */; do
   dir="${dir%/}"
 
-  # skip hidden dirs
   [[ "$dir" == .* ]] && continue
 
-  # find the first html file in the folder
-  html_file=$(find "$dir" -maxdepth 1 -name "*.html" -print -quit)
-  [ -z "$html_file" ] && continue
+  # each folder must have an index.html
+  [ -f "$dir/index.html" ] || continue
 
-  # extract ticker (everything before " - " if present, otherwise the folder name)
-  if [[ "$dir" == *" - "* ]]; then
-    ticker="${dir%% - *}"
-    date_part="${dir#* - }"
-  else
-    ticker="$dir"
-    date_part=""
-  fi
-
-  # url-encode spaces in the path
-  encoded_path=$(printf '%s' "$html_file" | sed 's/ /%20/g')
-
-  if [ -n "$date_part" ]; then
-    echo "    <a class=\"card\" href=\"$encoded_path\"><div><div class=\"ticker\">$ticker</div><div class=\"date\">$date_part</div></div></a>"
-  else
-    echo "    <a class=\"card\" href=\"$encoded_path\"><div><div class=\"ticker\">$ticker</div></div></a>"
-  fi
+  echo "    <a class=\"card\" href=\"/$dir/\"><div class=\"ticker\">$dir</div></a>"
 done | sort >> index.html
 
 cat <<'TAIL' >> index.html
