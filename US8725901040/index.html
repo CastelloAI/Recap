@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TMUS · Recap FY '25</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<style>
+  /* ---------- TMUS palette overrides — Magenta is the brand ---------- */
+  :root {
+    --magenta-50:  #FFF0F7;
+    --magenta-100: #FFD9EB;
+    --magenta-200: #FFA8D1;
+    --magenta-300: #F368B0;
+    --magenta-400: #E20074;     /* T-Mobile magenta — official */
+    --magenta-500: #B5005C;
+    --magenta-600: #850046;
+    --magenta-700: #4A0028;
+
+    --signal: var(--magenta-400);
+    --signal-soft: var(--magenta-50);
+    --signal-glow: 0 12px 36px -10px rgba(226, 0, 116, 0.45);
+
+    --paper: #FBFAF7;
+    --paper-2: #F4F2ED;
+    --ink: #0E0E10;
+    --ink-2: #2C2C30;
+    --ink-3: #6B6A6E;
+    --line: #E6E3DC;
+  }
+
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  /* Mobile-sized canvas — page IS the design, not a screenshot of one.
+     Centered; max-width 412 (Pixel-class) for stand-alone artifact viewing. */
+  .page {
+    width: 100%;
+    max-width: 412px;
+    margin: 0 auto;
+    position: relative;
+    background: var(--paper);
+    overflow: hidden;
+  }
+
+  /* ---------- PERSISTENT CHROME ---------- */
+  .chrome {
+    position: sticky;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    background: rgba(251, 250, 247, 0.78);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border-bottom: 1px solid rgba(230, 227, 220, 0.6);
+  }
+  .chrome-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 12px;
+  }
+  .chrome-left { display: flex; align-items: baseline; gap: 10px; }
+  .ticker {
+    font-family: var(--font-mono);
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .ticker .dot { color: var(--signal); margin: 0 4px; }
+  .company {
+    font-family: var(--font-sans);
+    font-size: 13px; font-weight: 400;
+    color: var(--ink-3);
+  }
+  .recap-label {
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .progress-track {
+    height: 1.5px; width: 100%;
+    background: var(--line);
+    position: relative;
+  }
+  .progress-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--signal);
+    width: 0%;
+    transition: width 80ms linear;
+  }
+
+  /* ---------- COMMON ---------- */
+  section {
+    position: relative;
+    padding: 96px 24px;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--signal);
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 28px;
+  }
+  .eyebrow .pip {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--signal);
+    display: inline-block;
+  }
+  .eyebrow .num {
+    color: var(--ink-3); margin-left: auto;
+    letter-spacing: 0.12em;
+  }
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .display em, .it { font-style: italic; }
+  .signal-text { color: var(--signal); }
+  .body {
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .body em { font-family: var(--font-display); font-style: italic; font-size: 18px; }
+  .body em.s { color: var(--signal); }
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 40px 24px 80px;
+    min-height: 92vh;
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-eyebrow {
+    margin-top: 24px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hero-eyebrow .live {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--signal);
+    box-shadow: 0 0 0 0 rgba(226,0,116,0.5);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(226,0,116,0.55); }
+    70% { box-shadow: 0 0 0 12px rgba(226,0,116,0); }
+    100% { box-shadow: 0 0 0 0 rgba(226,0,116,0); }
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 76px;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .hero-title .num {
+    color: var(--signal);
+    font-style: normal;
+  }
+  .hero-title em { font-style: italic; }
+  .hero-sub {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 320px;
+    margin-top: 28px;
+  }
+  .hero-sub em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--signal);
+    font-size: 18px;
+  }
+
+  /* Hero signal waves */
+  .hero-waves {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.55;
+  }
+  .hero > * { position: relative; z-index: 1; }
+
+  .hero-stats {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 16px; margin-top: 56px;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+  .hero-stat .v {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .hero-stat .v small { font-size: 18px; color: var(--ink-3); }
+  .hero-stat .l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 6px;
+    display: block;
+  }
+
+  /* ---------- RESET BEAT ---------- */
+  .reset {
+    background: var(--paper-2);
+    padding: 64px 28px;
+    border: none;
+  }
+  .reset-text {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.25;
+    color: var(--ink-2);
+    letter-spacing: -0.005em;
+  }
+  .reset-text .s { color: var(--signal); font-style: italic; }
+  .reset-mark {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 20px;
+  }
+
+  /* ---------- BUSINESS / REV STREAMS ---------- */
+  .biz-title {
+    font-family: var(--font-display);
+    font-size: 44px; line-height: 1; letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .biz-title em { font-style: italic; color: var(--signal); }
+  .biz-lede {
+    font-family: var(--font-sans);
+    font-size: 15px; line-height: 1.55; color: var(--ink-2);
+    max-width: 340px; margin-bottom: 48px;
+  }
+  .biz-lede em { font-family: var(--font-display); font-style: italic; font-size: 18px; }
+
+  .stream {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .stream:last-child { border-bottom: none; }
+  .stream-bar {
+    height: 36px;
+    width: 100%;
+    background: var(--paper-2);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-top: 8px;
+  }
+  .stream { grid-template-columns: 1fr auto; grid-template-rows: auto auto; }
+  .stream-name {
+    font-family: var(--font-sans);
+    font-size: 14px; font-weight: 500;
+    color: var(--ink);
+  }
+  .stream-name .pct {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.08em;
+    color: var(--ink-3);
+    margin-left: 8px;
+  }
+  .stream-val {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .stream-val small {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    margin-left: 2px;
+  }
+  .stream-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--signal);
+    width: 0;
+    transition: width 1.2s var(--ease-out);
+  }
+  .stream-fill.s2 { background: var(--magenta-300); }
+  .stream-fill.s3 { background: var(--magenta-500); }
+  .stream-fill.s4 { background: var(--magenta-200); }
+  .stream-fill.s5 { background: var(--ink-3); }
+
+  /* ---------- SCALE: 140M ---------- */
+  .scale {
+    background: var(--paper);
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+  .big-num {
+    font-family: var(--font-display);
+    font-size: 132px;
+    line-height: 0.86;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .big-num .s { color: var(--signal); font-style: italic; }
+  .big-num-unit {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 36px;
+    color: var(--ink-2);
+    display: block;
+    margin-top: 4px;
+  }
+  .scale-cap {
+    font-family: var(--font-sans);
+    font-size: 14px; color: var(--ink-3);
+    margin-top: 20px;
+    line-height: 1.5;
+  }
+  .scale-grid {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .scale-cell {
+    background: var(--paper);
+    padding: 20px 16px;
+  }
+  .scale-cell .v {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .scale-cell .v em { font-style: italic; color: var(--signal); }
+  .scale-cell .v small { font-size: 18px; color: var(--ink-3); }
+  .scale-cell .l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 10px;
+    display: block;
+  }
+  .scale-cell .delta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--signal);
+    margin-top: 6px;
+  }
+
+  /* Dot-cloud subscribers visualization */
+  .dots-wrap {
+    margin: 40px -24px 0;
+    padding: 24px 24px 0;
+    border-top: 1px solid var(--line);
+  }
+  .dots-cap {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 16px;
+    display: flex; justify-content: space-between;
+  }
+  .dots-svg { width: 100%; height: 180px; display: block; }
+
+  /* ---------- COSTS — stacked tower bars ---------- */
+  .costs { background: var(--paper-2); }
+  .cost-rows { margin-top: 36px; }
+  .cost-row {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 6px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-pct {
+    font-family: var(--font-display);
+    font-size: 28px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .cost-pct sup {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-left: 1px;
+    top: -10px;
+    position: relative;
+  }
+  .cost-label {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.3;
+    color: var(--ink-2);
+  }
+  .cost-label small {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+    margin-top: 2px;
+  }
+  .cost-track {
+    grid-column: 1 / -1;
+    height: 10px;
+    background: rgba(0,0,0,0.05);
+    position: relative;
+    border-radius: 1px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .cost-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 0;
+    transition: width 1.4s var(--ease-out);
+  }
+
+  /* ---------- FOOTPRINT ---------- */
+  .footprint { background: var(--paper); }
+  .map-wrap {
+    position: relative;
+    margin: 40px -8px 0;
+  }
+  .map-svg { width: 100%; height: auto; display: block; }
+  .map-cap {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .map-pct {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .map-pct .s { color: var(--signal); font-style: italic; }
+  .map-pct small { font-size: 22px; color: var(--ink-3); }
+  .map-pct-2 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--ink-3);
+    text-align: right;
+  }
+  .map-pct-2 small {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    margin-top: 4px;
+  }
+
+  /* ---------- THE BET ---------- */
+  .bet { background: var(--paper-2); }
+  .bet-flow {
+    margin: 40px -24px 0;
+    padding: 32px 24px;
+    background: var(--paper);
+  }
+  .flow-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .flow-row:last-child { border-bottom: none; }
+  .flow-l {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-2);
+  }
+  .flow-r {
+    font-family: var(--font-display);
+    font-size: 30px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .flow-r small { font-size: 16px; color: var(--ink-3); }
+  .flow-r .s { color: var(--signal); }
+  .bet-cap {
+    margin-top: 28px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .bet-cap em { font-family: var(--font-display); font-style: italic; color: var(--signal); font-size: 17.5px; }
+
+  /* ---------- DARK INTERLUDE — DEBT ---------- */
+  .debt {
+    background: #0A0A0C;
+    color: #F4F2ED;
+    padding: 110px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .debt .eyebrow { color: var(--magenta-300); }
+  .debt .body { color: rgba(244, 242, 237, 0.7); }
+  .debt-num {
+    font-family: var(--font-display);
+    font-size: 124px;
+    line-height: 0.86;
+    letter-spacing: -0.04em;
+    color: #F4F2ED;
+    margin: 0;
+  }
+  .debt-num .s { color: var(--magenta-300); font-style: italic; }
+  .debt-num-l {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    color: rgba(244,242,237,0.6);
+    margin-top: 8px;
+    display: block;
+  }
+  .debt-bar-wrap {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .debt-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 0;
+  }
+  .debt-row .lbl {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(244,242,237,0.55);
+    width: 92px;
+    flex-shrink: 0;
+  }
+  .debt-row .bar {
+    flex: 1; height: 22px;
+    background: rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+  .debt-row .bar .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 0;
+    transition: width 1.4s var(--ease-out);
+  }
+  .debt-row .bar.debt-bar .fill { background: var(--magenta-400); }
+  .debt-row .bar.eq-bar .fill { background: rgba(244,242,237,0.3); }
+  .debt-row .bar.cash-bar .fill { background: rgba(244,242,237,0.5); }
+  .debt-row .v {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: #F4F2ED;
+    width: 76px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .debt-row .v small { font-size: 12px; color: rgba(244,242,237,0.5); }
+  .debt-cap {
+    margin-top: 36px;
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: rgba(244,242,237,0.65);
+  }
+  .debt-cap em {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--magenta-300);
+  }
+
+  /* ---------- COMPETITORS — concentric rings ---------- */
+  .compete { background: var(--paper); }
+  .ring-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    margin: 32px 0 16px;
+  }
+  .ring-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .comp-list { margin-top: 40px; }
+  .comp-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 12px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .comp-row:first-child { border-top: 1px solid var(--line); }
+  .comp-tk {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    width: 44px;
+  }
+  .comp-name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1.05;
+    color: var(--ink);
+  }
+  .comp-name small {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    margin-top: 4px;
+    line-height: 1.4;
+    font-style: normal;
+  }
+  .comp-mc {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--ink);
+    line-height: 1;
+    text-align: right;
+  }
+  .comp-mc small {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+  .comp-mc .grow { color: var(--signal); }
+  .comp-mc .shrink { color: var(--ink-3); }
+
+  .tmus-row .comp-name { color: var(--signal); font-style: italic; }
+  .tmus-row .comp-name small { color: var(--ink-2); font-style: normal; }
+  .tmus-row { background: var(--signal-soft); margin: 0 -24px; padding: 18px 24px !important; border-bottom: 1px solid var(--line) !important; }
+
+  /* ---------- TAKEAWAY ---------- */
+  .close {
+    background: var(--paper);
+    padding: 96px 24px 80px;
+    text-align: left;
+  }
+  .close-num {
+    font-family: var(--font-display);
+    font-size: 96px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .close-num .s { color: var(--signal); font-style: italic; }
+  .close-line {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-top: 32px;
+  }
+  .close-line em { font-style: italic; color: var(--signal); }
+  .close-foot {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .close-foot .l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .close-foot .r {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+  }
+
+  /* ---------- SCROLL REVEAL ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* Subtle dot-grid background hints between sections */
+  .grain::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 18px 18px;
+    pointer-events: none;
+    opacity: 0.5;
+    mask-image: linear-gradient(180deg, transparent, black 30%, black 70%, transparent);
+    -webkit-mask-image: linear-gradient(180deg, transparent, black 30%, black 70%, transparent);
+  }
+</style>
+</head>
+<body>
+<div class="page" data-screen-label="01 TMUS Recap">
+
+  <!-- PERSISTENT CHROME -->
+  <header class="chrome">
+    <div class="chrome-row">
+      <div class="chrome-left">
+        <span class="ticker">TMUS<span class="dot">·</span><span class="company">T-Mobile US</span></span>
+      </div>
+      <span class="recap-label">Recap · FY '25</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" data-screen-label="Hero">
+    <svg class="hero-waves" viewBox="0 0 412 800" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <radialGradient id="signalCenter" cx="50%" cy="38%" r="60%">
+          <stop offset="0%" stop-color="#E20074" stop-opacity="0.18"/>
+          <stop offset="50%" stop-color="#E20074" stop-opacity="0.04"/>
+          <stop offset="100%" stop-color="#E20074" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect x="0" y="0" width="412" height="800" fill="url(#signalCenter)"/>
+      <!-- Concentric signal arcs centered top -->
+      <g fill="none" stroke="#E20074" stroke-width="1" opacity="0.35">
+        <circle cx="206" cy="280" r="80"/>
+        <circle cx="206" cy="280" r="140" opacity="0.7"/>
+        <circle cx="206" cy="280" r="200" opacity="0.5"/>
+        <circle cx="206" cy="280" r="260" opacity="0.35"/>
+        <circle cx="206" cy="280" r="320" opacity="0.22"/>
+        <circle cx="206" cy="280" r="380" opacity="0.12"/>
+      </g>
+      <!-- a tiny tower icon near the top -->
+      <g transform="translate(206 280)" opacity="0.85">
+        <line x1="0" y1="-12" x2="0" y2="12" stroke="#E20074" stroke-width="1.5"/>
+        <line x1="-7" y1="10" x2="0" y2="-12" stroke="#E20074" stroke-width="1"/>
+        <line x1="7" y1="10" x2="0" y2="-12" stroke="#E20074" stroke-width="1"/>
+        <circle cx="0" cy="-14" r="2.5" fill="#E20074"/>
+      </g>
+    </svg>
+
+    <div class="hero-eyebrow"><span class="live"></span><span>Live · Bellevue, WA</span></div>
+
+    <div>
+      <h1 class="hero-title">
+        <span class="num">140M</span><br>
+        <em>signals.</em><br>
+        One <em>network.</em>
+      </h1>
+      <p class="hero-sub">
+        T-Mobile US is the country's second-largest wireless carrier — <em>140M+ subscribers</em> on a network that spent the last five years swallowing rivals and rewiring the floor.
+      </p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="v">$217<small>.81B</small></div>
+        <span class="l">Market Cap</span>
+      </div>
+      <div class="hero-stat">
+        <div class="v">$88<small>.31B</small></div>
+        <span class="l">FY'25 Revenue</span>
+      </div>
+      <div class="hero-stat">
+        <div class="v">$1<small>.88</small></div>
+        <span class="l">Q4 EPS</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESET BEAT -->
+  <section class="reset" data-screen-label="Reset 1">
+    <div class="reset-mark">·  ·  ·</div>
+    <p class="reset-text">
+      Once it was the carrier you tried because the others were too expensive.<br>
+      Now <span class="s">it is the price the others have to match.</span>
+    </p>
+  </section>
+
+  <!-- ============ BUSINESS / 5 STREAMS ============ -->
+  <section data-screen-label="02 Business" class="grain">
+    <div class="eyebrow"><span class="pip"></span>The Business · five streams<span class="num">02</span></div>
+    <h2 class="biz-title">A bill for <em>every</em> phone in the room.</h2>
+    <p class="biz-lede">
+      Five revenue streams feed the network — but the bulk of <em>$88.31B</em> arrives one postpaid bill at a time.
+    </p>
+
+    <div class="streams" id="streams">
+      <div class="stream">
+        <div class="stream-name">Branded Postpaid <span class="pct">65.6%</span></div>
+        <div class="stream-val">$57.93<small>B</small></div>
+        <div class="stream-bar"><div class="stream-fill" data-w="100"></div></div>
+      </div>
+      <div class="stream">
+        <div class="stream-name">Equipment / Devices <span class="pct">18.1%</span></div>
+        <div class="stream-val">$15.97<small>B</small></div>
+        <div class="stream-bar"><div class="stream-fill s2" data-w="27.6"></div></div>
+      </div>
+      <div class="stream">
+        <div class="stream-name">Branded Prepaid <span class="pct">11.9%</span></div>
+        <div class="stream-val">$10.50<small>B</small></div>
+        <div class="stream-bar"><div class="stream-fill s3" data-w="18.1"></div></div>
+      </div>
+      <div class="stream">
+        <div class="stream-name">Wholesale Services <span class="pct">3.3%</span></div>
+        <div class="stream-val">$2.88<small>B</small></div>
+        <div class="stream-bar"><div class="stream-fill s4" data-w="4.97"></div></div>
+      </div>
+      <div class="stream">
+        <div class="stream-name">Other <span class="pct">1.2%</span></div>
+        <div class="stream-val">$1.03<small>B</small></div>
+        <div class="stream-bar"><div class="stream-fill s5" data-w="1.78"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESET BEAT -->
+  <section class="reset" data-screen-label="Reset 2">
+    <div class="reset-mark">·  ·  ·</div>
+    <p class="reset-text">
+      Devices walk out the door near cost.<br>
+      <span class="s">The bill is what stays.</span>
+    </p>
+  </section>
+
+  <!-- ============ SCALE — 140M ============ -->
+  <section class="scale" data-screen-label="03 Scale">
+    <div class="eyebrow"><span class="pip"></span>The Scale · subscribers<span class="num">03</span></div>
+
+    <h2 class="big-num"><span class="s">140</span><span style="color:var(--ink-3)">M</span><span class="big-num-unit">subscribers, late 2025.</span></h2>
+
+    <p class="scale-cap">
+      Across <em style="font-family:var(--font-display);font-style:italic;color:var(--signal)">T-Mobile</em>, <em style="font-family:var(--font-display);font-style:italic;color:var(--signal)">Metro</em>, and <em style="font-family:var(--font-display);font-style:italic;color:var(--signal)">Mint Mobile</em> — three brands, one billing engine.
+    </p>
+
+    <!-- Dot cloud — 140 dots, each = 1M subs -->
+    <div class="dots-wrap">
+      <div class="dots-cap"><span>each <span style="color:var(--signal)">●</span> = 1M subs</span><span>140M</span></div>
+      <svg class="dots-svg" viewBox="0 0 360 180" preserveAspectRatio="xMidYMid meet" id="dotsSvg" aria-hidden="true"></svg>
+    </div>
+
+    <div class="scale-grid">
+      <div class="scale-cell">
+        <div class="v"><em>$88</em><small>.31B</small></div>
+        <span class="l">FY'25 Revenue</span>
+        <div class="delta">+ growth on growth</div>
+      </div>
+      <div class="scale-cell">
+        <div class="v"><em>20.7</em><small>%</small></div>
+        <span class="l">Operating Margin</span>
+        <div class="delta">service-led</div>
+      </div>
+      <div class="scale-cell">
+        <div class="v">~70<small>K</small></div>
+        <span class="l">Employees</span>
+        <div class="delta">Bellevue, WA HQ</div>
+      </div>
+      <div class="scale-cell">
+        <div class="v">$24<small>.33B</small></div>
+        <span class="l">Q4'25 Revenue</span>
+        <div class="delta">EPS · $1.88</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESET BEAT -->
+  <section class="reset" data-screen-label="Reset 3">
+    <div class="reset-mark">·  ·  ·</div>
+    <p class="reset-text">
+      A network is the easy part to draw on a slide.<br>
+      <span class="s">Paying for it is the rest of the story.</span>
+    </p>
+  </section>
+
+  <!-- ============ COSTS ============ -->
+  <section class="costs" data-screen-label="04 Costs">
+    <div class="eyebrow"><span class="pip"></span>Where the money goes<span class="num">04</span></div>
+    <h2 class="biz-title">A hundred cents <em>in.</em></h2>
+    <p class="biz-lede">
+      Of every dollar of revenue, <em>~82¢</em> walks back out as cost — most of it the price of running, depreciating, and selling the network.
+    </p>
+
+    <div class="cost-rows" id="costRows">
+      <div class="cost-row">
+        <div class="cost-pct">24<sup>¢</sup></div>
+        <div class="cost-label">Cost of revenue<small>Services & equipment</small></div>
+        <div class="cost-track"><div class="cost-fill" data-w="24" style="background:#4F86C6"></div></div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-pct">22<sup>¢</sup></div>
+        <div class="cost-label">Selling, general &amp; admin<small>Sales, marketing, support</small></div>
+        <div class="cost-track"><div class="cost-fill" data-w="22" style="background:#F4A261"></div></div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-pct">14<sup>¢</sup></div>
+        <div class="cost-label">Depreciation &amp; amortization<small>The network ages on the books</small></div>
+        <div class="cost-track"><div class="cost-fill" data-w="14" style="background:#2A9D8F"></div></div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-pct">12<sup>¢</sup></div>
+        <div class="cost-label">Network &amp; technology ops<small>Towers, spectrum, backhaul</small></div>
+        <div class="cost-track"><div class="cost-fill" data-w="12" style="background:#E76F51"></div></div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-pct">10<sup>¢</sup></div>
+        <div class="cost-label">Cost of equipment sales<small>Phones, tablets, watches</small></div>
+        <div class="cost-track"><div class="cost-fill" data-w="10" style="background:#8338EC"></div></div>
+      </div>
+    </div>
+
+    <p class="bet-cap" style="margin-top:36px">
+      That leaves an <em>operating margin of 20.7%</em> — the high-margin core sitting on top of a notoriously low-margin device business that exists to keep the bills coming.
+    </p>
+  </section>
+
+  <!-- ============ FOOTPRINT ============ -->
+  <section class="footprint" data-screen-label="05 Footprint">
+    <div class="eyebrow"><span class="pip"></span>Footprint · one country<span class="num">05</span></div>
+    <h2 class="biz-title">An <em>all-American</em> network.</h2>
+    <p class="biz-lede">
+      Almost the entire revenue base sits inside the contiguous United States. There is no overseas safety net — and no overseas drag.
+    </p>
+
+    <div class="map-wrap">
+      <svg class="map-svg" viewBox="0 0 360 200" id="usMap" aria-hidden="true">
+        <defs>
+          <pattern id="signalDots" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+            <circle cx="3" cy="3" r="0.7" fill="#E20074" opacity="0.55"/>
+          </pattern>
+        </defs>
+        <!-- Stylized US silhouette built from a rough polygon. Filled with signal-dot pattern. -->
+        <path id="usPath" d="
+          M 30 88
+          L 50 70
+          L 78 64
+          L 110 60
+          L 140 58
+          L 178 56
+          L 215 56
+          L 245 60
+          L 270 66
+          L 286 72
+          L 295 80
+          L 308 78
+          L 318 84
+          L 326 96
+          L 332 110
+          L 326 122
+          L 318 132
+          L 304 138
+          L 282 140
+          L 258 142
+          L 232 144
+          L 200 148
+          L 174 150
+          L 144 148
+          L 116 144
+          L 92 138
+          L 70 128
+          L 54 116
+          L 42 104
+          Z"
+          fill="url(#signalDots)"
+          stroke="#E20074"
+          stroke-width="0.9"
+          stroke-opacity="0.55"
+          />
+        <!-- Florida tail -->
+        <path d="M 282 140 L 290 152 L 296 168 L 292 180 L 286 178 L 282 162 L 280 150 Z"
+              fill="url(#signalDots)" stroke="#E20074" stroke-width="0.9" stroke-opacity="0.55"/>
+        <!-- Tower pins -->
+        <g id="towers"></g>
+        <!-- Puerto Rico / USVI satellite -->
+        <g transform="translate(330 178)">
+          <circle r="8" fill="none" stroke="#E20074" stroke-width="0.7" stroke-dasharray="2 2" opacity="0.6"/>
+          <circle r="2.5" fill="#E20074" opacity="0.7"/>
+          <text x="14" y="3" font-family="ui-monospace, Geist Mono, monospace" font-size="8" fill="#6B6A6E" letter-spacing="0.08em">PR · USVI</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="map-cap">
+      <div class="map-pct"><span class="s">96</span><small>%</small></div>
+      <div class="map-pct-2">04<small>U.S. Territories</small></div>
+    </div>
+    <p class="body" style="margin-top:18px">
+      <em class="s">96%</em> United States, contiguous. <em class="s">4%</em> Puerto Rico &amp; USVI. The map ends at the shoreline — the bet is on America picking up.
+    </p>
+  </section>
+
+  <!-- RESET BEAT -->
+  <section class="reset" data-screen-label="Reset 4">
+    <div class="reset-mark">·  ·  ·</div>
+    <p class="reset-text">
+      You don't pour ten billion into a network <span class="s">unless you plan to be the network.</span>
+    </p>
+  </section>
+
+  <!-- ============ THE BET ============ -->
+  <section class="bet" data-screen-label="06 The Bet">
+    <div class="eyebrow"><span class="pip"></span>The bet · capital out<span class="num">06</span></div>
+    <h2 class="biz-title">$50B <em>back</em> to shareholders. <em>$10B</em> into the floor.</h2>
+    <p class="biz-lede">
+      Cash flow funds two things at once: the network underneath the customer, and the dividend in the customer's brokerage account.
+    </p>
+
+    <div class="bet-flow">
+      <div class="flow-row">
+        <span class="flow-l">Operating cash flow</span>
+        <span class="flow-r">$27<small>.95B</small></span>
+      </div>
+      <div class="flow-row">
+        <span class="flow-l">Free cash flow</span>
+        <span class="flow-r">$18<small>.00B</small></span>
+      </div>
+      <div class="flow-row">
+        <span class="flow-l">Capex (network &amp; fiber)</span>
+        <span class="flow-r"><span class="s">−$9<small>.96B</small></span></span>
+      </div>
+      <div class="flow-row">
+        <span class="flow-l">Dividends paid</span>
+        <span class="flow-r"><span class="s">−$4<small>.12B</small></span></span>
+      </div>
+      <div class="flow-row">
+        <span class="flow-l">Buybacks (FY'25)</span>
+        <span class="flow-r"><span class="s">~$10<small>B</small></span></span>
+      </div>
+    </div>
+
+    <p class="bet-cap" style="margin-top:28px">
+      Add it up: a multi-year commitment to <em>return up to $50B</em> while raising the dividend <em>+15.9%</em> in twelve months — a leverage-disciplined company spending like a growth one.
+    </p>
+  </section>
+
+  <!-- ============ DARK INTERLUDE — DEBT ============ -->
+  <section class="debt" data-screen-label="07 Debt">
+    <div class="eyebrow"><span class="pip" style="background:var(--magenta-300)"></span>The weight · capital structure<span class="num" style="color:rgba(244,242,237,0.4)">07</span></div>
+
+    <h2 class="debt-num"><span class="s">$86</span><small style="font-size:50px;color:rgba(244,242,237,0.5)">.28B</small><span class="debt-num-l">in total debt.</span></h2>
+
+    <p class="body" style="margin-top:32px;color:rgba(244,242,237,0.7);max-width:340px">
+      The price of being the network. Spectrum licenses sit at <em style="color:var(--magenta-300);font-family:var(--font-display);font-style:italic;font-size:17px">over $100B</em> on the balance sheet; goodwill from Sprint and the rest, ~<em style="color:var(--magenta-300);font-family:var(--font-display);font-style:italic;font-size:17px">$13B</em> more.
+    </p>
+
+    <div class="debt-bar-wrap" id="debtBars">
+      <div class="debt-row">
+        <span class="lbl">Total debt</span>
+        <div class="bar debt-bar"><div class="fill" data-w="100"></div></div>
+        <span class="v">$86<small>B</small></span>
+      </div>
+      <div class="debt-row">
+        <span class="lbl">Equity</span>
+        <div class="bar eq-bar"><div class="fill" data-w="68.6"></div></div>
+        <span class="v">$59<small>B</small></span>
+      </div>
+      <div class="debt-row">
+        <span class="lbl">Cash</span>
+        <div class="bar cash-bar"><div class="fill" data-w="6.5"></div></div>
+        <span class="v">$5.6<small>B</small></span>
+      </div>
+    </div>
+
+    <p class="debt-cap">
+      Net leverage targeted at <em>2.0–2.5×</em> — heavy by ordinary measure, ordinary by telecom's. The balance sheet is a tower built from spectrum and a steady postpaid bill.
+    </p>
+  </section>
+
+  <!-- ============ COMPETITION ============ -->
+  <section class="compete" data-screen-label="08 Competition">
+    <div class="eyebrow"><span class="pip"></span>The competition · range of signal<span class="num">08</span></div>
+    <h2 class="biz-title">Three <em>rivals.</em><br>One in front.</h2>
+    <p class="biz-lede">
+      Sized by market cap. T-Mobile sits ahead of Verizon and AT&amp;T — and squarely in Comcast's cross-hairs.
+    </p>
+
+    <div class="ring-stage">
+      <svg class="ring-svg" viewBox="0 0 360 360" aria-hidden="true">
+        <defs>
+          <radialGradient id="tmusFill" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#E20074" stop-opacity="0.18"/>
+            <stop offset="80%" stop-color="#E20074" stop-opacity="0.04"/>
+            <stop offset="100%" stop-color="#E20074" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- TMUS ring (largest, signal color) -->
+        <circle cx="180" cy="180" r="158" fill="url(#tmusFill)" stroke="#E20074" stroke-width="1.5" class="ring r-tmus"/>
+        <!-- VZ -->
+        <circle cx="180" cy="180" r="142" fill="none" stroke="#0E0E10" stroke-width="1" stroke-opacity="0.6" stroke-dasharray="3 3" class="ring r-vz"/>
+        <!-- T -->
+        <circle cx="180" cy="180" r="129" fill="none" stroke="#0E0E10" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="3 3" class="ring r-t"/>
+        <!-- CMCSA -->
+        <circle cx="180" cy="180" r="103" fill="none" stroke="#0E0E10" stroke-width="1" stroke-opacity="0.4" stroke-dasharray="3 3" class="ring r-cmcsa"/>
+
+        <!-- Labels -->
+        <g font-family="Geist Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#0E0E10">
+          <text x="180" y="14" text-anchor="middle" fill="#E20074" font-weight="500">TMUS · $217.81B</text>
+          <text x="180" y="35" text-anchor="middle" fill="#6B6A6E">VZ · $196.33B</text>
+          <text x="180" y="56" text-anchor="middle" fill="#6B6A6E">T · $177.70B</text>
+          <text x="180" y="84" text-anchor="middle" fill="#6B6A6E">CMCSA · $114.03B</text>
+        </g>
+
+        <!-- Center label -->
+        <g transform="translate(180 180)" text-anchor="middle">
+          <text font-family="Instrument Serif, serif" font-size="36" fill="#E20074" font-style="italic" y="6">in front</text>
+          <text font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.16em" fill="#6B6A6E" y="26">BY MARKET CAP</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="comp-list">
+      <div class="comp-row tmus-row">
+        <span class="comp-tk" style="color:var(--signal)">TMUS</span>
+        <div class="comp-name">T-Mobile<small>The page you're on.</small></div>
+        <div class="comp-mc">$217<small>.81B</small><small class="grow">leader</small></div>
+      </div>
+      <div class="comp-row">
+        <span class="comp-tk">VZ</span>
+        <div class="comp-name" style="font-style:normal">Verizon<small>Direct postpaid rival across 5G, FWA, and device financing.</small></div>
+        <div class="comp-mc">$196<small>.33B</small><small>+2.52% YoY</small></div>
+      </div>
+      <div class="comp-row">
+        <span class="comp-tk">T</span>
+        <div class="comp-name" style="font-style:normal">AT&amp;T<small>Slower-growth incumbent across postpaid, prepaid, enterprise.</small></div>
+        <div class="comp-mc">$177<small>.70B</small><small>+2.71% YoY</small></div>
+      </div>
+      <div class="comp-row">
+        <span class="comp-tk">CMCSA</span>
+        <div class="comp-name" style="font-style:normal">Comcast<small>Xfinity Mobile MVNO targets postpaid; T Fiber invades cable.</small></div>
+        <div class="comp-mc">$114<small>.03B</small><small class="shrink">−0.02% YoY</small></div>
+      </div>
+    </div>
+
+    <p class="bet-cap" style="margin-top:36px">
+      Verizon and AT&amp;T grow at <em>~2.5%</em>. T-Mobile grows by <em>subscribers, not pricing</em> — the reason it's already passed both by market cap.
+    </p>
+  </section>
+
+  <!-- ============ TAKEAWAY — INVERSION ============ -->
+  <section class="close" data-screen-label="09 Takeaway">
+    <div class="eyebrow"><span class="pip"></span>The takeaway · what survives<span class="num">09</span></div>
+
+    <h2 class="close-num">$18<span class="s">B</span></h2>
+    <p class="close-line">
+      <em>Free cash flow</em> survives every bill, every tower, every <em>$10B</em> of buybacks.
+    </p>
+
+    <p class="body" style="margin-top:32px;max-width:340px">
+      Open: <em class="s">140 million signals</em>. Close: one company keeping <em class="s">$18B</em> after the network is paid for. The signal scales; the cash flow stays.
+    </p>
+
+    <div class="close-foot">
+      <span class="l">TMUS · NASDAQ</span>
+      <span class="r">End of recap</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ---------- Scroll progress ----------
+  const progressFill = document.getElementById('progressFill');
+  const onScroll = () => {
+    const h = document.documentElement;
+    const scrolled = h.scrollTop / Math.max(1, (h.scrollHeight - h.clientHeight));
+    progressFill.style.width = (scrolled * 100).toFixed(2) + '%';
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ---------- Reveal on scroll (staggered) ----------
+  const revealTargets = document.querySelectorAll(
+    '.stream-fill, .cost-fill, .debt-row .fill, section'
+  );
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      if (el.matches('.stream-fill, .cost-fill, .debt-row .fill')) {
+        const w = parseFloat(el.dataset.w || '0');
+        requestAnimationFrame(() => { el.style.width = w + '%'; });
+      } else {
+        el.classList.add('in');
+      }
+      io.unobserve(el);
+    });
+  }, { threshold: 0.18 });
+  revealTargets.forEach((t) => io.observe(t));
+
+  // ---------- 140-dot subscriber cloud ----------
+  (() => {
+    const svg = document.getElementById('dotsSvg');
+    if (!svg) return;
+    const cols = 20, rows = 7; // 140 dots
+    const cellW = 360 / cols, cellH = 180 / rows;
+    const ns = 'http://www.w3.org/2000/svg';
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const cx = c * cellW + cellW / 2;
+        const cy = r * cellH + cellH / 2;
+        const dot = document.createElementNS(ns, 'circle');
+        dot.setAttribute('cx', cx);
+        dot.setAttribute('cy', cy);
+        dot.setAttribute('r', '2.6');
+        dot.setAttribute('fill', '#E20074');
+        dot.setAttribute('opacity', '0');
+        // staggered fade-in
+        dot.style.transition = 'opacity 600ms var(--ease-out)';
+        dot.style.transitionDelay = ((r * cols + c) * 6) + 'ms';
+        svg.appendChild(dot);
+      }
+    }
+    const dotsIO = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        svg.querySelectorAll('circle').forEach((d) => d.setAttribute('opacity', '0.85'));
+        dotsIO.disconnect();
+      });
+    }, { threshold: 0.3 });
+    dotsIO.observe(svg);
+  })();
+
+  // ---------- Tower pins on US map ----------
+  (() => {
+    const g = document.getElementById('towers');
+    if (!g) return;
+    const ns = 'http://www.w3.org/2000/svg';
+    // Approximate city positions inside the silhouette
+    const towers = [
+      { x: 60, y: 90,  name: 'Seattle' },
+      { x: 80, y: 130, name: 'SF' },
+      { x: 110, y: 138, name: 'LA' },
+      { x: 145, y: 130, name: 'Phoenix' },
+      { x: 178, y: 132, name: 'Dallas' },
+      { x: 200, y: 100, name: 'Chicago' },
+      { x: 225, y: 122, name: 'Atlanta' },
+      { x: 248, y: 95,  name: 'NYC' },
+      { x: 275, y: 105, name: 'DC' },
+      { x: 235, y: 140, name: 'Houston' },
+      { x: 280, y: 155, name: 'Miami area' },
+      { x: 305, y: 90,  name: 'Boston' },
+      { x: 100, y: 105, name: 'Portland' },
+      { x: 165, y: 90,  name: 'Denver' },
+      { x: 195, y: 115, name: 'KC' }
+    ];
+    towers.forEach((t, i) => {
+      const c = document.createElementNS(ns, 'circle');
+      c.setAttribute('cx', t.x);
+      c.setAttribute('cy', t.y);
+      c.setAttribute('r', '2.2');
+      c.setAttribute('fill', '#E20074');
+      c.setAttribute('opacity', '0');
+      c.style.transition = 'opacity 500ms var(--ease-out)';
+      c.style.transitionDelay = (120 + i * 40) + 'ms';
+      g.appendChild(c);
+
+      const ring = document.createElementNS(ns, 'circle');
+      ring.setAttribute('cx', t.x);
+      ring.setAttribute('cy', t.y);
+      ring.setAttribute('r', '6');
+      ring.setAttribute('fill', 'none');
+      ring.setAttribute('stroke', '#E20074');
+      ring.setAttribute('stroke-width', '0.6');
+      ring.setAttribute('opacity', '0');
+      ring.style.transition = 'opacity 500ms var(--ease-out), r 800ms var(--ease-out)';
+      ring.style.transitionDelay = (300 + i * 40) + 'ms';
+      g.appendChild(ring);
+    });
+    const mapIO = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        g.querySelectorAll('circle').forEach((c, i) => {
+          if (i % 2 === 0) c.setAttribute('opacity', '0.95');
+          else c.setAttribute('opacity', '0.35');
+        });
+        mapIO.disconnect();
+      });
+    }, { threshold: 0.35 });
+    mapIO.observe(document.getElementById('usMap'));
+  })();
+
+  // ---------- Speaker notes hook for slide host (single-screen) ----------
+  window.parent && window.parent.postMessage({ slideIndexChanged: 0 }, '*');
+</script>
+</body>
+</html>

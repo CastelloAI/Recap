@@ -1,0 +1,1289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=420, initial-scale=1, maximum-scale=1" />
+<title>CVS · Recap FY ’25</title>
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  /* ------------------------------------------------------------------ */
+  /*  CVS recap — narrative scaffold                                    */
+  /*  Signal color: a deep editorial red drawn from CVS's heritage.     */
+  /*  Base: warm paper from the design system.                          */
+  /* ------------------------------------------------------------------ */
+
+  :root {
+    --signal:      #C8102E;     /* CVS-adjacent editorial red */
+    --signal-deep: #8E0B20;
+    --signal-soft: #FBE6E9;
+    --ledger-ink:  #1A1A1A;
+    --receipt:     #FAF8F2;     /* slightly cooler than paper-2 */
+    --receipt-2:   #F1ECE0;
+    --rule:        #E0DBCE;
+    --tape:        #2A2624;     /* the "weight" beat */
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; overflow-x: hidden; }
+  body {
+    background: var(--receipt);
+    color: var(--ledger-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "tnum";
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Mobile container — page is the design, no device frame */
+  .page {
+    max-width: 440px;
+    margin: 0 auto;
+    background: var(--receipt);
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* paper grain */
+  .page::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0'/></filter><rect width='120' height='120' filter='url(%23n)'/></svg>");
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    z-index: 1;
+  }
+  .page > * { position: relative; z-index: 2; }
+
+  /* ------------------------------------------------------------------ */
+  /*  Persistent chrome                                                  */
+  /* ------------------------------------------------------------------ */
+  .chrome {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(16px) saturate(1.15);
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    background: rgba(250, 248, 242, 0.78);
+    border-bottom: 1px solid var(--rule);
+  }
+  .chrome-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 12px;
+  }
+  .ticker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    display: flex; align-items: center; gap: 10px;
+    color: var(--ledger-ink);
+  }
+  .ticker .dot {
+    width: 6px; height: 6px; border-radius: 999px;
+    background: var(--signal);
+    box-shadow: 0 0 0 4px rgba(200,16,46,0.12);
+  }
+  .ticker b { font-weight: 600; }
+  .ticker .sep { color: var(--ink-3); margin: 0 2px; }
+  .ticker .name {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .recap-tag {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .progress {
+    height: 1.5px;
+    background: linear-gradient(to right, var(--signal) var(--p, 0%), transparent 0);
+    transition: background 80ms linear;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  Eyebrows / type primitives                                         */
+  /* ------------------------------------------------------------------ */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--signal);
+    font-weight: 500;
+  }
+  .eyebrow .muted { color: var(--ink-3); }
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+  }
+  .italic { font-style: italic; }
+  .body {
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+  .body em { font-family: var(--font-display); font-style: italic; color: var(--signal-deep); font-size: 17px; }
+
+  /* Sections share a base padding */
+  section {
+    padding: 56px 24px 64px;
+    position: relative;
+  }
+  section.tight { padding: 36px 24px 36px; }
+
+  /* ------------------------------------------------------------------ */
+  /*  Reset beats — italic editorial bridges                             */
+  /* ------------------------------------------------------------------ */
+  .reset {
+    background: var(--receipt-2);
+    padding: 44px 28px 48px;
+    text-align: left;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .reset .label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 14px;
+  }
+  .reset p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1.18;
+    color: var(--ink-2);
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .reset p .hot { color: var(--signal); font-style: italic; }
+
+  /* dark variant of the reset, used once for the "weight" beat */
+  .reset.dark {
+    background: var(--tape);
+    border-color: #000;
+  }
+  .reset.dark .label { color: #8a8580; }
+  .reset.dark p { color: #f1ece0; }
+  .reset.dark p .hot { color: #FF8270; }
+
+  /* ------------------------------------------------------------------ */
+  /*  HERO — the receipt unspools                                        */
+  /* ------------------------------------------------------------------ */
+  .hero {
+    padding: 28px 24px 40px;
+    overflow: hidden;
+  }
+  .hero .eyebrow { margin-bottom: 18px; display: block; }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.96;
+    margin: 0 0 22px;
+    letter-spacing: -0.025em;
+    color: var(--ledger-ink);
+    font-weight: 400;
+  }
+  .hero h1 em { font-style: italic; color: var(--signal); }
+  .hero .lede {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 36ch;
+  }
+  .hero .lede em { font-family: var(--font-display); font-style: italic; color: var(--signal-deep); font-size: 18px; }
+
+  /* The big revenue figure that counts up */
+  .hero .figure {
+    margin-top: 30px;
+    padding: 24px 0 4px;
+    border-top: 1.5px dashed var(--rule);
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 16px;
+  }
+  .hero .figure .num {
+    font-family: var(--font-display);
+    font-size: 84px;
+    line-height: 0.85;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    color: var(--ledger-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .hero .figure .num .unit { font-style: italic; color: var(--signal); font-size: 56px; }
+  .hero .figure .cap {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: right;
+    line-height: 1.4;
+    max-width: 110px;
+  }
+
+  /* The receipt strip — narrows as we scroll into hero */
+  .receipt-strip {
+    margin-top: 28px;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 12px 30px -16px rgba(0,0,0,0.18), 0 1px 2px rgba(0,0,0,0.05);
+    padding: 18px 18px 24px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--ink-2);
+    position: relative;
+    transform-origin: top center;
+  }
+  .receipt-strip::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: -8px; height: 12px;
+    background: radial-gradient(circle at 6px 0, transparent 5px, #fff 5px) repeat-x;
+    background-size: 12px 12px;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.06));
+  }
+  .receipt-strip h4 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 400;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .receipt-strip .sub {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 14px;
+  }
+  .receipt-strip ul { list-style: none; margin: 0; padding: 0; }
+  .receipt-strip li {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .receipt-strip li:last-child { border-bottom: none; padding-top: 12px; }
+  .receipt-strip li .lbl { color: var(--ink-2); }
+  .receipt-strip li .val { font-weight: 500; color: var(--ledger-ink); }
+  .receipt-strip .total {
+    display: flex; justify-content: space-between;
+    margin-top: 10px; padding-top: 12px;
+    border-top: 1.5px solid var(--ledger-ink);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .receipt-strip .total .val { color: var(--signal); }
+
+  /* ------------------------------------------------------------------ */
+  /*  THREE BUSINESSES — segmented vertical pipe                         */
+  /* ------------------------------------------------------------------ */
+  .segments {
+    background: var(--receipt);
+  }
+  .segments .head {
+    margin-bottom: 28px;
+  }
+  .segments h2 {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.02;
+    margin: 8px 0 12px;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+  }
+  .segments h2 em { font-style: italic; color: var(--signal); }
+
+  .pipe {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    margin-top: 8px;
+  }
+  .pipe-col {
+    position: relative;
+    width: 56px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--receipt-2);
+    border: 1px solid var(--rule);
+    min-height: 520px;
+  }
+  .pipe-fill {
+    position: absolute; left: 0; right: 0;
+    transition: opacity 240ms var(--ease-out);
+  }
+  .pipe-fill.s1 { top: 0;     height: 59%; background: var(--signal); }
+  .pipe-fill.s2 { top: 59%;   height: 35%; background: var(--ledger-ink); }
+  .pipe-fill.s3 { top: 94%;   height: 6%;  background: var(--ink-3); }
+  /* segment labels float right of pipe */
+  .seg-list { display: flex; flex-direction: column; gap: 14px; }
+  .seg {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 16px 16px 18px;
+    position: relative;
+  }
+  .seg .pct {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-weight: 400;
+    color: var(--ledger-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .seg .pct .pct-mark { font-family: var(--font-display); font-style: italic; color: var(--signal); font-size: 30px; vertical-align: top; margin-left: 2px; }
+  .seg.health .pct .pct-mark { color: var(--signal); }
+  .seg.bene .pct .pct-mark { color: var(--ledger-ink); }
+  .seg.retail .pct .pct-mark { color: var(--ink-3); }
+
+  .seg .name {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 6px;
+    color: var(--ink-3);
+  }
+  .seg .desc {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin-top: 8px;
+    color: var(--ink-2);
+  }
+  .seg .desc em { font-family: var(--font-display); font-style: italic; color: var(--signal-deep); font-size: 15px; }
+
+  /* ------------------------------------------------------------------ */
+  /*  THE DOLLAR — 100-cent grid                                         */
+  /* ------------------------------------------------------------------ */
+  .dollar {
+    background: var(--receipt);
+  }
+  .dollar h2 {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.02;
+    margin: 10px 0 14px;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+  }
+  .dollar h2 em { font-style: italic; color: var(--signal); }
+  .grid-100 {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 3px;
+    aspect-ratio: 1 / 1;
+    max-width: 360px;
+  }
+  .cent {
+    aspect-ratio: 1 / 1;
+    border-radius: 2px;
+    background: var(--receipt-2);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: background 320ms var(--ease-out), transform 320ms var(--ease-out);
+  }
+  .cent.cogs   { background: #2563EB; }   /* 83 — cost of revenue */
+  .cent.med    { background: #DC2626; }   /* 7 — medical benefits */
+  .cent.sga    { background: #16A34A; }   /* 4 — sg&a */
+  .cent.amort  { background: #D97706; }   /* 1 — intangibles */
+  .cent.margin { background: var(--ledger-ink); position: relative; }
+  .cent.margin::after {
+    content: "";
+    position: absolute; inset: 1px;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        transparent 0 3px,
+        rgba(255,255,255,0.18) 3px 4px
+      );
+  }
+  .cent.surplus { /* the 5 cents that make it through */
+    background: var(--signal);
+    box-shadow: 0 0 0 1.5px var(--signal-deep);
+  }
+
+  .legend { margin-top: 22px; display: flex; flex-direction: column; gap: 8px; }
+  .legend .row {
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--ink-2);
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .legend .row:last-child { border-bottom: none; }
+  .legend .sw { width: 12px; height: 12px; border-radius: 2px; }
+  .legend .lbl { letter-spacing: 0.04em; text-transform: uppercase; font-size: 10.5px; color: var(--ink-2); }
+  .legend .val { font-family: var(--font-display); font-size: 18px; font-style: italic; color: var(--ledger-ink); font-variant-numeric: tabular-nums; }
+  .legend .row.surplus .val { color: var(--signal); }
+
+  .dollar .punchline {
+    margin-top: 26px;
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-style: italic;
+    line-height: 1.3;
+    color: var(--ink-2);
+  }
+  .dollar .punchline b { font-style: normal; font-family: var(--font-sans); font-weight: 500; color: var(--signal); }
+
+  /* ------------------------------------------------------------------ */
+  /*  FOOTPRINT — 9,000 dots, US-shaped                                  */
+  /* ------------------------------------------------------------------ */
+  .footprint { background: var(--receipt); padding-top: 48px; }
+  .footprint h2 {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+    margin: 10px 0 12px;
+  }
+  .footprint h2 em { font-style: italic; color: var(--signal); }
+  .map-wrap {
+    margin-top: 24px;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 18px 14px 20px;
+    box-shadow: var(--shadow-xs);
+  }
+  .map-wrap svg { display: block; width: 100%; height: auto; }
+  .map-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .map-meta .pair {
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+  }
+  .map-meta .num {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ledger-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .map-meta .num em { font-style: italic; color: var(--signal); font-size: 22px; }
+  .map-meta .lbl {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 6px;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  THE BET — pill bottle filled with intangibles                      */
+  /* ------------------------------------------------------------------ */
+  .bet {
+    background: var(--tape);
+    color: #f1ece0;
+    padding: 56px 24px 64px;
+  }
+  .bet .eyebrow { color: #FF8270; }
+  .bet h2 {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+    color: #f1ece0;
+    margin: 10px 0 16px;
+  }
+  .bet h2 em { font-style: italic; color: #FF8270; }
+  .bet .body { color: #c8c4ba; }
+  .bet .body em { color: #FF8270; }
+  .bet .scene {
+    margin: 28px auto 8px;
+    max-width: 320px;
+  }
+  .bet .scene svg { width: 100%; height: auto; display: block; }
+  .bet .stats {
+    margin-top: 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 18px;
+    border-top: 1px solid #4a423d;
+    padding-top: 18px;
+  }
+  .bet .stat .num {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #f1ece0;
+    font-variant-numeric: tabular-nums;
+  }
+  .bet .stat .num em { font-style: italic; color: #FF8270; font-size: 22px; }
+  .bet .stat .lbl {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8a8580;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  RIVALS — circles sized by market cap                               */
+  /* ------------------------------------------------------------------ */
+  .rivals { background: var(--receipt); padding-top: 56px; padding-bottom: 56px; }
+  .rivals h2 {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+    margin: 10px 0 12px;
+  }
+  .rivals h2 em { font-style: italic; color: var(--signal); }
+
+  .rival-stage {
+    margin-top: 28px;
+    height: 380px;
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: var(--shadow-xs);
+  }
+  .rival-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .rival-list { margin-top: 22px; display: flex; flex-direction: column; gap: 0; }
+  .rival {
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    gap: 14px;
+    align-items: baseline;
+    padding: 16px 0 18px;
+    border-bottom: 1px solid var(--rule);
+    cursor: pointer;
+    transition: background 180ms var(--ease-out);
+  }
+  .rival:hover { background: rgba(0,0,0,0.015); }
+  .rival.open { background: rgba(0,0,0,0.025); }
+  .rival .swatch {
+    width: 10px; height: 10px; border-radius: 999px; margin-top: 14px;
+  }
+  .rival .name {
+    font-family: var(--font-display);
+    font-size: 24px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ledger-ink);
+  }
+  .rival .name .tk {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .rival .cap {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-style: italic;
+    color: var(--signal-deep);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    line-height: 1;
+  }
+  .rival .cap small {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-style: normal;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .rival-detail {
+    grid-column: 2 / 4;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 320ms var(--ease-out), padding 240ms var(--ease-out);
+    padding: 0;
+  }
+  .rival.open .rival-detail {
+    max-height: 360px;
+    padding-top: 8px;
+    padding-bottom: 4px;
+  }
+  .rival-detail .desc {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .rival-detail .desc em { font-family: var(--font-display); font-style: italic; color: var(--signal-deep); font-size: 15px; }
+  .rival-detail .micro {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .rival-detail .micro .m {
+    border-top: 1px solid var(--rule);
+    padding-top: 8px;
+  }
+  .rival-detail .micro .v {
+    font-family: var(--font-display);
+    font-size: 18px;
+    line-height: 1;
+    color: var(--ledger-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .rival-detail .micro .l {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .rival .arrow {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    color: var(--ink-3);
+    margin-left: 6px;
+    transition: transform 240ms var(--ease-out);
+  }
+  .rival.open .arrow { transform: rotate(90deg); color: var(--signal); }
+
+  /* ------------------------------------------------------------------ */
+  /*  CLOSE                                                              */
+  /* ------------------------------------------------------------------ */
+  .close {
+    padding: 60px 24px 80px;
+    background: var(--receipt);
+  }
+  .close .eyebrow { color: var(--signal); }
+  .close h2 {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    font-weight: 400;
+    margin: 18px 0 14px;
+  }
+  .close h2 em { font-style: italic; color: var(--signal); }
+  .close .lede {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 36ch;
+  }
+  .close .lede em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--signal-deep);
+    font-size: 18px;
+  }
+  .close .ledger {
+    margin-top: 32px;
+    border-top: 1.5px solid var(--ledger-ink);
+    border-bottom: 1.5px solid var(--ledger-ink);
+    padding: 14px 0 16px;
+    background: transparent;
+  }
+  .close .ledger .row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--rule);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .close .ledger .row:last-child { border-bottom: none; }
+  .close .ledger .row .v {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--ledger-ink);
+    text-transform: none;
+    letter-spacing: -0.01em;
+  }
+  .close .ledger .row.hot .v { color: var(--signal); }
+  .close .signoff {
+    margin-top: 30px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: center;
+    padding-top: 16px;
+  }
+  .close .signoff .scissor { display: block; color: var(--rule); font-size: 14px; margin-bottom: 10px; letter-spacing: 0; }
+
+  /* ------------------------------------------------------------------ */
+  /*  reveal-on-scroll                                                   */
+  /* ------------------------------------------------------------------ */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
+  .reveal.in { opacity: 1; transform: none; }
+  .reveal.d1 { transition-delay: 80ms; }
+  .reveal.d2 { transition-delay: 160ms; }
+  .reveal.d3 { transition-delay: 240ms; }
+
+  /* count-up wrapper uses tabular-nums */
+  .num, [data-count] { font-variant-numeric: tabular-nums; }
+
+  /* receipt strip "scrubbed" — taller as you scroll past hero */
+  .receipt-strip { transition: transform 80ms linear; }
+
+  /* the dollar-grid cells fade in cell by cell */
+  .grid-100 .cent { opacity: 0; transform: scale(0.92); }
+  .grid-100.in .cent { opacity: 1; transform: none; transition: opacity 320ms var(--ease-out), transform 320ms var(--ease-spring); }
+
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ============================================================== -->
+  <!--  PERSISTENT CHROME                                               -->
+  <!-- ============================================================== -->
+  <header class="chrome" data-screen-label="00 Chrome">
+    <div class="chrome-row">
+      <div class="ticker">
+        <span class="dot"></span>
+        <b>CVS</b>
+        <span class="sep">·</span>
+        <span class="name">CVS Health</span>
+      </div>
+      <div class="recap-tag">Recap · FY ’25</div>
+    </div>
+    <div class="progress" id="progress"></div>
+  </header>
+
+  <!-- ============================================================== -->
+  <!--  HERO                                                            -->
+  <!-- ============================================================== -->
+  <section class="hero" data-screen-label="01 Hero">
+    <span class="eyebrow reveal">A retail pharmacy · A PBM · An insurer</span>
+
+    <h1 class="reveal d1">
+      Two-hundred and sixty-five<br/>
+      <em>billion</em> dollars<br/>
+      walked through the door.
+    </h1>
+
+    <p class="lede body reveal d2">
+      CVS is the world's <em>second-largest</em> healthcare company by revenue.
+      It is also a pharmacy on every other corner — and the company that
+      decides what your insurance pays for it.
+    </p>
+
+    <div class="figure reveal d3">
+      <div class="num"><span data-count="265.08" data-decimals="2" data-prefix="$">$0.00</span><span class="unit">B</span></div>
+      <div class="cap">FY '25<br/>Total revenue</div>
+    </div>
+
+    <!-- the receipt -->
+    <div class="receipt-strip reveal d3" id="receipt">
+      <h4>CVS Health Corp.</h4>
+      <div class="sub">Fiscal year 2025 · Consolidated</div>
+      <ul>
+        <li><span class="lbl">Health Services (Caremark, specialty)</span><span class="val">~59%</span></li>
+        <li><span class="lbl">Aetna · health benefits</span><span class="val">~35%</span></li>
+        <li><span class="lbl">Pharmacy &amp; Consumer Wellness</span><span class="val">remainder</span></li>
+        <li><span class="lbl">Q4 revenue</span><span class="val">$105.69B</span></li>
+        <li><span class="lbl">Q4 EPS</span><span class="val">$1.09</span></li>
+      </ul>
+      <div class="total">
+        <span>Total revenue</span><span class="val">$265.08B</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!--  RESET BEAT 1                                                    -->
+  <!-- ============================================================== -->
+  <div class="reset" data-screen-label="02 Reset · One company">
+    <div class="label">A pause</div>
+    <p>A pharmacy on the corner, a benefits manager behind the shelf, an insurer behind <span class="hot italic">both of them.</span> One company.</p>
+  </div>
+
+  <!-- ============================================================== -->
+  <!--  THREE BUSINESSES                                                -->
+  <!-- ============================================================== -->
+  <section class="segments" data-screen-label="03 Three segments">
+    <div class="head reveal">
+      <div class="eyebrow">The business · Three pipes</div>
+      <h2>One revenue line, <em>three</em> different companies underneath it.</h2>
+    </div>
+
+    <div class="pipe">
+      <!-- vertical pipe -->
+      <div class="pipe-col" aria-hidden="true">
+        <div class="pipe-fill s1"></div>
+        <div class="pipe-fill s2"></div>
+        <div class="pipe-fill s3"></div>
+      </div>
+
+      <div class="seg-list">
+        <div class="seg health reveal d1">
+          <div class="pct">59<span class="pct-mark">%</span></div>
+          <div class="name">Health Services · CVS Caremark</div>
+          <div class="desc">PBM, specialty pharmacy, and care delivery. The <em>middleman</em> between drugmaker and patient — and the segment that pays for itself by deciding which drugs make the formulary.</div>
+        </div>
+        <div class="seg bene reveal d2">
+          <div class="pct">35<span class="pct-mark">%</span></div>
+          <div class="name">Health Care Benefits · Aetna</div>
+          <div class="desc">Premiums collected as an insurer. The 2018 acquisition that turned a drugstore into a vertically integrated <em>health-care platform.</em></div>
+        </div>
+        <div class="seg retail reveal d3">
+          <div class="pct">~6<span class="pct-mark">%</span></div>
+          <div class="name">Pharmacy &amp; Consumer Wellness</div>
+          <div class="desc">The original business — 9,000+ stores filling prescriptions, ringing up shampoo, running MinuteClinics. Smaller as a share, but still <em>everywhere.</em></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!--  THE DOLLAR — 100-cent grid                                      -->
+  <!-- ============================================================== -->
+  <section class="dollar" data-screen-label="04 The dollar">
+    <div class="reveal">
+      <div class="eyebrow">A hundred cents in</div>
+      <h2>For every dollar of revenue, here is what's <em>left</em> after the bills.</h2>
+    </div>
+
+    <div class="grid-100" id="dollarGrid" aria-hidden="true"><!-- filled by JS --></div>
+
+    <div class="legend reveal d1">
+      <div class="row"><span class="sw" style="background:#2563EB"></span><span class="lbl">Cost of revenue</span><span class="val">83¢</span></div>
+      <div class="row"><span class="sw" style="background:#DC2626"></span><span class="lbl">Health-care (medical)</span><span class="val">7¢</span></div>
+      <div class="row"><span class="sw" style="background:#16A34A"></span><span class="lbl">SG&amp;A &amp; operating</span><span class="val">4¢</span></div>
+      <div class="row"><span class="sw" style="background:#D97706"></span><span class="lbl">Intangible amortization</span><span class="val">1¢</span></div>
+      <div class="row surplus"><span class="sw" style="background:var(--signal)"></span><span class="lbl">Operating margin</span><span class="val">~1.8¢</span></div>
+    </div>
+
+    <p class="punchline reveal d2">
+      A 1.8% operating margin <b>at $265B</b> is still $4.7 billion. Volume is the moat.
+    </p>
+  </section>
+
+  <!-- ============================================================== -->
+  <!--  RESET BEAT 2 — DARK / WEIGHT                                    -->
+  <!-- ============================================================== -->
+  <div class="reset dark" data-screen-label="05 Reset · The bet">
+    <div class="label">A pause</div>
+    <p>Volume covers a thin margin. <span class="hot italic">A balance sheet, eventually, asks to be paid back.</span></p>
+  </div>
+
+  <!-- ============================================================== -->
+  <!--  THE BET — pill bottle of intangibles                            -->
+  <!-- ============================================================== -->
+  <section class="bet" data-screen-label="06 The bet">
+    <div class="reveal">
+      <span class="eyebrow">The bet · $111B in goodwill</span>
+      <h2>CVS bought its way <em>into</em> health care. Now it carries it.</h2>
+      <p class="body">$75B of equity, $8.5B of cash, and roughly <em>$111 billion</em> of goodwill and intangibles — a legacy of Aetna and Oak Street Health. In Q3 '25, $5.7B of that legacy was written down.</p>
+    </div>
+
+    <!-- pill bottle metaphor -->
+    <div class="scene reveal d1">
+      <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- cap -->
+        <rect x="80" y="10" width="160" height="30" rx="6" fill="#3a302c" stroke="#FF8270" stroke-width="0.6"/>
+        <rect x="80" y="36" width="160" height="6" fill="#1a1614"/>
+        <!-- bottle body -->
+        <rect x="64" y="42" width="192" height="208" rx="14" fill="#FF8270" opacity="0.06" stroke="#FF8270" stroke-width="1"/>
+        <!-- label -->
+        <rect x="78" y="74" width="164" height="120" rx="4" fill="#f1ece0"/>
+        <text x="86" y="96" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.4" fill="#8a8580">RX · GOODWILL &amp; INTANGIBLES</text>
+        <text x="86" y="128" font-family="Instrument Serif, serif" font-size="38" fill="#1a1614" letter-spacing="-1">~$111B</text>
+        <text x="86" y="148" font-family="Geist, sans-serif" font-size="9.5" fill="#5a5853">on the balance sheet</text>
+        <line x1="86" y1="160" x2="234" y2="160" stroke="#e0dbce" stroke-width="0.6" stroke-dasharray="2 2"/>
+        <text x="86" y="178" font-family="Geist Mono, monospace" font-size="8.5" letter-spacing="1.2" fill="#8a8580">IMPAIRED · Q3 '25</text>
+        <text x="86" y="190" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#C8102E">−$5.7B</text>
+        <!-- pills inside -->
+        <g>
+          <ellipse cx="100" cy="220" rx="14" ry="6" fill="#FF8270"/>
+          <ellipse cx="135" cy="222" rx="13" ry="5.5" fill="#f1ece0"/>
+          <ellipse cx="170" cy="218" rx="14" ry="6" fill="#FF8270" opacity="0.7"/>
+          <ellipse cx="205" cy="222" rx="14" ry="5.5" fill="#f1ece0"/>
+          <ellipse cx="232" cy="220" rx="11" ry="5" fill="#FF8270" opacity="0.5"/>
+          <ellipse cx="116" cy="232" rx="13" ry="5" fill="#f1ece0" opacity="0.7"/>
+          <ellipse cx="155" cy="234" rx="14" ry="5.5" fill="#FF8270" opacity="0.6"/>
+          <ellipse cx="192" cy="232" rx="13" ry="5" fill="#f1ece0" opacity="0.7"/>
+          <ellipse cx="220" cy="234" rx="11" ry="4.5" fill="#FF8270" opacity="0.5"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="stats reveal d2">
+      <div class="stat"><div class="num">$10.64<em>B</em></div><div class="lbl">Operating cash flow</div></div>
+      <div class="stat"><div class="num">$7.81<em>B</em></div><div class="lbl">Free cash flow</div></div>
+      <div class="stat"><div class="num">$2.83<em>B</em></div><div class="lbl">Capex deployed</div></div>
+      <div class="stat"><div class="num">$3.40<em>B</em></div><div class="lbl">Dividends paid</div></div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!--  FOOTPRINT                                                       -->
+  <!-- ============================================================== -->
+  <section class="footprint" data-screen-label="07 Footprint">
+    <div class="reveal">
+      <div class="eyebrow">Footprint · 9,000+ stores</div>
+      <h2>America's <em>drug counter.</em></h2>
+      <p class="body">CVS earns 98 cents of every revenue dollar inside the United States. The other 2 cents come from Puerto Rico and a handful of <em>elsewheres.</em></p>
+    </div>
+
+    <div class="map-wrap reveal d1">
+      <svg viewBox="0 0 380 220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- US silhouette (simplified) -->
+        <path d="M28 92 L42 78 L60 72 L78 70 L96 64 L120 60 L142 56 L168 54 L196 56 L224 58 L256 60 L286 64 L312 70 L334 78 L348 90 L352 104 L348 118 L342 132 L336 144 L334 158 L322 168 L300 174 L276 178 L256 182 L240 188 L222 192 L208 196 L194 196 L184 198 L176 196 L168 192 L158 184 L150 178 L138 178 L122 174 L102 168 L84 160 L70 152 L56 144 L44 132 L34 118 L28 104 Z"
+              fill="#f1ece0" stroke="#cfc8b8" stroke-width="0.8"/>
+        <!-- Florida -->
+        <path d="M260 184 L268 196 L274 208 L280 214 L284 208 L284 196 L278 188 L268 184 Z" fill="#f1ece0" stroke="#cfc8b8" stroke-width="0.8"/>
+        <!-- 9000 store dots — generated procedurally below -->
+        <g id="storeDots" fill="#C8102E"></g>
+        <!-- legend -->
+        <g font-family="Geist Mono, monospace" font-size="7.5" letter-spacing="1.2" fill="#6B6A65">
+          <text x="28" y="22" text-transform="uppercase">CVS PHARMACY · 9,000+ LOCATIONS</text>
+        </g>
+        <!-- PR dot -->
+        <circle cx="346" cy="208" r="5" fill="none" stroke="#C8102E" stroke-width="1"/>
+        <text x="346" y="220" font-family="Geist Mono, monospace" font-size="7" letter-spacing="0.8" fill="#6B6A65" text-anchor="middle">PR</text>
+      </svg>
+    </div>
+
+    <div class="map-meta reveal d2">
+      <div class="pair">
+        <div class="num">98<em>%</em></div>
+        <div class="lbl">Revenue · United States</div>
+      </div>
+      <div class="pair">
+        <div class="num">2<em>%</em></div>
+        <div class="lbl">Puerto Rico &amp; Other</div>
+      </div>
+      <div class="pair">
+        <div class="num">300K<em>+</em></div>
+        <div class="lbl">Employees</div>
+      </div>
+      <div class="pair">
+        <div class="num">~100M</div>
+        <div class="lbl">Customers served</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!--  RIVALS                                                          -->
+  <!-- ============================================================== -->
+  <section class="rivals" data-screen-label="08 Rivals">
+    <div class="reveal">
+      <div class="eyebrow">The competition · Three sides</div>
+      <h2>Pharma supply on one side, insurance on another, <em>Amazon</em> on the third.</h2>
+      <p class="body">CVS ($98B mkt cap) sits inside a triangle. Each rival comes at a different segment — and one of them is very, very large.</p>
+    </div>
+
+    <div class="rival-stage reveal d1">
+      <svg viewBox="0 0 360 380" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+        <!-- Amazon — enormous, drawn very large to dwarf the page; only the upper arc is visible -->
+        <circle cx="180" cy="900" r="800" fill="none" stroke="#C8102E" stroke-width="0.6" stroke-dasharray="3 3" opacity="0.55"/>
+        <text x="180" y="118" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="13" fill="#8E0B20">↑ Amazon · $2.69T market cap (off-page)</text>
+
+        <!-- McKesson — 106B -->
+        <circle cx="80" cy="200" r="64" fill="#C8102E" fill-opacity="0.10" stroke="#C8102E" stroke-width="0.8"/>
+        <circle cx="80" cy="200" r="3" fill="#C8102E"/>
+        <text x="80" y="190" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.2" fill="#1a1a1a">MCK</text>
+        <text x="80" y="208" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#1a1a1a">$106B</text>
+
+        <!-- CVS — 98B, centered -->
+        <circle cx="200" cy="220" r="60" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="0.8"/>
+        <text x="200" y="210" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.4" fill="#FAF8F2">CVS</text>
+        <text x="200" y="232" text-anchor="middle" font-family="Instrument Serif, serif" font-size="20" fill="#FAF8F2">$98B</text>
+
+        <!-- Cigna — 73B -->
+        <circle cx="290" cy="240" r="48" fill="#C8102E" fill-opacity="0.10" stroke="#C8102E" stroke-width="0.8"/>
+        <circle cx="290" cy="240" r="3" fill="#C8102E"/>
+        <text x="290" y="234" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.2" fill="#1a1a1a">CI</text>
+        <text x="290" y="250" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#1a1a1a">$73B</text>
+
+        <!-- connector lines, dotted -->
+        <line x1="140" y1="208" x2="142" y2="216" stroke="#cfc8b8" stroke-width="0.7" stroke-dasharray="2 2"/>
+        <line x1="240" y1="226" x2="245" y2="232" stroke="#cfc8b8" stroke-width="0.7" stroke-dasharray="2 2"/>
+
+        <!-- micro labels -->
+        <text x="80" y="278" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.2" fill="#6B6A65">DISTRIBUTION · PBM</text>
+        <text x="290" y="304" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.2" fill="#6B6A65">INSURANCE · PBM</text>
+        <text x="180" y="350" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.2" fill="#6B6A65">RETAIL · PBM · CARE</text>
+      </svg>
+    </div>
+
+    <div class="rival-list">
+      <!-- entries are tap-to-deepen -->
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!--  RESET BEAT 3                                                    -->
+  <!-- ============================================================== -->
+  <div class="reset" data-screen-label="09 Reset · The takeaway">
+    <div class="label">A pause</div>
+    <p>$265 billion in. <span class="hot italic">The story is what makes it out.</span></p>
+  </div>
+
+  <!-- ============================================================== -->
+  <!--  CLOSE                                                           -->
+  <!-- ============================================================== -->
+  <section class="close" data-screen-label="10 Close">
+    <span class="eyebrow reveal">The takeaway</span>
+    <h2 class="reveal d1">~<em>1.8 cents</em><br/>on every dollar.</h2>
+    <p class="lede reveal d2">A thin slice on a $265B revenue line. <em>$1.09 EPS</em>, a 67¢ quarterly dividend, and a balance sheet that has paused buybacks while it digests the last decade of acquisitions.</p>
+
+    <div class="ledger reveal d3">
+      <div class="row"><span>Q4 EPS</span><span class="v">$1.09</span></div>
+      <div class="row"><span>Dividend (quarterly)</span><span class="v">$0.67</span></div>
+      <div class="row hot"><span>Yield</span><span class="v italic">3.45%</span></div>
+      <div class="row"><span>Payout ratio (TTM)</span><span class="v">44.42%</span></div>
+      <div class="row"><span>Cash &amp; equivalents</span><span class="v">$8.45B</span></div>
+      <div class="row"><span>Shareholder equity</span><span class="v">$75.21B</span></div>
+    </div>
+
+    <div class="signoff">
+      <span class="scissor">- - - - ✂ - - - -</span>
+      End of receipt · CVS · FY ’25
+    </div>
+  </section>
+
+</div>
+
+<!-- ============================================================== -->
+<!--  Scripts                                                         -->
+<!-- ============================================================== -->
+<script>
+(function(){
+  // ---------------- Reveal-on-scroll ----------------
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        // chain reveals
+        if (e.target.matches('[data-reveal-children]')) {
+          e.target.querySelectorAll('.reveal').forEach((c,i)=>{
+            setTimeout(()=>c.classList.add('in'), i*80);
+          });
+        }
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ---------------- Progress hairline ----------------
+  const prog = document.getElementById('progress');
+  const updateProgress = () => {
+    const sc = window.scrollY;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = Math.max(0, Math.min(1, sc / Math.max(1, max)));
+    prog.style.setProperty('--p', (pct*100).toFixed(2) + '%');
+  };
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // ---------------- Receipt scroll-scrub ----------------
+  const receipt = document.getElementById('receipt');
+  if (receipt) {
+    const heroRect = () => receipt.getBoundingClientRect();
+    const scrub = () => {
+      const r = heroRect();
+      const vh = window.innerHeight;
+      const t = 1 - Math.max(0, Math.min(1, (r.top + r.height/2) / vh));
+      // grow receipt slightly as user scrolls into it
+      receipt.style.transform = `scaleY(${0.96 + t*0.06}) translateY(${(1-t)*6}px)`;
+    };
+    window.addEventListener('scroll', scrub, { passive: true });
+    scrub();
+  }
+
+  // ---------------- Count-up numbers ----------------
+  const counters = document.querySelectorAll('[data-count]');
+  const cio = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const target = parseFloat(el.dataset.count);
+      const decimals = parseInt(el.dataset.decimals || '0', 10);
+      const prefix = el.dataset.prefix || '';
+      const suffix = el.dataset.suffix || '';
+      const dur = 1400;
+      const t0 = performance.now();
+      const easeOut = t => 1 - Math.pow(1 - t, 3);
+      const tick = (now) => {
+        const t = Math.max(0, Math.min(1, (now - t0)/dur));
+        const v = target * easeOut(t);
+        el.textContent = prefix + v.toFixed(decimals) + suffix;
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+      cio.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(el => cio.observe(el));
+
+  // ---------------- Dollar grid: 100 cents ----------------
+  // Order matters: stack from top. 83 cogs, 7 medical, 4 sga, 1 amort, 5 surplus.
+  // (83+7+4+1 = 95; remaining 5 = the operating margin / what's left, of which ~1.8 is op margin proper.
+  //  We dramatize the 5 leftover cents in signal red, then call out 1.8% in copy.)
+  const grid = document.getElementById('dollarGrid');
+  if (grid) {
+    const cells = [];
+    const push = (n, cls) => { for (let i=0;i<n;i++) cells.push(cls); };
+    push(83, 'cogs');
+    push(7,  'med');
+    push(4,  'sga');
+    push(1,  'amort');
+    push(5,  'surplus');
+    // total: 100. Render in row-major — but flip vertically so surplus reads
+    // at the bottom (where survival lives in a ledger).
+    cells.forEach((cls) => {
+      const d = document.createElement('div');
+      d.className = 'cent ' + cls;
+      grid.appendChild(d);
+    });
+    // staggered fade-in when section enters viewport
+    const dio = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        grid.classList.add('in');
+        // stagger
+        Array.from(grid.children).forEach((c,i)=>{
+          c.style.transitionDelay = (i*8) + 'ms';
+        });
+        dio.unobserve(grid);
+      });
+    }, { threshold: 0.25 });
+    dio.observe(grid);
+  }
+
+  // ---------------- Store dots on the US map ----------------
+  const dotsG = document.getElementById('storeDots');
+  if (dotsG) {
+    // Sample plausible CVS-like density: more dots in NE corridor, FL, CA, TX.
+    // We'll sample candidate points inside a polygon-ish bounding region of
+    // our hand-drawn US silhouette and accept based on a density field.
+    const isInUS = (x, y) => {
+      // crude: inside bounding curve drawn in the SVG
+      if (x < 28 || x > 352) return false;
+      if (y < 56 || y > 196) return false;
+      // lop off northern corners
+      if (x < 80 && y < 80) return false;
+      if (x > 320 && y < 80) return false;
+      // lop off bottom-left (gulf)
+      if (x < 80 && y > 170) return false;
+      if (x > 290 && y > 188 && x < 330) return false;
+      return true;
+    };
+    const density = (x, y) => {
+      // hot zones: NE corridor, FL, CA, TX
+      let d = 0.15;
+      // NE
+      d += 0.55 * Math.exp(-(((x-300)**2)/280 + ((y-90)**2)/220));
+      // FL
+      d += 0.35 * Math.exp(-(((x-275)**2)/180 + ((y-180)**2)/120));
+      // CA
+      d += 0.45 * Math.exp(-(((x-50)**2)/240 + ((y-130)**2)/260));
+      // TX
+      d += 0.40 * Math.exp(-(((x-180)**2)/360 + ((y-170)**2)/240));
+      // Midwest
+      d += 0.25 * Math.exp(-(((x-200)**2)/600 + ((y-110)**2)/300));
+      return Math.min(1, d);
+    };
+    const N = 540;
+    let placed = 0, tries = 0;
+    const svgns = "http://www.w3.org/2000/svg";
+    while (placed < N && tries < N * 8) {
+      tries++;
+      const x = 28 + Math.random() * 324;
+      const y = 56 + Math.random() * 140;
+      if (!isInUS(x, y)) continue;
+      const d = density(x, y);
+      if (Math.random() > d) continue;
+      const r = 0.7 + Math.random() * 0.6;
+      const c = document.createElementNS(svgns, "circle");
+      c.setAttribute("cx", x.toFixed(1));
+      c.setAttribute("cy", y.toFixed(1));
+      c.setAttribute("r",  r.toFixed(2));
+      c.setAttribute("opacity", (0.55 + Math.random()*0.4).toFixed(2));
+      dotsG.appendChild(c);
+      placed++;
+    }
+  }
+
+  // ---------------- Rivals: tap-to-deepen rows ----------------
+  const rivals = [
+    {
+      name: "McKesson Corp", ticker: "MCK", cap: "$106B",
+      desc: "The largest pharmaceutical distributor in the US — competing directly with CVS's pharmacy distribution and PBM. Its scale in drug supply chain and specialty pharmacy increasingly <em>overlaps</em> with CVS Caremark's formulary and distribution capabilities.",
+      micro: [["Revenue","$359B"],["P/E TTM","24.45"],["YoY","+15.49%"]],
+    },
+    {
+      name: "Cigna Group", ticker: "CI", cap: "$73B",
+      desc: "Competes head-on across both Aetna insurance and Caremark PBM through Evernorth — vying for the same employer-sponsored health plan and <em>PBM contracts</em> nationwide.",
+      micro: [["Revenue","$233B"],["P/E TTM","12.33"],["YoY","+11.24%"]],
+    },
+    {
+      name: "Amazon.com", ticker: "AMZN", cap: "$2.69T",
+      desc: "An emerging and strategically significant threat through Amazon Pharmacy and One Medical — directly displacing CVS in prescription fulfillment, front-store consumer health, and increasingly in employer-sponsored <em>primary care.</em>",
+      micro: [["Revenue","$716.9B"],["P/E TTM","34.63"],["YoY","+12.38%"]],
+    },
+  ];
+  const rlist = document.querySelector('.rival-list');
+  rivals.forEach((r, idx) => {
+    const row = document.createElement('div');
+    row.className = 'rival';
+    row.innerHTML = `
+      <span class="swatch" style="background:${idx===2?'#1a1a1a':'#C8102E'}"></span>
+      <div>
+        <div class="name">${r.name}<span class="tk">${r.ticker}</span><span class="arrow"> ›</span></div>
+        <div class="rival-detail">
+          <div class="desc">${r.desc}</div>
+          <div class="micro">
+            ${r.micro.map(([l,v])=>`<div class="m"><div class="v">${v}</div><div class="l">${l}</div></div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="cap">${r.cap}<small>Mkt Cap</small></div>
+    `;
+    row.addEventListener('click', () => row.classList.toggle('open'));
+    rlist.appendChild(row);
+  });
+
+})();
+</script>
+
+</body>
+</html>

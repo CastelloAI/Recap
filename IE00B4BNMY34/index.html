@@ -1,0 +1,1758 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ACN · Recap FY '25</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<style>
+  /* -------------------------------------------------------------
+     Accenture recap — palette overrides on top of Zair DS
+     Institutional purple signal, paper warmth, ledger ink
+     ------------------------------------------------------------- */
+  :root {
+    --paper:   #F5F2EC;
+    --paper-2: #EBE6DC;
+    --paper-3: #DED6C7;
+    --ink:     #1A1410;
+    --ink-2:   #3D342C;
+    --ink-3:   #6D6457;
+    --ink-4:   #9B9485;
+    --line:    #DCD3C2;
+    --line-strong: #BBAF99;
+
+    /* Signal — Accenture-adjacent deep magenta-purple */
+    --signal:        #6B2BD9;
+    --signal-deep:   #4A1B9A;
+    --signal-soft:   #EDE3FB;
+    --signal-bright: #A06CFF;
+
+    /* Ledger ink for big numerals */
+    --ledger:    #1A1410;
+
+    /* Brand cost hexes — preserved exactly */
+    --c-cogs:    #4F86C6;
+    --c-sga:     #F4A261;
+    --c-rd:      #2A9D8F;
+    --c-da:      #E76F51;
+    --c-restr:   #9B5DE5;
+
+    --bg:           var(--paper);
+    --bg-raised:    #FBF9F4;
+    --bg-sunken:    var(--paper-2);
+    --bg-dark:      #15121C;
+    --bg-deep:      #0E0B14;
+
+    --accent:       var(--signal);
+    --accent-hover: var(--signal-deep);
+
+    /* Re-tune type display weight */
+    --h1-tracking: -0.03em;
+    --h2-tracking: -0.022em;
+  }
+
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  /* Mobile-sized canvas. ~ iPhone 14 width. */
+  .stage {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--bg);
+    position: relative;
+    box-shadow: 0 0 80px -10px rgba(20,20,30,0.08);
+    overflow: hidden;
+  }
+
+  /* ============================================================
+     STICKY CHROME
+     ============================================================ */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    background: rgba(245, 242, 236, 0.78);
+    border-bottom: 1px solid var(--line);
+  }
+  .chrome-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px 12px;
+  }
+  .chrome-left {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .chrome-tick {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .chrome-tick::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--signal);
+    margin-right: 8px;
+    vertical-align: middle;
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(107,43,217,0.16);
+  }
+  .chrome-name {
+    font-family: var(--font-display);
+    font-size: 15px;
+    color: var(--ink-2);
+    letter-spacing: -0.01em;
+  }
+  .chrome-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .progress-rail {
+    height: 1.5px;
+    background: var(--line);
+    position: relative;
+  }
+  .progress-fill {
+    position: absolute;
+    inset: 0 100% 0 0;
+    background: var(--signal);
+    transition: right 60ms linear;
+  }
+
+  /* ============================================================
+     PRIMITIVES
+     ============================================================ */
+  .beat {
+    padding: 72px 24px 64px;
+    position: relative;
+  }
+  .beat-tight {
+    padding: 48px 24px;
+  }
+
+  .eyebrow-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 28px;
+  }
+  .eyebrow-row .dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--signal);
+  }
+  .eyebrow-row .ch {
+    color: var(--signal);
+    font-weight: 500;
+  }
+  .eyebrow-row .pip {
+    color: var(--ink-4);
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.94;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .display em, em.it {
+    font-style: italic;
+    color: var(--signal);
+  }
+  .body-lg {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+  .body-lg em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--signal);
+    font-size: 1.05em;
+  }
+  .meta-line {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ============================================================
+     RESET BEATS — italic-serif on contrasting band
+     ============================================================ */
+  .reset {
+    padding: 56px 28px;
+    background: var(--paper-2);
+    position: relative;
+  }
+  .reset.dark {
+    background: var(--bg-dark);
+    color: #E9E4DB;
+  }
+  .reset.dark .reset-q { color: #F2EEE5; }
+  .reset.dark .reset-q em { color: var(--signal-bright); }
+  .reset-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    margin-bottom: 18px;
+  }
+  .reset.dark .reset-tag { color: #6E6358; }
+  .reset-q {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .reset-q em {
+    font-style: italic;
+    color: var(--signal);
+  }
+
+  /* ============================================================
+     HERO BEAT 1 — Thesis
+     ============================================================ */
+  .hero {
+    padding: 110px 24px 72px;
+    position: relative;
+    overflow: hidden;
+    min-height: 96vh;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 36px;
+  }
+  .hero-eyebrow .sep {
+    color: var(--ink-4);
+    margin: 0 10px;
+  }
+  .hero-h1 {
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+  }
+  .hero-h1 em {
+    font-style: italic;
+    color: var(--signal);
+  }
+  .hero-sub {
+    margin-top: 28px;
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 32ch;
+  }
+  .hero-sub em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--signal);
+  }
+  .hero-stat {
+    margin-top: 52px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .hero-num {
+    font-family: var(--font-display);
+    font-size: 88px;
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .hero-num-tag {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    max-width: 12ch;
+    line-height: 1.4;
+  }
+  /* Workforce field — animated dot canvas backdrop */
+  .hero-field {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.55;
+    z-index: 0;
+  }
+  .hero > * { position: relative; z-index: 1; }
+  .hero-meta {
+    margin-top: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+  .hero-meta-row {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .hero-meta-row .v {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .scroll-cue {
+    margin-top: 22px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .scroll-cue .arrow {
+    width: 18px;
+    height: 1px;
+    background: var(--ink-4);
+    position: relative;
+    animation: pulseDown 2s ease-in-out infinite;
+  }
+  @keyframes pulseDown {
+    0%, 100% { transform: translateY(0); opacity: 0.6; }
+    50%      { transform: translateY(4px); opacity: 1; }
+  }
+
+  /* ============================================================
+     BEAT 2 — TWO RIVERS (revenue split)
+     ============================================================ */
+  .rivers-wrap {
+    margin-top: 36px;
+    position: relative;
+  }
+  .rivers-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .rivers-cap {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+  }
+  .rivers-cap .lab {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .rivers-cap .v {
+    font-family: var(--font-display);
+    font-size: 30px;
+    color: var(--ink);
+    margin-top: 4px;
+    letter-spacing: -0.02em;
+  }
+  .rivers-cap .sub {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+  .rivers-rule {
+    margin-top: 28px;
+    font-family: var(--font-display);
+    font-size: 19px;
+    line-height: 1.35;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .rivers-rule em {
+    color: var(--signal);
+  }
+
+  /* ============================================================
+     BEAT 3 — WORKFORCE FIELD
+     ============================================================ */
+  .field-stage {
+    margin-top: 24px;
+    background: var(--bg-raised);
+    padding: 22px 18px 24px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .field-num {
+    font-family: var(--font-display);
+    font-size: 72px;
+    line-height: 0.9;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    font-feature-settings: 'tnum';
+  }
+  .field-num em {
+    font-style: italic;
+    color: var(--signal);
+  }
+  .field-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+  .field-canvas {
+    margin-top: 20px;
+    width: 100%;
+    height: 220px;
+    display: block;
+  }
+  .field-mini {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+  .field-mini .n {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .field-mini .l {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 2px;
+    line-height: 1.35;
+  }
+
+  /* ============================================================
+     BEAT 4 — A DOLLAR DISSECTED
+     ============================================================ */
+  .dollar-stage {
+    margin-top: 28px;
+  }
+  .dollar-grid {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    overflow: hidden;
+  }
+  .dollar-cell {
+    border-right: 1px solid rgba(255,255,255,0.5);
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    transition: background-color 600ms var(--ease-out);
+    background: var(--paper-2);
+  }
+  .dollar-cap {
+    margin-top: 16px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .dollar-legend {
+    margin-top: 24px;
+  }
+  .dollar-row {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+  }
+  .dollar-row:last-child { border-bottom: 1px solid var(--line); }
+  .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+  }
+  .dollar-lab {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .dollar-pct {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    font-feature-settings: 'tnum';
+  }
+  .dollar-survives {
+    margin-top: 28px;
+    padding: 22px 20px;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .dollar-survives .s-num {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 56px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--signal-bright);
+  }
+  .dollar-survives .s-lab {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(245,242,236,0.7);
+    text-align: right;
+    line-height: 1.4;
+    max-width: 14ch;
+  }
+
+  /* ============================================================
+     BEAT 5 — FOOTPRINT
+     ============================================================ */
+  .horizon {
+    margin-top: 32px;
+  }
+  .horizon-row {
+    margin-bottom: 28px;
+  }
+  .horizon-row:last-child { margin-bottom: 0; }
+  .horizon-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .horizon-region {
+    font-family: var(--font-display);
+    font-size: 24px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .horizon-pct {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    font-feature-settings: 'tnum';
+  }
+  .horizon-bar {
+    height: 6px;
+    background: var(--paper-2);
+    position: relative;
+    overflow: hidden;
+  }
+  .horizon-fill {
+    position: absolute;
+    inset: 0 100% 0 0;
+    background: var(--signal);
+    transition: right 1200ms var(--ease-out);
+  }
+  .horizon-row:nth-child(2) .horizon-fill { background: var(--signal-bright); }
+  .horizon-row:nth-child(3) .horizon-fill { background: var(--ink-2); }
+  .horizon-tally {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .horizon-tally .n {
+    font-family: var(--font-display);
+    font-size: 30px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .horizon-tally .l {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 4px;
+    line-height: 1.35;
+  }
+
+  /* ============================================================
+     BEAT 6 — THE BET (dark beat — the earned tonal interlude)
+     ============================================================ */
+  .bet {
+    background: var(--bg-deep);
+    color: #ECE6DA;
+    padding: 88px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bet .eyebrow-row { color: #7A6F62; }
+  .bet .eyebrow-row .ch { color: var(--signal-bright); }
+  .bet .display {
+    color: #F1ECE0;
+  }
+  .bet .display em {
+    color: var(--signal-bright);
+  }
+  .bet-glow {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(160,108,255,0.32) 0%, rgba(107,43,217,0) 60%);
+    top: -120px;
+    right: -160px;
+    pointer-events: none;
+  }
+  .bet-rail {
+    margin-top: 38px;
+    position: relative;
+  }
+  .bet-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .bet-stats {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .bet-stat {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: 18px;
+    padding: 22px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .bet-stat .n {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    color: #F1ECE0;
+    font-style: italic;
+    min-width: 4.5ch;
+  }
+  .bet-stat .n .accent { color: var(--signal-bright); }
+  .bet-stat .l {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.45;
+    color: #B5AC9D;
+  }
+  .bet-stat .l strong {
+    font-weight: 500;
+    color: #ECE6DA;
+  }
+  .bet-foot {
+    margin-top: 30px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 21px;
+    line-height: 1.3;
+    color: #ECE6DA;
+    letter-spacing: -0.012em;
+  }
+  .bet-foot .glow { color: var(--signal-bright); }
+
+  /* ============================================================
+     BEAT 7 — COMPETITION
+     ============================================================ */
+  .comp-stage {
+    margin-top: 30px;
+  }
+  .comp-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+    cursor: pointer;
+    transition: padding 200ms var(--ease-out);
+  }
+  .comp-row:last-child { border-bottom: 1px solid var(--line); }
+  .comp-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .comp-name {
+    font-family: var(--font-display);
+    font-size: 24px;
+    letter-spacing: -0.018em;
+    color: var(--ink);
+  }
+  .comp-tick {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    align-self: center;
+  }
+  .comp-mc {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    font-feature-settings: 'tnum';
+  }
+  .comp-bars {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    align-items: center;
+    gap: 10px;
+    row-gap: 8px;
+  }
+  .comp-bar-lab {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .comp-bar-track {
+    position: relative;
+    height: 4px;
+    background: var(--paper-2);
+  }
+  .comp-bar-fill {
+    position: absolute;
+    inset: 0 100% 0 0;
+    background: var(--signal);
+    transition: right 1200ms var(--ease-out);
+  }
+  .comp-bar-fill.theirs { background: var(--ink-2); }
+  .comp-detail {
+    grid-column: 1 / -1;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 380ms var(--ease-out), margin-top 380ms var(--ease-out);
+    margin-top: 0;
+  }
+  .comp-row.open .comp-detail {
+    max-height: 320px;
+    margin-top: 16px;
+  }
+  .comp-detail-text {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+  .comp-detail-text em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--signal);
+  }
+  .comp-tap {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    margin-top: 10px;
+  }
+  .comp-row.open .comp-tap { color: var(--signal); }
+  .comp-summary {
+    margin-top: 28px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.32;
+    color: var(--ink);
+  }
+  .comp-summary em { color: var(--signal); }
+
+  /* ============================================================
+     BEAT 8 — CLOSE
+     ============================================================ */
+  .close {
+    padding: 96px 24px 120px;
+    position: relative;
+  }
+  .close-line {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.94;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+  }
+  .close-line em {
+    font-style: italic;
+    color: var(--signal);
+  }
+  .close-coin {
+    margin-top: 48px;
+    width: 200px;
+    height: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+  .close-num {
+    margin-top: 28px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 96px;
+    line-height: 0.85;
+    letter-spacing: -0.045em;
+    color: var(--signal);
+    text-align: center;
+  }
+  .close-cap {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: center;
+  }
+  .close-foot {
+    margin-top: 60px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 14px;
+  }
+  .close-foot .n {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .close-foot .l {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+  .close-final {
+    margin-top: 64px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+  .close-final .acc {
+    color: var(--signal);
+  }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <!-- =============================================================
+       PERSISTENT CHROME
+       ============================================================= -->
+  <header class="chrome" role="banner">
+    <div class="chrome-inner">
+      <div class="chrome-left">
+        <span class="chrome-tick">ACN</span>
+        <span class="chrome-name">Accenture</span>
+      </div>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="progress-rail" aria-hidden="true">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </header>
+
+  <!-- =============================================================
+       BEAT 1 — HERO / THESIS
+       "A workforce, rented by the hour."
+       ============================================================= -->
+  <section class="hero" data-screen-label="01 Hero">
+    <canvas class="hero-field" id="heroField"></canvas>
+
+    <div class="hero-eyebrow reveal">
+      <span>NYSE · ACN</span>
+      <span class="sep">·</span>
+      <span>Dublin, IE</span>
+      <span class="sep">·</span>
+      <span>FY '25</span>
+    </div>
+
+    <h1 class="hero-h1 reveal">
+      A workforce,<br/>
+      <em>rented by the hour.</em>
+    </h1>
+
+    <p class="hero-sub reveal">
+      Accenture doesn't ship a product. It ships <em>people</em> — to fix the system, build the model, run the back office, hold the pen.
+    </p>
+
+    <div class="hero-stat reveal">
+      <span class="hero-num" id="heroNum">779,000</span>
+      <span class="hero-num-tag">Employees on the bench, on the call, on the bill.</span>
+    </div>
+
+    <div class="hero-meta reveal">
+      <div class="hero-meta-row">Mkt Cap<br/><span class="v">$121.35B</span></div>
+      <div class="hero-meta-row">Revenue FY'25<br/><span class="v">$69.67B</span></div>
+      <div class="hero-meta-row">Op Margin<br/><span class="v">14.7%</span></div>
+    </div>
+
+    <div class="scroll-cue reveal">Scroll <span class="arrow"></span></div>
+  </section>
+
+  <!-- =============================================================
+       RESET BEAT
+       ============================================================= -->
+  <section class="reset" data-screen-label="R1 Reset">
+    <div class="reset-tag">— Interlude</div>
+    <p class="reset-q reveal">
+      You can't ship code with a balance sheet.<br/>
+      <em>You ship it with people.</em>
+    </p>
+  </section>
+
+  <!-- =============================================================
+       BEAT 2 — TWO RIVERS (revenue split)
+       ============================================================= -->
+  <section class="beat" data-screen-label="02 Two Rivers">
+    <div class="eyebrow-row reveal">
+      <span class="dot"></span>
+      <span class="ch">Ch. 02 · The business</span>
+      <span class="pip">·</span>
+      <span>$69.67B</span>
+    </div>
+
+    <h2 class="display reveal" style="font-size: 40px;">
+      Two rivers,<br/>
+      <em>one delta.</em>
+    </h2>
+
+    <p class="body-lg reveal" style="margin-top: 22px;">
+      Revenue arrives in two streams of nearly equal volume — one project, one persistent. Over <em>60%</em> of the work is fixed-price.
+    </p>
+
+    <div class="rivers-wrap reveal">
+      <svg class="rivers-svg" viewBox="0 0 380 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="rg1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6B2BD9" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#6B2BD9" stop-opacity="0.45"/>
+          </linearGradient>
+          <linearGradient id="rg2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#A06CFF" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#A06CFF" stop-opacity="0.45"/>
+          </linearGradient>
+        </defs>
+        <!-- River 1 — Consulting -->
+        <path d="M 30 0 C 30 60, 80 80, 80 130 C 80 180, 150 200, 190 230 L 190 260 L 0 260 L 0 0 Z" fill="url(#rg1)" />
+        <!-- River 2 — Outsourcing -->
+        <path d="M 350 0 C 350 60, 300 80, 300 130 C 300 180, 230 200, 190 230 L 190 260 L 380 260 L 380 0 Z" fill="url(#rg2)" />
+        <!-- Delta band -->
+        <rect x="0" y="230" width="380" height="30" fill="#1A1410" opacity="0.92"/>
+        <text x="190" y="250" text-anchor="middle" fill="#F5F2EC" font-family="Geist Mono, monospace" font-size="10" letter-spacing="2">$69.67B  ·  ONE COMPANY</text>
+
+        <!-- River labels -->
+        <text x="55" y="40" fill="#FFFFFF" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.5">CONSULTING</text>
+        <text x="55" y="56" fill="#FFFFFF" font-family="Instrument Serif, serif" font-size="22" font-style="italic">$35.1B</text>
+        <text x="280" y="40" fill="#FFFFFF" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.5">OUTSOURCING</text>
+        <text x="280" y="56" fill="#FFFFFF" font-family="Instrument Serif, serif" font-size="22" font-style="italic">$34.6B</text>
+      </svg>
+    </div>
+
+    <div class="rivers-cap reveal">
+      <div>
+        <div class="lab">Strategy & Consulting</div>
+        <div class="v">$35.1<span style="font-size: 18px; color: var(--ink-3);">B</span></div>
+        <div class="sub">Project · advisory · build</div>
+      </div>
+      <div>
+        <div class="lab">Managed Services</div>
+        <div class="v">$34.6<span style="font-size: 18px; color: var(--ink-3);">B</span></div>
+        <div class="sub">Operations · Industry X · Song</div>
+      </div>
+    </div>
+
+    <p class="rivers-rule reveal" style="margin-top: 36px;">
+      Five capabilities — <em>Strategy, Technology, Operations, Industry X, Song</em> — funnel through one umbrella the company renamed in 2025: <em>Reinvention Services</em>.
+    </p>
+  </section>
+
+  <!-- =============================================================
+       BEAT 3 — WORKFORCE FIELD
+       ============================================================= -->
+  <section class="beat" data-screen-label="03 Scale" style="background: var(--paper-2);">
+    <div class="eyebrow-row reveal">
+      <span class="dot"></span>
+      <span class="ch">Ch. 03 · The scale</span>
+      <span class="pip">·</span>
+      <span>9,000 clients</span>
+    </div>
+
+    <h2 class="display reveal" style="font-size: 40px;">
+      The asset<br/><em>is the headcount.</em>
+    </h2>
+
+    <p class="body-lg reveal" style="margin-top: 20px;">
+      Each dot below is a thousand people. Watch the field fill.
+    </p>
+
+    <div class="field-stage reveal">
+      <span class="field-tag">EMPLOYEES, FY '25</span>
+      <div class="field-num"><em id="fieldNum">779,000</em></div>
+      <canvas class="field-canvas" id="workforceCanvas"></canvas>
+      <div class="field-mini">
+        <div>
+          <div class="n">9,000</div>
+          <div class="l">Active clients</div>
+        </div>
+        <div>
+          <div class="n">3 <span style="font-size: 18px; color: var(--ink-3);">/ 4</span></div>
+          <div class="l">Of the F. Global 500</div>
+        </div>
+        <div>
+          <div class="n">120<span style="font-size: 18px; color: var(--ink-3);">+</span></div>
+          <div class="l">Countries served</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="rivers-rule reveal" style="margin-top: 28px;">
+      <em>351 locations.</em> The map is wide because the work is <em>where the work is.</em>
+    </p>
+  </section>
+
+  <!-- =============================================================
+       RESET BEAT — DARK
+       ============================================================= -->
+  <section class="reset dark" data-screen-label="R2 Reset">
+    <div class="reset-tag">— Interlude</div>
+    <p class="reset-q reveal">
+      A dollar of revenue<br/>
+      walks in the door.<br/>
+      <em>How much walks out?</em>
+    </p>
+  </section>
+
+  <!-- =============================================================
+       BEAT 4 — A DOLLAR DISSECTED
+       ============================================================= -->
+  <section class="beat" data-screen-label="04 The Dollar">
+    <div class="eyebrow-row reveal">
+      <span class="dot"></span>
+      <span class="ch">Ch. 04 · A hundred cents in</span>
+      <span class="pip">·</span>
+      <span>$1.00</span>
+    </div>
+
+    <h2 class="display reveal" style="font-size: 40px;">
+      Where the<br/><em>dollar goes.</em>
+    </h2>
+
+    <p class="body-lg reveal" style="margin-top: 20px;">
+      Cost of revenue — overwhelmingly <em>people</em> — eats <em>sixty‑eight cents</em> of every dollar before the lights are on.
+    </p>
+
+    <div class="dollar-stage reveal">
+      <div class="dollar-grid" id="dollarGrid" aria-hidden="true">
+        <!-- 100 cells — JS fills them -->
+      </div>
+      <div class="dollar-cap">
+        <span>1¢ = 1% of revenue</span>
+        <span>FY '25 · GAAP</span>
+      </div>
+    </div>
+
+    <div class="dollar-legend reveal">
+      <div class="dollar-row">
+        <span class="swatch" style="background: #4F86C6;"></span>
+        <span class="dollar-lab">Cost of revenue</span>
+        <span class="dollar-pct">68¢</span>
+      </div>
+      <div class="dollar-row">
+        <span class="swatch" style="background: #F4A261;"></span>
+        <span class="dollar-lab">SG&amp;A</span>
+        <span class="dollar-pct">17¢</span>
+      </div>
+      <div class="dollar-row">
+        <span class="swatch" style="background: #E76F51;"></span>
+        <span class="dollar-lab">Depreciation &amp; amortization</span>
+        <span class="dollar-pct">2¢</span>
+      </div>
+      <div class="dollar-row">
+        <span class="swatch" style="background: #2A9D8F;"></span>
+        <span class="dollar-lab">R&amp;D and innovation</span>
+        <span class="dollar-pct">1¢</span>
+      </div>
+      <div class="dollar-row">
+        <span class="swatch" style="background: #9B5DE5;"></span>
+        <span class="dollar-lab">Restructuring &amp; optimization</span>
+        <span class="dollar-pct">1¢</span>
+      </div>
+    </div>
+
+    <div class="dollar-survives reveal">
+      <span class="s-num">14.7¢</span>
+      <span class="s-lab">Operating<br/>margin survives</span>
+    </div>
+  </section>
+
+  <!-- =============================================================
+       RESET BEAT
+       ============================================================= -->
+  <section class="reset" data-screen-label="R3 Reset">
+    <div class="reset-tag">— Interlude</div>
+    <p class="reset-q reveal">
+      The map matters because<br/>
+      <em>the work is local.</em>
+    </p>
+  </section>
+
+  <!-- =============================================================
+       BEAT 5 — FOOTPRINT
+       ============================================================= -->
+  <section class="beat" data-screen-label="05 Footprint">
+    <div class="eyebrow-row reveal">
+      <span class="dot"></span>
+      <span class="ch">Ch. 05 · The footprint</span>
+      <span class="pip">·</span>
+      <span>351 locations</span>
+    </div>
+
+    <h2 class="display reveal" style="font-size: 40px;">
+      Three<br/><em>horizons.</em>
+    </h2>
+
+    <p class="body-lg reveal" style="margin-top: 18px;">
+      Revenue by region. The Americas anchor; <em>EMEA</em> still pays its share; APAC carries the smallest ledger and the most upside.
+    </p>
+
+    <div class="horizon reveal">
+      <div class="horizon-row">
+        <div class="horizon-meta">
+          <span class="horizon-region">Americas</span>
+          <span class="horizon-pct">50%</span>
+        </div>
+        <div class="horizon-bar"><div class="horizon-fill" data-pct="50"></div></div>
+      </div>
+      <div class="horizon-row">
+        <div class="horizon-meta">
+          <span class="horizon-region">EMEA</span>
+          <span class="horizon-pct">35%</span>
+        </div>
+        <div class="horizon-bar"><div class="horizon-fill" data-pct="35"></div></div>
+      </div>
+      <div class="horizon-row">
+        <div class="horizon-meta">
+          <span class="horizon-region">Asia Pacific</span>
+          <span class="horizon-pct">15%</span>
+        </div>
+        <div class="horizon-bar"><div class="horizon-fill" data-pct="15"></div></div>
+      </div>
+    </div>
+
+    <div class="horizon-tally reveal">
+      <div>
+        <div class="n">120<span style="font-size:18px;color:var(--ink-3)">+</span></div>
+        <div class="l">Countries</div>
+      </div>
+      <div>
+        <div class="n">351</div>
+        <div class="l">Locations</div>
+      </div>
+      <div>
+        <div class="n">$18.04B</div>
+        <div class="l">Q2 FY'26 rev.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================================
+       BEAT 6 — THE BET (DARK BAND — earned tonal interlude)
+       ============================================================= -->
+  <section class="bet" data-screen-label="06 The Bet">
+    <div class="bet-glow" aria-hidden="true"></div>
+
+    <div class="eyebrow-row reveal">
+      <span class="dot" style="background: var(--signal-bright);"></span>
+      <span class="ch">Ch. 06 · The bet</span>
+      <span class="pip">·</span>
+      <span>AI · M&amp;A · CAPEX</span>
+    </div>
+
+    <h2 class="display reveal" style="font-size: 44px;">
+      AI is the<br/><em>new billable hour.</em>
+    </h2>
+
+    <p class="reveal" style="margin-top: 22px; font-family: var(--font-sans); font-size: 15px; line-height: 1.55; color: #B5AC9D; max-width: 36ch;">
+      The pitch — for a quarter‑century — was reinvention. The product the consultancy now reinvents itself with is generative AI, and the pace shows in the bookings.
+    </p>
+
+    <div class="bet-rail reveal">
+      <svg class="bet-svg" viewBox="0 0 380 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="aiBar1" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#A06CFF" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#A06CFF" stop-opacity="1"/>
+          </linearGradient>
+        </defs>
+        <text x="0" y="14" fill="#7A6F62" font-family="Geist Mono, monospace" font-size="9" letter-spacing="2">FY '24 → FY '25  ·  ADVANCED AI REVENUE TRIPLED</text>
+        <!-- Prior year bar -->
+        <rect x="0" y="26" width="84" height="14" fill="#3B3543" />
+        <text x="0" y="20" fill="#7A6F62" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1">~ $0.9B</text>
+        <!-- Current bar (animated) -->
+        <rect class="ai-bar" x="0" y="50" width="252" height="14" fill="url(#aiBar1)" />
+        <text x="258" y="62" fill="#A06CFF" font-family="Instrument Serif, serif" font-style="italic" font-size="20">$2.7B</text>
+        <text x="0" y="84" fill="#7A6F62" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1">FY '25</text>
+      </svg>
+    </div>
+
+    <div class="bet-stats">
+      <div class="bet-stat reveal">
+        <span class="n"><span class="accent">$5.9B</span></span>
+        <span class="l"><strong>Gen AI bookings</strong> in FY '25, ≈60% of revenue tied to top tech‑ecosystem partners.</span>
+      </div>
+      <div class="bet-stat reveal">
+        <span class="n"><span class="accent">$1.5B</span></span>
+        <span class="l"><strong>Spent on M&amp;A</strong> across <em style="color:#A06CFF;font-style:italic">23 deals</em> in FY '25 alone.</span>
+      </div>
+      <div class="bet-stat reveal">
+        <span class="n"><span class="accent">$10.87B</span></span>
+        <span class="l"><strong>Free cash flow</strong> after $600M of capex — fuels the buying.</span>
+      </div>
+      <div class="bet-stat reveal">
+        <span class="n"><span class="accent">$24.95B</span></span>
+        <span class="l"><strong>Goodwill &amp; intangibles</strong> on the balance sheet — the receipts of two decades of buying capability.</span>
+      </div>
+    </div>
+
+    <p class="bet-foot reveal">
+      A <span class="glow">near debt‑free</span> balance sheet ($114M of debt against $31.2B equity) lets the company keep paying — <em>and keep buying.</em>
+    </p>
+  </section>
+
+  <!-- =============================================================
+       RESET BEAT
+       ============================================================= -->
+  <section class="reset" data-screen-label="R4 Reset">
+    <div class="reset-tag">— Interlude</div>
+    <p class="reset-q reveal">
+      But the consultancy now has rivals it<br/>
+      <em>didn't have five years ago.</em>
+    </p>
+  </section>
+
+  <!-- =============================================================
+       BEAT 7 — COMPETITION
+       ============================================================= -->
+  <section class="beat" data-screen-label="07 Competition">
+    <div class="eyebrow-row reveal">
+      <span class="dot"></span>
+      <span class="ch">Ch. 07 · The rivals</span>
+      <span class="pip">·</span>
+      <span>Tap to expand</span>
+    </div>
+
+    <h2 class="display reveal" style="font-size: 40px;">
+      Three kinds of<br/><em>threat.</em>
+    </h2>
+
+    <p class="body-lg reveal" style="margin-top: 20px;">
+      Sized by market cap. Bars below show <em>revenue</em> and <em>YoY growth</em> against Accenture's $69.67B revenue and the consensus mid‑single‑digit growth.
+    </p>
+
+    <div class="comp-stage" id="compStage">
+
+      <div class="comp-row reveal" data-comp="0">
+        <div class="comp-head">
+          <span class="comp-name">Dell</span>
+          <span class="comp-tick">DELL</span>
+          <span class="comp-mc">MC $126.92B</span>
+        </div>
+        <div class="comp-bars">
+          <span class="comp-bar-lab">Revenue</span>
+          <div class="comp-bar-track"><div class="comp-bar-fill theirs" data-pct="100"></div></div>
+          <span class="comp-bar-lab">vs ACN</span>
+          <div class="comp-bar-track"><div class="comp-bar-fill" data-pct="61"></div></div>
+          <span class="comp-bar-lab">YoY</span>
+          <div class="comp-bar-track"><div class="comp-bar-fill theirs" data-pct="94"></div></div>
+        </div>
+        <div class="comp-detail">
+          <p class="comp-detail-text">
+            Hardware giant pivoting into <em>end‑to‑end digital infrastructure</em>. $113.54B revenue, growing <em>18.8%</em> YoY — the same Fortune 500 buyers, the same AI deployment dollars.
+          </p>
+        </div>
+        <div class="comp-tap">+ Tap to expand</div>
+      </div>
+
+      <div class="comp-row reveal" data-comp="1">
+        <div class="comp-head">
+          <span class="comp-name">Salesforce</span>
+          <span class="comp-tick">CRM</span>
+          <span class="comp-mc">MC $168.12B</span>
+        </div>
+        <div class="comp-bars">
+          <span class="comp-bar-lab">Revenue</span>
+          <div class="comp-bar-track"><div class="comp-bar-fill theirs" data-pct="60"></div></div>
+          <span class="comp-bar-lab">vs ACN</span>
+          <div class="comp-bar-track"><div class="comp-bar-fill" data-pct="100"></div></div>
+          <span class="comp-bar-lab">YoY</span>
+          <div class="comp-bar-track"><div class="comp-bar-fill theirs" data-pct="48"></div></div>
+        </div>
+        <div class="comp-detail">
+          <p class="comp-detail-text">
+            $41.52B revenue, <em>9.58%</em> growth. <em>Agentforce</em> is the threat: a platform that displaces Accenture‑led CRM and workflow engagements rather than complements them.
+          </p>
+        </div>
+        <div class="comp-tap">+ Tap to expand</div>
+      </div>
+
+      <div class="comp-row reveal" data-comp="2">
+        <div class="comp-head">
+          <span class="comp-name">ServiceNow</span>
+          <span class="comp-tick">NOW</span>
+          <span class="comp-mc">MC $107.81B</span>
+        </div>
+        <div class="comp-bars">
+          <span class="comp-bar-lab">Revenue</span>
+          <div class="comp-bar-track"><div class="comp-bar-fill theirs" data-pct="19"></div></div>
+          <span class="comp-bar-lab">vs ACN</span>
+          <div class="comp-bar-track"><div class="comp-bar-fill" data-pct="100"></div></div>
+          <span class="comp-bar-lab">YoY</span>
+          <div class="comp-bar-track"><div class="comp-bar-fill theirs" data-pct="100"></div></div>
+        </div>
+        <div class="comp-detail">
+          <p class="comp-detail-text">
+            $13.28B revenue, <em>20.88%</em> growth, P/E 61.67 — the market is paying for software that lets enterprises <em>self‑execute</em> the transformation Accenture used to be hired to run.
+          </p>
+        </div>
+        <div class="comp-tap">+ Tap to expand</div>
+      </div>
+
+    </div>
+
+    <p class="comp-summary reveal">
+      The threat isn't a bigger consultancy. It's <em>software that does the consulting.</em>
+    </p>
+  </section>
+
+  <!-- =============================================================
+       BEAT 8 — THE CLOSE (inverts the open)
+       ============================================================= -->
+  <section class="close" data-screen-label="08 Close">
+    <div class="eyebrow-row reveal">
+      <span class="dot"></span>
+      <span class="ch">Ch. 08 · The takeaway</span>
+      <span class="pip">·</span>
+      <span>$1.00 → ?</span>
+    </div>
+
+    <h2 class="close-line reveal">
+      A workforce<br/>
+      walks in.<br/>
+      <em>A coupon walks out.</em>
+    </h2>
+
+    <!-- Coin SVG — visual closer -->
+    <svg class="close-coin reveal" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <radialGradient id="coinG" cx="0.4" cy="0.35">
+          <stop offset="0%" stop-color="#A06CFF"/>
+          <stop offset="60%" stop-color="#6B2BD9"/>
+          <stop offset="100%" stop-color="#4A1B9A"/>
+        </radialGradient>
+      </defs>
+      <circle cx="100" cy="100" r="92" fill="url(#coinG)" opacity="0.95"/>
+      <circle cx="100" cy="100" r="92" fill="none" stroke="#1A1410" stroke-opacity="0.18" stroke-width="2"/>
+      <circle cx="100" cy="100" r="80" fill="none" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1"/>
+      <text x="100" y="92" text-anchor="middle" fill="#FBF9F4" font-family="Geist Mono, monospace" font-size="9" letter-spacing="3">RETURN</text>
+      <text x="100" y="125" text-anchor="middle" fill="#FBF9F4" font-family="Instrument Serif, serif" font-style="italic" font-size="42">$8.3B</text>
+      <text x="100" y="142" text-anchor="middle" fill="#FBF9F4" opacity="0.7" font-family="Geist Mono, monospace" font-size="7" letter-spacing="2">TO SHAREHOLDERS · FY '25</text>
+    </svg>
+
+    <div class="close-num reveal">15¢</div>
+    <div class="close-cap reveal">survives, per dollar of revenue</div>
+
+    <div class="close-foot">
+      <div class="reveal">
+        <div class="n">$4.62B</div>
+        <div class="l">Buybacks FY '25</div>
+      </div>
+      <div class="reveal">
+        <div class="n">$3.7B</div>
+        <div class="l">Dividends FY '25</div>
+      </div>
+      <div class="reveal">
+        <div class="n">20+</div>
+        <div class="l">Yrs of dividend hikes</div>
+      </div>
+      <div class="reveal">
+        <div class="n">$9.3B</div>
+        <div class="l">Guided FY '26 returns</div>
+      </div>
+    </div>
+
+    <p class="reveal" style="margin-top: 56px; font-family: var(--font-display); font-style: italic; font-size: 22px; line-height: 1.32; color: var(--ink); letter-spacing: -0.012em;">
+      Opened on <em class="it">779,000 people.</em><br/>
+      Closes on <em class="it">fifteen cents</em> — and the dividend the fifteen cents pays.
+    </p>
+
+    <div class="close-final reveal">
+      ACN  <span class="acc">·</span>  END OF RECAP
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ================================================================
+   1) SCROLL PROGRESS — fills the chrome hairline
+   ================================================================ */
+const progressFill = document.getElementById('progressFill');
+function updateProgress() {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const p = max > 0 ? Math.min(1, Math.max(0, h.scrollTop / max)) : 0;
+  progressFill.style.right = (100 - p * 100) + '%';
+}
+document.addEventListener('scroll', updateProgress, { passive: true });
+window.addEventListener('resize', updateProgress);
+updateProgress();
+
+/* ================================================================
+   2) REVEAL ON SCROLL
+   ================================================================ */
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      const el = e.target;
+      // Slight stagger for siblings — based on index in parent
+      const idx = Array.from(el.parentNode.children).indexOf(el);
+      el.style.transitionDelay = Math.min(idx, 6) * 60 + 'ms';
+      el.classList.add('in');
+      revealObs.unobserve(el);
+    }
+  });
+}, { threshold: 0.18, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach((el) => revealObs.observe(el));
+
+/* ================================================================
+   3) HERO WORKFORCE FIELD — particles drifting
+   ================================================================ */
+(function heroField() {
+  const c = document.getElementById('heroField');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let w, h, dpr;
+  let particles = [];
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = c.clientWidth = c.parentElement.clientWidth;
+    h = c.clientHeight = c.parentElement.clientHeight;
+    c.width = w * dpr; c.height = h * dpr;
+    ctx.scale(dpr, dpr);
+    particles = [];
+    const N = Math.floor((w * h) / 2400);
+    for (let i = 0; i < N; i++) {
+      particles.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 1.2 + 0.4,
+        vx: (Math.random() - 0.5) * 0.12,
+        vy: (Math.random() - 0.5) * 0.08 + 0.04,
+        a: Math.random() * 0.6 + 0.2
+      });
+    }
+  }
+  function tick() {
+    ctx.clearRect(0, 0, w, h);
+    for (const p of particles) {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
+      if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
+      ctx.fillStyle = `rgba(107, 43, 217, ${p.a})`;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+    }
+    requestAnimationFrame(tick);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  tick();
+})();
+
+/* ================================================================
+   4) HERO COUNT-UP — 779,000 employees
+   ================================================================ */
+(function heroCount() {
+  const el = document.getElementById('heroNum');
+  if (!el) return;
+  const target = 779000;
+  let started = false;
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting && !started) {
+        started = true;
+        const dur = 1800, t0 = performance.now();
+        function step(t) {
+          const k = Math.min(1, (t - t0) / dur);
+          const eased = 1 - Math.pow(1 - k, 3);
+          const v = Math.round(target * eased);
+          el.textContent = v.toLocaleString('en-US');
+          if (k < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+    });
+  }, { threshold: 0.5 });
+  obs.observe(el);
+})();
+
+/* ================================================================
+   5) WORKFORCE CANVAS — 779 dots forming a field
+   ================================================================ */
+(function workforce() {
+  const c = document.getElementById('workforceCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let w, h, dpr;
+  const COLS = 38, ROWS = 21;     /* 38 × 21 = 798 ≈ 779 + buffer */
+  const TOTAL = 779;
+  let progress = 0;
+  let started = false;
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = c.clientWidth = c.parentElement.clientWidth;
+    h = c.clientHeight = 220;
+    c.width = w * dpr; c.height = h * dpr;
+    ctx.scale(dpr, dpr);
+    draw();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    const padX = 4, padY = 4;
+    const dx = (w - padX * 2) / (COLS - 1);
+    const dy = (h - padY * 2) / (ROWS - 1);
+    let i = 0;
+    const filled = Math.floor(TOTAL * progress);
+    for (let r = 0; r < ROWS; r++) {
+      for (let col = 0; col < COLS; col++) {
+        if (i >= TOTAL) break;
+        const x = padX + col * dx;
+        const y = padY + r * dy;
+        const lit = i < filled;
+        ctx.fillStyle = lit ? '#6B2BD9' : 'rgba(107,43,217,0.10)';
+        ctx.beginPath();
+        ctx.arc(x, y, lit ? 1.7 : 1.1, 0, Math.PI * 2);
+        ctx.fill();
+        i++;
+      }
+    }
+  }
+
+  function animate() {
+    const dur = 2000, t0 = performance.now();
+    function step(t) {
+      const k = Math.min(1, (t - t0) / dur);
+      progress = 1 - Math.pow(1 - k, 3);
+      draw();
+      if (k < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting && !started) {
+        started = true;
+        animate();
+      }
+    });
+  }, { threshold: 0.4 });
+  obs.observe(c);
+})();
+
+/* ================================================================
+   6) DOLLAR GRID — 100 cents, colored by cost bucket
+   ================================================================ */
+(function dollarGrid() {
+  const grid = document.getElementById('dollarGrid');
+  if (!grid) return;
+  // Order: cogs 68, sga 17, da 2, rd 1, restr 1 → 89 colored, 11 = margin (uses ink dark)
+  // But spec gave costs that sum to 89%. The remaining 11% is op income + interest etc.
+  // We'll show 68/17/2/1/1 = 89 cells of cost colors, and 11 cells of "margin" in deep ink.
+  const buckets = [
+    { n: 68, color: '#4F86C6' },
+    { n: 17, color: '#F4A261' },
+    { n: 2,  color: '#E76F51' },
+    { n: 1,  color: '#2A9D8F' },
+    { n: 1,  color: '#9B5DE5' },
+    { n: 11, color: '#1A1410' },     /* what's left → operating + below */
+  ];
+  const seq = [];
+  buckets.forEach((b) => { for (let i = 0; i < b.n; i++) seq.push(b.color); });
+  // Build cells
+  for (let i = 0; i < 100; i++) {
+    const d = document.createElement('div');
+    d.className = 'dollar-cell';
+    d.dataset.idx = i;
+    grid.appendChild(d);
+  }
+  let started = false;
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting && !started) {
+        started = true;
+        const cells = grid.querySelectorAll('.dollar-cell');
+        cells.forEach((cell, i) => {
+          setTimeout(() => {
+            cell.style.backgroundColor = seq[i];
+          }, 18 * i);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  obs.observe(grid);
+})();
+
+/* ================================================================
+   7) HORIZON BARS — animate fill
+   ================================================================ */
+(function horizon() {
+  const bars = document.querySelectorAll('.horizon-fill, .comp-bar-fill');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        const el = e.target;
+        const pct = parseFloat(el.dataset.pct || 0);
+        requestAnimationFrame(() => {
+          el.style.right = (100 - pct) + '%';
+        });
+        obs.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+  bars.forEach((b) => obs.observe(b));
+})();
+
+/* ================================================================
+   8) AI BAR — scroll-scrubbed grow
+   ================================================================ */
+(function aiBar() {
+  const bar = document.querySelector('.ai-bar');
+  if (!bar) return;
+  let started = false;
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting && !started) {
+        started = true;
+        bar.setAttribute('width', '0');
+        const dur = 1400, t0 = performance.now();
+        function step(t) {
+          const k = Math.min(1, (t - t0) / dur);
+          const eased = 1 - Math.pow(1 - k, 3);
+          bar.setAttribute('width', String(252 * eased));
+          if (k < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+    });
+  }, { threshold: 0.5 });
+  obs.observe(bar);
+})();
+
+/* ================================================================
+   9) COMPETITORS — tap to expand
+   ================================================================ */
+(function competitors() {
+  const rows = document.querySelectorAll('.comp-row');
+  rows.forEach((r) => {
+    r.addEventListener('click', () => {
+      r.classList.toggle('open');
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

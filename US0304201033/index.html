@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>AWK — American Water Works</title>
+<!--
+  THESIS: AWK is a government-sanctioned perpetuity that grows by burying
+  capital in the ground. The $3.13B/year it spends on pipes is the fact
+  everything hinges on — because every dollar in the ground becomes rate
+  base, and rate base becomes an allowed return for decades.
+
+  Archetype: M (Utility / Dividend Stalwart / Bond Proxy)
+  Metaphor: The pipe cross-section — descending underground through layers
+    of infrastructure into the rate base beneath.
+  Palette: Reservoir blue (monochrome value scale) + paper cream, with
+    coral reserved as the single alarm color for the killer stat.
+  Treatment: Swiss precision meets editorial magazine.
+
+  Section order (editorial dependency):
+    1. HOOK — 14M people · the quiet scale (opens on service)
+    2. THE INVERSION — capex > op cashflow. The number that explains it all.
+    3. THE MACHINE — how pipes become rate base becomes return
+    4. THE TERRITORY — 14 states as a monopoly map
+    5. THE COST STACK — where O&M + D&A + interest fit the toll
+    6. THE MOAT — Essential Utilities merger, scale comparison
+    7. THE PERPETUITY — dividend stream, the payoff
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* =============================================================
+   Zair Naqvi DS tokens — inlined for single-file mobile delivery
+   ============================================================= */
+:root{
+  --paper:#FBFAF7; --paper-2:#F4F2ED; --paper-3:#ECEAE3;
+  --ink:#141414; --ink-2:#3B3A37; --ink-3:#6B6A65; --ink-4:#A4A29C;
+  --line:#E4E1D9; --line-strong:#CFCBC0;
+  --coral-400:#FF7A57; --coral-500:#F25A37; --coral-600:#D6411F; --coral-50:#FFF1EC;
+
+  /* Reservoir blue — monochrome value scale derived for AWK */
+  --res-50:#EEF4F8;
+  --res-100:#D7E3EC;
+  --res-200:#A9C1D3;
+  --res-300:#6E95B0;
+  --res-400:#3F6C8D;
+  --res-500:#1F4868;
+  --res-600:#132F46;
+  --res-700:#0A1D2C;
+  --res-900:#05111B;
+
+  --font-display:'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:'Geist Mono', 'SF Mono', ui-monospace, monospace;
+
+  --ease-out:cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring:cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-languid:cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:var(--font-sans);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+body{overflow-x:hidden}
+
+/* Fluid page width — we target mobile, but behave on tablet */
+main{max-width:460px;margin:0 auto;position:relative;background:var(--paper);overflow:hidden}
+
+/* Progress bar */
+.progress{position:fixed;top:0;left:0;right:0;height:2px;background:transparent;z-index:100;max-width:460px;margin:0 auto}
+.progress__bar{height:100%;width:0%;background:var(--coral-400);transition:width 80ms linear}
+
+/* Ticker bar (sticky, sparse) */
+.ticker{position:sticky;top:0;z-index:50;background:rgba(251,250,247,0.82);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;font-family:var(--font-mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-3)}
+.ticker__sym{color:var(--ink);font-weight:500}
+.ticker__dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--coral-400);margin-right:6px;vertical-align:middle;animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.85)}}
+
+/* Generic section rhythm */
+section{padding:72px 24px;position:relative}
+.section-pad-tight{padding:44px 24px}
+.reset{padding:48px 24px;min-height:30dvh;display:flex;align-items:center}
+
+/* Eyebrow */
+.eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;font-weight:500;color:var(--res-400);margin:0 0 20px}
+
+/* Display heads */
+.display{font-family:var(--font-display);font-weight:400;line-height:0.95;letter-spacing:-0.025em;margin:0}
+.italic-display{font-family:var(--font-display);font-style:italic;font-weight:400}
+
+/* Hero */
+.hero{min-height:100dvh;display:flex;flex-direction:column;justify-content:space-between;padding:80px 24px 40px;position:relative;overflow:hidden}
+.hero__topline{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.hero__topline .meta{font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3)}
+.hero__wordmark{font-family:var(--font-display);font-size:80px;line-height:0.9;letter-spacing:-0.035em;font-weight:400;color:var(--ink);margin:16px 0 4px}
+.hero__wordmark .dot{color:var(--coral-400)}
+.hero__sub{font-family:var(--font-display);font-style:italic;font-size:26px;line-height:1.15;color:var(--res-500);max-width:14ch;margin-top:8px}
+.hero__rule{height:1px;background:var(--line);margin:28px 0 20px}
+.hero__stats{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px;margin-top:8px}
+.hstat__num{font-family:var(--font-display);font-size:42px;line-height:1;color:var(--ink);letter-spacing:-0.02em}
+.hstat__num sup{font-size:18px;color:var(--res-400);margin-left:2px;vertical-align:super}
+.hstat__label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);margin-top:6px;line-height:1.3}
+
+/* Water surface / drifting waves behind hero */
+.hero__water{position:absolute;left:0;right:0;bottom:0;height:140px;pointer-events:none;opacity:0.55;overflow:hidden}
+.hero__water svg{position:absolute;bottom:0;width:200%;height:100%}
+.hero__water svg:nth-child(1){animation:drift 18s linear infinite;fill:var(--res-100)}
+.hero__water svg:nth-child(2){animation:drift 26s linear infinite reverse;fill:var(--res-50);opacity:0.7}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* Scroll cue */
+.scrollcue{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--ink-3);font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;margin-top:auto;padding-top:40px;position:relative;z-index:2}
+.scrollcue__line{width:1px;height:28px;background:var(--ink-3);position:relative;overflow:hidden}
+.scrollcue__line::after{content:'';position:absolute;top:-28px;left:0;width:1px;height:28px;background:var(--coral-400);animation:scrolldown 2s ease-in-out infinite}
+@keyframes scrolldown{0%{top:-28px}100%{top:28px}}
+
+/* === ACT 1 — THE INVERSION ===
+   The $3.13B capex vs $2.06B op cashflow: negative FCF by design.
+*/
+.inversion{background:var(--paper);position:relative;padding-top:84px;padding-bottom:84px}
+.inversion__lede{font-family:var(--font-display);font-style:italic;font-size:20px;line-height:1.35;color:var(--ink-2);margin-bottom:36px;text-wrap:pretty}
+.inversion__lede .dropcap{font-family:var(--font-display);font-style:normal;font-size:68px;line-height:0.78;float:left;margin:6px 10px -2px 0;color:var(--res-500)}
+
+.bars{position:relative;margin:32px 0 28px}
+.bar{margin-bottom:28px}
+.bar__label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.bar__label-lhs{font-family:var(--font-mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3)}
+.bar__label-rhs{font-family:var(--font-display);font-size:30px;line-height:1;color:var(--ink);letter-spacing:-0.02em}
+.bar__track{position:relative;height:44px;background:var(--paper-2);border-radius:2px;overflow:hidden}
+.bar__fill{position:absolute;left:0;top:0;height:100%;width:0;transition:width 1.6s var(--ease-languid);border-radius:2px}
+.bar__fill--in{background:linear-gradient(90deg, var(--res-300), var(--res-500))}
+.bar__fill--out{background:linear-gradient(90deg, var(--coral-400), var(--coral-500))}
+.bar__fill::after{content:'';position:absolute;right:0;top:0;bottom:0;width:2px;background:rgba(255,255,255,0.55)}
+.bar__caption{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);margin-top:8px}
+
+.delta{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px 0;margin-top:8px;display:flex;align-items:baseline;justify-content:space-between}
+.delta__tag{font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral-500)}
+.delta__num{font-family:var(--font-display);font-size:46px;line-height:1;color:var(--coral-500);letter-spacing:-0.02em}
+.delta__minus{opacity:0.6;margin-right:2px}
+
+.pullquote{font-family:var(--font-display);font-style:italic;font-size:22px;line-height:1.32;color:var(--res-600);margin:36px 0 0;padding-left:16px;border-left:2px solid var(--coral-400);max-width:32ch;text-wrap:pretty}
+
+/* === RESET BEAT === */
+.reset-dark{background:var(--res-700);color:var(--res-100);min-height:32dvh;padding:56px 24px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.reset-dark p{font-family:var(--font-display);font-style:italic;font-size:24px;line-height:1.3;color:var(--res-100);margin:0;max-width:24ch;text-wrap:pretty}
+.reset-dark .meta{font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--res-300);margin-bottom:16px}
+.reset-dark__drip{position:absolute;right:24px;top:50%;transform:translateY(-50%);width:2px;height:60%;background:linear-gradient(180deg,transparent,var(--res-400),transparent);opacity:0.5}
+.reset-dark__drip::after{content:'';position:absolute;left:-3px;top:0;width:8px;height:8px;border-radius:50%;background:var(--res-200);box-shadow:0 0 12px var(--res-300);animation:drip 3.2s ease-in-out infinite}
+@keyframes drip{0%{top:0;opacity:0}15%{opacity:1}85%{opacity:1}100%{top:100%;opacity:0}}
+
+/* === ACT 2 — THE MACHINE (sticky scroll-through) ===
+   As you scroll, dollars descend from "rates" down through "capex"
+   into "rate base" — the mechanism of a regulated utility.
+*/
+.machine{position:relative;background:var(--paper)}
+.machine__sticky{position:sticky;top:0;height:100dvh;display:flex;flex-direction:column;justify-content:center;padding:24px;overflow:hidden}
+.machine__title{margin-bottom:24px}
+.machine__title .eyebrow{color:var(--coral-500)}
+.machine__h{font-family:var(--font-display);font-size:38px;line-height:1.02;letter-spacing:-0.02em;margin:4px 0 0;color:var(--ink)}
+.machine__h em{font-style:italic;color:var(--res-500)}
+
+.pipe{position:relative;height:58dvh;min-height:420px;width:100%;max-width:360px;margin:16px auto 0;border-left:1px solid var(--line);border-right:1px solid var(--line);background:linear-gradient(180deg, var(--paper) 0%, var(--res-50) 40%, var(--res-100) 100%)}
+.pipe__layer{position:absolute;left:0;right:0;padding:10px 12px;border-top:1px dashed var(--line-strong);transition:opacity 500ms var(--ease-out), transform 500ms var(--ease-out);opacity:0.35}
+.pipe__layer.is-active{opacity:1}
+.pipe__layer-l1{top:0}
+.pipe__layer-l2{top:25%}
+.pipe__layer-l3{top:52%}
+.pipe__layer-l4{top:78%;border-bottom:1px dashed var(--line-strong)}
+.pipe__layer .tag{font-family:var(--font-mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--res-400)}
+.pipe__layer .val{font-family:var(--font-display);font-size:28px;line-height:1;color:var(--ink);margin-top:2px}
+.pipe__layer .note{font-size:12px;color:var(--ink-3);margin-top:4px;line-height:1.35;max-width:24ch}
+
+/* Flowing dollar particles inside the pipe */
+.pipe__flow{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none}
+.pipe__drop{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--coral-400);opacity:0;box-shadow:0 0 8px rgba(242,90,55,0.5)}
+
+.machine__spacer{height:160vh}
+
+.machine__cap{padding:56px 24px 72px;background:var(--paper)}
+.machine__cap p{font-family:var(--font-display);font-style:italic;font-size:19px;line-height:1.4;color:var(--ink-2);max-width:32ch;text-wrap:pretty;margin:0}
+
+/* === ACT 2 — COST STACK ===
+   Horizontal composition bar — the toll's composition.
+*/
+.costs{padding:72px 24px;background:var(--paper-2)}
+.costs__head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.costs__head h3{font-family:var(--font-display);font-size:32px;line-height:1;letter-spacing:-0.02em;margin:0;color:var(--ink)}
+.costs__head .sub{font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3)}
+
+.stack{display:flex;width:100%;height:56px;border-radius:3px;overflow:hidden;margin:28px 0 16px;box-shadow:0 2px 8px rgba(10,29,44,0.08)}
+.stack__seg{position:relative;height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-mono);font-size:10px;font-weight:500;transition:flex 800ms var(--ease-out)}
+.stack__seg[data-seg="om"]{background:var(--res-500)}
+.stack__seg[data-seg="da"]{background:var(--res-400)}
+.stack__seg[data-seg="int"]{background:var(--coral-500)}
+.stack__seg[data-seg="tax"]{background:var(--res-300)}
+.stack__seg[data-seg="inc"]{background:var(--res-200);color:var(--res-700)}
+.stack__seg[data-seg="net"]{background:var(--paper-3);color:var(--ink-2)}
+
+.legend{display:grid;grid-template-columns:1fr;gap:0;border-top:1px solid var(--line);margin-top:24px}
+.lg-row{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.lg-sw{width:14px;height:14px;border-radius:2px}
+.lg-name{font-family:var(--font-sans);font-size:14px;color:var(--ink);font-weight:500}
+.lg-name .small{display:block;font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-3);font-weight:400;margin-top:2px}
+.lg-pct{font-family:var(--font-display);font-size:24px;color:var(--ink);letter-spacing:-0.01em}
+
+.callout-interest{margin-top:16px;padding:14px 16px;background:var(--coral-50);border-left:3px solid var(--coral-400);border-radius:0 6px 6px 0}
+.callout-interest .meta{font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral-600);margin-bottom:6px}
+.callout-interest p{font-family:var(--font-sans);font-size:14px;line-height:1.5;color:var(--ink-2);margin:0;max-width:32ch}
+
+/* === ACT 2/3 — THE TERRITORY (14 states) === */
+.territory{padding:72px 24px;background:var(--paper)}
+.territory h3{font-family:var(--font-display);font-size:32px;line-height:1.05;letter-spacing:-0.02em;margin:0 0 8px;color:var(--ink)}
+.territory .italic-display{color:var(--res-500)}
+.territory__intro{font-family:var(--font-sans);font-size:14px;line-height:1.5;color:var(--ink-3);max-width:32ch;margin:8px 0 24px}
+
+.regions{display:grid;grid-template-columns:1fr;gap:0;margin-top:16px}
+.region{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;transition:background 180ms var(--ease-out)}
+.region:active{background:var(--paper-2)}
+.region__name{font-family:var(--font-sans);font-size:15px;color:var(--ink);font-weight:500}
+.region__sub{display:block;font-family:var(--font-mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);font-weight:400;margin-top:3px}
+.region__bar{grid-column:1 / 3;height:4px;background:var(--paper-2);border-radius:2px;margin-top:10px;overflow:hidden}
+.region__fill{height:100%;background:var(--res-400);border-radius:2px;width:0;transition:width 1200ms var(--ease-languid)}
+.region__pct{font-family:var(--font-display);font-size:24px;color:var(--ink);letter-spacing:-0.01em}
+
+.people-strip{margin-top:28px;padding:20px 0;border-top:1px solid var(--line);display:flex;align-items:baseline;gap:14px}
+.people-strip__num{font-family:var(--font-display);font-size:44px;line-height:1;color:var(--res-500);letter-spacing:-0.02em}
+.people-strip__cap{font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);max-width:22ch;line-height:1.5}
+
+/* === RESET 2 === */
+.reset-light{background:var(--coral-50);padding:48px 24px;min-height:28dvh;display:flex;align-items:center}
+.reset-light p{font-family:var(--font-display);font-style:italic;font-size:22px;line-height:1.32;color:var(--coral-700);margin:0;max-width:26ch;text-wrap:pretty}
+
+/* === ACT 3 — THE MOAT (Essential Utilities merger) === */
+.moat{padding:72px 24px;background:var(--paper)}
+.moat h3{font-family:var(--font-display);font-size:32px;line-height:1.05;letter-spacing:-0.02em;margin:0 0 16px;color:var(--ink)}
+
+.scalecmp{margin:28px 0 20px}
+.scalecmp__row{margin-bottom:18px}
+.scalecmp__label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.scalecmp__name{font-family:var(--font-sans);font-size:14px;font-weight:500;color:var(--ink)}
+.scalecmp__name .ticker-inline{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;color:var(--ink-3);margin-left:6px}
+.scalecmp__mcap{font-family:var(--font-mono);font-size:12px;color:var(--ink-2);letter-spacing:0.02em}
+.scalecmp__track{height:18px;background:var(--paper-2);border-radius:2px;overflow:hidden;position:relative}
+.scalecmp__fill{height:100%;background:var(--res-500);width:0;transition:width 1400ms var(--ease-languid)}
+.scalecmp__row.is-awk .scalecmp__fill{background:var(--ink)}
+.scalecmp__row.is-target .scalecmp__fill{background:var(--coral-400)}
+
+.merger{margin-top:32px;padding:20px;background:var(--res-700);color:var(--res-100);border-radius:4px;position:relative;overflow:hidden}
+.merger__tag{font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral-400);margin-bottom:10px}
+.merger__eq{font-family:var(--font-display);font-size:36px;line-height:1.05;letter-spacing:-0.02em;margin:8px 0;color:#fff}
+.merger__eq .plus{color:var(--coral-400);font-style:italic;margin:0 8px}
+.merger__note{font-family:var(--font-sans);font-size:13px;line-height:1.5;color:var(--res-200);margin-top:10px;max-width:34ch}
+
+/* === FINAL — THE PERPETUITY === */
+.perpetuity{padding:84px 24px 72px;background:var(--paper);position:relative;overflow:hidden}
+.perpetuity__head{margin-bottom:36px}
+.perpetuity h3{font-family:var(--font-display);font-size:40px;line-height:1;letter-spacing:-0.025em;margin:8px 0 0;color:var(--ink)}
+.perpetuity h3 em{font-style:italic;color:var(--coral-500)}
+
+.metronome{display:flex;align-items:flex-end;justify-content:center;gap:6px;height:110px;margin:32px 0 28px;padding:0 8px}
+.metronome__beat{width:6px;background:var(--res-300);border-radius:2px;transform-origin:bottom;animation:beat 2.2s ease-in-out infinite}
+.metronome__beat.is-current{background:var(--coral-400);box-shadow:0 0 10px rgba(255,122,87,0.4)}
+@keyframes beat{0%,100%{transform:scaleY(0.6)}50%{transform:scaleY(1)}}
+
+.divstat{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.divstat__cell .val{font-family:var(--font-display);font-size:38px;line-height:1;color:var(--ink);letter-spacing:-0.02em}
+.divstat__cell .val em{font-style:italic;color:var(--res-500)}
+.divstat__cell .cap{font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);margin-top:8px;line-height:1.4}
+
+.perpetuity__close{margin-top:40px;padding:28px 0 0;border-top:1px solid var(--line)}
+.perpetuity__close .italic-display{font-size:26px;line-height:1.2;color:var(--ink);display:block;max-width:26ch;text-wrap:pretty}
+.perpetuity__close .sig{font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);margin-top:20px}
+
+/* Footer */
+footer{padding:28px 24px 40px;background:var(--res-900);color:var(--res-200);font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+footer .mark{color:var(--coral-400)}
+
+/* Entrance animations */
+.fade-in{opacity:0;transform:translateY(14px);transition:opacity 620ms var(--ease-out), transform 620ms var(--ease-out)}
+.fade-in.is-in{opacity:1;transform:translateY(0)}
+[data-stagger]>*{opacity:0;transform:translateY(12px);transition:opacity 560ms var(--ease-out), transform 560ms var(--ease-out)}
+[data-stagger].is-in>*{opacity:1;transform:translateY(0)}
+[data-stagger].is-in>*:nth-child(1){transition-delay:0ms}
+[data-stagger].is-in>*:nth-child(2){transition-delay:60ms}
+[data-stagger].is-in>*:nth-child(3){transition-delay:120ms}
+[data-stagger].is-in>*:nth-child(4){transition-delay:180ms}
+[data-stagger].is-in>*:nth-child(5){transition-delay:240ms}
+[data-stagger].is-in>*:nth-child(6){transition-delay:300ms}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:0.01ms !important;transition-duration:0.01ms !important;animation-iteration-count:1 !important}
+  .fade-in,[data-stagger]>*{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="progress" aria-hidden="true"><div class="progress__bar" id="progBar"></div></div>
+
+<main>
+
+  <!-- Sticky ticker bar -->
+  <div class="ticker">
+    <span><span class="ticker__dot"></span>NYSE&nbsp;·&nbsp;<span class="ticker__sym">AWK</span></span>
+    <span>Apr 24, 2026</span>
+  </div>
+
+  <!-- ============================================================
+       ACT 1 — THE HOOK
+       The quiet scale. 14 million people, 14 states, since 1886.
+       But what sets up the whole page is the italic sub that tells
+       you this is NOT a normal business: it grows by burying money.
+       ============================================================ -->
+  <section class="hero">
+    <div>
+      <div class="hero__topline">
+        <span class="meta">American Water Works Company</span>
+        <span class="meta">FY 2025</span>
+      </div>
+      <h1 class="hero__wordmark">AWK<span class="dot">.</span></h1>
+      <p class="hero__sub">A monopoly that grows by burying money in the ground.</p>
+
+      <div class="hero__rule"></div>
+
+      <div class="hero__stats" data-stagger>
+        <div class="hstat">
+          <div class="hstat__num" data-count="14" data-suffix="M">0</div>
+          <div class="hstat__label">People served<br/>across 14 states</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat__num" data-count="5.14" data-prefix="$" data-suffix="B" data-dec="2">0</div>
+          <div class="hstat__label">FY25 revenue<br/>+9.7% YoY</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat__num" data-count="1886">0</div>
+          <div class="hstat__label">Founded<br/>140 years of pipes</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat__num" data-count="25.7" data-prefix="$" data-suffix="B" data-dec="1">0</div>
+          <div class="hstat__label">Market cap<br/>only pure-play U.S. water</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scrollcue">
+      <span>Scroll</span>
+      <span class="scrollcue__line"></span>
+    </div>
+
+    <!-- Drifting water surface -->
+    <div class="hero__water" aria-hidden="true">
+      <svg viewBox="0 0 1200 140" preserveAspectRatio="none"><path d="M0,80 C200,40 400,120 600,80 C800,40 1000,120 1200,80 L1200,140 L0,140 Z M1200,80 C1400,40 1600,120 1800,80 C2000,40 2200,120 2400,80 L2400,140 L1200,140 Z"/></svg>
+      <svg viewBox="0 0 1200 140" preserveAspectRatio="none"><path d="M0,100 C200,70 400,130 600,100 C800,70 1000,130 1200,100 L1200,140 L0,140 Z M1200,100 C1400,70 1600,130 1800,100 C2000,70 2200,130 2400,100 L2400,140 L1200,140 Z"/></svg>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ACT 1 — THE INVERSION
+       This is the hook's payoff. A regulated utility spends MORE
+       on capex than it earns in operating cash. That's not a bug.
+       That's the business model. Every dollar in the ground
+       becomes rate base. Rate base becomes allowed return.
+       ============================================================ -->
+  <section class="inversion">
+    <p class="eyebrow fade-in">The inversion</p>
+    <h2 class="display fade-in" style="font-size:38px;line-height:1.04;margin-bottom:24px;">The fact that<br/><em class="italic-display">breaks your intuition.</em></h2>
+
+    <p class="inversion__lede fade-in"><span class="dropcap">A</span>WK spent $3.13 billion on infrastructure last year and collected $2.06 billion in cash from operations. It did this on purpose. The gap is the business.</p>
+
+    <div class="bars fade-in">
+      <div class="bar">
+        <div class="bar__label">
+          <span class="bar__label-lhs">Cash in · operations</span>
+          <span class="bar__label-rhs" data-count="2.06" data-prefix="$" data-suffix="B" data-dec="2">0</span>
+        </div>
+        <div class="bar__track"><div class="bar__fill bar__fill--in" data-width="65"></div></div>
+        <div class="bar__caption">Operating cash flow, FY2025</div>
+      </div>
+      <div class="bar">
+        <div class="bar__label">
+          <span class="bar__label-lhs">Cash out · into pipes</span>
+          <span class="bar__label-rhs" data-count="3.13" data-prefix="$" data-suffix="B" data-dec="2">0</span>
+        </div>
+        <div class="bar__track"><div class="bar__fill bar__fill--out" data-width="100"></div></div>
+        <div class="bar__caption">Capital expenditure, FY2025</div>
+      </div>
+    </div>
+
+    <div class="delta fade-in">
+      <span class="delta__tag">Free cash flow</span>
+      <span class="delta__num"><span class="delta__minus">−</span>$1.07<span style="font-size:28px;">B</span></span>
+    </div>
+
+    <p class="pullquote fade-in">Every dollar buried in the ground comes back as rate base — a guaranteed return, set by a state commission, paid by every customer for the next 50 years.</p>
+  </section>
+
+  <!-- ============================================================
+       RESET BEAT — the metaphor distilled
+       ============================================================ -->
+  <section class="reset-dark">
+    <div class="reset-dark__drip"></div>
+    <p class="meta fade-in">The mechanism</p>
+    <p class="fade-in">Spend capital. Earn it back slowly. For a century.</p>
+  </section>
+
+  <!-- ============================================================
+       ACT 2 — THE MACHINE
+       Sticky scroll-through. As you scroll, each layer of the
+       pipe lights up — rates → capex → rate base → allowed return.
+       A continuous scroll-linked animation (Tier 1 per Section 4.7).
+       ============================================================ -->
+  <section class="machine" id="machine">
+    <div class="machine__spacer">
+      <div class="machine__sticky" id="machineSticky">
+        <div class="machine__title">
+          <p class="eyebrow">How the machine runs</p>
+          <h3 class="machine__h">Rates become<br/><em>pipes become rate base</em><br/>becomes return.</h3>
+        </div>
+        <div class="pipe" id="pipe">
+          <div class="pipe__layer pipe__layer-l1" data-layer="1">
+            <div class="tag">1 · Customer rates</div>
+            <div class="val">3.5M</div>
+            <div class="note">Active connections. Rates set by state PUCs.</div>
+          </div>
+          <div class="pipe__layer pipe__layer-l2" data-layer="2">
+            <div class="tag">2 · Capex into infrastructure</div>
+            <div class="val">$3.13B</div>
+            <div class="note">Pipes, plants, mains, treatment, replaced & renewed.</div>
+          </div>
+          <div class="pipe__layer pipe__layer-l3" data-layer="3">
+            <div class="tag">3 · Becomes rate base</div>
+            <div class="val">$10.84B</div>
+            <div class="note">Equity on which commissions allow an authorized return.</div>
+          </div>
+          <div class="pipe__layer pipe__layer-l4" data-layer="4">
+            <div class="tag">4 · Compounds as EPS & dividend</div>
+            <div class="val">7–9%<span style="font-size:14px;color:var(--ink-3);margin-left:4px;">/yr target</span></div>
+            <div class="note">Guided annual EPS &amp; dividend growth.</div>
+          </div>
+          <div class="pipe__flow" id="pipeFlow"></div>
+        </div>
+      </div>
+    </div>
+    <div class="machine__cap">
+      <p class="fade-in">This is what a regulated utility actually is — a pipe that converts capital investment into decades of allowed return. The bigger the pipe, the bigger the perpetuity.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ACT 2 — THE COST STACK
+       Not a pie. A horizontal composition bar — the toll's anatomy.
+       The coral segment (interest) draws attention; everything else
+       is reservoir-blue monochrome value scale.
+       ============================================================ -->
+  <section class="costs">
+    <div class="costs__head fade-in">
+      <div>
+        <p class="eyebrow" style="color:var(--coral-500);margin-bottom:8px;">Where the revenue goes</p>
+        <h3>The toll's anatomy.</h3>
+      </div>
+      <span class="sub">% of revenue</span>
+    </div>
+
+    <div class="stack fade-in" id="costStack" aria-label="Cost composition">
+      <div class="stack__seg" data-seg="om" style="flex:0 0 0%" data-final="28">28%</div>
+      <div class="stack__seg" data-seg="da" style="flex:0 0 0%" data-final="17">17%</div>
+      <div class="stack__seg" data-seg="int" style="flex:0 0 0%" data-final="11">11%</div>
+      <div class="stack__seg" data-seg="tax" style="flex:0 0 0%" data-final="7">7%</div>
+      <div class="stack__seg" data-seg="inc" style="flex:0 0 0%" data-final="5">5%</div>
+      <div class="stack__seg" data-seg="net" style="flex:0 0 0%" data-final="32"></div>
+    </div>
+
+    <div class="legend" data-stagger>
+      <div class="lg-row"><div class="lg-sw" style="background:var(--res-500)"></div>
+        <div class="lg-name">Operation &amp; maintenance<span class="small">Running the system</span></div>
+        <div class="lg-pct">28%</div></div>
+      <div class="lg-row"><div class="lg-sw" style="background:var(--res-400)"></div>
+        <div class="lg-name">Depreciation &amp; amortization<span class="small">Pipes age out slowly</span></div>
+        <div class="lg-pct">17%</div></div>
+      <div class="lg-row"><div class="lg-sw" style="background:var(--coral-500)"></div>
+        <div class="lg-name">Interest expense<span class="small">$1.59B debt · cost of the capital stack</span></div>
+        <div class="lg-pct">11%</div></div>
+      <div class="lg-row"><div class="lg-sw" style="background:var(--res-300)"></div>
+        <div class="lg-name">Property &amp; other taxes<span class="small">Pass-through to ratepayers</span></div>
+        <div class="lg-pct">7%</div></div>
+      <div class="lg-row"><div class="lg-sw" style="background:var(--res-200)"></div>
+        <div class="lg-name">Income taxes<span class="small">Federal &amp; state</span></div>
+        <div class="lg-pct">5%</div></div>
+    </div>
+
+    <div class="callout-interest fade-in">
+      <div class="meta">Note · the coral band</div>
+      <p>Interest is the only cost that isn't a pass-through. It's what you pay the bond market to fund the pipes before rate cases return it.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ACT 2 — THE TERRITORY
+       14 states, 14M people. Each region is a bar fill, sized by
+       revenue share. Tap expands (though bars are already visible).
+       ============================================================ -->
+  <section class="territory">
+    <p class="eyebrow fade-in">The territory</p>
+    <h3 class="fade-in">Fourteen states,<br/><span class="italic-display">one monopoly.</span></h3>
+    <p class="territory__intro fade-in">Regulated utilities are local monopolies by design. AWK runs 14 of them, plus 18 military bases. Each state commission approves its own rates.</p>
+
+    <div class="regions" data-stagger>
+      <div class="region">
+        <div class="region__name">Eastern U.S.<span class="region__sub">NJ · PA · VA · WV · MD · TN · KY</span></div>
+        <div class="region__pct" data-count="45" data-suffix="%">0%</div>
+        <div class="region__bar"><div class="region__fill" data-width="100"></div></div>
+      </div>
+      <div class="region">
+        <div class="region__name">Midwestern U.S.<span class="region__sub">IL · IN · IA · MO</span></div>
+        <div class="region__pct" data-count="30" data-suffix="%">0%</div>
+        <div class="region__bar"><div class="region__fill" data-width="66"></div></div>
+      </div>
+      <div class="region">
+        <div class="region__name">Western U.S.<span class="region__sub">CA · HI</span></div>
+        <div class="region__pct" data-count="15" data-suffix="%">0%</div>
+        <div class="region__bar"><div class="region__fill" data-width="33"></div></div>
+      </div>
+      <div class="region">
+        <div class="region__name">South &amp; Military<span class="region__sub">GA · 18 military installations</span></div>
+        <div class="region__pct" data-count="10" data-suffix="%">0%</div>
+        <div class="region__bar"><div class="region__fill" data-width="22"></div></div>
+      </div>
+    </div>
+
+    <div class="people-strip fade-in">
+      <span class="people-strip__num" data-count="14" data-suffix="M">0</span>
+      <span class="people-strip__cap">People who turn on a tap and have no second option</span>
+    </div>
+  </section>
+
+  <!-- Reset 2 -->
+  <section class="reset-light">
+    <p class="fade-in"><span class="italic-display">Legal monopoly is not a bug of water. It is the business.</span></p>
+  </section>
+
+  <!-- ============================================================
+       ACT 3 — THE MOAT / SCALE
+       Not a "competitors" list. A scale comparator against WTRG,
+       plus the merger moment (the biggest deal in AWK's history).
+       ============================================================ -->
+  <section class="moat">
+    <p class="eyebrow fade-in">The moat</p>
+    <h3 class="fade-in">The last roll-up<br/>in a fragmented category.</h3>
+    <p class="territory__intro fade-in">Water utilities in the U.S. are 80%+ municipal — fragmented, aging, underfunded. AWK has quietly been buying them, 18 in 2025 alone.</p>
+
+    <div class="scalecmp fade-in" id="scaleCmp">
+      <div class="scalecmp__row is-awk">
+        <div class="scalecmp__label">
+          <span class="scalecmp__name">American Water Works<span class="ticker-inline">AWK</span></span>
+          <span class="scalecmp__mcap">$25.7B</span>
+        </div>
+        <div class="scalecmp__track"><div class="scalecmp__fill" data-width="100"></div></div>
+      </div>
+      <div class="scalecmp__row is-target">
+        <div class="scalecmp__label">
+          <span class="scalecmp__name">Essential Utilities<span class="ticker-inline">WTRG</span></span>
+          <span class="scalecmp__mcap">$10.9B</span>
+        </div>
+        <div class="scalecmp__track"><div class="scalecmp__fill" data-width="42"></div></div>
+      </div>
+      <div class="scalecmp__row">
+        <div class="scalecmp__label">
+          <span class="scalecmp__name">CMS Energy<span class="ticker-inline">CMS</span></span>
+          <span class="scalecmp__mcap">$24.0B</span>
+        </div>
+        <div class="scalecmp__track"><div class="scalecmp__fill" data-width="93"></div></div>
+      </div>
+      <div class="scalecmp__row">
+        <div class="scalecmp__label">
+          <span class="scalecmp__name">NiSource<span class="ticker-inline">NI</span></span>
+          <span class="scalecmp__mcap">$23.2B</span>
+        </div>
+        <div class="scalecmp__track"><div class="scalecmp__fill" data-width="90"></div></div>
+      </div>
+    </div>
+
+    <div class="merger fade-in">
+      <div class="merger__tag">Pending · closes Q1 2027</div>
+      <div class="merger__eq">
+        AWK <span class="plus">+</span> WTRG
+      </div>
+      <p class="merger__note">The largest deal in AWK's 140-year history. An all-stock merger that absorbs the next-largest public water utility — eliminating its closest competitor and consolidating the last public roll-up target.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ACT 3 — THE PERPETUITY
+       Dividend metronome. The payoff after 140 years of burying
+       capital. 7-9% guided dividend growth. $633M paid in 2025.
+       ============================================================ -->
+  <section class="perpetuity">
+    <div class="perpetuity__head fade-in">
+      <p class="eyebrow">The payoff</p>
+      <h3>A government-issued<br/><em>perpetuity</em><br/>under a ticker.</h3>
+    </div>
+
+    <div class="metronome fade-in" id="metronome" aria-hidden="true">
+      <!-- beats added via JS -->
+    </div>
+
+    <div class="divstat fade-in" data-stagger>
+      <div class="divstat__cell">
+        <div class="val" data-count="633" data-prefix="$" data-suffix="M">$0</div>
+        <div class="cap">FY25 dividends paid<br/>to shareholders</div>
+      </div>
+      <div class="divstat__cell">
+        <div class="val"><em>7–9%</em></div>
+        <div class="cap">Guided annual EPS<br/>&amp; dividend growth</div>
+      </div>
+      <div class="divstat__cell">
+        <div class="val" data-count="140">0</div>
+        <div class="cap">Years of pipes<br/>since 1886</div>
+      </div>
+      <div class="divstat__cell">
+        <div class="val"><em>A−</em></div>
+        <div class="cap">S&amp;P credit rating<br/>Moody's Baa1 / stable</div>
+      </div>
+    </div>
+
+    <div class="perpetuity__close fade-in">
+      <span class="italic-display">If you want to own a ticker that collects a fraction of a penny every time someone in New Jersey takes a shower —</span>
+      <span class="italic-display" style="display:block;margin-top:12px;color:var(--coral-500);">this is the one.</span>
+      <div class="sig">End · AWK · FY2025 recap</div>
+    </div>
+  </section>
+
+  <footer>
+    <span>American Water Works</span>
+    <span class="mark">AWK<span style="color:var(--coral-400)">.</span></span>
+  </footer>
+
+</main>
+
+<script>
+/* ============================================================
+   Motion logic — all lightweight, no external libs.
+   ============================================================ */
+(function(){
+  const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- Progress bar ----------
+  const progBar = document.getElementById('progBar');
+  function updateProgress(){
+    const h = document.documentElement;
+    const p = (h.scrollTop || document.body.scrollTop) / ((h.scrollHeight - h.clientHeight) || 1);
+    progBar.style.width = Math.min(100, Math.max(0, p * 100)) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, {passive:true});
+  updateProgress();
+
+  // ---------- Entrance observer ----------
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('is-in');
+        // Trigger bar fills
+        e.target.querySelectorAll && e.target.querySelectorAll('[data-width]').forEach(el=>{
+          const w = el.getAttribute('data-width');
+          requestAnimationFrame(()=>{ el.style.width = w + '%'; });
+        });
+        // Number count-up
+        e.target.querySelectorAll && e.target.querySelectorAll('[data-count]').forEach(startCount);
+        // Cost stack seg flex
+        if(e.target.id === 'costStack' || e.target.classList.contains('costs')){
+          const segs = document.querySelectorAll('#costStack .stack__seg');
+          segs.forEach(s=>{
+            const f = parseFloat(s.getAttribute('data-final'));
+            s.style.flex = `0 0 ${f}%`;
+          });
+        }
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold: 0.15, rootMargin:'0px 0px -40px 0px'});
+
+  document.querySelectorAll('.fade-in, [data-stagger], #costStack').forEach(el=>io.observe(el));
+
+  // ---------- Number count-up ----------
+  function startCount(el){
+    if(el.__counted) return;
+    el.__counted = true;
+    const target = parseFloat(el.getAttribute('data-count'));
+    const dec = parseInt(el.getAttribute('data-dec') || '0', 10);
+    const prefix = el.getAttribute('data-prefix') || '';
+    const suffix = el.getAttribute('data-suffix') || '';
+    if(prefersReduced){
+      el.textContent = prefix + target.toFixed(dec) + suffix;
+      return;
+    }
+    const dur = 1400;
+    const start = performance.now();
+    function tick(now){
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const v = target * eased;
+      el.textContent = prefix + v.toFixed(dec) + suffix;
+      if(t < 1) requestAnimationFrame(tick);
+      else el.textContent = prefix + target.toFixed(dec) + suffix;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ---------- Hero water stats kicker ----------
+  // Force hero stats to count on load (they're above the fold)
+  setTimeout(()=>{
+    const staggerHero = document.querySelector('.hero__stats');
+    if(staggerHero){
+      staggerHero.classList.add('is-in');
+      staggerHero.querySelectorAll('[data-count]').forEach(startCount);
+    }
+  }, 280);
+
+  // ---------- The Machine — sticky pipe scroll-through ----------
+  // As user scrolls through the spacer, light up successive pipe layers
+  // and drip dollar particles down the pipe.
+  const machine = document.getElementById('machine');
+  const sticky = document.getElementById('machineSticky');
+  const pipe = document.getElementById('pipe');
+  const layers = pipe ? pipe.querySelectorAll('.pipe__layer') : [];
+  const flow = document.getElementById('pipeFlow');
+
+  // Pre-populate droplets
+  if(flow && !prefersReduced){
+    for(let i=0;i<14;i++){
+      const d = document.createElement('div');
+      d.className = 'pipe__drop';
+      d.style.left = (10 + Math.random()*80) + '%';
+      flow.appendChild(d);
+    }
+  }
+
+  function machineScroll(){
+    if(!machine) return;
+    const rect = machine.getBoundingClientRect();
+    const vh = window.innerHeight;
+    // Progress through machine section (0 to 1)
+    const total = machine.offsetHeight - vh;
+    const passed = Math.min(Math.max(-rect.top, 0), total);
+    const prog = total > 0 ? passed / total : 0;
+
+    // Drive 4 layer activations across the progress
+    layers.forEach((l, i)=>{
+      const threshold = (i + 1) / (layers.length + 1);
+      if(prog >= threshold - 0.15){
+        l.classList.add('is-active');
+      } else {
+        l.classList.remove('is-active');
+      }
+    });
+
+    // Animate droplets based on scroll
+    if(flow && !prefersReduced){
+      const drops = flow.querySelectorAll('.pipe__drop');
+      drops.forEach((d, i)=>{
+        const phase = (prog * 2 + i * 0.08) % 1;
+        d.style.top = (phase * 100) + '%';
+        d.style.opacity = phase < 0.85 ? (0.25 + phase*0.6) : 0;
+      });
+    }
+  }
+  window.addEventListener('scroll', machineScroll, {passive:true});
+  machineScroll();
+
+  // ---------- Metronome — build beats that pulse at dividend cadence ----------
+  const mm = document.getElementById('metronome');
+  if(mm){
+    const N = 24;
+    for(let i=0;i<N;i++){
+      const b = document.createElement('div');
+      b.className = 'metronome__beat';
+      // Grow height slightly across — encoding dividend growth
+      b.style.height = (40 + i * 2.5) + '%';
+      b.style.animationDelay = (i * 0.09) + 's';
+      if(i === N-1) b.classList.add('is-current');
+      mm.appendChild(b);
+    }
+  }
+
+  // ---------- Region rows tap to emphasize ----------
+  document.querySelectorAll('.region').forEach(r=>{
+    r.addEventListener('click', ()=>{
+      r.style.background = 'var(--paper-2)';
+      setTimeout(()=>{ r.style.background=''; }, 260);
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>

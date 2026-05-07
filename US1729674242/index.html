@@ -1,0 +1,1724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Citigroup · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     Citigroup Recap — palette + type
+     Ledger ink, archive cream, brass signal. Mobile-first.
+     ============================================================ */
+  :root {
+    /* Ledger neutrals — warm cream → archive ink → midnight */
+    --cream:        #F4EFE4;   /* page paper */
+    --cream-2:      #EBE5D5;   /* raised card */
+    --cream-3:      #E1D9C5;   /* dividers / sunken */
+    --cream-4:      #CFC6AE;   /* heavy line */
+    --ink:          #14171C;   /* main text — bluish ink */
+    --ink-2:        #2E343F;
+    --ink-3:        #5A6170;
+    --ink-4:        #8B91A1;
+    --line:         #CFC6AE;
+    --hairline:     rgba(20,23,28,0.10);
+
+    /* Signal — brass/amber. Vault-key, FX-board, ticker */
+    --brass:        #B8862C;
+    --brass-2:      #D9A23F;
+    --brass-soft:   #F0DDB1;
+
+    /* Heritage navy — used sparingly for the dark beat */
+    --navy:         #0B1320;
+    --navy-2:       #131C2E;
+    --navy-3:       #1F2B42;
+    --navy-line:    #2A3852;
+
+    /* Type */
+    --serif:        'Instrument Serif', 'Times New Roman', serif;
+    --sans:         'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --mono:         'Geist Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+
+    /* Mobile column */
+    --col:          412px;
+    --pad:          24px;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  html { background: #2A2520; }   /* gutter color outside the mobile column */
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    max-width: var(--col);
+    margin: 0 auto;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    position: relative;
+    box-shadow: 0 0 80px rgba(0,0,0,0.45);
+    min-height: 100vh;
+  }
+
+  /* Subtle paper grain on cream */
+  body::before {
+    content:"";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.08  0 0 0 0 0.08  0 0 0 0 0.08  0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.35'/></svg>");
+    opacity: 0.18;
+    mix-blend-mode: multiply;
+    z-index: 1000;
+    max-width: var(--col);
+    left: 50%; transform: translateX(-50%);
+  }
+
+  /* ============================================================
+     PERSISTENT CHROME
+     ============================================================ */
+  .chrome {
+    position: sticky; top: 0; z-index: 200;
+    background: rgba(244,239,228,0.78);
+    backdrop-filter: saturate(1.2) blur(14px);
+    -webkit-backdrop-filter: saturate(1.2) blur(14px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .chrome-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px var(--pad) 12px;
+  }
+  .chrome-left { display: flex; align-items: baseline; gap: 10px; }
+  .ticker {
+    font-family: var(--mono);
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+  }
+  .tick-dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--brass);
+    margin-right: 6px; transform: translateY(-1px);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.35 } }
+  .co-name {
+    font-family: var(--serif);
+    font-size: 18px; line-height: 1;
+    color: var(--ink);
+  }
+  .recap-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .progress-track {
+    height: 1.5px; background: transparent;
+    width: 100%;
+  }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: var(--brass);
+    transition: width 80ms linear;
+  }
+
+  /* ============================================================
+     SHARED SECTION PRIMITIVES
+     ============================================================ */
+  section {
+    position: relative;
+    padding: 96px var(--pad) 96px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brass);
+    font-weight: 500;
+    margin: 0 0 28px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .eyebrow .num {
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-3);
+    font-weight: 400;
+  }
+  .eyebrow .bar {
+    width: 22px; height: 1px; background: var(--brass);
+    display: inline-block;
+  }
+  h1, h2, h3, h4 { margin: 0; font-weight: 400; }
+  .display {
+    font-family: var(--serif);
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .display em { font-style: italic; color: var(--brass); }
+  .display .brass { color: var(--brass); }
+  p { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.55; }
+  p em { font-family: var(--serif); font-style: italic; font-size: 1.06em; color: var(--brass); }
+  p .accent { color: var(--brass); font-weight: 500; }
+
+  /* Reset beats — short editorial italic interludes between sections */
+  .reset {
+    padding: 56px var(--pad);
+    background: var(--cream-2);
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .reset p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.35;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+  .reset p em { color: var(--brass); font-style: italic; }
+  .reset .ornament {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .reset .ornament .bar { flex: 1; height: 1px; background: var(--cream-4); }
+
+  /* ============================================================
+     1. HERO / THESIS
+     ============================================================ */
+  .hero {
+    padding: 40px var(--pad) 80px;
+    overflow: hidden;
+  }
+  .hero-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 28px;
+    margin-bottom: 32px;
+    display: flex; gap: 14px;
+    align-items: center;
+  }
+  .hero-meta .dot { width: 3px; height: 3px; background: var(--ink-4); border-radius: 50%; }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: 72px;
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--brass);
+  }
+  .hero .sub {
+    margin-top: 32px;
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 34ch;
+  }
+  .hero .sub em {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--brass);
+    font-size: 1.06em;
+  }
+
+  /* Ticker readout in hero */
+  .quote {
+    margin-top: 44px;
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: end;
+    gap: 14px 20px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hairline);
+  }
+  .quote .price {
+    font-family: var(--serif);
+    font-size: 44px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .quote .delta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--brass);
+    letter-spacing: 0.04em;
+    padding-bottom: 6px;
+  }
+  .quote .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: right;
+    padding-bottom: 6px;
+  }
+
+  /* Hero metaphor — ledger lines flowing like global money currents */
+  .hero-art {
+    position: absolute;
+    right: -40px; top: 90px;
+    width: 360px; height: 380px;
+    pointer-events: none;
+    opacity: 0.55;
+    z-index: 0;
+  }
+  .hero h1, .hero .hero-meta, .hero .sub, .hero .quote { position: relative; z-index: 2; }
+
+  /* ============================================================
+     2. THE BUSINESS — five segments as an FX board
+     ============================================================ */
+  .fxboard {
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 4px;
+    padding: 22px 20px;
+    margin-top: 32px;
+    font-family: var(--mono);
+    box-shadow: 0 30px 60px -28px rgba(0,0,0,0.45);
+    border: 1px solid #1B1F26;
+    position: relative;
+    overflow: hidden;
+  }
+  .fxboard::after {
+    content:""; position: absolute; inset:0;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.018) 0 1px, transparent 1px 3px);
+    pointer-events: none;
+  }
+  .fxboard-head {
+    display: flex; justify-content: space-between;
+    font-size: 9px; letter-spacing: 0.22em;
+    color: rgba(244,239,228,0.45);
+    text-transform: uppercase;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed rgba(244,239,228,0.18);
+  }
+  .fxrow {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: baseline;
+    padding: 14px 0 12px;
+    border-bottom: 1px dashed rgba(244,239,228,0.12);
+    gap: 12px;
+    position: relative;
+  }
+  .fxrow:last-child { border-bottom: none; }
+  .fx-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--cream);
+  }
+  .fx-name small {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: rgba(244,239,228,0.42);
+    margin-top: 4px;
+  }
+  .fx-rev {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--cream);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .fx-pct {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--brass-2);
+    letter-spacing: 0.05em;
+    text-align: right;
+  }
+  .fx-pct .yoy {
+    display: block;
+    color: rgba(244,239,228,0.5);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    margin-top: 2px;
+  }
+  .fx-bar {
+    grid-column: 1 / -1;
+    height: 2px;
+    background: rgba(244,239,228,0.08);
+    border-radius: 1px;
+    margin-top: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  .fx-bar > i {
+    display: block; height: 100%;
+    background: var(--brass-2);
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
+  }
+  .fxrow.bank .fx-bar > i { background: #F2C168; }   /* highlight strongest grower */
+  .fxrow.bank .fx-pct { color: #F2C168; }
+  .fx-blink {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--brass-2);
+    position: absolute; left: -14px; top: 22px;
+    animation: blink 1.6s steps(2,end) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0.2; } }
+
+  .fxboard-foot {
+    display: flex; justify-content: space-between;
+    margin-top: 16px; padding-top: 12px;
+    border-top: 1px dashed rgba(244,239,228,0.18);
+    font-size: 10px; letter-spacing: 0.18em;
+    color: rgba(244,239,228,0.55);
+    text-transform: uppercase;
+  }
+  .fxboard-foot .total {
+    font-family: var(--serif);
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: var(--brass-2);
+  }
+
+  /* ============================================================
+     3. SCALE — the vast comparative
+     ============================================================ */
+  .scale-grid {
+    margin-top: 40px;
+    display: flex; flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--hairline);
+  }
+  .scale-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    padding: 22px 0 18px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .scale-row .lab {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .scale-row .val {
+    font-family: var(--serif);
+    font-size: 38px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .scale-row .val .unit {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+    margin-left: 4px;
+    vertical-align: 4px;
+  }
+  .scale-row .val em {
+    color: var(--brass);
+    font-style: italic;
+  }
+  .scale-row p {
+    grid-column: 1 / -1;
+    margin-top: 12px;
+    font-size: 14px;
+    color: var(--ink-3);
+    max-width: 38ch;
+  }
+
+  /* The 226k employees / 160 countries scene */
+  .reach {
+    margin-top: 44px;
+    padding: 28px 0 8px;
+  }
+  .reach-headline {
+    font-family: var(--serif);
+    font-size: 32px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+  }
+  .reach-headline em { font-style: italic; color: var(--brass); }
+  .countries-grid {
+    --d: 6px;
+    display: grid;
+    grid-template-columns: repeat(20, var(--d));
+    gap: 4px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .countries-grid i {
+    width: var(--d); height: var(--d);
+    background: var(--ink);
+    border-radius: 50%;
+    opacity: 0.85;
+    transition: opacity 220ms;
+  }
+  .countries-grid i.brass { background: var(--brass); }
+  .countries-grid i.dim { background: var(--cream-4); opacity: 1; }
+  .reach-cap {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 10px;
+  }
+
+  /* ============================================================
+     4. WHERE THE MONEY GOES — 100-cent dollar mosaic
+     w/ supplied biggest_costs hexes
+     ============================================================ */
+  .dollar-card {
+    margin-top: 36px;
+  }
+  .dollar-frame {
+    background: var(--cream-2);
+    padding: 24px 22px 22px;
+    border-radius: 6px;
+    border: 1px solid var(--cream-4);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 30px 60px -40px rgba(20,23,28,0.25);
+    position: relative;
+  }
+  .dollar-frame::before {
+    content: "ON EVERY DOLLAR OF FY '25 EXPENSE";
+    position: absolute;
+    top: 12px; right: 14px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+  }
+  .dollar-grid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 3px;
+    aspect-ratio: 10 / 9;   /* slight rectangle */
+  }
+  .dollar-grid i {
+    background: var(--cream-3);
+    border-radius: 2px;
+    transform: scale(0.6);
+    opacity: 0;
+    transition: transform .5s var(--easeo, cubic-bezier(0.22,1,0.36,1)),
+                opacity .5s var(--easeo, cubic-bezier(0.22,1,0.36,1));
+    transition-delay: var(--d, 0ms);
+  }
+  .dollar-grid.lit i { transform: scale(1); opacity: 1; }
+  .dollar-frame .surplus {
+    margin-top: 18px;
+    display: flex; align-items: baseline; justify-content: space-between;
+    border-top: 1px dashed var(--cream-4);
+    padding-top: 16px;
+  }
+  .dollar-frame .surplus .num {
+    font-family: var(--serif);
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .dollar-frame .surplus .num em { font-style: italic; color: var(--brass); }
+  .dollar-frame .surplus .lab {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: right;
+    max-width: 12ch;
+    line-height: 1.4;
+  }
+
+  .legend {
+    margin-top: 22px;
+    display: flex; flex-direction: column;
+    gap: 10px;
+  }
+  .legend-row {
+    display: grid;
+    grid-template-columns: 12px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--hairline);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+  .legend-row:last-child { border-bottom: none; }
+  .legend-row .sw {
+    width: 12px; height: 12px;
+    border-radius: 2px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+  }
+  .legend-row .nm { font-family: var(--sans); font-size: 13px; color: var(--ink); letter-spacing: 0; text-transform: none; }
+  .legend-row .pc {
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ============================================================
+     5. FOOTPRINT — global flow
+     ============================================================ */
+  .geo {
+    margin-top: 32px;
+  }
+  .geo-stage {
+    position: relative;
+    background: var(--cream-2);
+    border-radius: 6px;
+    overflow: hidden;
+    padding: 20px 0 0;
+    border: 1px solid var(--cream-4);
+  }
+  .geo-svg { display: block; width: 100%; height: auto; }
+  .geo-rows {
+    margin-top: 16px;
+    background: var(--cream);
+    padding: 16px 18px 18px;
+    border-top: 1px solid var(--cream-4);
+  }
+  .geo-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--hairline);
+    gap: 12px;
+    position: relative;
+  }
+  .geo-row:last-child { border-bottom: none; }
+  .geo-row .nm {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .geo-row .nm .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--ink-4);
+  }
+  .geo-row .pct {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .geo-row .bar {
+    grid-column: 1 / -1;
+    height: 2px;
+    background: var(--cream-3);
+    border-radius: 1px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .geo-row .bar > i {
+    display: block; height: 100%;
+    background: var(--ink);
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
+  }
+  .geo-row.major .bar > i { background: var(--brass); }
+  .geo-row.major .pct em { color: var(--brass); font-style: italic; }
+
+  /* ============================================================
+     6. THE BET — capex / capital allocation timeline
+     ============================================================ */
+  .bet {
+    margin-top: 32px;
+    display: flex; flex-direction: column;
+    gap: 0;
+  }
+  .bet-row {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 18px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .bet-row:last-child { border-bottom: none; }
+  .bet-row .amt {
+    font-family: var(--serif);
+    font-size: 28px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .bet-row .amt em { font-style: italic; color: var(--brass); }
+  .bet-row .amt small {
+    display: block;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-top: 4px;
+    font-style: normal;
+  }
+  .bet-row .cap {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.45;
+  }
+  .bet-row .cap strong {
+    display: block;
+    font-weight: 500;
+    color: var(--ink);
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  /* ============================================================
+     7. DEBT — the dark interlude
+     ============================================================ */
+  .dark-band {
+    background: var(--navy);
+    color: var(--cream);
+    padding: 96px var(--pad);
+    margin: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .dark-band::before {
+    content:"";
+    position: absolute; inset:0;
+    background: radial-gradient(120% 70% at 50% 0%, rgba(216,162,63,0.10), transparent 60%);
+    pointer-events: none;
+  }
+  .dark-band .eyebrow { color: var(--brass-2); }
+  .dark-band p { color: rgba(244,239,228,0.72); }
+  .dark-band p em { color: var(--brass-2); }
+  .dark-band .display { color: var(--cream); }
+  .dark-band .display em { color: var(--brass-2); }
+
+  /* The scale balance — debt vs equity */
+  .balance {
+    margin: 40px 0 28px;
+    position: relative;
+    height: 240px;
+  }
+  .balance-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .balance-lab {
+    display: flex; justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: rgba(244,239,228,0.55);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .balance-lab .val {
+    font-family: var(--serif);
+    font-size: 22px;
+    text-transform: none;
+    letter-spacing: -0.01em;
+    color: var(--cream);
+    display: block;
+    margin-top: 4px;
+  }
+  .balance-lab .val em { color: var(--brass-2); font-style: italic; }
+  .balance-lab .right { text-align: right; }
+
+  .ratio-line {
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--navy-line);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .ratio-line .item .v {
+    font-family: var(--serif);
+    font-size: 36px;
+    line-height: 1;
+    color: var(--cream);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .ratio-line .item .v em { color: var(--brass-2); font-style: italic; }
+  .ratio-line .item .l {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: rgba(244,239,228,0.55);
+    text-transform: uppercase;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* ============================================================
+     8. COMPETITORS
+     ============================================================ */
+  .compet {
+    margin-top: 32px;
+  }
+  .comp-stack {
+    position: relative;
+    height: 280px;
+    margin: 32px 0 16px;
+  }
+  .comp-bar {
+    position: absolute;
+    bottom: 36px;
+    border-radius: 3px 3px 0 0;
+    transition: height 1.2s var(--easeo, cubic-bezier(0.22,1,0.36,1));
+    border-top: 2px solid var(--ink);
+  }
+  .comp-bar .head {
+    position: absolute;
+    top: -56px; left: 0; right: 0;
+    text-align: center;
+  }
+  .comp-bar .ticker {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .comp-bar .mc {
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+  .comp-bar .mc em { font-style: italic; color: var(--brass); }
+  .comp-bar .foot {
+    position: absolute;
+    bottom: -24px; left: 0; right: 0;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .comp-bar.us {
+    background: var(--brass);
+    border-top-color: var(--brass);
+  }
+  .comp-bar.us .head .mc { color: var(--brass); }
+  .comp-bar.them {
+    background: linear-gradient(180deg, var(--ink) 0%, var(--ink-2) 100%);
+  }
+
+  .comp-list {
+    margin-top: 12px;
+    display: flex; flex-direction: column;
+    gap: 0;
+  }
+  .comp-card {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--hairline);
+    cursor: pointer;
+  }
+  .comp-card:last-child { border-bottom: none; }
+  .comp-card-head {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .comp-card .name {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .comp-card .tk {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+  }
+  .comp-card .mcap {
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .comp-card .desc {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--ink-3);
+    line-height: 1.5;
+    max-height: 0; overflow: hidden;
+    transition: max-height 320ms cubic-bezier(0.22,1,0.36,1), margin-top 320ms;
+  }
+  .comp-card.open .desc { max-height: 240px; margin-top: 12px; }
+  .comp-card .micro {
+    margin-top: 10px;
+    display: flex; gap: 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .comp-card .micro b {
+    color: var(--ink); font-weight: 500;
+    margin-left: 4px;
+    font-family: var(--mono);
+  }
+  .comp-card .chev {
+    font-family: var(--mono);
+    color: var(--ink-3);
+    font-size: 14px;
+    transition: transform 240ms;
+  }
+  .comp-card.open .chev { transform: rotate(45deg); color: var(--brass); }
+
+  /* ============================================================
+     9. CLOSE — inversion of opening
+     ============================================================ */
+  .close {
+    padding-top: 88px;
+    padding-bottom: 64px;
+  }
+  .close .display {
+    font-size: 64px;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+  }
+  .close .tail {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    border-top: 1px solid var(--hairline);
+    padding-top: 24px;
+  }
+  .close .tail .item .v {
+    font-family: var(--serif);
+    font-size: 36px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .close .tail .item .v em { font-style: italic; color: var(--brass); }
+  .close .tail .item .l {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+  .colophon {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hairline);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-4);
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.6;
+  }
+  .colophon .bullet { color: var(--brass); }
+
+  /* ============================================================
+     SCROLL REVEAL (gentle)
+     ============================================================ */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease-out, transform .6s ease-out; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* utility */
+  .muted { color: var(--ink-3); }
+  .hairline { height: 1px; background: var(--hairline); width: 100%; }
+
+</style>
+</head>
+<body>
+
+<!-- =============================================================
+     PERSISTENT CHROME
+     ============================================================== -->
+<header class="chrome">
+  <div class="chrome-row">
+    <div class="chrome-left">
+      <span class="ticker"><span class="tick-dot"></span>NYSE · C</span>
+      <span class="co-name">Citigroup</span>
+    </div>
+    <span class="recap-label">Recap · FY '25</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="prog"></div></div>
+</header>
+
+<!-- =============================================================
+     1. HERO — THESIS
+     ============================================================== -->
+<section class="hero">
+  <!-- subtle ledger flow lines behind hero -->
+  <svg class="hero-art" viewBox="0 0 360 380" aria-hidden="true">
+    <defs>
+      <linearGradient id="flow" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0" stop-color="#B8862C" stop-opacity="0"/>
+        <stop offset=".4" stop-color="#B8862C" stop-opacity=".6"/>
+        <stop offset="1" stop-color="#B8862C" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <g fill="none" stroke="url(#flow)" stroke-width="0.6">
+      <path d="M-40,40 C 80,80 200,20 380,90"/>
+      <path d="M-40,90 C 80,140 200,70 380,140"/>
+      <path d="M-40,140 C 80,200 200,120 380,190"/>
+      <path d="M-40,190 C 80,260 200,170 380,240"/>
+      <path d="M-40,240 C 80,320 200,220 380,290"/>
+      <path d="M-40,290 C 80,380 200,270 380,340"/>
+    </g>
+    <g fill="#B8862C">
+      <circle cx="160" cy="140" r="1.4"/>
+      <circle cx="220" cy="200" r="1.4"/>
+      <circle cx="100" cy="240" r="1.4"/>
+      <circle cx="290" cy="100" r="1.4"/>
+    </g>
+  </svg>
+
+  <div class="hero-meta">
+    <span>NYSE · C</span><span class="dot"></span>
+    <span>Founded 1812</span><span class="dot"></span>
+    <span>NYC</span>
+  </div>
+
+  <h1>
+    160 countries.<br/>
+    One <em>ledger.</em>
+  </h1>
+
+  <p class="sub">
+    Two centuries of moving money across borders, condensed into <em>$2.7 trillion</em> in assets and the patience to keep it that way.
+  </p>
+
+  <div class="quote">
+    <span class="price">$226.68B</span>
+    <span class="delta">↑ market cap</span>
+    <span class="label">FY '25<br/>close</span>
+  </div>
+</section>
+
+<!-- RESET BEAT -->
+<aside class="reset">
+  <div class="ornament"><span>I</span><span class="bar"></span><span>The business</span></div>
+  <p>A bank this old keeps five doors open at once. <em>Each one rings a different bell;</em> all of them ring at the same time.</p>
+</aside>
+
+<!-- =============================================================
+     2. THE BUSINESS — FX BOARD
+     ============================================================== -->
+<section>
+  <div class="eyebrow"><span class="num">02</span><span class="bar"></span> Five doors · FY '25 revenue</div>
+  <h2 class="display" style="font-size:46px">
+    What the <em>$85.22B</em> looks like, when you split it five ways.
+  </h2>
+  <p style="margin-top:20px;max-width:36ch;">
+    Markets and Services are the muscle. U.S. Personal Banking is the steady hand. <em>Banking</em> — the smallest line — was the one that woke up: <span class="accent">+32% YoY</span>.
+  </p>
+
+  <div class="fxboard" id="fxboard">
+    <div class="fxboard-head">
+      <span>Segment</span><span>Revenue · Δ</span>
+    </div>
+    <div class="fxrow" data-pct="27">
+      <div class="fx-name">MARKETS<small>Trading · fixed income · equities</small></div>
+      <div class="fx-rev">$21.97B</div>
+      <div class="fx-pct">27%<span class="yoy">of mix</span></div>
+      <div class="fx-bar"><i style="--w:100%"></i></div>
+    </div>
+    <div class="fxrow" data-pct="26">
+      <div class="fx-name">SERVICES<small>Treasury · securities</small></div>
+      <div class="fx-rev">$21.26B</div>
+      <div class="fx-pct">26%<span class="yoy">of mix</span></div>
+      <div class="fx-bar"><i style="--w:96.7%"></i></div>
+    </div>
+    <div class="fxrow" data-pct="26">
+      <div class="fx-name">U.S. PERSONAL BANKING<small>Cards · branches · retail</small></div>
+      <div class="fx-rev">$20.97B</div>
+      <div class="fx-pct">26%<span class="yoy">of mix</span></div>
+      <div class="fx-bar"><i style="--w:95.4%"></i></div>
+    </div>
+    <div class="fxrow" data-pct="11">
+      <div class="fx-name">WEALTH<small>Personal banking · wealth mgmt</small></div>
+      <div class="fx-rev">$8.56B</div>
+      <div class="fx-pct">11%<span class="yoy">of mix</span></div>
+      <div class="fx-bar"><i style="--w:39%"></i></div>
+    </div>
+    <div class="fxrow bank" data-pct="10">
+      <div class="fx-blink"></div>
+      <div class="fx-name">BANKING<small>Investment banking · advisory</small></div>
+      <div class="fx-rev">$8.22B</div>
+      <div class="fx-pct">+32% YoY<span class="yoy">10% of mix</span></div>
+      <div class="fx-bar"><i style="--w:37.4%"></i></div>
+    </div>
+    <div class="fxboard-foot">
+      <span>FY '25 Total</span>
+      <span class="total">$85.22B</span>
+    </div>
+  </div>
+</section>
+
+<!-- RESET BEAT -->
+<aside class="reset">
+  <div class="ornament"><span>II</span><span class="bar"></span><span>The scale</span></div>
+  <p>You don't get to <em>$2.7 trillion</em> on the books without a payroll the size of a small city, and a footprint the size of every other country.</p>
+</aside>
+
+<!-- =============================================================
+     3. SCALE
+     ============================================================== -->
+<section>
+  <div class="eyebrow"><span class="num">03</span><span class="bar"></span> The vast comparative</div>
+  <h2 class="display" style="font-size:46px">
+    Numbers that read more like <em>geography</em> than balance sheet.
+  </h2>
+
+  <div class="scale-grid">
+    <div class="scale-row">
+      <span class="lab">Total assets</span>
+      <span class="val">~<em>$2.7T</em></span>
+      <p>Roughly the GDP of France, sitting on a single balance sheet.</p>
+    </div>
+    <div class="scale-row">
+      <span class="lab">FY '25 revenue</span>
+      <span class="val">$85.22<span class="unit">B</span></span>
+    </div>
+    <div class="scale-row">
+      <span class="lab">FY '25 net income</span>
+      <span class="val">$14.31<span class="unit">B</span></span>
+    </div>
+    <div class="scale-row">
+      <span class="lab">Q1 '26 EPS</span>
+      <span class="val">$3.06</span>
+      <p>On $24.63B in quarterly revenue.</p>
+    </div>
+    <div class="scale-row">
+      <span class="lab">Cash &amp; equivalents</span>
+      <span class="val">~$276.5<span class="unit">B</span></span>
+    </div>
+  </div>
+
+  <div class="reach">
+    <h3 class="reach-headline">
+      <em>226,000</em> people,<br/>in <em>160+</em> countries.
+    </h3>
+    <div class="countries-grid" id="countriesGrid"></div>
+    <div class="reach-cap">Each dot · one country · gold = where Citi books revenue</div>
+  </div>
+</section>
+
+<!-- RESET BEAT -->
+<aside class="reset">
+  <div class="ornament"><span>III</span><span class="bar"></span><span>The bill</span></div>
+  <p>A dollar of expense doesn't go one place. <em>It splits five ways</em> before anyone sees the bottom of it.</p>
+</aside>
+
+<!-- =============================================================
+     4. WHERE THE MONEY GOES — 100-cent dollar
+     ============================================================== -->
+<section>
+  <div class="eyebrow"><span class="num">04</span><span class="bar"></span> A hundred cents in</div>
+  <h2 class="display" style="font-size:46px">
+    Every dollar of expense, <em>broken into pennies.</em>
+  </h2>
+  <p style="margin-top:20px;max-width:36ch;">
+    Pay the people. Service the debt. Cover the losses. Keep the lights on. <em>What's left, lends.</em>
+  </p>
+
+  <div class="dollar-card">
+    <div class="dollar-frame">
+      <div class="dollar-grid" id="dollarGrid"></div>
+      <div class="surplus">
+        <div class="num"><em>17¢</em></div>
+        <div class="lab">Other &<br/>residual</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-row">
+        <span class="sw" style="background:#4F81BD"></span>
+        <span class="nm">Compensation &amp; benefits</span>
+        <span class="pc">30¢</span>
+      </div>
+      <div class="legend-row">
+        <span class="sw" style="background:#F79646"></span>
+        <span class="nm">Interest expense</span>
+        <span class="pc">18¢</span>
+      </div>
+      <div class="legend-row">
+        <span class="sw" style="background:#8064A2"></span>
+        <span class="nm">Other operating (non-comp)</span>
+        <span class="pc">13¢</span>
+      </div>
+      <div class="legend-row">
+        <span class="sw" style="background:#9BBB59"></span>
+        <span class="nm">Provision for credit losses</span>
+        <span class="pc">12¢</span>
+      </div>
+      <div class="legend-row">
+        <span class="sw" style="background:#C0504D"></span>
+        <span class="nm">Technology &amp; communications</span>
+        <span class="pc">10¢</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================================
+     5. FOOTPRINT — Geography
+     ============================================================== -->
+<section>
+  <div class="eyebrow"><span class="num">05</span><span class="bar"></span> Where it shows up</div>
+  <h2 class="display" style="font-size:46px">
+    Half the revenue comes home. <em>Half travels.</em>
+  </h2>
+
+  <div class="geo">
+    <div class="geo-stage">
+      <!-- Abstract world strip — quadrants representing regions, with brass dot density tied to share -->
+      <svg class="geo-svg" viewBox="0 0 360 200" aria-hidden="true">
+        <defs>
+          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M20 0 L0 0 0 20" fill="none" stroke="#CFC6AE" stroke-width="0.4"/>
+          </pattern>
+        </defs>
+        <rect width="360" height="200" fill="url(#grid)"/>
+        <!-- region blocks (continents, abstract) -->
+        <g fill="#14171C" opacity="0.92">
+          <!-- North America -->
+          <path d="M20,40 C 30,30 70,28 100,40 C 130,52 145,70 130,90 C 115,108 80,112 50,100 C 28,92 12,70 20,40 Z"/>
+          <!-- Latin America -->
+          <path d="M85,120 C 100,118 116,128 120,148 C 122,168 108,178 92,170 C 78,162 76,140 85,120 Z"/>
+          <!-- EMEA -->
+          <path d="M170,40 C 200,32 232,38 248,58 C 258,72 252,90 234,96 C 210,104 178,98 168,82 C 160,68 162,50 170,40 Z"/>
+          <!-- Africa (part of EMEA) -->
+          <path d="M200,108 C 218,108 232,128 230,150 C 226,172 208,180 196,168 C 184,156 184,128 200,108 Z" opacity=".88"/>
+          <!-- APAC -->
+          <path d="M278,52 C 308,46 338,58 340,80 C 342,100 322,114 296,110 C 274,106 262,90 270,72 C 274,62 274,56 278,52 Z"/>
+          <path d="M306,124 C 320,124 332,138 326,154 C 318,170 302,170 296,158 C 290,148 296,128 306,124 Z" opacity=".75"/>
+        </g>
+        <!-- Brass volume dots, density per region -->
+        <g fill="#B8862C" id="geoDots"></g>
+      </svg>
+    </div>
+
+    <div class="geo-rows" id="geoRows">
+      <div class="geo-row major">
+        <span class="nm"><span class="dot" style="background:#B8862C"></span>North America</span>
+        <span class="pct"><em>50%</em></span>
+        <span class="bar"><i data-w="100"></i></span>
+      </div>
+      <div class="geo-row">
+        <span class="nm"><span class="dot"></span>Europe, Middle East &amp; Africa</span>
+        <span class="pct">20%</span>
+        <span class="bar"><i data-w="40"></i></span>
+      </div>
+      <div class="geo-row">
+        <span class="nm"><span class="dot"></span>Asia-Pacific</span>
+        <span class="pct">18%</span>
+        <span class="bar"><i data-w="36"></i></span>
+      </div>
+      <div class="geo-row">
+        <span class="nm"><span class="dot"></span>Latin America</span>
+        <span class="pct">12%</span>
+        <span class="bar"><i data-w="24"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <p style="margin-top:24px;max-width:36ch;font-size:14px;color:var(--ink-3)">
+    The Banamex sale will move that 12% south. Citi has been quietly trimming legacy markets to lean the rest.
+  </p>
+</section>
+
+<!-- RESET BEAT — segue into the dark beat -->
+<aside class="reset">
+  <div class="ornament"><span>IV</span><span class="bar"></span><span>The weight</span></div>
+  <p>Banks borrow to lend. <em>The bigger the bank, the bigger the borrow</em> — and the longer you spend explaining what's holding up the other side.</p>
+</aside>
+
+<!-- =============================================================
+     6. DEBT — DARK INTERLUDE
+     ============================================================== -->
+<section class="dark-band">
+  <div class="eyebrow"><span class="num">06</span><span class="bar"></span> The weight</div>
+  <h2 class="display" style="font-size:48px;">
+    <em>$367.7B</em> of debt,<br/>$212.3B of equity.
+  </h2>
+  <p style="margin-top:18px;max-width:34ch;">
+    A bank's balance sheet isn't a bug. <em>Leverage is the product.</em> What matters is the cushion underneath it.
+  </p>
+
+  <div class="balance">
+    <svg class="balance-svg" viewBox="0 0 360 240" aria-hidden="true">
+      <defs>
+        <linearGradient id="pan" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#D9A23F"/>
+          <stop offset="1" stop-color="#9C6E1F"/>
+        </linearGradient>
+      </defs>
+      <!-- pivot column -->
+      <line x1="180" y1="40" x2="180" y2="200" stroke="#2A3852" stroke-width="2"/>
+      <circle cx="180" cy="36" r="4" fill="#D9A23F"/>
+      <!-- beam, tilted slightly toward debt (left/heavier visually) -->
+      <g transform="rotate(-7 180 40)">
+        <line x1="40" y1="40" x2="320" y2="40" stroke="#D9A23F" stroke-width="2"/>
+        <!-- left rope (debt — heavier) -->
+        <line x1="70" y1="40" x2="70" y2="110" stroke="#2A3852" stroke-width="1"/>
+        <!-- right rope (equity) -->
+        <line x1="290" y1="40" x2="290" y2="80" stroke="#2A3852" stroke-width="1"/>
+        <!-- left pan (heavy) -->
+        <g transform="translate(20 110)">
+          <path d="M0,0 L100,0 L88,42 L12,42 Z" fill="#1F2B42" stroke="#2A3852"/>
+          <path d="M0,0 L100,0" stroke="#D9A23F" stroke-width="2"/>
+          <text x="50" y="26" text-anchor="middle" fill="#F4EFE4" font-family="Instrument Serif, serif" font-size="20" font-style="italic">$367.7B</text>
+        </g>
+        <!-- right pan (lighter) -->
+        <g transform="translate(240 80)">
+          <path d="M0,0 L100,0 L92,32 L8,32 Z" fill="#1F2B42" stroke="#2A3852"/>
+          <path d="M0,0 L100,0" stroke="#D9A23F" stroke-width="2"/>
+          <text x="50" y="22" text-anchor="middle" fill="#F4EFE4" font-family="Instrument Serif, serif" font-size="16">$212.3B</text>
+        </g>
+      </g>
+      <!-- base -->
+      <path d="M120,210 L240,210 L260,228 L100,228 Z" fill="#131C2E" stroke="#2A3852"/>
+    </svg>
+    <div class="balance-lab">
+      <div>
+        Total debt
+        <span class="val"><em>1.73×</em> equity</span>
+      </div>
+      <div class="right">
+        Capital cushion
+        <span class="val">CET1 · <em>13.18%</em></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ratio-line">
+    <div class="item">
+      <div class="v"><em>−$67.6B</em></div>
+      <div class="l">Operating cash flow · FY '25 · negative by design at large banks</div>
+    </div>
+    <div class="item">
+      <div class="v"><em>−$74.2B</em></div>
+      <div class="l">Free cash flow · after $6.52B capex on transformation</div>
+    </div>
+    <div class="item">
+      <div class="v">$5.37B</div>
+      <div class="l">Dividends paid · FY '25</div>
+    </div>
+    <div class="item">
+      <div class="v">$13.25B</div>
+      <div class="l">Buybacks · returned to shareholders</div>
+    </div>
+  </div>
+
+  <p style="margin-top:36px;max-width:34ch;">
+    <em>$18.6B back to shareholders</em> in a year the cash flow line read negative. That is what a bank balance sheet is allowed to do, and only because the cushion is real.
+  </p>
+</section>
+
+<!-- =============================================================
+     7. THE BET
+     ============================================================== -->
+<section>
+  <div class="eyebrow"><span class="num">07</span><span class="bar"></span> Where the chips go</div>
+  <h2 class="display" style="font-size:46px">
+    The capital allocation, <em>line by line.</em>
+  </h2>
+  <p style="margin-top:20px;max-width:36ch;">
+    Three priorities, in this order: <em>transformation</em>, <em>discipline</em>, and a <em>steady dividend</em>. Plus an exit ramp out of legacy geographies.
+  </p>
+
+  <div class="bet">
+    <div class="bet-row">
+      <div class="amt"><em>$13.25B</em><small>Buybacks</small></div>
+      <div class="cap">
+        <strong>Disciplined repurchase</strong>
+        Common-share buybacks paced through the year against the CET1 envelope.
+      </div>
+    </div>
+    <div class="bet-row">
+      <div class="amt">$6.52B<small>Capex</small></div>
+      <div class="cap">
+        <strong>Organic investment</strong>
+        Spending into transformation and technology — the multi-year project of consolidating the platform.
+      </div>
+    </div>
+    <div class="bet-row">
+      <div class="amt">$5.37B<small>Dividend</small></div>
+      <div class="cap">
+        <strong>Stable payout</strong>
+        Dividends paid in FY '25 — the line management protects.
+      </div>
+    </div>
+    <div class="bet-row">
+      <div class="amt">Exit<small>Banamex</small></div>
+      <div class="cap">
+        <strong>Trim legacy</strong>
+        Planned sale of the Mexican consumer franchise — the largest of the non-core exits still in motion.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESET BEAT -->
+<aside class="reset">
+  <div class="ornament"><span>V</span><span class="bar"></span><span>The room</span></div>
+  <p>Three other doors open onto the same hallway. <em>Each one wants the same client</em> — for a slightly different reason.</p>
+</aside>
+
+<!-- =============================================================
+     8. COMPETITORS
+     ============================================================== -->
+<section>
+  <div class="eyebrow"><span class="num">08</span><span class="bar"></span> Same hallway</div>
+  <h2 class="display" style="font-size:46px">
+    By market cap, <em>Citi sits middle of the pack.</em>
+  </h2>
+  <p style="margin-top:20px;max-width:36ch;">
+    HSBC for the cross-border; Goldman for the deal flow; Morgan Stanley for the high-net-worth. Tap any to read the overlap.
+  </p>
+
+  <div class="compet">
+    <!-- comparative columns -->
+    <div class="comp-stack" id="compStack">
+      <!-- bars positioned in JS / inline -->
+      <div class="comp-bar them" style="left:6%;width:18%;height:74%;">
+        <div class="head">
+          <span class="ticker">C</span>
+          <span class="mc">$226.7B</span>
+        </div>
+        <div class="foot">CITI</div>
+      </div>
+      <div class="comp-bar them" style="left:30%;width:18%;height:75%;">
+        <div class="head">
+          <span class="ticker">HSBC</span>
+          <span class="mc">$229.9B</span>
+        </div>
+        <div class="foot">HSBC</div>
+      </div>
+      <div class="comp-bar them" style="left:54%;width:18%;height:89%;">
+        <div class="head">
+          <span class="ticker">GS</span>
+          <span class="mc">$273.2B</span>
+        </div>
+        <div class="foot">GOLDMAN</div>
+      </div>
+      <div class="comp-bar them" style="left:78%;width:18%;height:97%;">
+        <div class="head">
+          <span class="ticker">MS</span>
+          <span class="mc">$299.8B</span>
+        </div>
+        <div class="foot">MORGAN&nbsp;ST.</div>
+      </div>
+      <!-- overlay: highlight Citi by switching first bar to .us color -->
+      <style>
+        .comp-stack .comp-bar:first-child { background: var(--brass); border-top-color: var(--brass-2); }
+        .comp-stack .comp-bar:first-child .mc { color: var(--brass); }
+      </style>
+    </div>
+
+    <div class="comp-list">
+      <div class="comp-card" data-comp>
+        <div class="comp-card-head">
+          <span class="name">HSBC Holdings</span>
+          <span class="tk">HSBC</span>
+          <span class="mcap">$229.9B</span>
+        </div>
+        <div class="micro">
+          <span>Q REV<b>$17.63B</b></span>
+          <span>P/E<b>11.3</b></span>
+          <span>YOY<b>+109%</b></span>
+        </div>
+        <div class="desc">
+          Direct rival for multinational corporate clients, cross-border transaction banking, trade finance, and institutional markets.
+          <span class="chev" style="float:right">+</span>
+        </div>
+      </div>
+      <div class="comp-card" data-comp>
+        <div class="comp-card-head">
+          <span class="name">Goldman Sachs</span>
+          <span class="tk">GS</span>
+          <span class="mcap">$273.2B</span>
+        </div>
+        <div class="micro">
+          <span>Q REV<b>$17.23B</b></span>
+          <span>P/E<b>15.1</b></span>
+          <span>YOY<b>+1.3%</b></span>
+        </div>
+        <div class="desc">
+          Head-to-head with Citi's Banking and Markets segments — investment banking mandates, fixed income and equities trading, institutional services.
+        </div>
+      </div>
+      <div class="comp-card" data-comp>
+        <div class="comp-card-head">
+          <span class="name">Morgan Stanley</span>
+          <span class="tk">MS</span>
+          <span class="mcap">$299.8B</span>
+        </div>
+        <div class="micro">
+          <span>Q REV<b>$20.58B</b></span>
+          <span>P/E<b>16.6</b></span>
+          <span>YOY<b>+12.3%</b></span>
+        </div>
+        <div class="desc">
+          Overlap across institutional securities, wealth management, and investment banking — same fight for HNW clients, capital markets deal flow, prime brokerage.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESET BEAT -->
+<aside class="reset">
+  <div class="ornament"><span>VI</span><span class="bar"></span><span>The takeaway</span></div>
+  <p>Two centuries in, the question isn't whether the doors are open. It's <em>which ones the next decade walks through.</em></p>
+</aside>
+
+<!-- =============================================================
+     9. CLOSE — INVERSION
+     ============================================================== -->
+<section class="close">
+  <div class="eyebrow"><span class="num">09</span><span class="bar"></span> The takeaway</div>
+  <h1 class="display">
+    160 countries opened the page.<br/>
+    <em>One ledger</em> closes it.
+  </h1>
+
+  <p style="margin-top:28px;max-width:36ch;">
+    A 213-year-old bank, leaner than it was, returning <em>$18.6B</em> to owners while it rebuilds the platform underneath. <span class="accent">+32%</span> in the youngest segment, <em>13.18%</em> in the cushion, one Banamex sale to go.
+  </p>
+
+  <div class="tail">
+    <div class="item">
+      <div class="v">$85.22<span style="font-family:var(--mono);font-size:14px;color:var(--ink-3);letter-spacing:.06em;margin-left:4px">B</span></div>
+      <div class="l">FY '25 revenue</div>
+    </div>
+    <div class="item">
+      <div class="v"><em>$14.31</em><span style="font-family:var(--mono);font-size:14px;color:var(--ink-3);letter-spacing:.06em;margin-left:4px">B</span></div>
+      <div class="l">FY '25 net income</div>
+    </div>
+    <div class="item">
+      <div class="v">$3.06</div>
+      <div class="l">Q1 '26 EPS</div>
+    </div>
+    <div class="item">
+      <div class="v"><em>13.18%</em></div>
+      <div class="l">CET1 capital ratio</div>
+    </div>
+  </div>
+
+  <div class="colophon">
+    Citigroup Inc. <span class="bullet">·</span> NYSE: C <span class="bullet">·</span> FY '25 recap<br/>
+    All figures sourced to disclosed FY '25 &amp; Q1 '26 reporting
+  </div>
+</section>
+
+<script>
+/* =============================================================
+   Wire-up: scroll progress, count-ups, FX bars, dollar mosaic,
+   geo bars, country dots, comp cards.
+   ============================================================== */
+
+// --- Scroll progress hairline ----------------------------------
+(function() {
+  const fill = document.getElementById('prog');
+  function tick() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = Math.max(0, Math.min(1, window.scrollY / Math.max(1, max)));
+    fill.style.width = (pct * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', tick, { passive: true });
+  window.addEventListener('resize', tick);
+  tick();
+})();
+
+// --- Reveal on scroll ------------------------------------------
+const revealEls = [];
+document.querySelectorAll('section, .reset').forEach(el => {
+  el.classList.add('reveal');
+  revealEls.push(el);
+});
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+revealEls.forEach(el => io.observe(el));
+
+// --- FX board: animate bars when in view -----------------------
+(function() {
+  const board = document.getElementById('fxboard');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        board.querySelectorAll('.fx-bar > i').forEach(i => {
+          i.style.width = i.style.getPropertyValue('--w');
+        });
+        obs.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+  obs.observe(board);
+})();
+
+// --- Dollar mosaic: 100 cells, distributed by biggest_costs ----
+(function() {
+  const grid = document.getElementById('dollarGrid');
+  const seg = [
+    { c:'#4F81BD', n:30 },  // Comp & benefits
+    { c:'#F79646', n:18 },  // Interest expense
+    { c:'#8064A2', n:13 },  // Other operating
+    { c:'#9BBB59', n:12 },  // Provision for credit losses
+    { c:'#C0504D', n:10 },  // Tech & comms
+    { c:'#B8862C', n:17 },  // residual / brass — surplus
+  ];
+  // Build a fixed but visually-pleasing distribution (snake-fill)
+  const colors = [];
+  seg.forEach(s => { for (let i=0; i<s.n; i++) colors.push(s.c); });
+  // Snake order so blocks form contiguous regions per row pair
+  const idx = [];
+  for (let r=0; r<10; r++) {
+    const row = [];
+    for (let c=0; c<10; c++) row.push(r*10+c);
+    if (r % 2) row.reverse();
+    idx.push(...row);
+  }
+  // Place colors into snake-ordered cells, then unscramble back to grid order
+  const cellColor = new Array(100);
+  idx.forEach((cellPos, i) => { cellColor[cellPos] = colors[i] || '#E1D9C5'; });
+  cellColor.forEach((color, i) => {
+    const i2 = document.createElement('i');
+    i2.style.background = color;
+    i2.style.setProperty('--d', (i * 10) + 'ms');
+    grid.appendChild(i2);
+  });
+  // Light up when visible
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { grid.classList.add('lit'); obs.disconnect(); }
+    });
+  }, { threshold: 0.2 });
+  obs.observe(grid);
+})();
+
+// --- Country dots (160+) ---------------------------------------
+(function() {
+  const root = document.getElementById('countriesGrid');
+  const total = 160;
+  // Of those 160, ~85 are "active" / strongly present (gold), rest are quieter (ink dim)
+  // Per JSON: ~50% NA, 20% EMEA, 18% APAC, 12% LatAm — reflect dot density
+  for (let i=0; i<total; i++) {
+    const el = document.createElement('i');
+    // First chunk gold (high-revenue), rest ink, sparkle at random
+    if (i < 64) el.classList.add('brass');
+    else if (i < 110) el.classList.add('');  // ink
+    else el.classList.add('dim');
+    root.appendChild(el);
+  }
+})();
+
+// --- Geo bars animate ------------------------------------------
+(function() {
+  const rows = document.getElementById('geoRows');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        rows.querySelectorAll('.bar > i').forEach(i => {
+          i.style.width = (i.getAttribute('data-w') + '%');
+        });
+        obs.disconnect();
+      }
+    });
+  }, { threshold: 0.2 });
+  obs.observe(rows);
+})();
+
+// --- Geo dots over map -----------------------------------------
+(function() {
+  // Density per region (per JSON pcts: NA 50, EMEA 20, APAC 18, LATAM 12)
+  // Plant a fixed-but-pleasing scatter inside each region's bbox.
+  const regions = [
+    // {name, count, x0, y0, x1, y1}
+    { n: 40, x0: 25,  y0: 40,  x1: 130, y1: 100 },   // NA
+    { n: 12, x0: 80,  y0: 122, x1: 122, y1: 175 },  // LatAm
+    { n: 16, x0: 168, y0: 42,  x1: 248, y1: 100 },   // EMEA-Eu
+    { n: 8,  x0: 192, y0: 110, x1: 232, y1: 175 },  // EMEA-Africa
+    { n: 14, x0: 268, y0: 52,  x1: 342, y1: 110 },   // APAC
+    { n: 4,  x0: 290, y0: 124, x1: 332, y1: 168 },  // APAC oceania
+  ];
+  const g = document.getElementById('geoDots');
+  let s = 7; // simple deterministic prng
+  function rng() { s = (s * 9301 + 49297) % 233280; return s/233280; }
+  regions.forEach(r => {
+    for (let i=0; i<r.n; i++) {
+      const cx = r.x0 + rng() * (r.x1 - r.x0);
+      const cy = r.y0 + rng() * (r.y1 - r.y0);
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', cx.toFixed(1));
+      c.setAttribute('cy', cy.toFixed(1));
+      c.setAttribute('r', (0.8 + rng()*1.0).toFixed(1));
+      c.setAttribute('opacity', (0.55 + rng()*0.45).toFixed(2));
+      g.appendChild(c);
+    }
+  });
+})();
+
+// --- Competitor cards: tap-to-expand ---------------------------
+document.querySelectorAll('.comp-card').forEach(card => {
+  card.addEventListener('click', () => {
+    card.classList.toggle('open');
+  });
+});
+
+// --- Hero parallax on the flow lines ---------------------------
+(function() {
+  const art = document.querySelector('.hero-art');
+  if (!art) return;
+  function tick() {
+    const y = window.scrollY;
+    art.style.transform = `translateY(${(y * 0.15).toFixed(1)}px)`;
+  }
+  window.addEventListener('scroll', tick, { passive: true });
+})();
+
+</script>
+</body>
+</html>

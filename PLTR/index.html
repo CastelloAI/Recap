@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>PLTR · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0A0A0A;
+    --ink-2:#0F0F0F;
+    --raised:#141414;
+    --hairline:#1F1F1F;
+    --hairline-2:#2A2A2A;
+    --paper:#E8E6E1;
+    --paper-dim:#B8B5AE;
+    --paper-mute:#7A7770;
+    --signal:#F4A23C;     /* terminal amber */
+    --classified:#D33A2C; /* earned red */
+    --teal:#3FA89B;       /* secondary signal */
+    --max-w:430px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:#000;color:var(--paper);font-family:'Inter Tight',system-ui,sans-serif;font-feature-settings:"ss01","cv11";-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{overflow-x:hidden}
+  .stage{max-width:var(--max-w);margin:0 auto;background:var(--ink);position:relative;overflow:hidden;min-height:100vh;box-shadow:0 0 80px rgba(244,162,60,.04)}
+  /* tiny grain */
+  .stage::before{content:"";position:fixed;inset:0;max-width:var(--max-w);margin:0 auto;pointer-events:none;z-index:200;opacity:.035;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+
+  /* ==== CHROME ==== */
+  .chrome{position:sticky;top:0;z-index:100;background:rgba(10,10,10,.78);backdrop-filter:blur(14px) saturate(1.1);-webkit-backdrop-filter:blur(14px) saturate(1.1);border-bottom:1px solid var(--hairline)}
+  .chrome-row{display:flex;align-items:center;gap:10px;padding:14px 18px 10px}
+  .ticker{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px;letter-spacing:.04em;color:var(--paper);background:var(--paper);color:#0A0A0A;padding:3px 6px;border-radius:2px}
+  .name{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--paper-dim);letter-spacing:.06em;text-transform:uppercase}
+  .recap{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--paper-mute);letter-spacing:.18em;display:flex;align-items:center;gap:6px}
+  .recap .dot{width:5px;height:5px;border-radius:50%;background:var(--signal);box-shadow:0 0 8px var(--signal);animation:blip 2.4s ease-in-out infinite}
+  @keyframes blip{0%,100%{opacity:.5}50%{opacity:1}}
+  .progress{height:1px;background:var(--hairline);position:relative;overflow:hidden}
+  .progress > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--signal),#fff);transition:width .08s linear}
+
+  /* ==== shared ==== */
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;color:var(--paper-mute);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+  .eyebrow::before{content:"";width:14px;height:1px;background:var(--signal)}
+  .display{font-family:'Instrument Serif',serif;font-weight:400;color:var(--paper);line-height:.95;letter-spacing:-.01em}
+  .display em{font-style:italic;color:var(--signal)}
+  .body{font-family:'Inter Tight',sans-serif;font-weight:400;font-size:15px;line-height:1.55;color:var(--paper-dim)}
+  .body em{font-family:'Instrument Serif',serif;font-style:italic;color:var(--paper)}
+  .body em.amber{color:var(--signal)}
+  .mono{font-family:'JetBrains Mono',monospace}
+  section{position:relative;padding:64px 22px}
+  .sec-tight{padding:48px 22px}
+
+  /* ==== HERO ==== */
+  .hero{padding:28px 22px 60px;position:relative;overflow:hidden}
+  .classmark{display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.28em;color:var(--paper-mute);padding:18px 0 10px;border-bottom:1px dashed var(--hairline-2)}
+  .classmark .seal{display:flex;align-items:center;gap:6px}
+  .classmark .seal::before{content:"";width:8px;height:8px;border:1px solid var(--signal);transform:rotate(45deg)}
+  .hero h1{font-family:'Instrument Serif',serif;font-size:54px;line-height:1;letter-spacing:-.015em;margin:38px 0 0;color:var(--paper)}
+  .hero h1 em{font-style:italic;color:var(--signal)}
+  .hero h1 .strike{position:relative;display:inline-block}
+  .hero h1 .strike::after{content:"";position:absolute;left:-2px;right:-2px;top:54%;height:3px;background:var(--classified);transform:scaleX(var(--strike,0));transform-origin:left;transition:transform .8s cubic-bezier(.7,0,.2,1)}
+  .hero h1 .strike.on::after{--strike:1}
+  .hero h1 .replace{display:inline-block;color:var(--paper);font-style:italic;opacity:0;transform:translateY(6px);transition:opacity .5s ease .6s, transform .5s ease .6s}
+  .hero h1 .replace.on{opacity:1;transform:translateY(0)}
+  .hero .cursor{display:inline-block;width:.55ch;height:.85em;background:var(--signal);vertical-align:-0.06em;margin-left:.06em;animation:cur 1.05s steps(2) infinite;box-shadow:0 0 14px rgba(244,162,60,.7)}
+  @keyframes cur{50%{opacity:0}}
+  .hero p.lede{margin:26px 0 0;color:var(--paper-dim);font-size:15.5px;line-height:1.55;max-width:30ch}
+  .hero p.lede em{font-family:'Instrument Serif',serif;font-style:italic;color:var(--paper)}
+
+  .hero .meta{margin-top:36px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+  .hero .meta .cell{padding:14px 0;border-right:1px solid var(--hairline)}
+  .hero .meta .cell:last-child{border-right:0}
+  .hero .meta .k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--paper-mute);text-transform:uppercase}
+  .hero .meta .v{font-family:'Instrument Serif',serif;font-size:22px;color:var(--paper);margin-top:6px;line-height:1}
+  .hero .meta .v .unit{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--paper-mute);margin-left:3px;letter-spacing:.05em}
+
+  /* crosshair scene behind hero subhead */
+  .crosshair{position:absolute;right:-30px;top:90px;width:240px;height:240px;opacity:.55;pointer-events:none}
+
+  /* ==== TWO HALVES (govt/commercial) ==== */
+  .halves{position:relative}
+  .halves .stage-wrap{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end}
+  .pillar{position:relative;border-top:1px solid var(--hairline);padding-top:14px}
+  .pillar .tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--paper-mute);text-transform:uppercase}
+  .pillar .pct{font-family:'Instrument Serif',serif;font-size:36px;color:var(--paper);margin-top:6px;line-height:1}
+  .pillar .rev{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--paper-dim);margin-top:6px}
+  .pillar .bar{margin-top:14px;height:160px;border:1px solid var(--hairline);position:relative;overflow:hidden;background:#0C0C0C}
+  .pillar .fill{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(244,162,60,.08),rgba(244,162,60,.32));transition:height 1.2s cubic-bezier(.6,0,.2,1)}
+  .pillar.gov .fill{background:linear-gradient(180deg,rgba(232,230,225,.06),rgba(232,230,225,.22))}
+  .pillar .grid-y{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent 0,transparent 19px,rgba(255,255,255,.04) 19px,rgba(255,255,255,.04) 20px)}
+  .pillar .glyph{position:absolute;left:8px;top:8px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--paper-mute);letter-spacing:.1em}
+
+  /* ==== ONTOLOGY ==== */
+  .ontology{padding:72px 0 64px;position:relative}
+  .ontology .pad{padding:0 22px}
+  .ontology svg{display:block;width:100%;height:auto}
+  .onto-cap{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px;padding:0 22px}
+  .onto-cap .b{border-top:1px solid var(--hairline);padding-top:8px}
+  .onto-cap .b .k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--paper-mute);text-transform:uppercase}
+  .onto-cap .b .v{font-family:'Instrument Serif',serif;font-size:18px;color:var(--paper);margin-top:4px;line-height:1}
+
+  /* ==== RESET BEAT ==== */
+  .reset{padding:46px 26px;background:#0E0E0E;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);position:relative}
+  .reset p{margin:0;font-family:'Instrument Serif',serif;font-style:italic;font-size:24px;line-height:1.25;color:var(--paper);letter-spacing:-.005em}
+  .reset p .a{color:var(--signal)}
+  .reset .pre{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.28em;color:var(--paper-mute);text-transform:uppercase;margin-bottom:12px}
+  .reset.alt{background:#080808}
+
+  /* ==== SCALE ==== */
+  .scale .big{font-family:'Instrument Serif',serif;font-size:96px;line-height:.9;color:var(--paper);margin:18px 0 0;letter-spacing:-.02em}
+  .scale .big .u{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--paper-mute);vertical-align:.6em;margin-left:4px;letter-spacing:.05em}
+  .scale .sub{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--paper-dim);letter-spacing:.05em}
+  .scale .growth{margin-top:30px;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+  .scale .growth .tick{font-family:'Instrument Serif',serif;font-size:42px;color:var(--signal);font-style:italic;line-height:1}
+  .scale .growth .lbl{font-family:'Inter Tight',sans-serif;font-size:13px;color:var(--paper-dim);line-height:1.4}
+  .scale .growth .lbl em{font-family:'Instrument Serif',serif;font-style:italic;color:var(--paper)}
+
+  /* multiple visual: revenue tiny vs market cap towering */
+  .mult{margin-top:48px;border-top:1px dashed var(--hairline-2);padding-top:24px}
+  .mult .label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--paper-mute);text-transform:uppercase}
+  .mult .stage2{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:end;height:280px}
+  .mult .col{position:relative;height:100%}
+  .mult .col .b{position:absolute;left:0;right:0;bottom:0;border-top:1px solid var(--paper);background:repeating-linear-gradient(180deg,transparent 0 6px,rgba(255,255,255,.04) 6px 7px);transition:height 1.4s cubic-bezier(.5,0,.2,1)}
+  .mult .col.cap .b{background:repeating-linear-gradient(180deg,rgba(244,162,60,.18) 0 6px,rgba(244,162,60,.06) 6px 7px);border-top:1px solid var(--signal);box-shadow:0 -10px 30px rgba(244,162,60,.18) inset}
+  .mult .col .cap-num{position:absolute;left:0;right:0;text-align:left;font-family:'Instrument Serif',serif;font-size:22px;color:var(--paper);transition:bottom 1.4s cubic-bezier(.5,0,.2,1)}
+  .mult .col.cap .cap-num{color:var(--signal)}
+  .mult .col .leg{position:absolute;bottom:-22px;left:0;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--paper-mute);letter-spacing:.08em}
+  .mult .footnote{margin-top:34px;font-family:'Instrument Serif',serif;font-style:italic;font-size:18px;line-height:1.35;color:var(--paper)}
+  .mult .footnote .a{color:var(--signal)}
+
+  /* ==== COSTS — ledger ==== */
+  .costs{padding-top:68px}
+  .costs h2{font-family:'Instrument Serif',serif;font-size:38px;line-height:1.02;margin:14px 0 8px;color:var(--paper);letter-spacing:-.01em}
+  .costs h2 em{font-style:italic;color:var(--signal)}
+  .costs .lede{font-family:'Inter Tight',sans-serif;font-size:14.5px;color:var(--paper-dim);line-height:1.55;max-width:34ch}
+  .costs .lede em{font-family:'Instrument Serif',serif;font-style:italic;color:var(--paper)}
+  .ledger{margin-top:34px;border-top:1px solid var(--hairline)}
+  .row{display:grid;grid-template-columns:34px 1fr auto;column-gap:14px;align-items:center;padding:18px 0;border-bottom:1px solid var(--hairline);position:relative}
+  .row .idx{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--paper-mute);letter-spacing:.06em}
+  .row .label{font-family:'Inter Tight',sans-serif;font-size:14px;color:var(--paper);font-weight:500}
+  .row .pct{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--paper);font-weight:500}
+  .row .pct .p{color:var(--paper-mute);margin-left:2px}
+  .row .bar{grid-column:1 / -1;margin-top:12px;height:6px;background:#161616;position:relative;overflow:hidden}
+  .row .bar > i{position:absolute;left:0;top:0;bottom:0;width:0;transition:width 1.4s cubic-bezier(.5,0,.15,1)}
+  .row .swatch{position:absolute;left:0;top:0;bottom:0;width:3px}
+  .ledger .residual{display:grid;grid-template-columns:1fr auto;align-items:center;padding:22px 0 4px}
+  .ledger .residual .l{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--paper-mute);text-transform:uppercase}
+  .ledger .residual .v{font-family:'Instrument Serif',serif;font-style:italic;font-size:42px;color:var(--signal);line-height:1}
+  .ledger .residual .v .pct{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--paper-mute);margin-left:4px;font-style:normal;letter-spacing:.05em}
+  .ledger .resnote{font-family:'Inter Tight',sans-serif;font-size:13px;color:var(--paper-dim);margin-top:6px}
+
+  /* ==== MARGIN STRIP ==== */
+  .margins{padding:54px 22px;background:#0B0B0B;border-top:1px solid var(--hairline)}
+  .margins .pair{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:18px}
+  .margins .m{position:relative;padding:18px 14px;border:1px solid var(--hairline);background:#0E0E0E}
+  .margins .m .k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--paper-mute);text-transform:uppercase}
+  .margins .m .v{font-family:'Instrument Serif',serif;font-size:42px;color:var(--paper);margin-top:6px;line-height:1}
+  .margins .m .v em{font-style:italic;color:var(--signal)}
+  .margins .m .ring{position:absolute;right:10px;top:10px;width:38px;height:38px}
+
+  /* ==== FORTRESS (dark interlude) ==== */
+  .fortress{background:#050505;padding:80px 22px 90px;border-top:1px solid #151515;position:relative;overflow:hidden}
+  .fortress::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,rgba(244,162,60,.06),transparent 60%);pointer-events:none}
+  .fortress h2{font-family:'Instrument Serif',serif;font-size:42px;line-height:1.02;color:var(--paper);margin:18px 0 0;letter-spacing:-.01em}
+  .fortress h2 em{font-style:italic;color:var(--signal)}
+  .vault{margin-top:36px;position:relative}
+  .vault svg{display:block;width:100%;height:auto}
+  .vault .legend{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+  .vault .legend .l{padding:12px 0;border-top:1px solid #1A1A1A}
+  .vault .legend .k{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--paper-mute);letter-spacing:.16em;text-transform:uppercase}
+  .vault .legend .v{font-family:'Instrument Serif',serif;font-size:24px;color:var(--paper);margin-top:4px;line-height:1}
+  .vault .legend .v em{font-style:italic;color:var(--signal)}
+  .vault .footnote{margin-top:24px;font-family:'Inter Tight',sans-serif;font-size:13.5px;color:var(--paper-dim);line-height:1.55}
+  .vault .footnote em{font-family:'Instrument Serif',serif;font-style:italic;color:var(--paper)}
+
+  /* ==== GEOGRAPHY ==== */
+  .geo h2{font-family:'Instrument Serif',serif;font-size:38px;line-height:1.02;margin:14px 0 0;color:var(--paper)}
+  .geo h2 em{font-style:italic;color:var(--signal)}
+  .geo .grid{margin-top:30px;display:grid;grid-template-columns:repeat(10,1fr);grid-auto-rows:18px;gap:2px}
+  .geo .grid .cell{background:#161616;transition:background .8s ease}
+  .geo .grid .cell.us{background:rgba(244,162,60,.85)}
+  .geo .grid .cell.uk{background:rgba(232,230,225,.55)}
+  .geo .grid .cell.eu{background:rgba(232,230,225,.35)}
+  .geo .grid .cell.ap{background:rgba(63,168,155,.55)}
+  .geo .key{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:10px 18px}
+  .geo .key .k{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--paper-dim);letter-spacing:.04em}
+  .geo .key .k .sw{width:10px;height:10px;flex:none}
+  .geo .key .k .pct{margin-left:auto;color:var(--paper)}
+  .geo .pull{margin-top:30px;font-family:'Instrument Serif',serif;font-style:italic;font-size:22px;line-height:1.25;color:var(--paper)}
+  .geo .pull em{color:var(--signal)}
+
+  /* ==== THE BET (capex vs cash) ==== */
+  .bet{padding-top:70px}
+  .bet h2{font-family:'Instrument Serif',serif;font-size:36px;line-height:1.05;margin:14px 0 8px;color:var(--paper)}
+  .bet h2 em{font-style:italic;color:var(--signal)}
+  .bet .lede{font-family:'Inter Tight',sans-serif;font-size:14.5px;color:var(--paper-dim);line-height:1.55;max-width:34ch}
+  .bet .lede em{font-family:'Instrument Serif',serif;font-style:italic;color:var(--paper)}
+  .stash{margin-top:36px;position:relative}
+  .stash .row2{display:grid;grid-template-columns:1fr;gap:6px}
+  .stash .pile{position:relative;border:1px solid var(--hairline);background:#0E0E0E;padding:14px 14px 18px;overflow:hidden}
+  .stash .pile.cash{border-color:rgba(244,162,60,.4)}
+  .stash .pile .tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--paper-mute);letter-spacing:.14em;text-transform:uppercase;display:flex;justify-content:space-between}
+  .stash .pile .tag .v{color:var(--paper)}
+  .stash .pile.cash .tag .v{color:var(--signal)}
+  .stash .pile .num{font-family:'Instrument Serif',serif;font-size:38px;color:var(--paper);margin-top:6px;line-height:1}
+  .stash .pile.cash .num{color:var(--signal);font-style:italic}
+  .stash .pile .num .u{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--paper-mute);vertical-align:.7em;margin-left:3px}
+  .stash .pile .visbar{margin-top:14px;height:8px;background:#1A1A1A;position:relative;overflow:hidden}
+  .stash .pile .visbar > i{position:absolute;left:0;top:0;bottom:0;width:0;transition:width 1.6s cubic-bezier(.5,0,.15,1)}
+  .stash .pile.capex .visbar > i{background:var(--paper-dim)}
+  .stash .pile.cash .visbar > i{background:linear-gradient(90deg,var(--signal),#ffd398)}
+  .stash .ratio{margin-top:24px;font-family:'Instrument Serif',serif;font-style:italic;font-size:20px;line-height:1.3;color:var(--paper)}
+  .stash .ratio em{color:var(--signal)}
+  .stash .ratio .x{font-family:'JetBrains Mono',monospace;font-style:normal;font-size:14px;color:var(--paper-mute);letter-spacing:.05em;margin-left:4px}
+
+  /* ==== COMPETITION ==== */
+  .compete{padding-top:70px}
+  .compete h2{font-family:'Instrument Serif',serif;font-size:38px;line-height:1.02;margin:14px 0 8px;color:var(--paper)}
+  .compete h2 em{font-style:italic;color:var(--signal)}
+  .compete .lede{font-family:'Inter Tight',sans-serif;font-size:14.5px;color:var(--paper-dim);line-height:1.55;max-width:34ch}
+  .lineup{margin-top:36px}
+  .comp{padding:22px 0;border-top:1px solid var(--hairline);position:relative}
+  .comp:last-child{border-bottom:1px solid var(--hairline)}
+  .comp.self{background:linear-gradient(90deg,rgba(244,162,60,.06),transparent)}
+  .comp .head{display:flex;align-items:baseline;gap:10px}
+  .comp .tk{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--paper-mute);background:#1A1A1A;padding:2px 6px;border-radius:2px}
+  .comp.self .tk{background:var(--signal);color:#0A0A0A}
+  .comp .nm{font-family:'Inter Tight',sans-serif;font-size:14px;color:var(--paper);font-weight:500}
+  .comp .mc-row{margin-top:14px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:10px}
+  .comp .mc-row .k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--paper-mute);text-transform:uppercase}
+  .comp .mc-row .v{font-family:'Instrument Serif',serif;font-size:20px;color:var(--paper);text-align:right;line-height:1}
+  .comp.self .mc-row .v{color:var(--signal)}
+  .comp .mcbar{grid-column:1 / -1;margin-top:8px;height:4px;background:#161616;position:relative;overflow:hidden}
+  .comp .mcbar > i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--paper-dim);transition:width 1.4s cubic-bezier(.5,0,.15,1)}
+  .comp.self .mcbar > i{background:var(--signal)}
+  .comp .pe{margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--paper-mute);letter-spacing:.05em}
+  .comp .pe .cell{border-top:1px dashed var(--hairline-2);padding-top:6px}
+  .comp .pe .cell .v{font-family:'Instrument Serif',serif;font-style:italic;font-size:16px;color:var(--paper);display:block;margin-top:2px;line-height:1}
+  .comp.self .pe .cell .v{color:var(--signal)}
+  .comp .desc{margin-top:14px;font-family:'Inter Tight',sans-serif;font-size:13px;color:var(--paper-dim);line-height:1.5}
+  .comp .desc em{font-family:'Instrument Serif',serif;font-style:italic;color:var(--paper)}
+
+  /* ==== CLOSE ==== */
+  .close{padding:80px 22px 60px;background:#080808;border-top:1px solid #151515;position:relative;overflow:hidden}
+  .close .pre{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--paper-mute);text-transform:uppercase}
+  .close h2{font-family:'Instrument Serif',serif;font-size:50px;line-height:1.0;margin:18px 0 0;color:var(--paper);letter-spacing:-.015em}
+  .close h2 em{font-style:italic;color:var(--signal)}
+  .close .equ{margin-top:38px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
+  .close .equ .a{font-family:'Instrument Serif',serif;font-size:34px;color:var(--paper);text-align:center;line-height:1}
+  .close .equ .a .u{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--paper-mute);display:block;letter-spacing:.14em;margin-top:6px}
+  .close .equ .op{font-family:'Instrument Serif',serif;font-size:32px;color:var(--paper-mute);font-style:italic}
+  .close .equ .b{font-family:'Instrument Serif',serif;font-size:34px;color:var(--signal);text-align:center;line-height:1;font-style:italic}
+  .close .equ .b .u{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--paper-mute);display:block;letter-spacing:.14em;margin-top:6px;font-style:normal}
+  .close .frame{margin-top:46px;font-family:'Instrument Serif',serif;font-size:22px;line-height:1.3;color:var(--paper);font-style:italic}
+  .close .frame .a{color:var(--signal)}
+  .close .seal{margin-top:54px;border:1px solid var(--hairline-2);padding:14px;display:flex;align-items:center;gap:14px}
+  .close .seal .stamp{width:42px;height:42px;border:1.5px solid var(--signal);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--signal);letter-spacing:.1em;transform:rotate(-4deg)}
+  .close .seal .meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--paper-mute);letter-spacing:.1em;line-height:1.6}
+  .close .seal .meta b{color:var(--paper);font-weight:500}
+
+  /* footer */
+  footer{padding:30px 22px 60px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--paper-mute);letter-spacing:.18em;text-align:center;border-top:1px dashed var(--hairline-2)}
+
+  /* reveal helper */
+  .rv{opacity:0;transform:translateY(14px);transition:opacity .8s ease, transform .8s cubic-bezier(.4,.0,.2,1)}
+  .rv.on{opacity:1;transform:none}
+
+  @media (min-width:431px){
+    body{background:#000}
+  }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <!-- ======== CHROME ======== -->
+  <header class="chrome" role="banner">
+    <div class="chrome-row">
+      <span class="ticker">PLTR</span>
+      <span class="name">Palantir Technologies</span>
+      <span class="recap"><span class="dot"></span>RECAP · FY '25</span>
+    </div>
+    <div class="progress" aria-hidden="true"><i id="prog"></i></div>
+  </header>
+
+  <!-- ======== HERO ======== -->
+  <section class="hero" data-screen-label="01 Thesis">
+    <div class="classmark">
+      <span class="seal">DOSSIER · NYSE:PLTR</span>
+      <span>FY 2025 · DECLASSIFIED</span>
+    </div>
+
+    <svg class="crosshair" viewBox="0 0 240 240" aria-hidden="true">
+      <defs>
+        <radialGradient id="cg" cx="50%" cy="50%" r="50%">
+          <stop offset="0" stop-color="#F4A23C" stop-opacity=".18"/>
+          <stop offset=".7" stop-color="#F4A23C" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <circle cx="120" cy="120" r="110" fill="url(#cg)"/>
+      <circle cx="120" cy="120" r="110" fill="none" stroke="#F4A23C" stroke-opacity=".35" stroke-dasharray="2 6"/>
+      <circle cx="120" cy="120" r="78" fill="none" stroke="#F4A23C" stroke-opacity=".25"/>
+      <circle cx="120" cy="120" r="46" fill="none" stroke="#F4A23C" stroke-opacity=".55"/>
+      <line x1="0" y1="120" x2="240" y2="120" stroke="#F4A23C" stroke-opacity=".35" stroke-width=".5"/>
+      <line x1="120" y1="0" x2="120" y2="240" stroke="#F4A23C" stroke-opacity=".35" stroke-width=".5"/>
+      <circle cx="120" cy="120" r="3" fill="#F4A23C"/>
+      <text x="130" y="60" fill="#F4A23C" font-family="JetBrains Mono" font-size="8" opacity=".7">N 25.95° W 80.13°</text>
+      <text x="130" y="190" fill="#F4A23C" font-family="JetBrains Mono" font-size="8" opacity=".7">AVENTURA · FL</text>
+    </svg>
+
+    <h1 id="hero-h1">
+      They sell<br/>
+      <span class="strike" id="strike1">software<sup style="font-size:.4em;color:var(--paper-mute);font-family:'JetBrains Mono',monospace;vertical-align:.6em;margin-left:.1em">[REDACTED]</sup></span><br/>
+      <span class="replace" id="replace1"><em>decisions</em>.</span><span class="cursor" aria-hidden="true"></span>
+    </h1>
+
+    <p class="lede">
+      Palantir builds the platforms — <em>Gotham, Foundry, Apollo, AIP</em> — that defense agencies and Fortune 500s use to turn raw data into operational calls. <em>Not a dashboard.</em> The decision itself.
+    </p>
+
+    <div class="meta">
+      <div class="cell"><div class="k">Founded</div><div class="v">2003</div></div>
+      <div class="cell"><div class="k">Employees</div><div class="v">4,429</div></div>
+      <div class="cell"><div class="k">HQ</div><div class="v" style="font-size:14px;line-height:1.2;padding-top:4px">Aventura<span class="unit">FL</span></div></div>
+    </div>
+  </section>
+
+  <!-- ======== TWO HALVES ======== -->
+  <section class="halves sec-tight" data-screen-label="02 Two Halves">
+    <div class="eyebrow rv">The book of business</div>
+    <h2 class="display rv" style="font-size:32px;margin-top:14px;max-width:14ch">
+      A <em>fifty-fifty</em> company sitting on either side of the firewall.
+    </h2>
+    <div class="stage-wrap">
+      <div class="pillar gov rv">
+        <div class="tag">Government</div>
+        <div class="pct"><span data-count="53.68" data-decimals="2">0</span><span style="font-size:18px;color:var(--paper-mute)">%</span></div>
+        <div class="rev">≈ $2.40B · FY '25</div>
+        <div class="bar"><div class="grid-y"></div><span class="glyph">CLASSIFIED</span><div class="fill" data-h="79"></div></div>
+      </div>
+      <div class="pillar com rv">
+        <div class="tag">Commercial</div>
+        <div class="pct"><span data-count="46.32" data-decimals="2">0</span><span style="font-size:18px;color:var(--paper-mute)">%</span></div>
+        <div class="rev">≈ $2.07B · FY '25</div>
+        <div class="bar"><div class="grid-y"></div><span class="glyph">AIP</span><div class="fill" data-h="68"></div></div>
+      </div>
+    </div>
+    <p class="body rv" style="margin-top:22px;max-width:36ch">
+      One half lives behind <em>SCIFs</em>. The other half is being sold, ten-day bootcamp at a time, to <em class="amber">U.S. enterprises</em> that have never bought defense software before.
+    </p>
+  </section>
+
+  <!-- ======== RESET BEAT 1 ======== -->
+  <aside class="reset" data-screen-label="03 Reset · Decisions">
+    <div class="pre">// reset · 001</div>
+    <p>The hard part was never the data. It was getting <span class="a">a hundred analysts to agree on what the data means</span> — and to act before the window closes.</p>
+  </aside>
+
+  <!-- ======== ONTOLOGY ======== -->
+  <section class="ontology" data-screen-label="04 Ontology">
+    <div class="pad">
+      <div class="eyebrow rv">The ontology · how AIP works</div>
+      <h2 class="display rv" style="font-size:30px;margin-top:14px;max-width:18ch">
+        Raw signal in. <em>Decision out.</em>
+      </h2>
+    </div>
+    <svg viewBox="0 0 430 360" preserveAspectRatio="xMidYMid meet" id="ontology-svg" style="margin-top:20px" aria-hidden="true">
+      <defs>
+        <linearGradient id="edgeG" x1="0" x2="1">
+          <stop offset="0" stop-color="#3FA89B" stop-opacity=".05"/>
+          <stop offset=".5" stop-color="#F4A23C" stop-opacity=".7"/>
+          <stop offset="1" stop-color="#F4A23C" stop-opacity=".05"/>
+        </linearGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="2"/></filter>
+      </defs>
+
+      <!-- left column: data sources -->
+      <g font-family="JetBrains Mono" font-size="8" fill="#7A7770" letter-spacing=".06em">
+        <text x="22" y="40">SATELLITE</text>
+        <text x="22" y="100">SENSOR</text>
+        <text x="22" y="160">CRM</text>
+        <text x="22" y="220">SAP/ERP</text>
+        <text x="22" y="280">CABLE TRAFFIC</text>
+        <text x="22" y="340">PROD LINE</text>
+      </g>
+      <g fill="#141414" stroke="#2A2A2A">
+        <rect x="22" y="48" width="78" height="28" rx="1"/>
+        <rect x="22" y="108" width="78" height="28" rx="1"/>
+        <rect x="22" y="168" width="78" height="28" rx="1"/>
+        <rect x="22" y="228" width="78" height="28" rx="1"/>
+        <rect x="22" y="288" width="78" height="28" rx="1"/>
+      </g>
+
+      <!-- middle: AIP core -->
+      <g class="core">
+        <circle cx="215" cy="180" r="68" fill="none" stroke="#F4A23C" stroke-opacity=".18" stroke-dasharray="3 5" class="ring-spin"/>
+        <circle cx="215" cy="180" r="44" fill="#0F0F0F" stroke="#F4A23C" stroke-opacity=".55"/>
+        <circle cx="215" cy="180" r="44" fill="none" stroke="#F4A23C" stroke-opacity=".25" filter="url(#glow)"/>
+        <text x="215" y="178" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#E8E6E1">AIP</text>
+        <text x="215" y="194" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#7A7770" letter-spacing=".18em">ONTOLOGY</text>
+      </g>
+
+      <!-- edges in -->
+      <g stroke="url(#edgeG)" stroke-width="1" fill="none" id="edges-in">
+        <path d="M100 62 C 150 70, 165 130, 175 156" />
+        <path d="M100 122 C 150 130, 170 150, 178 168" />
+        <path d="M100 182 C 140 184, 165 184, 178 182" />
+        <path d="M100 242 C 150 230, 170 210, 180 198" />
+        <path d="M100 302 C 150 270, 170 230, 180 210" />
+      </g>
+
+      <!-- right column: decisions -->
+      <g font-family="JetBrains Mono" font-size="8" fill="#7A7770" letter-spacing=".06em" text-anchor="end">
+        <text x="408" y="78">DEPLOY UNIT 7</text>
+        <text x="408" y="138">REROUTE FREIGHT</text>
+        <text x="408" y="198">FLAG TRANSACTION</text>
+        <text x="408" y="258">SHUT LINE 4</text>
+        <text x="408" y="318">APPROVE LOAN</text>
+      </g>
+      <g fill="#0F0F0F" stroke="#F4A23C" stroke-opacity=".55">
+        <rect x="320" y="86" width="88" height="22" rx="1"/>
+        <rect x="320" y="146" width="88" height="22" rx="1"/>
+        <rect x="320" y="206" width="88" height="22" rx="1"/>
+        <rect x="320" y="266" width="88" height="22" rx="1"/>
+        <rect x="320" y="326" width="88" height="22" rx="1"/>
+      </g>
+
+      <!-- edges out -->
+      <g stroke="#F4A23C" stroke-opacity=".5" stroke-width="1" fill="none" id="edges-out">
+        <path d="M255 165 C 290 130, 300 110, 320 97"/>
+        <path d="M258 175 C 290 170, 300 162, 320 157"/>
+        <path d="M260 185 C 290 195, 305 210, 320 217"/>
+        <path d="M258 198 C 290 230, 305 260, 320 277"/>
+        <path d="M252 205 C 290 280, 305 320, 320 337"/>
+      </g>
+
+      <!-- pulse particles -->
+      <g id="pulses">
+        <circle r="1.8" fill="#F4A23C" class="pulse" cx="100" cy="62"/>
+        <circle r="1.8" fill="#F4A23C" class="pulse" cx="100" cy="182"/>
+        <circle r="1.8" fill="#F4A23C" class="pulse" cx="100" cy="302"/>
+      </g>
+    </svg>
+    <div class="onto-cap">
+      <div class="b rv"><div class="k">Platforms</div><div class="v">4</div></div>
+      <div class="b rv"><div class="k">Gross margin</div><div class="v"><em style="font-style:italic;color:var(--signal)">82.4%</em></div></div>
+      <div class="b rv"><div class="k">Op margin</div><div class="v">31.6%</div></div>
+    </div>
+  </section>
+
+  <!-- ======== SCALE ======== -->
+  <section class="scale" data-screen-label="05 Scale">
+    <div class="eyebrow rv">The scale · FY 2025</div>
+    <div class="big rv"><span data-count="4.48" data-decimals="2">0</span><span class="u">$ B revenue</span></div>
+    <div class="sub rv">Q4 alone: $1.41B · EPS $0.25</div>
+
+    <div class="growth rv">
+      <div class="tick">↑ <span data-count="56.18" data-decimals="2">0</span>%</div>
+      <div class="lbl">Revenue growth, year over year — driven by <em>explosive</em> U.S. commercial adoption of AIP.</div>
+    </div>
+
+    <!-- multiple visual: revenue vs market cap -->
+    <div class="mult">
+      <div class="label">What the market is paying</div>
+      <div class="stage2" id="mult-stage">
+        <div class="col rev">
+          <div class="b" data-h="3.5"></div>
+          <div class="cap-num" data-bot="3.5">$4.48B<br/><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--paper-mute);letter-spacing:.05em">revenue</span></div>
+          <div class="leg">FY '25 REV</div>
+        </div>
+        <div class="col cap">
+          <div class="b" data-h="100"></div>
+          <div class="cap-num" data-bot="100">$350.12B<br/><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--paper-mute);letter-spacing:.05em">market cap</span></div>
+          <div class="leg">MARKET CAP</div>
+        </div>
+      </div>
+      <div class="footnote">A <span class="a">78×</span> revenue multiple. The market is buying the next decade — not this year.</div>
+    </div>
+  </section>
+
+  <!-- ======== RESET BEAT 2 ======== -->
+  <aside class="reset alt" data-screen-label="06 Reset · Bill">
+    <div class="pre">// reset · 002</div>
+    <p>You can sell decisions at <span class="a">82-cent margins</span> — but somebody still has to walk into the Pentagon, and somebody still has to write the code.</p>
+  </aside>
+
+  <!-- ======== COSTS ======== -->
+  <section class="costs" data-screen-label="07 Costs">
+    <div class="eyebrow rv">A hundred cents in</div>
+    <h2 class="rv">Where each dollar of <em>revenue</em> goes.</h2>
+    <p class="lede rv">Five visible expense lines. The largest by far is the salesforce that <em>knocks on the Pentagon's door</em>.</p>
+
+    <div class="ledger" id="ledger">
+      <!-- rows injected -->
+    </div>
+  </section>
+
+  <!-- ======== MARGINS STRIP ======== -->
+  <section class="margins" data-screen-label="08 Margins">
+    <div class="eyebrow rv">What the operator keeps</div>
+    <div class="pair">
+      <div class="m rv">
+        <svg class="ring" viewBox="0 0 38 38"><circle cx="19" cy="19" r="16" fill="none" stroke="#1F1F1F" stroke-width="3"/><circle cx="19" cy="19" r="16" fill="none" stroke="#F4A23C" stroke-width="3" stroke-dasharray="100 100" stroke-dashoffset="17.6" transform="rotate(-90 19 19)" stroke-linecap="round"/></svg>
+        <div class="k">Gross margin</div>
+        <div class="v"><em>82.4</em>%</div>
+      </div>
+      <div class="m rv">
+        <svg class="ring" viewBox="0 0 38 38"><circle cx="19" cy="19" r="16" fill="none" stroke="#1F1F1F" stroke-width="3"/><circle cx="19" cy="19" r="16" fill="none" stroke="#E8E6E1" stroke-width="3" stroke-dasharray="100 100" stroke-dashoffset="68.4" transform="rotate(-90 19 19)" stroke-linecap="round"/></svg>
+        <div class="k">Operating margin</div>
+        <div class="v">31.6%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== FORTRESS · dark interlude ======== -->
+  <section class="fortress" data-screen-label="09 Fortress">
+    <div class="eyebrow rv" style="--paper-mute:#5A5750">The fortress</div>
+    <h2 class="rv">A <em>$7.2 billion</em> war chest, no debt, and nowhere to spend it.</h2>
+
+    <div class="vault rv">
+      <svg viewBox="0 0 386 220" aria-hidden="true">
+        <defs>
+          <linearGradient id="goldG" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#F4A23C"/>
+            <stop offset="1" stop-color="#9A6420"/>
+          </linearGradient>
+          <linearGradient id="silvG" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#E8E6E1"/>
+            <stop offset="1" stop-color="#7A7770"/>
+          </linearGradient>
+        </defs>
+        <!-- treasury stacks: 5.8B -->
+        <g id="vault-treasury">
+          <!-- 12 silver bars stacked -->
+          <g transform="translate(20,80)">
+            <!-- generated below by JS would be cleaner, but inline for clarity -->
+          </g>
+        </g>
+        <!-- ground -->
+        <line x1="0" y1="200" x2="386" y2="200" stroke="#2A2A2A"/>
+        <!-- silver stack (treasuries 5.8B) -->
+        <g id="silver">
+          <!-- rows: each row 6 bars across, height 8, gap 2 -->
+        </g>
+        <!-- gold stack (cash 1.42B) -->
+        <g id="gold"></g>
+        <!-- labels -->
+        <g font-family="JetBrains Mono" font-size="9" fill="#7A7770" letter-spacing=".1em">
+          <text x="20" y="216">U.S. TREASURIES · $5.8B</text>
+          <text x="270" y="216">CASH · $1.42B</text>
+        </g>
+        <!-- debt: empty box -->
+        <g>
+          <rect x="20" y="22" width="346" height="34" fill="none" stroke="#2A2A2A" stroke-dasharray="3 4"/>
+          <text x="32" y="42" fill="#7A7770" font-family="JetBrains Mono" font-size="10" letter-spacing=".14em">LONG-TERM DEBT</text>
+          <text x="354" y="42" text-anchor="end" fill="#F4A23C" font-family="Instrument Serif" font-style="italic" font-size="20">$0</text>
+        </g>
+      </svg>
+
+      <div class="legend">
+        <div class="l rv"><div class="k">Total equity</div><div class="v">$7.39B</div></div>
+        <div class="l rv"><div class="k">Op cash flow</div><div class="v">$2.13B</div></div>
+        <div class="l rv"><div class="k">Free cash flow</div><div class="v"><em>$2.10B</em></div></div>
+        <div class="l rv"><div class="k">Goodwill</div><div class="v">$0</div></div>
+      </div>
+
+      <p class="footnote rv">No goodwill. <em>No intangibles.</em> No acquisitions of consequence. Palantir grew this entire balance sheet itself — and now sits on it, <em>"pending a defined capital allocation framework."</em></p>
+    </div>
+  </section>
+
+  <!-- ======== GEOGRAPHY ======== -->
+  <section class="geo sec-tight" data-screen-label="10 Geography">
+    <div class="eyebrow rv">The footprint</div>
+    <h2 class="rv">Seventy-three cents of every dollar comes <em>from home.</em></h2>
+
+    <div class="grid" id="geo-grid" aria-hidden="true"></div>
+
+    <div class="key">
+      <div class="k rv"><span class="sw" style="background:rgba(244,162,60,.85)"></span>United States <span class="pct">73%</span></div>
+      <div class="k rv"><span class="sw" style="background:rgba(232,230,225,.55)"></span>United Kingdom <span class="pct">8%</span></div>
+      <div class="k rv"><span class="sw" style="background:rgba(232,230,225,.35)"></span>Rest of Europe <span class="pct">11%</span></div>
+      <div class="k rv"><span class="sw" style="background:rgba(63,168,155,.55)"></span>Asia-Pacific & other <span class="pct">8%</span></div>
+    </div>
+
+    <p class="pull rv">An <em>American</em> defense contractor that happens to also sell software.</p>
+  </section>
+
+  <!-- ======== RESET BEAT 3 ======== -->
+  <aside class="reset" data-screen-label="11 Reset · Bet">
+    <div class="pre">// reset · 003</div>
+    <p>Most software companies build factories. Palantir built <span class="a">a balance sheet that doesn't need one</span> — and now has to decide what it is for.</p>
+  </aside>
+
+  <!-- ======== THE BET ======== -->
+  <section class="bet" data-screen-label="12 The Bet">
+    <div class="eyebrow rv">The bet they haven't placed</div>
+    <h2 class="rv">A <em>cash hoard</em>, parked next to a <em>rounding-error</em> capex line.</h2>
+    <p class="lede rv">For every dollar of capex Palantir spent in FY '25, it had <em class="amber">$212</em> sitting in cash and treasuries. The capital is real. The bet is not yet placed.</p>
+
+    <div class="stash">
+      <div class="row2">
+        <div class="pile capex rv">
+          <div class="tag">Capex FY '25 <span class="v">$33.88M</span></div>
+          <div class="num">$33.88<span class="u">M</span></div>
+          <div class="visbar"><i data-w="0.47"></i></div>
+        </div>
+        <div class="pile cash rv">
+          <div class="tag">Total liquidity <span class="v">$7.2B</span></div>
+          <div class="num">$7.20<span class="u">B</span></div>
+          <div class="visbar"><i data-w="100"></i></div>
+        </div>
+      </div>
+      <p class="ratio rv">A balance sheet built for <em>one big move</em><span class="x">that hasn't come</span>. No dividends. No buybacks of consequence. No acquisitions on the books.</p>
+    </div>
+  </section>
+
+  <!-- ======== COMPETITION ======== -->
+  <section class="compete" data-screen-label="13 Competition">
+    <div class="eyebrow rv">The lineup</div>
+    <h2 class="rv">Bigger by revenue. <em>Smaller by belief.</em></h2>
+    <p class="lede rv">Palantir's market cap sits between IBM's and Oracle's — on a fraction of their sales. The premium is the bet.</p>
+
+    <div class="lineup" id="lineup">
+      <!-- self -->
+      <div class="comp self rv">
+        <div class="head"><span class="tk">PLTR</span><span class="nm">Palantir Technologies</span></div>
+        <div class="mc-row">
+          <span class="k">Market cap</span><span></span><span class="v">$350.12B</span>
+          <div class="mcbar"><i data-w="69.5"></i></div>
+        </div>
+        <div class="pe">
+          <div class="cell">Revenue<span class="v">$4.48B</span></div>
+          <div class="cell">YoY<span class="v">+56.2%</span></div>
+          <div class="cell">P/E<span class="v">78×*</span></div>
+        </div>
+      </div>
+
+      <div class="comp rv">
+        <div class="head"><span class="tk">ORCL</span><span class="nm">Oracle Corp</span></div>
+        <div class="mc-row">
+          <span class="k">Market cap</span><span></span><span class="v">$503.48B</span>
+          <div class="mcbar"><i data-w="100"></i></div>
+        </div>
+        <div class="pe">
+          <div class="cell">Revenue<span class="v">$57.40B</span></div>
+          <div class="cell">YoY<span class="v">+14.9%</span></div>
+          <div class="cell">P/E<span class="v">31.06×</span></div>
+        </div>
+        <p class="desc">OCI and the autonomous database are increasingly positioned as <em>the same foundation</em> for the analytics and AI orchestration that Foundry and AIP address.</p>
+      </div>
+
+      <div class="comp rv">
+        <div class="head"><span class="tk">IBM</span><span class="nm">International Business Machines</span></div>
+        <div class="mc-row">
+          <span class="k">Market cap</span><span></span><span class="v">$233.85B</span>
+          <div class="mcbar"><i data-w="46.5"></i></div>
+        </div>
+        <div class="pe">
+          <div class="cell">Revenue<span class="v">$67.53B</span></div>
+          <div class="cell">YoY<span class="v">+7.6%</span></div>
+          <div class="cell">P/E<span class="v">22.07×</span></div>
+        </div>
+        <p class="desc">Watson and watsonx hunt the same government and large-enterprise budgets — buyers seeking <em>AI-driven decision intelligence</em>.</p>
+      </div>
+
+      <div class="comp rv">
+        <div class="head"><span class="tk">AI</span><span class="nm">C3.ai</span></div>
+        <div class="mc-row">
+          <span class="k">Market cap</span><span></span><span class="v">$1.31B</span>
+          <div class="mcbar"><i data-w="0.26"></i></div>
+        </div>
+        <div class="pe">
+          <div class="cell">Revenue<span class="v">$389M</span></div>
+          <div class="cell">YoY<span class="v">−16.2%</span></div>
+          <div class="cell">P/E<span class="v">n/a</span></div>
+        </div>
+        <p class="desc">A direct product-market competitor — <em>deal-by-deal</em> for AI platform budget across defense, energy, and financial services. Shrinking.</p>
+      </div>
+    </div>
+    <p class="body rv" style="margin-top:18px;font-size:11px;color:var(--paper-mute);font-family:'JetBrains Mono',monospace;letter-spacing:.04em">* PLTR P/E TTM not provided in source; shown as price-to-revenue multiple of 78× for comparison.</p>
+  </section>
+
+  <!-- ======== CLOSE ======== -->
+  <section class="close" data-screen-label="14 Close">
+    <div class="pre">// close · the inversion</div>
+    <h2 class="rv">They sell decisions.<br/>The market is <em>pricing the next ten years</em> of them.</h2>
+
+    <div class="equ rv">
+      <div class="a">$4.48B<span class="u">REVENUE</span></div>
+      <div class="op">→</div>
+      <div class="b">$350B<span class="u">MARKET CAP</span></div>
+    </div>
+
+    <p class="frame rv">
+      A four-and-a-half-billion-dollar software house, valued <span class="a">like a hyperscaler</span>, sitting on enough cash to buy itself five times over — waiting for the call to make.
+    </p>
+
+    <div class="seal rv">
+      <div class="stamp">FY<br/>'25</div>
+      <div class="meta">
+        DOSSIER · NYSE:<b>PLTR</b><br/>
+        FILED · DEC 31 2025<br/>
+        STATUS · <b style="color:var(--signal)">DECLASSIFIED</b>
+      </div>
+    </div>
+  </section>
+
+  <footer>END · DOSSIER · PLTR · FY 2025</footer>
+
+</div>
+
+<script>
+(() => {
+  // ===== scroll progress =====
+  const prog = document.getElementById('prog');
+  const stage = document.getElementById('stage');
+  function onScroll(){
+    const h = document.documentElement;
+    const max = (h.scrollHeight - h.clientHeight) || 1;
+    const p = Math.min(1, Math.max(0, h.scrollTop / max));
+    prog.style.width = (p*100).toFixed(2) + '%';
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  // ===== reveal observer =====
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('on');
+        // count-ups
+        e.target.querySelectorAll('[data-count]').forEach(el => {
+          if(el.dataset.done) return;
+          el.dataset.done = '1';
+          const target = parseFloat(el.dataset.count);
+          const decimals = parseInt(el.dataset.decimals || '0', 10);
+          const dur = 1400;
+          const t0 = performance.now();
+          function tick(t){
+            const k = Math.min(1, (t - t0)/dur);
+            const e2 = 1 - Math.pow(1-k, 3);
+            const v = target * e2;
+            el.textContent = v.toFixed(decimals);
+            if(k<1) requestAnimationFrame(tick);
+            else el.textContent = target.toFixed(decimals);
+          }
+          requestAnimationFrame(tick);
+        });
+        // bar/fill animations driven by data-h / data-w
+        e.target.querySelectorAll('[data-h]').forEach(el => {
+          if(el.dataset.applied) return;
+          el.dataset.applied = '1';
+          requestAnimationFrame(() => { el.style.height = el.dataset.h + '%'; });
+        });
+        e.target.querySelectorAll('[data-w]').forEach(el => {
+          if(el.dataset.applied) return;
+          el.dataset.applied = '1';
+          requestAnimationFrame(() => { el.style.width = el.dataset.w + '%'; });
+        });
+        e.target.querySelectorAll('[data-bot]').forEach(el => {
+          if(el.dataset.applied) return;
+          el.dataset.applied = '1';
+          requestAnimationFrame(() => { el.style.bottom = 'calc(' + el.dataset.bot + '% + 8px)'; });
+        });
+      }
+    });
+  }, {threshold: 0.15});
+
+  document.querySelectorAll('.rv, [data-h], [data-w], [data-count], [data-bot]').forEach(el => io.observe(el));
+
+  // ===== HERO redaction sequence =====
+  setTimeout(() => {
+    document.getElementById('strike1').classList.add('on');
+    setTimeout(() => document.getElementById('replace1').classList.add('on'), 700);
+  }, 700);
+
+  // ===== LEDGER (costs) — build rows from data =====
+  const costs = [
+    {pct:23, color:"#E8734A", label:"Sales & Marketing"},
+    {pct:18, color:"#4F86C6", label:"Cost of Revenue"},
+    {pct:17, color:"#6DBF82", label:"Research & Development"},
+    {pct:15, color:"#A87DC8", label:"Stock-Based Compensation"},
+    {pct:10, color:"#F2C94C", label:"General & Administrative"}
+  ];
+  const max = Math.max(...costs.map(c=>c.pct));
+  const ledger = document.getElementById('ledger');
+  costs.forEach((c, i) => {
+    const w = (c.pct / max) * 100;
+    const row = document.createElement('div');
+    row.className = 'row rv';
+    row.innerHTML = `
+      <span class="idx">${String(i+1).padStart(2,'0')}</span>
+      <span class="label">${c.label}</span>
+      <span class="pct">${c.pct}<span class="p">¢</span></span>
+      <div class="bar"><span class="swatch" style="background:${c.color}"></span><i data-w="${w}" style="background:linear-gradient(90deg,${c.color},${c.color}88)"></i></div>
+    `;
+    ledger.appendChild(row);
+    io.observe(row);
+  });
+  // residual = 100 - sum
+  const sum = costs.reduce((a,b)=>a+b.pct,0);
+  const residual = 100 - sum; // = 17
+  const res = document.createElement('div');
+  res.className = 'residual rv';
+  res.innerHTML = `<div><div class="l">Operating margin</div><div class="resnote">What survives, before tax.</div></div><div class="v">${residual}<span class="pct">¢</span></div>`;
+  ledger.appendChild(res);
+  io.observe(res);
+
+  // ===== GEO grid: 100 cells, distributed by pct =====
+  const geo = document.getElementById('geo-grid');
+  const buckets = [
+    {n:73, cls:'us'},
+    {n:8,  cls:'uk'},
+    {n:11, cls:'eu'},
+    {n:8,  cls:'ap'}
+  ];
+  // arrange so US fills bottom-left, etc — interesting territory
+  // Build 10x10
+  const gridArr = new Array(100).fill(null);
+  // Fill US first contiguously from bottom-left rows
+  let order = [];
+  for(let r=9; r>=0; r--){ for(let c=0; c<10; c++){ order.push(r*10+c); } }
+  let i=0;
+  buckets.forEach(b => {
+    for(let k=0;k<b.n;k++){ gridArr[order[i++]] = b.cls; }
+  });
+  for(let idx=0; idx<100; idx++){
+    const cell = document.createElement('div');
+    cell.className = 'cell ' + (gridArr[idx] || '');
+    cell.style.opacity = '0';
+    cell.style.transition = 'opacity .5s ease ' + (idx*8) + 'ms';
+    geo.appendChild(cell);
+  }
+  const geoIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        [...geo.children].forEach(c => c.style.opacity = '1');
+        geoIO.disconnect();
+      }
+    });
+  }, {threshold:.2});
+  geoIO.observe(geo);
+
+  // ===== Vault stacks =====
+  const silver = document.getElementById('silver');
+  const gold = document.getElementById('gold');
+  function makeStack(host, x0, y0, cols, rows, fill, stroke){
+    const bw = 22, bh = 7, gap = 2;
+    let html = '';
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const x = x0 + c*(bw+gap) + (r%2 === 1 ? bw/2 : 0);
+        const y = y0 - (r+1)*(bh+gap);
+        const op = 0.35 + (r/rows)*0.55;
+        html += `<rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="0.5" fill="${fill}" fill-opacity="${op.toFixed(2)}" stroke="${stroke}" stroke-opacity=".5"/>`;
+      }
+    }
+    host.innerHTML = html;
+  }
+  // silver: bigger stack — 9 cols × 10 rows
+  makeStack(silver, 22, 200, 9, 10, '#C8C5BD', '#7A7770');
+  // gold: smaller — 4 cols × 5 rows
+  makeStack(gold, 282, 200, 4, 5, '#F4A23C', '#9A6420');
+
+  // ===== ontology pulses traveling along edges =====
+  const edgesIn = document.querySelectorAll('#edges-in path');
+  const edgesOut = document.querySelectorAll('#edges-out path');
+  function makePulses(){
+    const pulseLayer = document.getElementById('pulses');
+    pulseLayer.innerHTML = '';
+    edgesIn.forEach((path, i) => {
+      const len = path.getTotalLength();
+      const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('r', '1.8');
+      c.setAttribute('fill', '#F4A23C');
+      c.setAttribute('filter', 'url(#glow)');
+      pulseLayer.appendChild(c);
+      let t = (i*0.18) % 1;
+      function step(){
+        t = (t + 0.0035) % 1;
+        const p = path.getPointAtLength(t * len);
+        c.setAttribute('cx', p.x); c.setAttribute('cy', p.y);
+        c.setAttribute('opacity', (Math.sin(t*Math.PI)).toFixed(2));
+        requestAnimationFrame(step);
+      }
+      step();
+    });
+    edgesOut.forEach((path, i) => {
+      const len = path.getTotalLength();
+      const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('r', '1.8');
+      c.setAttribute('fill', '#F4A23C');
+      pulseLayer.appendChild(c);
+      let t = (i*0.22) % 1;
+      function step(){
+        t = (t + 0.0045) % 1;
+        const p = path.getPointAtLength(t * len);
+        c.setAttribute('cx', p.x); c.setAttribute('cy', p.y);
+        c.setAttribute('opacity', (Math.sin(t*Math.PI)).toFixed(2));
+        requestAnimationFrame(step);
+      }
+      step();
+    });
+  }
+  // Wait a tick so SVG is laid out
+  requestAnimationFrame(makePulses);
+
+  // tag for screen labels (keep)
+})();
+</script>
+</body>
+</html>

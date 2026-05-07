@@ -1,0 +1,1574 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=420, initial-scale=1" />
+<title>GPC · Recap FY '25</title>
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  /* ---------- Page shell ---------- */
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  /* The page itself is mobile-sized; on wider viewports we center it on a
+     deeper paper tone so it reads as the artifact, not a webpage. */
+  .stage {
+    background: #E9E5DA;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+  .page {
+    width: 100%;
+    max-width: 420px;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ---------- Sticky chrome ---------- */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(251, 250, 247, 0.78);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border-bottom: 1px solid rgba(228, 225, 217, 0.6);
+  }
+  .chrome-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px 10px;
+  }
+  .ticker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    color: var(--ink);
+    background: var(--paper);
+  }
+  .ticker .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--coral-400);
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: 1px;
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .chrome-recap {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .progress {
+    height: 1px;
+    background: var(--line);
+    position: relative;
+  }
+  .progress::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--p, 0%);
+    background: var(--ink);
+  }
+
+  /* ---------- Section primitives ---------- */
+  section { padding: 64px 24px; position: relative; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    margin-bottom: 18px;
+  }
+  .eyebrow b { color: var(--coral-500); font-weight: 500; }
+  .eyebrow .sep { margin: 0 6px; color: var(--line-strong); }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .it { font-style: italic; }
+  .coral { color: var(--coral-500); }
+  .muted { color: var(--ink-2); }
+  .subtle { color: var(--ink-3); }
+
+  p.lede {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    text-wrap: pretty;
+    margin: 0;
+  }
+  p.lede em { font-family: var(--font-display); font-style: italic; color: var(--coral-500); font-size: 17px; }
+
+  .mono { font-family: var(--font-mono); }
+
+  /* Reset beats — italic interludes */
+  .reset {
+    background: var(--paper-2);
+    padding: 56px 28px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .reset p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.18;
+    color: var(--ink);
+    margin: 0;
+    text-wrap: balance;
+  }
+  .reset p .hit { color: var(--coral-500); }
+  .reset .tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero { padding: 92px 24px 80px; }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .hero h1 .small { font-size: 44px; display: block; }
+  .hero .est {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 22px;
+  }
+  .hero .est .coral { color: var(--coral-500); }
+  .hero-meta {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 24px;
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+  }
+  .hero-meta .k {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .hero-meta .v {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+    color: var(--ink);
+    margin-top: 4px;
+  }
+  .hero-meta .v small {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    margin-left: 4px;
+  }
+
+  /* Hero parts-bin scene */
+  .hero-bin {
+    margin-top: 36px;
+    aspect-ratio: 372 / 220;
+    width: 100%;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    position: relative;
+    border-radius: 2px;
+  }
+  .hero-bin svg { display: block; width: 100%; height: 100%; }
+
+  /* ---------- BUSINESS / SHELF ---------- */
+  .shelf-wrap { padding: 84px 24px 72px; background: var(--paper); }
+  .shelf-wrap h2 {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    margin: 0 0 18px;
+    color: var(--ink);
+  }
+  .shelf-wrap h2 .it { font-style: italic; color: var(--coral-500); }
+  .shelf-stage {
+    margin-top: 30px;
+    border: 1px solid var(--line);
+    background: var(--paper-2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .shelf-stage svg { display: block; width: 100%; height: auto; }
+  .shelf-foot {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-top: 1px solid var(--line);
+    background: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+
+  /* ---------- SCALE — locations grid ---------- */
+  .scale { background: var(--paper-2); padding: 84px 0 72px; border-top: 1px solid var(--line); }
+  .scale .pad { padding: 0 24px; }
+  .scale h2 {
+    font-family: var(--font-display);
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+  .scale .big {
+    font-family: var(--font-display);
+    font-size: 110px;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    margin-top: 20px;
+    display: block;
+    color: var(--ink);
+  }
+  .scale .big .unit {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: block;
+    margin-top: 6px;
+  }
+  .dot-grid {
+    margin-top: 40px;
+    width: 100%;
+    aspect-ratio: 1 / 0.92;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+  .dot-grid svg { width: 100%; height: 100%; display: block; }
+  .scale-stats {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--line);
+  }
+  .scale-stats > div {
+    padding: 18px 6px 0;
+    border-right: 1px solid var(--line);
+  }
+  .scale-stats > div:last-child { border-right: none; }
+  .scale-stats .v {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .scale-stats .k {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 6px;
+  }
+
+  /* ---------- DOLLAR / cost beat ---------- */
+  .dollar-beat { padding: 88px 24px 80px; background: var(--paper); }
+  .dollar-beat h2 {
+    font-family: var(--font-display);
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+  .dollar-beat .lede { margin-top: 20px; }
+  .grid100 {
+    margin-top: 38px;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 3px;
+    aspect-ratio: 1;
+    width: 100%;
+    background: var(--paper);
+    padding: 6px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+  }
+  .grid100 .cell {
+    background: var(--paper-2);
+    border-radius: 1px;
+    transition: background 600ms var(--ease-out);
+  }
+  .grid100 .cell.lit { background: var(--c, var(--ink)); }
+  .legend {
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .legend .row {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding-bottom: 9px;
+    border-bottom: 1px solid var(--line);
+  }
+  .legend .row:last-child { border-bottom: none; }
+  .legend .swatch { width: 14px; height: 14px; border-radius: 2px; }
+  .legend .label {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .legend .pct {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-2);
+    letter-spacing: 0.02em;
+  }
+  .leftover {
+    margin-top: 30px;
+    padding: 22px 0 4px;
+    border-top: 1px solid var(--ink);
+  }
+  .leftover .k {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .leftover .v {
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 1;
+    color: var(--coral-500);
+    margin-top: 6px;
+  }
+  .leftover .v .it { font-style: italic; }
+  .leftover .note {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-2);
+    margin-top: 10px;
+    line-height: 1.3;
+  }
+
+  /* ---------- DIVIDEND KING — rings ---------- */
+  .king { background: var(--paper-2); padding: 88px 24px 80px; border-top: 1px solid var(--line); }
+  .king h2 {
+    font-family: var(--font-display);
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+  .king .lede { margin-top: 20px; }
+  .rings {
+    margin-top: 36px;
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .rings svg { width: 100%; height: 100%; display: block; }
+  .king-meta {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .king-meta > div {
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+  }
+  .king-meta .k {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .king-meta .v {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1;
+    margin-top: 6px;
+  }
+
+  /* ---------- GEOGRAPHY ---------- */
+  .geo { padding: 84px 24px 76px; background: var(--paper); }
+  .geo h2 {
+    font-family: var(--font-display);
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+  .geo .lede { margin-top: 20px; }
+  .geo-stage {
+    margin-top: 34px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    border-radius: 2px;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    position: relative;
+  }
+  .geo-stage svg { width: 100%; height: 100%; display: block; }
+  .geo-list { margin-top: 22px; display: flex; flex-direction: column; gap: 0; }
+  .geo-list .row {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+  }
+  .geo-list .row:last-child { border-bottom: 1px solid var(--line); }
+  .geo-list .num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-3);
+  }
+  .geo-list .name {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    color: var(--ink);
+  }
+  .geo-list .pct {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .geo-list .pct .u {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    margin-left: 2px;
+  }
+  .geo-list .row.active .pct { color: var(--coral-500); }
+
+  /* ---------- THE SPLIT — dark interlude ---------- */
+  .split {
+    background: #0F0E0D;
+    color: #F4F2ED;
+    padding: 96px 24px 92px;
+    position: relative;
+  }
+  .split .eyebrow { color: #8C8A84; }
+  .split .eyebrow b { color: var(--coral-300); }
+  .split h2 {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    color: #F4F2ED;
+  }
+  .split h2 .it { font-style: italic; color: var(--coral-300); }
+  .split .lede { color: #C9C6BF; margin-top: 18px; font-size: 15px; }
+  .split .lede em { color: var(--coral-300); }
+  .split-stage {
+    margin-top: 40px;
+    width: 100%;
+    aspect-ratio: 1 / 1.05;
+    background: #0F0E0D;
+    border: 1px solid #2A2826;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .split-stage svg { width: 100%; height: 100%; display: block; }
+  .split-cards {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .split-card {
+    padding: 18px 14px 16px;
+    border: 1px solid #2A2826;
+    background: #1A1917;
+    border-radius: 2px;
+  }
+  .split-card .tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: #8C8A84;
+    text-transform: uppercase;
+  }
+  .split-card .name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1.05;
+    color: #F4F2ED;
+    margin-top: 8px;
+  }
+  .split-card .name .it { font-style: italic; color: var(--coral-300); }
+  .split-card .desc {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: #C9C6BF;
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+
+  /* ---------- COMPETITORS ---------- */
+  .compet { padding: 84px 24px 80px; background: var(--paper); }
+  .compet h2 {
+    font-family: var(--font-display);
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+  .compet .lede { margin-top: 20px; }
+  .compet-list {
+    margin-top: 36px;
+    display: flex;
+    flex-direction: column;
+  }
+  .comp-row {
+    padding: 22px 0 20px;
+    border-top: 1px solid var(--line);
+  }
+  .comp-row:last-child { border-bottom: 1px solid var(--line); }
+  .comp-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .comp-tk {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+  }
+  .comp-name {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .comp-name .it { font-style: italic; }
+  .comp-row.self .comp-name { color: var(--coral-500); }
+  .comp-bar-wrap {
+    margin-top: 16px;
+  }
+  .comp-bar {
+    height: 14px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    position: relative;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .comp-bar .fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    background: var(--ink);
+    transition: width 1200ms var(--ease-out);
+  }
+  .comp-row.self .comp-bar .fill { background: var(--coral-500); }
+  .comp-meta {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .comp-meta .v { color: var(--ink); }
+  .comp-desc {
+    margin-top: 12px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  /* ---------- CLOSING ---------- */
+  .close { padding: 100px 24px 72px; background: var(--paper); }
+  .close .eyebrow { margin-bottom: 24px; }
+  .close h2 {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .close h2 .it { font-style: italic; color: var(--coral-500); }
+  .close p {
+    margin-top: 26px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .close p em { font-family: var(--font-display); font-style: italic; color: var(--coral-500); font-size: 17px; }
+  .close-stamp {
+    margin-top: 60px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .close-stamp .left {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .close-stamp .right {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--coral-500);
+  }
+  .footer {
+    padding: 28px 24px 56px;
+    border-top: 1px solid var(--line);
+    background: var(--paper-2);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* ---------- Reveal & motion utilities ---------- */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out); }
+  .reveal.on { opacity: 1; transform: none; }
+  .reveal.d1 { transition-delay: 80ms; }
+  .reveal.d2 { transition-delay: 160ms; }
+  .reveal.d3 { transition-delay: 240ms; }
+  .reveal.d4 { transition-delay: 320ms; }
+
+  /* SVG draw-on */
+  .draw { stroke-dasharray: var(--len, 1000); stroke-dashoffset: var(--len, 1000); transition: stroke-dashoffset 1400ms var(--ease-out); }
+  .draw.on { stroke-dashoffset: 0; }
+
+  /* count-up cells */
+  .cell { opacity: 0; transition: opacity 8ms linear; }
+  .cell.shown { opacity: 1; }
+
+  /* Subtle paper grain */
+  .grain {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.04 0 0 0 0 0.03 0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+    opacity: 0.04;
+    z-index: 1;
+    mix-blend-mode: multiply;
+  }
+  section, .reset { position: relative; }
+  section > *, .reset > * { position: relative; z-index: 2; }
+</style>
+</head>
+<body>
+<div class="stage">
+<div class="page" id="page">
+
+<!-- ============ STICKY CHROME ============ -->
+<header class="chrome">
+  <div class="chrome-row">
+    <span class="ticker"><span class="dot"></span>GPC</span>
+    <span class="chrome-name">Genuine Parts</span>
+    <span class="chrome-recap">Recap · FY '25</span>
+  </div>
+  <div class="progress" id="progress"></div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" data-screen-label="01 Hero">
+  <div class="grain"></div>
+  <div class="eyebrow reveal on">Est. <b>1928</b> <span class="sep">·</span> Atlanta, GA <span class="sep">·</span> NYSE</div>
+
+  <h1 class="reveal on d1">
+    <span class="small it" style="font-style:italic;color:var(--ink-2)">Ten thousand,</span>
+    eight hundred
+    <span class="small">small <span class="it" style="font-style:italic;color:var(--coral-500)">parts</span> bins.</span>
+    <span class="small">One company.</span>
+  </h1>
+
+  <p class="lede reveal on d2" style="margin-top: 26px;">
+    Founded in Atlanta in 1928. A 98-year-old distribution machine that quietly moves
+    the brake pads, bearings, and bushings keeping <em>everything else</em> running —
+    and is now preparing to split itself in two.
+  </p>
+
+  <div class="hero-meta">
+    <div class="reveal d1">
+      <div class="k">Market cap</div>
+      <div class="v">$15.88<small>B</small></div>
+    </div>
+    <div class="reveal d2">
+      <div class="k">Revenue · FY'25</div>
+      <div class="v">$24.30<small>B</small></div>
+    </div>
+    <div class="reveal d3">
+      <div class="k">Locations</div>
+      <div class="v">10,800<small>+</small></div>
+    </div>
+    <div class="reveal d4">
+      <div class="k">Countries</div>
+      <div class="v">17</div>
+    </div>
+  </div>
+
+  <!-- Hero parts-bin scene: a small wall of bins with one lit -->
+  <div class="hero-bin reveal d3">
+    <svg viewBox="0 0 372 220" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <pattern id="binPat" x="0" y="0" width="62" height="44" patternUnits="userSpaceOnUse">
+          <rect x="0.5" y="0.5" width="61" height="43" fill="#FBFAF7" stroke="#E4E1D9"/>
+          <rect x="6" y="6" width="50" height="6" fill="#ECEAE3"/>
+          <line x1="6" y1="34" x2="56" y2="34" stroke="#ECEAE3"/>
+        </pattern>
+      </defs>
+      <rect width="372" height="220" fill="url(#binPat)"/>
+      <!-- one lit coral bin -->
+      <g transform="translate(186 88)">
+        <rect x="0" y="0" width="62" height="44" fill="#FFF1EC"/>
+        <rect x="0.5" y="0.5" width="61" height="43" fill="none" stroke="#FF7A57"/>
+        <rect x="6" y="6" width="50" height="6" fill="#FF7A57"/>
+        <text x="6" y="29" font-family="Geist Mono, monospace" font-size="8" fill="#A7311A" letter-spacing="1.2">A·144·1928</text>
+        <line x1="6" y1="34" x2="56" y2="34" stroke="#FF7A57" stroke-opacity="0.4"/>
+      </g>
+      <!-- subtle ledger lines -->
+      <g stroke="#CFCBC0" stroke-width="0.5" opacity="0.5">
+        <line x1="0" y1="0" x2="372" y2="0"/>
+        <line x1="0" y1="219.5" x2="372" y2="219.5"/>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- ============ RESET BEAT 1 ============ -->
+<div class="reset" data-screen-label="02 Reset · the box">
+  <span class="tag">Interlude</span>
+  <p>You don't notice <span class="hit it">the part</span> until it breaks.<br>
+     Then you notice <span class="hit it">where it comes from.</span></p>
+</div>
+
+<!-- ============ THE BUSINESS — shelf scene ============ -->
+<section class="shelf-wrap" data-screen-label="03 Business">
+  <div class="eyebrow reveal">The business <span class="sep">·</span> <b>Two segments</b></div>
+  <h2 class="reveal d1">A wholesaler of <span class="it">small things,</span> at scale.</h2>
+  <p class="lede reveal d2" style="margin-top:22px;">
+    GPC moves automotive parts under <em>NAPA</em> and industrial MRO parts through
+    <em>Motion</em>. High volume, low margin — <em>36.8¢</em> of every dollar in sales
+    is gross profit. The model is the warehouse, the truck, the counter, the rep.
+  </p>
+
+  <div class="shelf-stage reveal d3">
+    <svg viewBox="0 0 372 320" preserveAspectRatio="none" aria-hidden="true">
+      <!-- back wall -->
+      <rect width="372" height="320" fill="#F4F2ED"/>
+      <!-- shelves with vials/bottles/parts -->
+      <g>
+        <!-- shelf 1: NAPA (auto) -->
+        <rect x="20" y="40" width="332" height="100" fill="#FBFAF7" stroke="#E4E1D9"/>
+        <line x1="20" y1="138" x2="352" y2="138" stroke="#CFCBC0" stroke-width="2"/>
+        <text x="28" y="34" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="1.5">SHELF·01 — NAPA · AUTOMOTIVE</text>
+        <!-- items on shelf 1 -->
+        <g>
+          <!-- brake disc -->
+          <circle cx="48" cy="110" r="22" fill="none" stroke="#3B3A37" stroke-width="1.2"/>
+          <circle cx="48" cy="110" r="14" fill="none" stroke="#3B3A37" stroke-width="1"/>
+          <circle cx="48" cy="110" r="3" fill="#3B3A37"/>
+          <!-- spark plugs -->
+          <g transform="translate(94 76)">
+            <rect x="0" y="0" width="6" height="58" fill="#3B3A37"/>
+            <rect x="-2" y="58" width="10" height="6" fill="#3B3A37"/>
+            <rect x="-3" y="64" width="12" height="4" fill="#A4A29C"/>
+          </g>
+          <g transform="translate(108 80)"><rect x="0" y="0" width="6" height="54" fill="#3B3A37"/><rect x="-2" y="54" width="10" height="6" fill="#3B3A37"/><rect x="-3" y="60" width="12" height="4" fill="#A4A29C"/></g>
+          <g transform="translate(122 78)"><rect x="0" y="0" width="6" height="56" fill="#3B3A37"/><rect x="-2" y="56" width="10" height="6" fill="#3B3A37"/><rect x="-3" y="62" width="12" height="4" fill="#A4A29C"/></g>
+          <!-- oil bottle -->
+          <g transform="translate(160 70)">
+            <path d="M0 12 L0 64 L28 64 L28 12 L22 12 L22 4 L6 4 L6 12 Z" fill="#FF7A57" stroke="#A7311A"/>
+            <rect x="2" y="38" width="24" height="14" fill="#FBFAF7" opacity="0.85"/>
+            <text x="14" y="49" font-family="Geist Mono, monospace" font-size="6" fill="#A7311A" text-anchor="middle">5W30</text>
+          </g>
+          <!-- filter cans -->
+          <g transform="translate(212 80)"><rect x="0" y="0" width="20" height="54" fill="#3B3A37"/><rect x="0" y="0" width="20" height="6" fill="#A4A29C"/></g>
+          <g transform="translate(238 84)"><rect x="0" y="0" width="20" height="50" fill="#6B6A65"/><rect x="0" y="0" width="20" height="6" fill="#A4A29C"/></g>
+          <g transform="translate(264 78)"><rect x="0" y="0" width="20" height="56" fill="#3B3A37"/><rect x="0" y="0" width="20" height="6" fill="#A4A29C"/></g>
+          <!-- belt -->
+          <g transform="translate(298 92)">
+            <ellipse cx="22" cy="22" rx="22" ry="22" fill="none" stroke="#3B3A37" stroke-width="3"/>
+            <ellipse cx="22" cy="22" rx="14" ry="14" fill="none" stroke="#3B3A37"/>
+          </g>
+        </g>
+        <!-- shelf 2: Motion (industrial) -->
+        <rect x="20" y="170" width="332" height="100" fill="#FBFAF7" stroke="#E4E1D9"/>
+        <line x1="20" y1="268" x2="352" y2="268" stroke="#CFCBC0" stroke-width="2"/>
+        <text x="28" y="164" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="1.5">SHELF·02 — MOTION · INDUSTRIAL</text>
+        <g>
+          <!-- bearing -->
+          <g transform="translate(38 200)">
+            <circle cx="22" cy="22" r="22" fill="none" stroke="#3B3A37" stroke-width="1.5"/>
+            <circle cx="22" cy="22" r="10" fill="none" stroke="#3B3A37"/>
+            <g fill="#3B3A37"><circle cx="22" cy="6" r="2.6"/><circle cx="38" cy="22" r="2.6"/><circle cx="22" cy="38" r="2.6"/><circle cx="6" cy="22" r="2.6"/><circle cx="33" cy="11" r="2.6"/><circle cx="33" cy="33" r="2.6"/><circle cx="11" cy="33" r="2.6"/><circle cx="11" cy="11" r="2.6"/></g>
+          </g>
+          <!-- gears -->
+          <g transform="translate(110 198)" fill="none" stroke="#3B3A37" stroke-width="1.4">
+            <circle cx="22" cy="22" r="20"/>
+            <circle cx="22" cy="22" r="6"/>
+            <g stroke-width="3"><line x1="22" y1="2" x2="22" y2="6"/><line x1="22" y1="38" x2="22" y2="42"/><line x1="2" y1="22" x2="6" y2="22"/><line x1="38" y1="22" x2="42" y2="22"/><line x1="8" y1="8" x2="11" y2="11"/><line x1="33" y1="33" x2="36" y2="36"/><line x1="36" y1="8" x2="33" y2="11"/><line x1="11" y1="33" x2="8" y2="36"/></g>
+          </g>
+          <!-- bolts -->
+          <g transform="translate(170 206)" fill="#3B3A37">
+            <polygon points="0,8 6,0 18,0 24,8 18,16 6,16"/>
+            <rect x="6" y="16" width="12" height="22"/>
+          </g>
+          <g transform="translate(200 208)" fill="#6B6A65">
+            <polygon points="0,8 6,0 18,0 24,8 18,16 6,16"/>
+            <rect x="6" y="16" width="12" height="20"/>
+          </g>
+          <g transform="translate(228 210)" fill="#3B3A37">
+            <polygon points="0,8 6,0 18,0 24,8 18,16 6,16"/>
+            <rect x="6" y="16" width="12" height="18"/>
+          </g>
+          <!-- box of fasteners -->
+          <g transform="translate(272 198)">
+            <rect x="0" y="0" width="60" height="44" fill="#FF7A57" opacity="0.92"/>
+            <rect x="0" y="0" width="60" height="10" fill="#A7311A"/>
+            <text x="30" y="28" font-family="Geist Mono, monospace" font-size="7" fill="#FBFAF7" text-anchor="middle" letter-spacing="0.5">MOTION</text>
+            <text x="30" y="38" font-family="Geist Mono, monospace" font-size="6" fill="#FFDFD3" text-anchor="middle">M-PARTS · 1/2"</text>
+          </g>
+        </g>
+        <!-- floor -->
+        <rect x="0" y="298" width="372" height="22" fill="#ECEAE3"/>
+      </g>
+    </svg>
+    <div class="shelf-foot">
+      <span>NAPA · 74% of sales</span>
+      <span>Motion · ~26%</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCALE — bin grid ============ -->
+<section class="scale" data-screen-label="04 Scale">
+  <div class="pad">
+    <div class="eyebrow reveal">The scale <span class="sep">·</span> <b>10,800 locations</b></div>
+    <h2 class="reveal d1">Counted out, <span class="it" style="font-style:italic;color:var(--coral-500)">one bin at a time.</span></h2>
+    <span class="big reveal d2" id="scaleBig">10,800<span class="unit">Locations · 17 countries · 65,000 teammates</span></span>
+  </div>
+
+  <div class="pad">
+    <div class="dot-grid reveal d3" id="dotGrid">
+      <svg id="dotGridSvg" viewBox="0 0 320 294" preserveAspectRatio="none" aria-hidden="true"></svg>
+    </div>
+
+    <div class="scale-stats">
+      <div>
+        <div class="v">17</div>
+        <div class="k">Countries</div>
+      </div>
+      <div>
+        <div class="v">65k</div>
+        <div class="k">Teammates</div>
+      </div>
+      <div>
+        <div class="v">$24.3<span style="font-family:var(--font-mono);font-size:13px;color:var(--ink-3)">B</span></div>
+        <div class="k">Revenue '25</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESET BEAT 2 ============ -->
+<div class="reset" data-screen-label="05 Reset · the dollar">
+  <span class="tag">Interlude</span>
+  <p>The model isn't <span class="hit it">complicated.</span><br>
+  Sell a <span class="hit it">dollar's</span> worth of parts. See what <span class="hit it">survives.</span></p>
+</div>
+
+<!-- ============ THE DOLLAR / costs ============ -->
+<section class="dollar-beat" data-screen-label="06 The dollar">
+  <div class="eyebrow reveal">A hundred cents in <span class="sep">·</span> <b>FY'25 cost stack</b></div>
+  <h2 class="reveal d1">For every <span class="it" style="font-style:italic;color:var(--coral-500)">dollar</span> of revenue —</h2>
+  <p class="lede reveal d2">
+    GPC books <em>$24.30B</em> in sales. Most of it goes back out the door as the parts
+    themselves. The grid below is one dollar, in cents.
+  </p>
+
+  <div class="grid100 reveal d3" id="grid100" aria-hidden="true">
+    <!-- 100 cells injected by JS -->
+  </div>
+
+  <div class="legend reveal d4">
+    <!-- rows injected by JS -->
+  </div>
+
+  <div class="leftover reveal d4">
+    <div class="k">What survives — operating margin (approx.)</div>
+    <div class="v"><span class="it">~8</span><span class="mono" style="font-size:24px;letter-spacing:0.04em">¢</span></div>
+    <div class="note">A hundred cents in. <span class="it" style="color:var(--coral-500)">A handful out.</span> Built to compound, not to sprint.</div>
+  </div>
+</section>
+
+<!-- ============ DIVIDEND KING — rings ============ -->
+<section class="king" data-screen-label="07 Dividend King">
+  <div class="eyebrow reveal">The bet on patience <span class="sep">·</span> <b>70 years</b></div>
+  <h2 class="reveal d1"><span class="it" style="font-style:italic">Seventy</span> raises, in a row.</h2>
+  <p class="lede reveal d2">
+    GPC has increased its dividend every year since <em>1956</em>. The board approved a
+    3.2% raise this year to <em>$4.25</em> annualized — a quiet, compounding
+    promise that has outlasted ten recessions.
+  </p>
+
+  <div class="rings reveal d3" id="rings">
+    <svg viewBox="0 0 360 360" id="ringsSvg" aria-hidden="true"></svg>
+  </div>
+
+  <div class="king-meta">
+    <div class="reveal">
+      <div class="k">Annual dividend</div>
+      <div class="v">$4.25</div>
+    </div>
+    <div class="reveal d1">
+      <div class="k">Consecutive years</div>
+      <div class="v" style="color:var(--coral-500)">70</div>
+    </div>
+    <div class="reveal d2">
+      <div class="k">Paid in FY'25</div>
+      <div class="v">$564M</div>
+    </div>
+    <div class="reveal d3">
+      <div class="k">Free cash flow</div>
+      <div class="v">$421M</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESET BEAT 3 ============ -->
+<div class="reset" data-screen-label="08 Reset · the map">
+  <span class="tag">Interlude</span>
+  <p>Three quarters of the <span class="hit it">work</span> happens on one continent.<br>
+  The rest of the <span class="hit it">map</span> is filling in.</p>
+</div>
+
+<!-- ============ GEOGRAPHY ============ -->
+<section class="geo" data-screen-label="09 Geography">
+  <div class="eyebrow reveal">The footprint <span class="sep">·</span> <b>Three continents</b></div>
+  <h2 class="reveal d1">Anchored in <span class="it" style="font-style:italic;color:var(--coral-500)">North America.</span></h2>
+  <p class="lede reveal d2">
+    Most of the dollars are still booked between Toronto and Tijuana. Europe and
+    Australasia are smaller — <em>but they're the growth wedge</em>.
+  </p>
+
+  <div class="geo-stage reveal d3" id="geoStage">
+    <svg viewBox="0 0 360 360" preserveAspectRatio="none" aria-hidden="true">
+      <!-- ledger backdrop -->
+      <rect width="360" height="360" fill="#FBFAF7"/>
+      <g stroke="#ECEAE3" stroke-width="1">
+        <line x1="0" y1="60" x2="360" y2="60"/>
+        <line x1="0" y1="120" x2="360" y2="120"/>
+        <line x1="0" y1="180" x2="360" y2="180"/>
+        <line x1="0" y1="240" x2="360" y2="240"/>
+        <line x1="0" y1="300" x2="360" y2="300"/>
+      </g>
+      <!-- North America circle (74) -->
+      <g id="geoNA">
+        <circle cx="110" cy="135" r="86" fill="#FF7A57" fill-opacity="0.12" stroke="#FF7A57" stroke-width="1.5"/>
+        <text x="110" y="135" font-family="Instrument Serif, serif" font-size="58" fill="#A7311A" text-anchor="middle" dominant-baseline="middle" font-style="italic">74</text>
+        <text x="110" y="170" font-family="Geist Mono, monospace" font-size="9" fill="#A7311A" text-anchor="middle" letter-spacing="2">NORTH AMERICA</text>
+      </g>
+      <!-- Europe (16) -->
+      <g id="geoEU">
+        <circle cx="248" cy="118" r="40" fill="none" stroke="#3B3A37" stroke-width="1.2"/>
+        <text x="248" y="120" font-family="Instrument Serif, serif" font-size="30" fill="#141414" text-anchor="middle" dominant-baseline="middle">16</text>
+        <text x="248" y="142" font-family="Geist Mono, monospace" font-size="8" fill="#6B6A65" text-anchor="middle" letter-spacing="1.6">EUROPE</text>
+      </g>
+      <!-- Australasia (10) -->
+      <g id="geoAU">
+        <circle cx="252" cy="248" r="32" fill="none" stroke="#3B3A37" stroke-width="1.2"/>
+        <text x="252" y="252" font-family="Instrument Serif, serif" font-size="26" fill="#141414" text-anchor="middle" dominant-baseline="middle">10</text>
+        <text x="252" y="270" font-family="Geist Mono, monospace" font-size="8" fill="#6B6A65" text-anchor="middle" letter-spacing="1.6">AUSTRALASIA</text>
+      </g>
+      <!-- corner stamps -->
+      <text x="14" y="20" font-family="Geist Mono, monospace" font-size="8" fill="#A4A29C" letter-spacing="2">FY'25 · % OF SALES</text>
+      <text x="346" y="350" font-family="Geist Mono, monospace" font-size="8" fill="#A4A29C" letter-spacing="2" text-anchor="end">N=24.3B</text>
+    </svg>
+  </div>
+
+  <div class="geo-list">
+    <div class="row active reveal">
+      <div class="num">01</div>
+      <div class="name">North America</div>
+      <div class="pct">74<span class="u">%</span></div>
+    </div>
+    <div class="row reveal d1">
+      <div class="num">02</div>
+      <div class="name">Europe</div>
+      <div class="pct">16<span class="u">%</span></div>
+    </div>
+    <div class="row reveal d2">
+      <div class="num">03</div>
+      <div class="name">Australasia</div>
+      <div class="pct">10<span class="u">%</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE SPLIT — dark earned interlude ============ -->
+<section class="split" data-screen-label="10 The split">
+  <div class="eyebrow">The bet <span class="sep">·</span> <b>One company, splitting</b></div>
+  <h2>
+    98 years as <span class="it">one.</span><br>
+    The board <span class="it">drew a line.</span>
+  </h2>
+  <p class="lede">
+    GPC has announced plans to <em>separate</em> its automotive and industrial
+    businesses into two independent public companies. Capital allocation
+    has already pivoted: <em>$318M</em> in bolt-on acquisitions, <em>$564M</em> out
+    in dividends, no buybacks. The split is the bet.
+  </p>
+
+  <div class="split-stage" id="splitStage">
+    <svg viewBox="0 0 360 380" preserveAspectRatio="none" aria-hidden="true">
+      <!-- single trunk at top -->
+      <g id="splitGroup">
+        <rect x="160" y="20" width="40" height="80" fill="none" stroke="#C9C6BF" stroke-width="1.2"/>
+        <text x="180" y="64" font-family="Instrument Serif, serif" font-size="22" fill="#F4F2ED" text-anchor="middle" dominant-baseline="middle">GPC</text>
+        <text x="180" y="86" font-family="Geist Mono, monospace" font-size="8" fill="#8C8A84" text-anchor="middle" letter-spacing="2">EST · 1928</text>
+
+        <!-- splitting line -->
+        <path id="splitPath" d="M 180 100 L 180 160 L 90 160 L 90 220" fill="none" stroke="#FF8B6A" stroke-width="1.5"/>
+        <path id="splitPath2" d="M 180 160 L 270 160 L 270 220" fill="none" stroke="#FF8B6A" stroke-width="1.5"/>
+
+        <!-- Auto box -->
+        <g transform="translate(40 220)">
+          <rect x="0" y="0" width="100" height="120" fill="#1A1917" stroke="#FF8B6A" stroke-width="1.2"/>
+          <text x="50" y="32" font-family="Geist Mono, monospace" font-size="8" fill="#8C8A84" text-anchor="middle" letter-spacing="2">SPIN A</text>
+          <text x="50" y="60" font-family="Instrument Serif, serif" font-size="20" fill="#F4F2ED" text-anchor="middle">NAPA</text>
+          <text x="50" y="80" font-family="Geist Mono, monospace" font-size="8" fill="#C9C6BF" text-anchor="middle" letter-spacing="1">AUTO</text>
+          <line x1="14" y1="92" x2="86" y2="92" stroke="#2A2826"/>
+          <text x="50" y="108" font-family="Geist Mono, monospace" font-size="8" fill="#8C8A84" text-anchor="middle" letter-spacing="1">~74% of sales</text>
+        </g>
+
+        <!-- Industrial box -->
+        <g transform="translate(220 220)">
+          <rect x="0" y="0" width="100" height="120" fill="#1A1917" stroke="#FF8B6A" stroke-width="1.2"/>
+          <text x="50" y="32" font-family="Geist Mono, monospace" font-size="8" fill="#8C8A84" text-anchor="middle" letter-spacing="2">SPIN B</text>
+          <text x="50" y="60" font-family="Instrument Serif, serif" font-size="20" fill="#F4F2ED" text-anchor="middle">Motion</text>
+          <text x="50" y="80" font-family="Geist Mono, monospace" font-size="8" fill="#C9C6BF" text-anchor="middle" letter-spacing="1">INDUSTRIAL</text>
+          <line x1="14" y1="92" x2="86" y2="92" stroke="#2A2826"/>
+          <text x="50" y="108" font-family="Geist Mono, monospace" font-size="8" fill="#8C8A84" text-anchor="middle" letter-spacing="1">~26% of sales</text>
+        </g>
+
+        <!-- bottom stamp -->
+        <text x="180" y="370" font-family="Geist Mono, monospace" font-size="8" fill="#5A5853" text-anchor="middle" letter-spacing="3">PLANNED · TWO PUBLIC COS</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="split-cards">
+    <div class="split-card">
+      <div class="tag">Spin A</div>
+      <div class="name"><span class="it">NAPA</span> Auto</div>
+      <div class="desc">North America, Europe, Australasia. The retail-and-jobber book that 90 years built.</div>
+    </div>
+    <div class="split-card">
+      <div class="tag">Spin B</div>
+      <div class="name"><span class="it">Motion</span></div>
+      <div class="desc">Industrial MRO and OEM parts. Bearings, fasteners, fluid power. Sold to factories, not drivers.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COMPETITORS ============ -->
+<section class="compet" data-screen-label="11 Competitors">
+  <div class="eyebrow reveal">The neighborhood <span class="sep">·</span> <b>Sized by revenue</b></div>
+  <h2 class="reveal d1">Bigger names, <span class="it" style="font-style:italic;color:var(--coral-500)">thinner aisles.</span></h2>
+  <p class="lede reveal d2">
+    Sized against the rivals named in the filings. AutoZone is the head-to-head
+    on the auto side; Fastenal is the head-to-head on Motion's. Bars are scaled to
+    annual revenue.
+  </p>
+
+  <div class="compet-list" id="competList">
+    <!-- GPC: 24.3B -->
+    <div class="comp-row self reveal d3">
+      <div class="comp-head">
+        <div class="comp-tk">GPC</div>
+        <div class="comp-name">Genuine <span class="it">Parts</span></div>
+      </div>
+      <div class="comp-bar-wrap">
+        <div class="comp-bar"><div class="fill" data-w="58.5"></div></div>
+        <div class="comp-meta"><span>Rev TTM <span class="v">$24.30B</span></span><span>Mcap <span class="v">$15.88B</span></span></div>
+      </div>
+      <div class="comp-desc">The benchmark. 70 years of dividends, 10,800 locations, splitting in two.</div>
+    </div>
+    <!-- AZO 18.94B -->
+    <div class="comp-row reveal d3">
+      <div class="comp-head">
+        <div class="comp-tk">AZO</div>
+        <div class="comp-name">AutoZone</div>
+      </div>
+      <div class="comp-bar-wrap">
+        <div class="comp-bar"><div class="fill" data-w="45.6"></div></div>
+        <div class="comp-meta"><span>Rev <span class="v">$18.94B</span> · +5.0% YoY</span><span>Mcap <span class="v">$58.86B</span></span></div>
+      </div>
+      <div class="comp-desc">The most direct rival to NAPA — DIY shoppers and commercial repair shops, store by store.</div>
+    </div>
+    <!-- BBY 41.69B -->
+    <div class="comp-row reveal d3">
+      <div class="comp-head">
+        <div class="comp-tk">BBY</div>
+        <div class="comp-name">Best Buy</div>
+      </div>
+      <div class="comp-bar-wrap">
+        <div class="comp-bar"><div class="fill" data-w="100"></div></div>
+        <div class="comp-meta"><span>Rev <span class="v">$41.69B</span> · +0.4% YoY</span><span>Mcap <span class="v">$13.74B</span></span></div>
+      </div>
+      <div class="comp-desc">Adjacent — auto electronics, diagnostic tools, the omnichannel customer overlap.</div>
+    </div>
+    <!-- FAST 8.20B -->
+    <div class="comp-row reveal d3">
+      <div class="comp-head">
+        <div class="comp-tk">FAST</div>
+        <div class="comp-name">Fastenal</div>
+      </div>
+      <div class="comp-bar-wrap">
+        <div class="comp-bar"><div class="fill" data-w="19.7"></div></div>
+        <div class="comp-meta"><span>Rev <span class="v">$8.20B</span> · +10.9% YoY</span><span>Mcap <span class="v">$52.57B</span></span></div>
+      </div>
+      <div class="comp-desc">The head-to-head with Motion. Vending machines and on-site stocking — quietly eating share.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESET BEAT 4 ============ -->
+<div class="reset" data-screen-label="12 Reset · close">
+  <span class="tag">Interlude</span>
+  <p>Ten thousand <span class="hit it">bins.</span> Seventy <span class="hit it">raises.</span><br>
+  And one <span class="hit it">line</span> drawn down the middle.</p>
+</div>
+
+<!-- ============ CLOSE ============ -->
+<section class="close" data-screen-label="13 Close">
+  <div class="eyebrow reveal">The takeaway</div>
+  <h2 class="reveal d1">One <span class="it">company,</span><br>about to become <span class="it">two.</span></h2>
+  <p class="reveal d2">
+    GPC's bet is a paradox: the same boring, compounding model that produced
+    <em>70 consecutive raises</em> is now being cut in half — on the theory that two
+    focused operators are worth more than one diversified one.
+  </p>
+  <p class="reveal d3">
+    Ten thousand bins still need filling. The brake pads still need to land at the
+    counter by Tuesday. <em>What changes is the letterhead.</em>
+  </p>
+
+  <div class="close-stamp reveal d4">
+    <div class="left">FY'25 · Recap<br>Filed Q1 '26</div>
+    <div class="right">$4.25 → 71.</div>
+  </div>
+</section>
+
+<div class="footer">
+  Source · GPC FY'25 disclosures · Recap rendered <span style="color:var(--coral-500)">04 / 26</span>
+</div>
+
+</div><!-- /.page -->
+</div><!-- /.stage -->
+
+<script>
+/* ============================================================
+   Scroll progress + reveal observer
+   ============================================================ */
+(function() {
+  const page = document.getElementById('page');
+  const progress = document.getElementById('progress');
+
+  // Scroll progress measured against page (since we may be inside a centered stage)
+  function updateProgress() {
+    const max = page.scrollHeight - window.innerHeight;
+    const y = Math.min(Math.max(window.scrollY, 0), Math.max(max, 1));
+    const p = max > 0 ? (y / max) * 100 : 0;
+    progress.style.setProperty('--p', p.toFixed(2) + '%');
+  }
+  document.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+  updateProgress();
+
+  // Reveal observer
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('on');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => {
+    if (!el.classList.contains('on')) io.observe(el);
+  });
+})();
+
+/* ============================================================
+   Scale section — dot grid (each dot = a location)
+   ============================================================ */
+(function buildDotGrid() {
+  const svg = document.getElementById('dotGridSvg');
+  if (!svg) return;
+  const cols = 36, rows = 30; // 1080 dots representing 10,800 locations (1 dot = 10)
+  const W = 320, H = 294;
+  const padX = 12, padY = 10;
+  const gx = (W - padX * 2) / (cols - 1);
+  const gy = (H - padY * 2) / (rows - 1);
+
+  // top inscription
+  const stamp = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  stamp.setAttribute('x', '12');
+  stamp.setAttribute('y', '294');
+  stamp.setAttribute('font-family', 'Geist Mono, monospace');
+  stamp.setAttribute('font-size', '8');
+  stamp.setAttribute('fill', '#A4A29C');
+  stamp.setAttribute('letter-spacing', '2');
+  stamp.textContent = '1 dot ≈ 10 locations';
+  svg.appendChild(stamp);
+
+  const dots = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const cx = padX + c * gx;
+      const cy = padY + r * gy;
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', cx.toFixed(2));
+      dot.setAttribute('cy', cy.toFixed(2));
+      dot.setAttribute('r', '1.6');
+      dot.setAttribute('fill', '#CFCBC0');
+      dot.setAttribute('opacity', '0');
+      svg.appendChild(dot);
+      dots.push(dot);
+    }
+  }
+  // Highlight a small cluster (Atlanta HQ area, mid-left)
+  const hqIdx = Math.floor(rows * 0.55) * cols + Math.floor(cols * 0.28);
+  const hq = dots[hqIdx];
+  if (hq) {
+    hq.setAttribute('r', '3.5');
+    hq.setAttribute('fill', '#FF7A57');
+    hq.dataset.hq = '1';
+    // label
+    const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    lbl.setAttribute('x', (parseFloat(hq.getAttribute('cx')) + 7).toFixed(2));
+    lbl.setAttribute('y', (parseFloat(hq.getAttribute('cy')) + 3).toFixed(2));
+    lbl.setAttribute('font-family', 'Geist Mono, monospace');
+    lbl.setAttribute('font-size', '7');
+    lbl.setAttribute('fill', '#A7311A');
+    lbl.setAttribute('letter-spacing', '1');
+    lbl.textContent = 'ATL · HQ';
+    lbl.style.opacity = '0';
+    lbl.dataset.lbl = '1';
+    svg.appendChild(lbl);
+  }
+
+  // Reveal dots when scaled into view
+  const grid = document.getElementById('dotGrid');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        // Stagger reveal — 1080 dots in ~1.6s
+        const total = dots.length;
+        const dur = 1600;
+        dots.forEach((d, i) => {
+          const t = (i / total) * dur;
+          setTimeout(() => { d.setAttribute('opacity', d.dataset.hq ? '1' : '0.85'); }, t);
+        });
+        // Reveal HQ label after dots are in
+        const lbl = svg.querySelector('text[data-lbl]');
+        if (lbl) setTimeout(() => { lbl.style.transition = 'opacity 400ms ease-out'; lbl.style.opacity = '1'; }, dur + 100);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  io.observe(grid);
+})();
+
+/* ============================================================
+   Dollar grid — 100 cells colored by cost stack
+   ============================================================ */
+(function buildDollar() {
+  const grid = document.getElementById('grid100');
+  if (!grid) return;
+
+  // Cost stack from JSON. The colors are honored as supplied.
+  const costs = [
+    { pct: 63, color: '#2563EB', label: 'Cost of revenue' },
+    { pct: 20, color: '#16A34A', label: 'Selling, general & admin' },
+    { pct: 4,  color: '#DC2626', label: 'Restructuring & special' },
+    { pct: 3,  color: '#D97706', label: 'Depreciation & amortization' },
+    { pct: 2,  color: '#7C3AED', label: 'Capital expenditures' },
+  ];
+  // Fill grid
+  const cells = [];
+  for (let i = 0; i < 100; i++) {
+    const d = document.createElement('div');
+    d.className = 'cell';
+    grid.appendChild(d);
+    cells.push(d);
+  }
+  // Build mapping array index -> color
+  const seq = [];
+  costs.forEach(c => {
+    for (let i = 0; i < c.pct; i++) seq.push(c.color);
+  });
+  while (seq.length < 100) seq.push(null); // remaining cents (~the surplus)
+
+  // Animate when in view
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const dur = 1400;
+        cells.forEach((c, i) => {
+          setTimeout(() => {
+            const col = seq[i];
+            if (col) {
+              c.style.setProperty('--c', col);
+              c.classList.add('lit');
+            } else {
+              // surplus — coral wash
+              c.style.setProperty('--c', '#FF7A57');
+              c.classList.add('lit');
+            }
+          }, (i / 100) * dur);
+        });
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.25 });
+  io.observe(grid);
+
+  // Build legend
+  const legend = document.querySelector('.dollar-beat .legend');
+  costs.forEach(c => {
+    const r = document.createElement('div');
+    r.className = 'row';
+    r.innerHTML = `
+      <div class="swatch" style="background:${c.color}"></div>
+      <div class="label">${c.label}</div>
+      <div class="pct">${c.pct}¢</div>`;
+    legend.appendChild(r);
+  });
+  // surplus row
+  const r = document.createElement('div');
+  r.className = 'row';
+  r.innerHTML = `
+    <div class="swatch" style="background:var(--coral-400)"></div>
+    <div class="label" style="color:var(--coral-500)"><em style="font-family:var(--font-display);font-style:italic">What survives</em></div>
+    <div class="pct" style="color:var(--coral-500)">~8¢</div>`;
+  legend.appendChild(r);
+})();
+
+/* ============================================================
+   Dividend King rings — 70 concentric rings
+   ============================================================ */
+(function buildRings() {
+  const svg = document.getElementById('ringsSvg');
+  if (!svg) return;
+  const cx = 180, cy = 180;
+  const total = 70;
+  const minR = 8;
+  const maxR = 168;
+  const step = (maxR - minR) / (total - 1);
+
+  // Background numerals — years
+  const yearStart = 1956;
+  // build rings from inner to outer
+  const rings = [];
+  for (let i = 0; i < total; i++) {
+    const r = minR + step * i;
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx', cx);
+    c.setAttribute('cy', cy);
+    c.setAttribute('r', r.toFixed(2));
+    c.setAttribute('fill', 'none');
+    c.setAttribute('stroke', i === total - 1 ? '#FF7A57' : '#3B3A37');
+    c.setAttribute('stroke-width', i === total - 1 ? '1.5' : '0.8');
+    c.setAttribute('opacity', '0');
+    svg.appendChild(c);
+    rings.push(c);
+  }
+
+  // center label
+  const cLbl1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  cLbl1.setAttribute('x', cx);
+  cLbl1.setAttribute('y', cy - 3);
+  cLbl1.setAttribute('text-anchor', 'middle');
+  cLbl1.setAttribute('font-family', 'Instrument Serif, serif');
+  cLbl1.setAttribute('font-size', '52');
+  cLbl1.setAttribute('font-style', 'italic');
+  cLbl1.setAttribute('fill', '#FF7A57');
+  cLbl1.textContent = '70';
+  cLbl1.style.opacity = '0';
+  svg.appendChild(cLbl1);
+
+  const cLbl2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  cLbl2.setAttribute('x', cx);
+  cLbl2.setAttribute('y', cy + 16);
+  cLbl2.setAttribute('text-anchor', 'middle');
+  cLbl2.setAttribute('font-family', 'Geist Mono, monospace');
+  cLbl2.setAttribute('font-size', '8');
+  cLbl2.setAttribute('letter-spacing', '2');
+  cLbl2.setAttribute('fill', '#A7311A');
+  cLbl2.textContent = 'CONSECUTIVE RAISES';
+  cLbl2.style.opacity = '0';
+  svg.appendChild(cLbl2);
+
+  // year stamps
+  const stamps = [
+    { y: '1956', tx: 30, ty: 28 },
+    { y: '2026', tx: 330, ty: 350 },
+  ];
+  stamps.forEach(s => {
+    const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    t.setAttribute('x', s.tx);
+    t.setAttribute('y', s.ty);
+    t.setAttribute('font-family', 'Geist Mono, monospace');
+    t.setAttribute('font-size', '9');
+    t.setAttribute('fill', '#A4A29C');
+    t.setAttribute('letter-spacing', '2');
+    t.setAttribute('text-anchor', s.tx > 200 ? 'end' : 'start');
+    t.textContent = s.y;
+    svg.appendChild(t);
+  });
+
+  // animate — rings from inside out
+  const stage = document.getElementById('rings');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const dur = 1800;
+        rings.forEach((c, i) => {
+          setTimeout(() => {
+            c.setAttribute('opacity', i === total - 1 ? '1' : (0.18 + (i / total) * 0.55).toFixed(2));
+          }, (i / total) * dur);
+        });
+        setTimeout(() => { cLbl1.style.transition = 'opacity 500ms ease-out'; cLbl1.style.opacity = '1'; }, dur + 200);
+        setTimeout(() => { cLbl2.style.transition = 'opacity 500ms ease-out'; cLbl2.style.opacity = '1'; }, dur + 350);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.25 });
+  io.observe(stage);
+})();
+
+/* ============================================================
+   Competitor bars — fill on enter
+   ============================================================ */
+(function buildCompet() {
+  const list = document.getElementById('competList');
+  const fills = list.querySelectorAll('.comp-bar .fill');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        fills.forEach((f, i) => {
+          setTimeout(() => { f.style.width = f.dataset.w + '%'; }, 120 + i * 130);
+        });
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  io.observe(list);
+})();
+
+/* ============================================================
+   The Split — animate path drawing
+   ============================================================ */
+(function buildSplit() {
+  const stage = document.getElementById('splitStage');
+  if (!stage) return;
+  const p1 = document.getElementById('splitPath');
+  const p2 = document.getElementById('splitPath2');
+  [p1, p2].forEach(p => {
+    const len = p.getTotalLength();
+    p.style.strokeDasharray = len;
+    p.style.strokeDashoffset = len;
+    p.style.transition = 'stroke-dashoffset 1400ms cubic-bezier(0.22,1,0.36,1)';
+  });
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        p1.style.strokeDashoffset = '0';
+        setTimeout(() => { p2.style.strokeDashoffset = '0'; }, 200);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.25 });
+  io.observe(stage);
+})();
+
+/* ============================================================
+   Hero count-ups — small numbers only, polite
+   ============================================================ */
+(function countUps() {
+  // We fade them in via reveal already; no count animation to avoid jitter on serif glyphs.
+})();
+</script>
+</body>
+</html>

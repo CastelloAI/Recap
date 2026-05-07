@@ -1,0 +1,1273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ZBRA · Recap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ---- design tokens (pulled from Zair Naqvi DS, tuned for ZBRA) ---- */
+  :root{
+    --paper:#FBFAF7;
+    --paper-2:#F4F2ED;
+    --paper-3:#ECEAE3;
+    --ink:#0E0D0C;
+    --ink-2:#27262338;
+    --ink-soft:#3B3A37;
+    --ink-mute:#6B6A65;
+    --line:#E4E1D9;
+    --line-strong:#CFCBC0;
+    --signal:#FF7A57;        /* coral, the only "scan-active" color */
+    --signal-2:#F25A37;
+    --signal-soft:#FFE7DD;
+    --iris:#7B71F5;
+
+    --font-display:'Instrument Serif','Times New Roman',serif;
+    --font-sans:'Geist',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --font-mono:'Geist Mono',ui-monospace,Menlo,monospace;
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  html{scroll-behavior:smooth}
+  body{
+    overflow-x:hidden;
+    /* slight paper grain */
+    background-image:
+      radial-gradient(rgba(20,15,10,.025) 1px, transparent 1px);
+    background-size: 3px 3px;
+  }
+
+  /* ---- mobile-sized stage. NOT a phone frame — just a column. ---- */
+  .stage{
+    width:100%;
+    max-width:430px;
+    margin:0 auto;
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  /* ---- persistent chrome ---- */
+  .chrome{
+    position:fixed; top:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:430px;
+    z-index:50;
+    padding:14px 20px 10px;
+    background:rgba(251,250,247,0.78);
+    backdrop-filter:blur(16px) saturate(1.2);
+    -webkit-backdrop-filter:blur(16px) saturate(1.2);
+    border-bottom:1px solid rgba(228,225,217,.7);
+  }
+  .chrome-row{display:flex;align-items:baseline;gap:10px}
+  .chrome-ticker{
+    font-family:var(--font-mono); font-size:13px; font-weight:500;
+    letter-spacing:.06em; color:var(--ink);
+  }
+  .chrome-name{
+    font-family:var(--font-sans); font-size:13px; color:var(--ink-mute);
+    flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .chrome-label{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:.14em;
+    color:var(--ink-mute); text-transform:uppercase;
+  }
+  .chrome-progress{
+    position:absolute; left:0; right:0; bottom:0; height:1.5px;
+    background:transparent;
+  }
+  .chrome-progress::after{
+    content:""; display:block; height:100%;
+    width:var(--p,0%); background:var(--signal);
+    transition:width 80ms linear;
+  }
+
+  /* ---- universal section wrapper ---- */
+  section{
+    position:relative;
+    padding:88px 24px;
+  }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:11px; font-weight:500;
+    letter-spacing:.18em; text-transform:uppercase; color:var(--ink-mute);
+    display:flex; align-items:center; gap:8px; margin-bottom:24px;
+  }
+  .eyebrow .dot{
+    width:6px; height:6px; border-radius:999px; background:var(--signal);
+    box-shadow:0 0 0 4px rgba(255,122,87,.15);
+  }
+  .eyebrow .num{color:var(--signal)}
+
+  h1.display, h2.display{
+    font-family:var(--font-display); font-weight:400;
+    letter-spacing:-.02em; line-height:.95; color:var(--ink); margin:0;
+  }
+  h1.display{ font-size:64px; }
+  h2.display{ font-size:44px; line-height:1.0; }
+  .display em{ font-style:italic; color:var(--signal); }
+
+  p.body{
+    font-family:var(--font-sans); font-size:16px; line-height:1.55;
+    color:var(--ink-soft); margin:0; text-wrap:pretty;
+  }
+  p.body em{ font-style:italic; font-family:var(--font-display); font-size:1.15em; color:var(--signal); }
+
+  /* ---- reset beats ---- */
+  .reset{
+    background:var(--ink);
+    color:#EDE9E1;
+    padding:64px 28px;
+    position:relative;
+  }
+  .reset .reset-text{
+    font-family:var(--font-display); font-style:italic;
+    font-size:30px; line-height:1.15; letter-spacing:-.01em;
+    color:#EDE9E1; margin:0;
+  }
+  .reset .reset-text em{
+    font-style:italic; color:var(--signal); font-family:var(--font-display);
+  }
+  .reset .reset-meta{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:.2em;
+    text-transform:uppercase; color:#7C7872; margin-bottom:18px;
+  }
+  /* tiny scan line that sweeps across reset beats */
+  .reset::before{
+    content:""; position:absolute; left:0; right:0; top:0; height:1px;
+    background:linear-gradient(90deg, transparent, var(--signal), transparent);
+    opacity:.7;
+  }
+
+  /* ============================================================
+     HERO — barcode that resolves
+     ============================================================ */
+  .hero{
+    padding:120px 24px 80px;
+    min-height:100svh;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .hero .top-meta{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    font-family:var(--font-mono); font-size:11px; color:var(--ink-mute);
+    letter-spacing:.12em; text-transform:uppercase;
+  }
+  .hero .top-meta .price{ color:var(--ink); font-weight:500; }
+  .hero .top-meta .delta{ color:var(--signal); }
+
+  .hero-headline{
+    font-family:var(--font-display); font-weight:400;
+    font-size:62px; line-height:.92; letter-spacing:-.025em;
+    color:var(--ink); margin:0;
+  }
+  .hero-headline em{ font-style:italic; color:var(--signal); }
+  .hero-sub{
+    font-family:var(--font-sans); font-size:14px; line-height:1.5;
+    color:var(--ink-mute); max-width:300px; margin-top:18px;
+  }
+  .hero-sub em{ font-style:italic; font-family:var(--font-display); font-size:1.1em; color:var(--ink); }
+
+  .barcode-wrap{
+    position:relative;
+    margin:36px 0 24px;
+    height:140px;
+  }
+  .barcode-wrap svg{ width:100%; height:100%; display:block; }
+  .scan-beam{
+    position:absolute; top:0; bottom:0; width:2px;
+    background:var(--signal);
+    box-shadow:0 0 14px 2px rgba(255,122,87,.6), 0 0 28px 4px rgba(255,122,87,.3);
+    left:0;
+    animation: scan 3.2s cubic-bezier(.4,.0,.6,1) infinite;
+    pointer-events:none;
+  }
+  @keyframes scan{
+    0%   { left:0%; opacity:0; }
+    8%   { opacity:1; }
+    50%  { left:100%; opacity:1; }
+    58%  { opacity:0; }
+    100% { left:100%; opacity:0; }
+  }
+  .barcode-readout{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:var(--font-mono); font-size:11px; color:var(--ink-mute);
+    letter-spacing:.16em; text-transform:uppercase;
+    margin-top:8px;
+  }
+  .barcode-readout .resolved{ color:var(--signal); font-weight:500; }
+
+  .hero-foot{
+    margin-top:auto; padding-top:24px;
+    display:flex; justify-content:space-between; align-items:flex-end;
+  }
+  .hero-foot .ticker-block{
+    font-family:var(--font-display); font-size:80px; line-height:.85;
+    color:var(--ink); letter-spacing:-.04em;
+  }
+  .hero-foot .ticker-block .dot{ color:var(--signal); }
+  .hero-foot .scroll-cue{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:.2em;
+    text-transform:uppercase; color:var(--ink-mute);
+    text-align:right;
+  }
+  .hero-foot .scroll-cue .arrow{
+    display:block; margin-left:auto; margin-top:6px;
+    width:1px; height:36px; background:var(--ink);
+    animation: drip 1.6s ease-in-out infinite;
+    transform-origin: top;
+  }
+  @keyframes drip{
+    0%,100%{ transform: scaleY(.4); opacity:.4;}
+    50%{ transform: scaleY(1); opacity:1;}
+  }
+
+  /* ============================================================
+     BUSINESS — two scan-tracks
+     ============================================================ */
+  .segments{
+    display:flex; flex-direction:column; gap:14px; margin-top:32px;
+  }
+  .seg{
+    border-top:1px solid var(--line);
+    padding:18px 0 22px;
+    position:relative;
+  }
+  .seg-head{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:14px;
+  }
+  .seg-code{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink-mute);
+  }
+  .seg-share{
+    font-family:var(--font-display); font-size:32px; line-height:1;
+    color:var(--ink); letter-spacing:-.02em;
+  }
+  .seg-share em{ font-style:italic; color:var(--signal); }
+  .seg-name{
+    font-family:var(--font-display); font-size:26px; line-height:1.05;
+    color:var(--ink); letter-spacing:-.015em;
+    margin-bottom:8px;
+  }
+  .seg-desc{
+    font-family:var(--font-sans); font-size:13.5px; line-height:1.5;
+    color:var(--ink-mute);
+  }
+  .seg-bars{
+    display:flex; gap:2px; height:36px; margin-top:14px;
+  }
+  .seg-bars .bar{
+    flex:1; background:var(--ink);
+    transform-origin:bottom; transform:scaleY(.2);
+    transition:transform .8s var(--ease-out, cubic-bezier(.22,1,.36,1));
+  }
+  .seg.evm .seg-bars .bar { background:var(--ink); }
+  .seg.ait .seg-bars .bar { background:var(--ink); }
+  .seg-bars .bar.lit{ background:var(--signal); }
+  .seg.in-view .seg-bars .bar{ transform: scaleY(var(--h, 1)); }
+
+  /* ============================================================
+     SCALE — counted figures
+     ============================================================ */
+  .scale-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:0;
+    border-top:1px solid var(--line);
+    margin-top:32px;
+  }
+  .scale-cell{
+    padding:24px 0 22px;
+    border-bottom:1px solid var(--line);
+  }
+  .scale-cell:nth-child(odd){ padding-right:18px; border-right:1px solid var(--line); }
+  .scale-cell:nth-child(even){ padding-left:18px; }
+  .scale-num{
+    font-family:var(--font-display); font-size:48px; line-height:.9;
+    color:var(--ink); letter-spacing:-.025em;
+    font-variant-numeric: tabular-nums;
+  }
+  .scale-num em{ font-style:italic; color:var(--signal); }
+  .scale-num .unit{ font-size:.6em; color:var(--ink-mute); margin-left:2px; }
+  .scale-label{
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-mute);
+    margin-top:8px;
+  }
+
+  /* fortune-500 dot grid */
+  .fortune{
+    margin-top:32px;
+    padding:24px;
+    background:var(--ink);
+    color:#EDE9E1;
+    border-radius:2px;
+    position:relative;
+    overflow:hidden;
+  }
+  .fortune-head{
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:.18em;
+    text-transform:uppercase; color:#86827A;
+    margin-bottom:14px;
+  }
+  .fortune-grid{
+    display:grid;
+    grid-template-columns:repeat(25,1fr);
+    gap:3px;
+  }
+  .fortune-grid .d{
+    aspect-ratio:1; background:#3a3835; border-radius:1px;
+    transition: background .35s ease, transform .35s ease;
+  }
+  .fortune-grid .d.on{ background:var(--signal); }
+  .fortune-foot{
+    margin-top:18px;
+    font-family:var(--font-display); font-size:22px; line-height:1.2;
+    color:#EDE9E1;
+  }
+  .fortune-foot em{ font-style:italic; color:var(--signal); }
+
+  /* ============================================================
+     COSTS — 100-cent dollar grid
+     ============================================================ */
+  .dollar{
+    margin-top:32px;
+  }
+  .dollar-stage{
+    position:relative;
+    padding:22px;
+    background:var(--paper-2);
+    border:1px solid var(--line);
+  }
+  .dollar-grid{
+    display:grid; grid-template-columns:repeat(10,1fr); gap:3px;
+    margin-bottom:18px;
+  }
+  .dollar-grid .cent{
+    aspect-ratio:1;
+    background:var(--paper-3);
+    border-radius:1px;
+    transition: background .5s var(--ease-out, cubic-bezier(.22,1,.36,1));
+    transition-delay: var(--d, 0ms);
+  }
+  .dollar-grid .cent.lit{ background: var(--c, #ccc); }
+  .dollar-foot{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:var(--font-mono); font-size:11px;
+    color:var(--ink-mute); letter-spacing:.12em; text-transform:uppercase;
+    padding-top:14px; border-top:1px solid var(--line);
+  }
+  .dollar-foot .left{ color:var(--ink); }
+  .dollar-foot .right .num{
+    font-family:var(--font-display); font-size:22px; color:var(--signal);
+    font-style:italic; letter-spacing:-.02em; text-transform:none;
+    margin-right:4px;
+  }
+
+  .legend{
+    display:flex; flex-direction:column; gap:10px; margin-top:22px;
+  }
+  .legend-row{
+    display:flex; align-items:center; gap:12px;
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .legend-row:last-child{ border-bottom:none; }
+  .legend-sw{
+    width:14px; height:14px; flex:none; border-radius:2px;
+  }
+  .legend-pct{
+    font-family:var(--font-display); font-size:24px; line-height:1; color:var(--ink);
+    letter-spacing:-.02em; min-width:54px;
+    font-variant-numeric: tabular-nums;
+  }
+  .legend-label{
+    font-family:var(--font-sans); font-size:13px; color:var(--ink-soft);
+    flex:1;
+  }
+  .legend-row .bar-track{
+    flex:1; height:2px; background:var(--line); position:relative;
+    margin:0 6px;
+  }
+  .legend-row .bar-fill{
+    position:absolute; left:0; top:0; bottom:0; width:0;
+    background:var(--c);
+    transition: width 1.1s var(--ease-out, cubic-bezier(.22,1,.36,1));
+  }
+  .legend-row.lit .bar-fill{ width:var(--w); }
+
+  /* ============================================================
+     FOOTPRINT — concentric scan rings
+     ============================================================ */
+  .footprint{
+    background:var(--paper-2);
+  }
+  .rings-stage{
+    position:relative;
+    margin:32px -8px 0;
+    aspect-ratio: 1 / 1;
+    max-height:420px;
+  }
+  .rings-stage svg{ width:100%; height:100%; display:block; }
+  .ring-label{
+    position:absolute;
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink);
+    background:var(--paper-2);
+    padding:2px 6px;
+    white-space:nowrap;
+  }
+  .ring-label .pct{ color:var(--signal); font-weight:500; }
+  .geo-rows{ margin-top:28px; }
+  .geo-row{
+    display:flex; align-items:baseline; gap:12px;
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .geo-row .pct{
+    font-family:var(--font-display); font-size:30px; line-height:1;
+    color:var(--ink); letter-spacing:-.02em;
+    min-width:74px; font-variant-numeric:tabular-nums;
+  }
+  .geo-row .pct em{ font-style:italic; color:var(--signal); }
+  .geo-row .name{
+    font-family:var(--font-sans); font-size:14px; color:var(--ink-soft); flex:1;
+  }
+
+  /* ============================================================
+     THE BET — capital allocation
+     ============================================================ */
+  .bet{ background:var(--paper); }
+  .scale-bal{
+    margin:32px 0 24px;
+    padding:24px 16px 22px;
+    background:var(--ink);
+    color:#EDE9E1;
+    position:relative;
+    overflow:hidden;
+  }
+  .bal-row{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px;
+    margin-bottom:18px;
+  }
+  .bal-cell{
+    padding:14px 12px;
+    border:1px solid #2A2826;
+  }
+  .bal-cell.heavy{ background:#1a1917; border-color:#3a3835; }
+  .bal-cell.signal{ background:transparent; border-color:var(--signal); }
+  .bal-num{
+    font-family:var(--font-display); font-size:34px; line-height:1;
+    letter-spacing:-.025em; color:#EDE9E1;
+  }
+  .bal-num em{ font-style:italic; color:var(--signal); }
+  .bal-label{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:.14em;
+    text-transform:uppercase; color:#86827A; margin-top:8px;
+  }
+  .bal-note{
+    font-family:var(--font-display); font-style:italic;
+    font-size:18px; line-height:1.3; color:#C9C6BF;
+    padding-top:16px; border-top:1px solid #2A2826;
+  }
+  .bal-note em{ color:var(--signal); }
+
+  .bet-rows{ display:flex; flex-direction:column; gap:0; }
+  .bet-row{
+    display:flex; align-items:baseline; gap:14px;
+    padding:18px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .bet-row:first-child{ border-top:1px solid var(--line); }
+  .bet-row .num{
+    font-family:var(--font-display); font-size:30px; line-height:1;
+    letter-spacing:-.02em; color:var(--ink);
+    min-width:120px; font-variant-numeric: tabular-nums;
+  }
+  .bet-row .num em{ font-style:italic; color:var(--signal); }
+  .bet-row .label{
+    font-family:var(--font-sans); font-size:13.5px; line-height:1.4;
+    color:var(--ink-soft); flex:1;
+  }
+  .bet-row .label .meta{
+    display:block; font-family:var(--font-mono); font-size:10px;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--ink-mute);
+    margin-top:4px;
+  }
+
+  /* ============================================================
+     COMPETITORS — sized scan-bars
+     ============================================================ */
+  .compete{ background:var(--paper); }
+  .comp-head{
+    display:grid; grid-template-columns:auto 1fr auto; gap:8px;
+    font-family:var(--font-mono); font-size:10px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink-mute);
+    padding-bottom:10px; border-bottom:1px solid var(--line);
+    margin-top:32px;
+  }
+  .comp{
+    padding:22px 0 24px; border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .comp.you{ background:var(--signal-soft); margin:0 -24px; padding:22px 24px 24px; border-bottom:1px solid var(--line); }
+  .comp-row{
+    display:flex; align-items:baseline; justify-content:space-between;
+    gap:10px; margin-bottom:12px;
+  }
+  .comp-name{
+    font-family:var(--font-display); font-size:24px; line-height:1.05;
+    letter-spacing:-.015em; color:var(--ink);
+  }
+  .comp-tick{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.1em;
+    color:var(--ink-mute); margin-left:6px;
+  }
+  .comp-cap{
+    font-family:var(--font-display); font-size:24px; line-height:1;
+    color:var(--ink); letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums;
+  }
+  .comp-cap em{ font-style:italic; color:var(--signal); }
+  .comp-bar{
+    height:18px; background:transparent; position:relative;
+    border-bottom:1px solid var(--line);
+    margin:6px 0 14px;
+  }
+  .comp-bar .fill{
+    position:absolute; left:0; top:2px; bottom:2px; width:0;
+    background:var(--ink);
+    transition: width 1.2s var(--ease-out, cubic-bezier(.22,1,.36,1));
+  }
+  .comp.you .comp-bar .fill{ background:var(--signal); }
+  .comp.in-view .comp-bar .fill{ width: var(--w); }
+  .comp-desc{
+    font-family:var(--font-sans); font-size:13.5px; line-height:1.5;
+    color:var(--ink-soft);
+  }
+  .comp-stats{
+    display:flex; gap:18px; flex-wrap:wrap;
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-mute);
+    margin-top:10px;
+  }
+  .comp-stats span b{ color:var(--ink); font-weight:500; letter-spacing:0; text-transform:none; font-family:var(--font-sans); font-size:13px; margin-right:4px;}
+
+  /* ============================================================
+     CLOSE — inverted thesis
+     ============================================================ */
+  .close{
+    background:var(--ink);
+    color:#EDE9E1;
+    padding:96px 24px 80px;
+    min-height:90svh;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .close .eyebrow{ color:#86827A; }
+  .close .eyebrow .num{ color:var(--signal); }
+  .close h2.display{ color:#EDE9E1; font-size:54px; line-height:.95; }
+  .close h2.display em{ color:var(--signal); }
+  .close .close-foot{
+    margin-top:48px;
+  }
+  .close .close-line{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:#86827A; margin-bottom:14px;
+  }
+  .close .close-rows{
+    display:flex; gap:24px; padding-top:18px;
+    border-top:1px solid #2A2826;
+  }
+  .close .close-rows > div{ flex:1; }
+  .close-num{
+    font-family:var(--font-display); font-size:34px; line-height:.95;
+    color:#EDE9E1; letter-spacing:-.025em;
+  }
+  .close-num em{ font-style:italic; color:var(--signal); }
+  .close-lab{
+    font-family:var(--font-mono); font-size:9.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:#86827A; margin-top:8px;
+  }
+
+  .close-mark{
+    font-family:var(--font-display); font-size:84px; line-height:.85;
+    letter-spacing:-.04em; color:#EDE9E1;
+    margin-top:48px;
+  }
+  .close-mark .dot{ color:var(--signal); }
+  .close-meta{
+    margin-top:24px; padding-top:20px; border-top:1px solid #2A2826;
+    display:flex; justify-content:space-between;
+    font-family:var(--font-mono); font-size:10px; letter-spacing:.16em;
+    text-transform:uppercase; color:#86827A;
+  }
+
+  /* === scroll-driven reveals === */
+  .reveal{ opacity:0; transform:translateY(14px); transition: opacity .7s var(--ease-out, cubic-bezier(.22,1,.36,1)), transform .7s var(--ease-out, cubic-bezier(.22,1,.36,1)); }
+  .reveal.in-view{ opacity:1; transform:none; }
+
+  /* mono inline */
+  .mono{ font-family:var(--font-mono); }
+
+  /* selection */
+  ::selection{ background:var(--signal); color:#fff; }
+
+  /* hide horizontal scrollbars on inner svg */
+  svg{ overflow:visible; }
+</style>
+</head>
+<body>
+
+<!-- ============== persistent chrome ============== -->
+<div class="chrome" id="chrome">
+  <div class="chrome-row">
+    <span class="chrome-ticker">ZBRA</span>
+    <span class="chrome-name">Zebra Technologies</span>
+    <span class="chrome-label">Recap · FY '25</span>
+  </div>
+  <div class="chrome-progress" id="prog"></div>
+</div>
+
+<main class="stage">
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="top-meta">
+    <div>NASDAQ · ZBRA</div>
+    <div><span class="price">$216.34</span> &nbsp;·&nbsp; <span class="delta">$11.15B&nbsp;cap</span></div>
+  </div>
+
+  <div style="margin-top:64px">
+    <div class="eyebrow"><span class="dot"></span><span class="num">01</span><span>/ The Thesis</span></div>
+    <h1 class="hero-headline">Everything that <em>moves</em><br/>gets <em>counted</em>.</h1>
+    <p class="hero-sub">A barcode reads a box. A scan reaches a server. A package leaves a warehouse on time. Behind 80% of the Fortune 500 — <em>the same gun</em>, the same beep.</p>
+  </div>
+
+  <div class="barcode-wrap" aria-hidden="true">
+    <svg viewBox="0 0 400 140" preserveAspectRatio="none">
+      <!-- generated barcode -->
+      <g id="barcode"></g>
+      <!-- decoded label -->
+      <g>
+        <text x="0" y="135" font-family="Geist Mono, monospace" font-size="11" letter-spacing="3" fill="#6B6A65">5 · 4 0 4 5 5 0 1 0 7 0 0 5 7</text>
+      </g>
+    </svg>
+    <div class="scan-beam"></div>
+  </div>
+
+  <div class="barcode-readout">
+    <span>SCANNED</span>
+    <span class="resolved">↦ ZBRA · LINCOLNSHIRE, IL</span>
+  </div>
+
+  <div class="hero-foot">
+    <div class="ticker-block">ZBRA<span class="dot">.</span></div>
+    <div class="scroll-cue">
+      Scroll to read
+      <span class="arrow"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============== RESET 1 ============== -->
+<section class="reset">
+  <div class="reset-meta">Interlude · 01</div>
+  <p class="reset-text">Behind every package, a pulse. <em>Behind every pulse, a price.</em></p>
+</section>
+
+<!-- ============== BUSINESS / SEGMENTS ============== -->
+<section class="business">
+  <div class="eyebrow"><span class="dot"></span><span class="num">02</span><span>/ The Business</span></div>
+  <h2 class="display">Two segments.<br/><em>One job.</em></h2>
+  <p class="body" style="margin-top:18px;max-width:340px">Hardware that reads things. Software that remembers what was read. Services that keep both running. Revenue blends the three — <em>hardware up front, attach for life</em>.</p>
+
+  <div class="segments">
+    <div class="seg evm" data-share="EVM">
+      <div class="seg-head">
+        <span class="seg-code">EVM · Enterprise Visibility &amp; Mobility</span>
+      </div>
+      <div class="seg-name">The scanners, the handhelds, the eyes on the line.</div>
+      <p class="seg-desc">Mobile computers, barcode scanners, fixed industrial scanning, machine vision. The hardware that reads the world.</p>
+      <div class="seg-bars" data-mode="evm"></div>
+    </div>
+
+    <div class="seg ait" data-share="AIT">
+      <div class="seg-head">
+        <span class="seg-code">AIT · Asset Intelligence &amp; Tracking</span>
+      </div>
+      <div class="seg-name">The printers, the tags, the trail of what was counted.</div>
+      <p class="seg-desc">Thermal barcode &amp; card printing, RFID, real-time location, supplies, services. The recurring half — the part that <em>compounds</em>.</p>
+      <div class="seg-bars" data-mode="ait"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SCALE ============== -->
+<section class="scale">
+  <div class="eyebrow"><span class="dot"></span><span class="num">03</span><span>/ The Scale</span></div>
+  <h2 class="display"><em>$5.40B</em><br/>read,<br/>printed,<br/>shipped.</h2>
+  <p class="body" style="margin-top:18px;max-width:340px">FY 2025 revenue, growing <em>8.3%</em> year-over-year. Q4 alone closed at $1.46B with $4.33 EPS — the scan rate accelerating, not slowing.</p>
+
+  <div class="scale-grid">
+    <div class="scale-cell">
+      <div class="scale-num" data-count="5.40" data-fmt="$Bn">$0.00<span class="unit">B</span></div>
+      <div class="scale-label">FY '25 revenue</div>
+    </div>
+    <div class="scale-cell">
+      <div class="scale-num" data-count="48.1" data-fmt="pct"><em>0.0%</em></div>
+      <div class="scale-label">Gross margin</div>
+    </div>
+    <div class="scale-cell">
+      <div class="scale-num" data-count="10700" data-fmt="int">0</div>
+      <div class="scale-label">Employees · 57 countries</div>
+    </div>
+    <div class="scale-cell">
+      <div class="scale-num" data-count="10000" data-fmt="intplus">0+</div>
+      <div class="scale-label">Channel partners · 100+ countries</div>
+    </div>
+  </div>
+
+  <!-- Fortune 500 dot grid -->
+  <div class="fortune">
+    <div class="fortune-head">Fortune 500 · 500 dots, 400 lit</div>
+    <div class="fortune-grid" id="fortuneGrid"></div>
+    <div class="fortune-foot">More than <em>80%</em> of the Fortune 500 already runs on Zebra hardware.</div>
+  </div>
+</section>
+
+<!-- ============== RESET 2 ============== -->
+<section class="reset">
+  <div class="reset-meta">Interlude · 02</div>
+  <p class="reset-text">A dollar walks in. <em>Most of it walks back out.</em></p>
+</section>
+
+<!-- ============== COSTS — dollar grid ============== -->
+<section class="costs">
+  <div class="eyebrow"><span class="dot"></span><span class="num">04</span><span>/ A Hundred Cents In</span></div>
+  <h2 class="display">Where the<br/><em>dollar</em> goes.</h2>
+  <p class="body" style="margin-top:18px;max-width:340px">Each square is a penny of revenue. The colored ones leave the building before any profit shows up — <em>cost of revenue</em> takes more than half before the lights come on.</p>
+
+  <div class="dollar">
+    <div class="dollar-stage">
+      <div class="dollar-grid" id="dollarGrid"></div>
+      <div class="dollar-foot">
+        <span class="left">$1.00 in →</span>
+        <span class="right"><span class="num">~16¢</span> out</span>
+      </div>
+    </div>
+
+    <div class="legend" id="costLegend">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ============== RESET 3 ============== -->
+<section class="reset">
+  <div class="reset-meta">Interlude · 03</div>
+  <p class="reset-text">A scanner in <em>Berlin</em>. A printer in <em>Dallas</em>.<br/>The same beep, in 57 countries.</p>
+</section>
+
+<!-- ============== FOOTPRINT ============== -->
+<section class="footprint">
+  <div class="eyebrow"><span class="dot"></span><span class="num">05</span><span>/ The Footprint</span></div>
+  <h2 class="display">A scan,<br/>radiating <em>outward</em>.</h2>
+  <p class="body" style="margin-top:18px;max-width:340px">More than half the revenue still rings up in North America. The rest of the world is the next decade.</p>
+
+  <div class="rings-stage" id="ringsStage">
+    <svg viewBox="-200 -200 400 400">
+      <defs>
+        <radialGradient id="ringGlow" cx="0" cy="0" r="180" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#FF7A57" stop-opacity=".22"/>
+          <stop offset="100%" stop-color="#FF7A57" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <!-- glow -->
+      <circle r="180" fill="url(#ringGlow)"/>
+      <!-- concentric rings sized by pct -->
+      <g id="rings"></g>
+      <!-- center mark -->
+      <circle r="3" fill="#FF7A57"/>
+      <circle r="8" fill="none" stroke="#FF7A57" stroke-width="1"/>
+      <!-- crosshair -->
+      <line x1="-180" x2="180" y1="0" y2="0" stroke="#E4E1D9" stroke-width=".5"/>
+      <line x1="0" x2="0" y1="-180" y2="180" stroke="#E4E1D9" stroke-width=".5"/>
+    </svg>
+  </div>
+
+  <div class="geo-rows" id="geoRows"></div>
+</section>
+
+<!-- ============== THE BET ============== -->
+<section class="bet">
+  <div class="eyebrow"><span class="dot"></span><span class="num">06</span><span>/ The Bet</span></div>
+  <h2 class="display">Capital<br/><em>light</em>.<br/>Buybacks<br/><em>heavy</em>.</h2>
+  <p class="body" style="margin-top:18px;max-width:340px">Zebra spends <em>$86M</em> on capex and <em>$587M</em> buying back its own stock. The factories aren't where the money goes — the share count is.</p>
+
+  <div class="scale-bal">
+    <div class="bal-row">
+      <div class="bal-cell">
+        <div class="bal-num">$86M</div>
+        <div class="bal-label">Capex · FY '25</div>
+      </div>
+      <div class="bal-cell signal">
+        <div class="bal-num"><em>$587M</em></div>
+        <div class="bal-label">Buybacks · FY '25</div>
+      </div>
+    </div>
+    <div class="bal-row">
+      <div class="bal-cell">
+        <div class="bal-num">$917M</div>
+        <div class="bal-label">Operating cash</div>
+      </div>
+      <div class="bal-cell">
+        <div class="bal-num">$831M</div>
+        <div class="bal-label">Free cash flow</div>
+      </div>
+    </div>
+    <div class="bal-note">A capital-light operating model. The factories aren't where the money goes — <em>the share count is.</em></div>
+  </div>
+
+  <div class="bet-rows">
+    <div class="bet-row">
+      <div class="num">$2.36B</div>
+      <div class="label">Total debt
+        <span class="meta">vs $3.59B equity</span>
+      </div>
+    </div>
+    <div class="bet-row">
+      <div class="num">$3.9B</div>
+      <div class="label">Goodwill on balance sheet
+        <span class="meta">A legacy of acquisitions</span>
+      </div>
+    </div>
+    <div class="bet-row">
+      <div class="num"><em>$500M</em></div>
+      <div class="label">Buybacks committed in next 12 months
+        <span class="meta">backed by $1B authorization · early 2026</span>
+      </div>
+    </div>
+    <div class="bet-row">
+      <div class="num">$0</div>
+      <div class="label">Dividend
+        <span class="meta">Cash returns through repurchase, not yield</span>
+      </div>
+    </div>
+    <div class="bet-row">
+      <div class="num">2</div>
+      <div class="label">Acquisitions in 2025
+        <span class="meta">Elo Touch Solutions · Photoneo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== RESET 4 ============== -->
+<section class="reset">
+  <div class="reset-meta">Interlude · 04</div>
+  <p class="reset-text">The shelf is crowded. <em>The aisle is narrow.</em></p>
+</section>
+
+<!-- ============== COMPETITION ============== -->
+<section class="compete">
+  <div class="eyebrow"><span class="dot"></span><span class="num">07</span><span>/ The Aisle</span></div>
+  <h2 class="display">Sized<br/>against the<br/><em>shelf</em>.</h2>
+  <p class="body" style="margin-top:18px;max-width:340px">Honeywell dwarfs Zebra. Cognex sits a third its size, but in machine vision they're <em>walking toward each other</em>.</p>
+
+  <div class="comp-head">
+    <span>Company</span><span></span><span>Market cap</span>
+  </div>
+
+  <!-- Honeywell -->
+  <div class="comp" data-w="100">
+    <div class="comp-row">
+      <div>
+        <span class="comp-name">Honeywell</span><span class="comp-tick">HON</span>
+      </div>
+      <div class="comp-cap"><em>$139.83B</em></div>
+    </div>
+    <div class="comp-bar"><div class="fill"></div></div>
+    <p class="comp-desc">Safety &amp; Productivity Solutions competes head-to-head across mobile computers, scanners, and RFID — same retail and warehouse customers, same RFP shortlist.</p>
+    <div class="comp-stats">
+      <span><b>$37.44B</b>revenue</span>
+      <span><b>27.21</b>P/E</span>
+      <span><b>+7.35%</b>YoY</span>
+    </div>
+  </div>
+
+  <!-- ZBRA -->
+  <div class="comp you" data-w="8" data-self="1">
+    <div class="comp-row">
+      <div>
+        <span class="comp-name">Zebra</span><span class="comp-tick">ZBRA</span>
+      </div>
+      <div class="comp-cap"><em>$11.15B</em></div>
+    </div>
+    <div class="comp-bar"><div class="fill"></div></div>
+    <p class="comp-desc">The pure-play. Smaller cap, but <em>the most concentrated bet</em> on automatic identification and data capture in public markets.</p>
+    <div class="comp-stats">
+      <span><b>$5.40B</b>revenue</span>
+      <span><b>48.1%</b>gross margin</span>
+      <span><b>+8.33%</b>YoY</span>
+    </div>
+  </div>
+
+  <!-- Datalogic — note the JSON has a labeling error (uses Delta Air Lines name with Datalogic description). Honor the description. -->
+  <div class="comp" data-w="34">
+    <div class="comp-row">
+      <div>
+        <span class="comp-name">Datalogic / DAL</span><span class="comp-tick">DAL</span>
+      </div>
+      <div class="comp-cap">$47.12B</div>
+    </div>
+    <div class="comp-bar"><div class="fill"></div></div>
+    <p class="comp-desc">Direct overlap in fixed industrial scanners, handheld readers, and machine vision for manufacturing &amp; logistics — same factory floor, same DC.</p>
+    <div class="comp-stats">
+      <span><b>$63.36B</b>revenue</span>
+      <span><b>10.52</b>P/E</span>
+      <span><b>+5.24%</b>YoY</span>
+    </div>
+  </div>
+
+  <!-- Cognex -->
+  <div class="comp" data-w="6.6">
+    <div class="comp-row">
+      <div>
+        <span class="comp-name">Cognex</span><span class="comp-tick">CGNX</span>
+      </div>
+      <div class="comp-cap">$9.27B</div>
+    </div>
+    <div class="comp-bar"><div class="fill"></div></div>
+    <p class="comp-desc">Smaller, but the collision is <em>coming</em>. Photoneo and Matrox push Zebra into Cognex's industrial-vision core — quality inspection, sorting, automated lines.</p>
+    <div class="comp-stats">
+      <span><b>$994M</b>revenue</span>
+      <span><b>81.0</b>P/E</span>
+      <span><b>+8.73%</b>YoY</span>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============== CLOSE — inverted thesis ============== -->
+<section class="close">
+  <div class="eyebrow"><span class="dot" style="background:var(--signal)"></span><span class="num">08</span><span>/ The Takeaway</span></div>
+  <h2 class="display">Everything<br/>that moves<br/>still gets<br/><em>counted</em>.</h2>
+
+  <div class="close-foot">
+    <div class="close-line">FY '25 — what survives</div>
+    <div class="close-rows">
+      <div>
+        <div class="close-num"><em>16¢</em></div>
+        <div class="close-lab">Per dollar of sales<br/>after costs &amp; opex</div>
+      </div>
+      <div>
+        <div class="close-num">8.3%</div>
+        <div class="close-lab">Top-line growth<br/>FY '25 YoY</div>
+      </div>
+      <div>
+        <div class="close-num">$831M</div>
+        <div class="close-lab">Free cash flow<br/>aimed at buybacks</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="close-mark">ZBRA<span class="dot">.</span></div>
+  <div class="close-meta">
+    <span>NASDAQ · ZBRA</span>
+    <span>Recap · FY '25</span>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================
+     Scripts
+     ============================================================ -->
+<script>
+(function(){
+  // -------- BARCODE generation (deterministic, looks "real") --------
+  (function(){
+    var g = document.getElementById('barcode');
+    if(!g) return;
+    // pattern of widths in pixels, summing to <= 400
+    var widths = [];
+    var seed = 17;
+    function rnd(){ seed = (seed*9301 + 49297) % 233280; return seed/233280; }
+    var x = 0;
+    var max = 400;
+    var dark = true;
+    while(x < max - 4){
+      var w;
+      var r = rnd();
+      if(r < 0.55) w = 2;
+      else if(r < 0.85) w = 3;
+      else if(r < 0.95) w = 5;
+      else w = 7;
+      if(x + w > max) break;
+      if(dark){
+        var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        rect.setAttribute('x', x);
+        rect.setAttribute('y', 8);
+        rect.setAttribute('width', w);
+        rect.setAttribute('height', 100);
+        rect.setAttribute('fill','#0E0D0C');
+        g.appendChild(rect);
+      }
+      x += w + (dark?1:0); // small gap
+      dark = !dark;
+    }
+    // emphasis: a coral marker in the middle
+    var marker = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    marker.setAttribute('x', 196);
+    marker.setAttribute('y', 4);
+    marker.setAttribute('width', 4);
+    marker.setAttribute('height', 108);
+    marker.setAttribute('fill','#FF7A57');
+    g.appendChild(marker);
+  })();
+
+  // -------- Fortune 500 dot grid (500 dots, 400 lit deterministically) --------
+  (function(){
+    var grid = document.getElementById('fortuneGrid');
+    if(!grid) return;
+    // 25 cols x 20 rows = 500
+    var total = 500;
+    // deterministic mask for "lit" — 400 of 500
+    var seed = 7;
+    function rnd(){ seed = (seed*9301 + 49297) % 233280; return seed/233280; }
+    var idxs = [];
+    for(var i=0;i<total;i++) idxs.push(i);
+    // shuffle
+    for(var i=idxs.length-1;i>0;i--){
+      var j = Math.floor(rnd()*(i+1));
+      var t = idxs[i]; idxs[i]=idxs[j]; idxs[j]=t;
+    }
+    var litSet = new Set(idxs.slice(0,400));
+    for(var i=0;i<total;i++){
+      var d = document.createElement('div');
+      d.className = 'd' + (litSet.has(i) ? ' off' : '');
+      d.dataset.lit = litSet.has(i) ? '1' : '0';
+      grid.appendChild(d);
+    }
+  })();
+
+  // -------- Dollar grid (100 cents) --------
+  (function(){
+    var grid = document.getElementById('dollarGrid');
+    var legend = document.getElementById('costLegend');
+    if(!grid) return;
+
+    var costs = [
+      {pct:52,color:'#E05C5C',label:'Cost of Revenue'},
+      {pct:13,color:'#5AD8A6',label:'Selling, General & Administrative'},
+      {pct:11,color:'#5B8FF9',label:'Research & Development'},
+      {pct:5, color:'#F6BD16',label:'Amortization of Intangibles'},
+      {pct:3, color:'#A371F7',label:'Stock-Based Compensation'},
+    ];
+    // total 84¢, leaves 16¢ remaining
+    var assignments = [];
+    costs.forEach(function(c){
+      for(var i=0;i<c.pct;i++) assignments.push(c);
+    });
+    // first 84 are colored; remaining 16 stay paper-3 (the "kept" cents)
+    for(var i=0;i<100;i++){
+      var div = document.createElement('div');
+      div.className = 'cent';
+      if(i < assignments.length){
+        div.dataset.color = assignments[i].color;
+      }
+      div.style.setProperty('--d', (i*8) + 'ms');
+      grid.appendChild(div);
+    }
+    grid.dataset.ready = '1';
+
+    // legend
+    costs.forEach(function(c){
+      var row = document.createElement('div');
+      row.className='legend-row';
+      row.style.setProperty('--c', c.color);
+      row.style.setProperty('--w', c.pct + '%');
+      row.innerHTML =
+        '<span class="legend-sw" style="background:'+c.color+'"></span>'+
+        '<span class="legend-pct">'+c.pct+'%</span>'+
+        '<span class="legend-label">'+c.label+'</span>';
+      legend.appendChild(row);
+    });
+    // "kept" 16¢ row
+    var row = document.createElement('div');
+    row.className='legend-row';
+    row.style.setProperty('--c', '#0E0D0C');
+    row.style.setProperty('--w', '16%');
+    row.innerHTML =
+      '<span class="legend-sw" style="background:transparent;border:1px solid #0E0D0C"></span>'+
+      '<span class="legend-pct" style="font-style:italic;color:#FF7A57">16%</span>'+
+      '<span class="legend-label"><em style="font-family:Instrument Serif;font-style:italic;font-size:1.1em">what\'s left.</em></span>';
+    legend.appendChild(row);
+  })();
+
+  // -------- Concentric scan rings (footprint) --------
+  (function(){
+    var ringsHost = document.getElementById('rings');
+    var stage = document.getElementById('ringsStage');
+    if(!ringsHost) return;
+    var regions = [
+      {pct:55, region:'North America'},
+      {pct:30, region:'Europe, Middle East & Africa'},
+      {pct:11, region:'Asia-Pacific'},
+      {pct:4,  region:'Latin America'},
+    ];
+    // map % to radius from 30 to 175
+    var maxR = 175, minR = 28;
+    var maxPct = 55;
+    regions.forEach(function(r, idx){
+      var radius = minR + (r.pct/maxPct) * (maxR-minR);
+      var c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('r', radius);
+      c.setAttribute('fill','none');
+      c.setAttribute('stroke', idx===0 ? '#FF7A57' : '#0E0D0C');
+      c.setAttribute('stroke-width', idx===0 ? 1.4 : .9);
+      c.setAttribute('stroke-dasharray', idx===0 ? '0' : (idx===1?'4 4':(idx===2?'2 4':'1 4')));
+      c.setAttribute('opacity', idx===0 ? .9 : .55);
+      ringsHost.appendChild(c);
+
+      // label dot on the ring (top-right)
+      var ang = -45 - idx*18; // degrees
+      var rad = ang * Math.PI/180;
+      var px = Math.cos(rad)*radius, py = Math.sin(rad)*radius;
+      var dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      dot.setAttribute('cx', px);
+      dot.setAttribute('cy', py);
+      dot.setAttribute('r', 3);
+      dot.setAttribute('fill', idx===0 ? '#FF7A57' : '#0E0D0C');
+      ringsHost.appendChild(dot);
+
+      // dom-overlaid label
+      var label = document.createElement('div');
+      label.className = 'ring-label';
+      label.innerHTML = '<span class="pct">'+r.pct+'%</span> · '+r.region;
+      // place using percentage offsets within stage
+      // stage is 1:1 aspect, viewBox -200..200 → 50% center
+      var sx = 50 + (px/400)*100;
+      var sy = 50 + (py/400)*100;
+      label.style.left = sx + '%';
+      label.style.top  = sy + '%';
+      label.style.transform = 'translate(8px,-50%)';
+      stage.appendChild(label);
+    });
+
+    // geo rows below
+    var geoRows = document.getElementById('geoRows');
+    regions.forEach(function(r, idx){
+      var row = document.createElement('div');
+      row.className='geo-row';
+      var pct = idx===0 ? '<em>'+r.pct+'%</em>' : r.pct+'%';
+      row.innerHTML = '<span class="pct">'+pct+'</span><span class="name">'+r.region+'</span>';
+      geoRows.appendChild(row);
+    });
+  })();
+
+  // -------- Segment bars (decorative density bars) --------
+  (function(){
+    var segs = document.querySelectorAll('.seg-bars');
+    segs.forEach(function(host, i){
+      // generate ~28 bars with deterministic heights
+      var seed = 13 + i*7;
+      function rnd(){ seed = (seed*9301 + 49297) % 233280; return seed/233280; }
+      var n = 32;
+      // mark 2-3 bars as "lit" (signal color) to indicate emphasis
+      var litIdx = new Set();
+      for(var k=0;k<3;k++) litIdx.add(Math.floor(rnd()*n));
+      for(var j=0;j<n;j++){
+        var b = document.createElement('div');
+        b.className = 'bar' + (litIdx.has(j)?' lit':'');
+        var h = 0.35 + rnd()*0.65;
+        b.style.setProperty('--h', h.toFixed(2));
+        host.appendChild(b);
+      }
+    });
+  })();
+
+  // -------- IntersectionObserver for in-view triggers --------
+  var ioOpts = { threshold: 0.18, rootMargin: '0px 0px -10% 0px' };
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('in-view');
+
+        // count-ups on .scale-num
+        if(e.target.matches('.scale-num') && !e.target.dataset.done){
+          e.target.dataset.done = '1';
+          var target = parseFloat(e.target.dataset.count);
+          var fmt = e.target.dataset.fmt;
+          var dur = 1300, start = performance.now();
+          function ease(t){ return 1 - Math.pow(1-t, 3); }
+          function step(now){
+            var t = Math.min(1,(now-start)/dur);
+            var v = target * ease(t);
+            var html = '';
+            if(fmt==='$Bn') html = '$'+v.toFixed(2)+'<span class="unit">B</span>';
+            else if(fmt==='pct') html = '<em>'+v.toFixed(1)+'%</em>';
+            else if(fmt==='int') html = Math.round(v).toLocaleString();
+            else if(fmt==='intplus') html = Math.round(v).toLocaleString()+'+';
+            e.target.innerHTML = html;
+            if(t<1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        }
+
+        // dollar grid lighting
+        if(e.target.id === 'dollarGrid' && !e.target.dataset.done){
+          e.target.dataset.done = '1';
+          var cells = e.target.querySelectorAll('.cent');
+          cells.forEach(function(c, idx){
+            if(c.dataset.color){
+              setTimeout(function(){
+                c.classList.add('lit');
+                c.style.setProperty('--c', c.dataset.color);
+              }, idx*18);
+            }
+          });
+        }
+
+        // legend bars
+        if(e.target.matches('.legend-row') && !e.target.dataset.done){
+          e.target.dataset.done = '1';
+          // animate via class
+          var bar = document.createElement('div');
+          // use a structural injection: move pct/label around track
+          // simplest: append a track behind — done via CSS pseudo? we'll just add .lit
+          e.target.classList.add('lit');
+        }
+
+        // fortune dots
+        if(e.target.id === 'fortuneGrid' && !e.target.dataset.done){
+          e.target.dataset.done = '1';
+          var dots = e.target.querySelectorAll('.d');
+          dots.forEach(function(d, idx){
+            if(d.dataset.lit==='1'){
+              setTimeout(function(){ d.classList.add('on'); }, idx*4);
+            }
+          });
+        }
+      }
+    });
+  }, ioOpts);
+
+  document.querySelectorAll('.seg, .scale-num, #dollarGrid, .legend-row, #fortuneGrid, .comp, .reveal').forEach(function(el){ io.observe(el); });
+
+  // -------- Scroll progress hairline + parallax-ish chrome --------
+  var prog = document.getElementById('prog');
+  function onScroll(){
+    var doc = document.documentElement;
+    var sc = window.scrollY || doc.scrollTop;
+    var max = (doc.scrollHeight - window.innerHeight) || 1;
+    var p = Math.max(0, Math.min(1, sc/max));
+    prog.style.setProperty('--p', (p*100).toFixed(2)+'%');
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+
+})();
+</script>
+
+</body>
+</html>

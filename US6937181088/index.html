@@ -1,0 +1,1185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>PCAR · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   PACCAR (PCAR) — Recap FY '25
+   Mobile-first stock recap. Editorial × industrial.
+   Palette pulled from Zair design tokens, warmed toward
+   shop-floor manila / diesel cream / chrome blue.
+   ============================================================ */
+
+:root {
+  /* Diesel paper — warmer than off-white, less than parchment */
+  --paper:        #F2EEE4;   /* shop-floor manila base */
+  --paper-2:      #EAE5D7;   /* raised */
+  --paper-3:      #DED7C5;   /* deeper / dividers */
+  --paper-4:      #C9C0AA;   /* deepest grain */
+  --ink:          #14130F;   /* deep diesel ink */
+  --ink-2:        #2A2823;
+  --ink-3:        #5A574E;
+  --ink-4:        #8A867A;
+  --line:         #D9D2BF;
+  --line-strong:  #B9B19A;
+
+  /* Signal — chrome blue, anchored to the cost-of-revenue hex but adapted as identity */
+  --signal:       #1F4FB8;   /* chrome blue */
+  --signal-2:     #2563EB;   /* the spec'd cost color */
+  --signal-soft:  #C9D8F4;
+  --signal-dark:  #0E2A66;
+
+  /* Earned-drama dark band */
+  --grease:       #14130F;
+  --grease-2:     #1F1D17;
+  --grease-edge:  #322F26;
+
+  /* Cost slice colors honored from JSON */
+  --c-cost:       #2563EB;
+  --c-rd:         #16A34A;
+  --c-sga:        #DC2626;
+  --c-fin:        #9333EA;
+  --c-other:      #C9C0AA;   /* "what survives" — warm clay, not in JSON, used only for the residual */
+
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; background: #1a1815; }
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* The page itself is the design — mobile-sized canvas centered on dark gutter (so it reads as artifact, not page) */
+.frame {
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--paper);
+  position: relative;
+  overflow-x: hidden;
+  /* film grain */
+  background-image:
+    radial-gradient(rgba(20,19,15,0.025) 1px, transparent 1px),
+    radial-gradient(rgba(20,19,15,0.018) 1px, transparent 1px);
+  background-size: 3px 3px, 7px 7px;
+  background-position: 0 0, 1px 2px;
+}
+
+/* ===== Persistent chrome ===== */
+.chrome {
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  background: rgba(242, 238, 228, 0.78);
+  border-bottom: 1px solid var(--line);
+}
+.chrome-inner {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 18px 10px;
+}
+.chrome .ticker {
+  font-family: var(--font-mono);
+  font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--ink); padding: 4px 8px; border: 1px solid var(--ink-3);
+  border-radius: 4px;
+}
+.chrome .name {
+  font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+  color: var(--ink-2); letter-spacing: -0.01em;
+}
+.chrome .label {
+  margin-left: auto;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.chrome .label .dot { color: var(--signal); margin: 0 6px; }
+.scroll-rail {
+  height: 1.5px; background: var(--paper-3); position: relative;
+}
+.scroll-rail .fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--signal);
+  width: 0%;
+  transition: width 60ms linear;
+}
+
+/* ===== Type roles ===== */
+.eyebrow {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em;
+  text-transform: uppercase; font-weight: 500; color: var(--ink-3);
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.eyebrow .num { color: var(--signal); font-weight: 600; }
+.eyebrow .bar { width: 22px; height: 1px; background: var(--ink-4); display: inline-block; }
+.display { font-family: var(--font-display); font-weight: 400; line-height: 0.92; letter-spacing: -0.02em; }
+.display em { font-style: italic; }
+.body {
+  font-family: var(--font-sans); font-size: 16px; line-height: 1.55;
+  color: var(--ink-2); margin: 0;
+}
+.body .em { font-family: var(--font-display); font-style: italic; font-weight: 400; color: var(--signal); }
+.body .ink { color: var(--ink); }
+.mono { font-family: var(--font-mono); }
+
+/* ===== Section base ===== */
+section { padding: 56px 22px; position: relative; }
+section.tight { padding: 40px 22px; }
+section.tonal { background: var(--paper-2); }
+section.deep { background: var(--paper-3); }
+
+/* Reset beat — italic interlude, contrasting band, no card */
+.reset {
+  padding: 36px 28px; background: transparent;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.reset.dark { background: var(--grease); border-color: var(--grease-edge); color: #EFEAD7; }
+.reset.dark .display { color: #F4EFD9; }
+.reset.dark .em { color: #FFB07F; }
+.reset.signal { background: var(--signal); border-color: var(--signal-dark); }
+.reset.signal .display { color: #fff; }
+.reset.signal .em { color: var(--signal-soft); }
+.reset .display {
+  font-size: 28px; line-height: 1.2; letter-spacing: -0.005em;
+  font-style: italic;
+}
+.reset .display .em { font-style: italic; color: var(--signal); font-weight: 400; }
+.reset .meta { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-4); margin-bottom: 14px; }
+.reset.dark .meta { color: #807A65; }
+.reset.signal .meta { color: var(--signal-soft); }
+
+/* ===== Hero ===== */
+.hero { padding: 28px 22px 56px; position: relative; overflow: hidden; }
+.hero .stamp {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 22px;
+  display: flex; align-items: center; gap: 10px;
+}
+.hero .stamp .pulse {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--signal);
+  box-shadow: 0 0 0 0 rgba(31,79,184,0.6);
+  animation: pulse 2.4s ease-out infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(31,79,184,0.6); }
+  100% { box-shadow: 0 0 0 12px rgba(31,79,184,0); }
+}
+.hero h1.display {
+  font-size: 64px; line-height: 0.92;
+}
+.hero h1.display em { color: var(--signal); }
+.hero .sub {
+  margin-top: 28px; font-size: 16px; line-height: 1.55; color: var(--ink-2);
+  max-width: 30ch;
+}
+.hero .sub .em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+/* Highway scene */
+.highway {
+  margin-top: 40px;
+  position: relative;
+  height: 220px;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, var(--paper-2) 0%, var(--paper-3) 100%);
+}
+.highway .road {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 78px;
+  background: linear-gradient(180deg, #2B2722 0%, #14130F 100%);
+}
+.highway .lane {
+  position: absolute; left: 0; right: 0; top: 50%; height: 4px;
+  background-image: linear-gradient(90deg, #F4C430 0 60%, transparent 60% 100%);
+  background-size: 56px 4px;
+  background-position: var(--lane-x, 0) 0;
+  transform: translateY(-2px);
+  opacity: 0.95;
+}
+.highway .horizon {
+  position: absolute; left: 0; right: 0; bottom: 78px; height: 1px;
+  background: var(--line-strong);
+}
+.highway .sun {
+  position: absolute; right: -30px; top: 32px;
+  width: 96px; height: 96px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(244,196,48,0.95) 0%, rgba(244,196,48,0.0) 70%);
+}
+.highway .rig {
+  position: absolute; left: 50%; bottom: 78px;
+  transform: translate(-50%, 0);
+  width: 240px; height: 110px;
+}
+.highway .rig svg { width: 100%; height: 100%; display: block; }
+
+/* ===== Big number row ===== */
+.bignum {
+  font-family: var(--font-display);
+  line-height: 0.92; letter-spacing: -0.02em; color: var(--ink);
+}
+.bignum em { font-style: italic; color: var(--signal); }
+.bignum .small { font-family: var(--font-mono); font-style: normal; font-size: 11px;
+  letter-spacing: 0.12em; color: var(--ink-3); display: block; margin-top: 8px;
+  text-transform: uppercase; }
+
+/* ===== Odometer (count-up) ===== */
+.odo {
+  display: inline-flex; align-items: center;
+  background: #14130F; color: #F4C430;
+  padding: 8px 12px; border-radius: 4px;
+  font-family: var(--font-mono); font-weight: 600; font-size: 22px;
+  letter-spacing: 0.04em;
+  border: 1px solid #322F26;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 2px 4px rgba(0,0,0,0.18);
+}
+.odo .digit { display: inline-block; min-width: 0.62em; text-align: center; }
+.odo .label { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.18em;
+  color: #6B6457; margin-left: 10px; text-transform: uppercase; }
+
+/* ===== Revenue split — three-tank fuel rendering ===== */
+.tanks {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px; margin-top: 28px; align-items: end;
+}
+.tank {
+  position: relative; height: 220px;
+  border: 1px solid var(--line-strong);
+  background: var(--paper-2);
+  overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.tank .fluid {
+  width: 100%; transition: height 1200ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+  background: var(--signal);
+  position: relative;
+}
+.tank .fluid::before {
+  content: ""; position: absolute; left: 0; right: 0; top: -6px; height: 6px;
+  background: rgba(255,255,255,0.1);
+}
+.tank .fluid::after {
+  content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 2px;
+  background: rgba(255,255,255,0.4);
+}
+.tank.t-truck .fluid { background: var(--signal); }
+.tank.t-parts .fluid { background: var(--ink); }
+.tank.t-fin   .fluid { background: var(--c-fin); opacity: 0.85; }
+.tank .gauge {
+  position: absolute; top: 10px; left: 10px; right: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.tank .gauge .pct {
+  font-family: var(--font-mono); font-size: 11px; color: #fff;
+  background: rgba(0,0,0,0.18); padding: 2px 6px; border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+.tank .gauge .name {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.tank .val {
+  position: absolute; left: 10px; bottom: 10px; right: 10px;
+  font-family: var(--font-display); font-size: 28px; color: #fff;
+  line-height: 1; letter-spacing: -0.02em;
+}
+.tank .val em { font-style: italic; color: rgba(255,255,255,0.85); font-size: 13px;
+  font-family: var(--font-mono); margin-left: 4px; letter-spacing: 0.06em; }
+.tank.t-truck .val, .tank.t-parts .val, .tank.t-fin .val { color: #fff; }
+.tank.t-truck .gauge .name, .tank.t-parts .gauge .name { color: rgba(255,255,255,0.7); }
+.tank.t-fin .gauge .name { color: rgba(255,255,255,0.75); }
+.tank-caption {
+  margin-top: 14px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-3);
+  display: flex; justify-content: space-between;
+}
+
+/* ===== Cost — penny grid ===== */
+.pennies {
+  margin-top: 28px;
+  display: grid; grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  padding: 16px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+}
+.penny {
+  aspect-ratio: 1; border-radius: 50%;
+  background: var(--paper-3);
+  position: relative;
+  transition: background 220ms var(--ease-out, ease-out), transform 220ms var(--ease-out, ease-out);
+}
+.penny.lit { box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
+.penny.cost { background: var(--c-cost); }
+.penny.rd { background: var(--c-rd); }
+.penny.sga { background: var(--c-sga); }
+.penny.fin { background: var(--c-fin); }
+.penny.surv { background: var(--c-other); }
+.penny.surv::after {
+  content: ""; position: absolute; inset: 22%;
+  border-radius: 50%; background: var(--ink);
+  opacity: 0.85;
+}
+
+.cost-legend { margin-top: 18px; display: grid; grid-template-columns: 1fr; gap: 10px; }
+.cost-legend .row {
+  display: grid; grid-template-columns: 16px 1fr auto; gap: 12px; align-items: center;
+  padding: 8px 0; border-bottom: 1px dashed var(--line-strong);
+}
+.cost-legend .row:last-child { border-bottom: 0; }
+.cost-legend .sw { width: 12px; height: 12px; border-radius: 50%; }
+.cost-legend .lbl { font-family: var(--font-sans); font-size: 14px; color: var(--ink); }
+.cost-legend .lbl .sub { display: block; font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-top: 2px; }
+.cost-legend .pct { font-family: var(--font-display); font-size: 24px; color: var(--ink); }
+.cost-legend .pct em { font-style: italic; color: var(--signal); }
+.cost-legend .row.surv .pct em { color: var(--signal); }
+
+/* ===== Footprint globe ===== */
+.globe-wrap { position: relative; margin-top: 32px; height: 320px; }
+.globe-wrap svg { width: 100%; height: 100%; display: block; }
+.geo-list { margin-top: 24px; }
+.geo-row {
+  display: grid; grid-template-columns: 1fr auto; align-items: baseline;
+  padding: 14px 0; border-top: 1px solid var(--line);
+  position: relative;
+}
+.geo-row:last-child { border-bottom: 1px solid var(--line); }
+.geo-row .region { font-family: var(--font-sans); font-size: 16px; color: var(--ink); font-weight: 500; }
+.geo-row .pct { font-family: var(--font-display); font-size: 32px; color: var(--ink); line-height: 1; }
+.geo-row .pct em { font-style: italic; color: var(--signal); }
+.geo-row .bar-track {
+  position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+  background: transparent;
+}
+.geo-row .bar-fill {
+  position: absolute; left: 0; bottom: 0; height: 2px;
+  background: var(--signal); width: 0;
+  transition: width 1000ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+/* ===== Balance / debt — dark band ===== */
+.weight-section {
+  background: var(--grease); color: #EFEAD7;
+  padding: 64px 22px;
+  position: relative; overflow: hidden;
+}
+.weight-section .eyebrow { color: #C9C0AA; }
+.weight-section .eyebrow .num { color: #FFB07F; }
+.weight-section h2.display {
+  font-size: 44px; line-height: 1.0;
+  margin-top: 14px; color: #F4EFD9;
+}
+.weight-section h2.display em { color: #FFB07F; font-style: italic; }
+.weight-section .body { color: #C9C0AA; }
+.weight-section .body .em { font-family: var(--font-display); font-style: italic; color: #FFB07F; }
+.weight-section .body .ink { color: #F4EFD9; }
+
+.scale-wrap { margin: 36px 0 8px; height: 220px; position: relative; }
+.scale-wrap svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+.weight-stats { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+.weight-stats .stat { padding: 14px 0; border-top: 1px solid #322F26; }
+.weight-stats .stat .v { font-family: var(--font-display); font-size: 32px; color: #F4EFD9; line-height: 1; }
+.weight-stats .stat .v em { font-style: italic; color: #FFB07F; }
+.weight-stats .stat .l { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #807A65; margin-top: 8px; }
+
+/* ===== The bet — capex / battery ===== */
+.bet-row {
+  display: grid; grid-template-columns: 1fr; gap: 10px;
+  margin-top: 28px;
+}
+.bet-row .pill {
+  border: 1px solid var(--line-strong);
+  padding: 14px 16px;
+  background: var(--paper);
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center;
+  gap: 14px;
+}
+.bet-row .pill .ico { width: 36px; height: 36px; }
+.bet-row .pill .lbl { font-family: var(--font-sans); font-size: 14px; color: var(--ink); }
+.bet-row .pill .lbl .sub { display: block; color: var(--ink-3); font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
+.bet-row .pill .v { font-family: var(--font-display); font-size: 24px; color: var(--ink); }
+.bet-row .pill .v em { font-style: italic; color: var(--signal); }
+.bet-row .pill.battery {
+  grid-column: 1 / -1; background: var(--ink); color: var(--paper);
+  border-color: var(--ink);
+}
+.bet-row .pill.battery .lbl { color: var(--paper); }
+.bet-row .pill.battery .lbl .sub { color: var(--ink-4); }
+.bet-row .pill.battery .v { color: #F4C430; }
+.bet-row .pill.battery .v em { color: #F4C430; }
+
+/* ===== Competitors ===== */
+.comp-stage {
+  margin-top: 28px; position: relative;
+  padding: 28px 0 8px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.comp-row {
+  display: grid; grid-template-columns: 1fr; gap: 4px;
+  padding: 18px 0;
+  border-bottom: 1px dashed var(--line-strong);
+  cursor: pointer;
+  transition: background 220ms ease;
+}
+.comp-row:last-child { border-bottom: 0; }
+.comp-row:active, .comp-row.open { background: var(--paper-2); }
+.comp-row .head {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: 10px;
+}
+.comp-row .name { font-family: var(--font-display); font-size: 26px; color: var(--ink); line-height: 1; }
+.comp-row.us .name { color: var(--signal); }
+.comp-row.us .name em { font-style: italic; }
+.comp-row .tk { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
+  color: var(--ink-3); padding: 3px 6px; border: 1px solid var(--line-strong); border-radius: 3px;
+  align-self: center; }
+.comp-row .mc { font-family: var(--font-display); font-size: 22px; color: var(--ink); line-height: 1; }
+.comp-row .mc em { font-style: italic; color: var(--signal); }
+.comp-row .chassis {
+  margin-top: 12px; height: 18px;
+  background: linear-gradient(90deg, var(--paper-3) 0 var(--w, 50%), transparent var(--w, 50%) 100%);
+  border-bottom: 1px solid var(--line-strong);
+  position: relative;
+}
+.comp-row.us .chassis {
+  background: linear-gradient(90deg, var(--signal) 0 var(--w, 100%), transparent var(--w, 100%) 100%);
+}
+.comp-row .chassis .wheel {
+  position: absolute; bottom: -5px; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--ink); border: 2px solid var(--paper);
+}
+.comp-row .chassis .wheel.l { left: 8%; }
+.comp-row .chassis .wheel.r { left: calc(var(--w, 50%) - 14px); }
+.comp-row .det {
+  max-height: 0; overflow: hidden; transition: max-height 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.comp-row.open .det { max-height: 240px; }
+.comp-row .det-inner {
+  padding: 14px 0 4px; font-size: 14px; color: var(--ink-2); line-height: 1.55;
+}
+.comp-row .det-inner .em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+.comp-row .tap {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-4); margin-top: 6px;
+}
+
+/* ===== Closing thesis ===== */
+.close { padding: 72px 22px 88px; background: var(--paper); position: relative; }
+.close h2.display {
+  font-size: 56px; line-height: 0.95; color: var(--ink);
+}
+.close h2.display em { color: var(--signal); }
+.close .out {
+  margin-top: 20px; font-size: 16px; color: var(--ink-2);
+}
+.close .out .em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+.close .stamp-out {
+  margin-top: 56px;
+  display: flex; justify-content: space-between; align-items: end;
+  padding-top: 18px; border-top: 1px solid var(--line);
+}
+.close .stamp-out .sig { font-family: var(--font-display); font-style: italic; font-size: 18px; color: var(--ink-3); }
+.close .stamp-out .meta-r { font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); text-align: right; line-height: 1.5; }
+
+/* Reveal-on-scroll primitive */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 540ms cubic-bezier(0.22, 1, 0.36, 1), transform 540ms cubic-bezier(0.22, 1, 0.36, 1); }
+.reveal.in { opacity: 1; transform: none; }
+.reveal.d1 { transition-delay: 80ms; }
+.reveal.d2 { transition-delay: 160ms; }
+.reveal.d3 { transition-delay: 240ms; }
+
+/* draw-on path (used in scenes) */
+.draw { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1400ms cubic-bezier(0.22, 1, 0.36, 1); }
+.in .draw { stroke-dashoffset: 0; }
+
+/* hover only on non-touch */
+@media (hover: hover) {
+  .comp-row:hover { background: var(--paper-2); }
+}
+</style>
+</head>
+<body>
+<div class="frame" id="frame">
+
+  <!-- PERSISTENT CHROME -->
+  <header class="chrome">
+    <div class="chrome-inner">
+      <span class="ticker">PCAR</span>
+      <span class="name">PACCAR Inc.</span>
+      <span class="label">Recap <span class="dot">·</span> FY '25</span>
+    </div>
+    <div class="scroll-rail"><div class="fill" id="scrollFill"></div></div>
+  </header>
+
+  <!-- HERO — opens with 87 years of profit -->
+  <section class="hero">
+    <div class="stamp"><span class="pulse"></span><span>NASDAQ <span style="color:var(--ink-2)">·</span> Bellevue, WA <span style="color:var(--ink-2)">·</span> Est. 1905</span></div>
+
+    <h1 class="display reveal">
+      Eighty-seven<br/>
+      <em>consecutive</em><br/>
+      years of profit.
+    </h1>
+
+    <p class="sub reveal d1">
+      Through wars, oil shocks, and three recessions, PACCAR has booked a positive annual income <span class="em">every single year since 1939</span> — a streak unmatched in the S&amp;P 500's industrial roster.
+    </p>
+
+    <!-- Highway scene — animated lane stripes scrub with scroll -->
+    <div class="highway" aria-hidden="true">
+      <div class="sun"></div>
+      <div class="horizon"></div>
+      <div class="road"></div>
+      <div class="lane"></div>
+      <div class="rig">
+        <!-- Class-8 silhouette: tractor + trailer in profile -->
+        <svg viewBox="0 0 240 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- trailer -->
+          <rect x="78" y="22" width="146" height="56" fill="#1F1D17" stroke="#322F26" stroke-width="1"/>
+          <!-- trailer ribs -->
+          <line x1="100" y1="26" x2="100" y2="74" stroke="#2F2C24" stroke-width="1"/>
+          <line x1="124" y1="26" x2="124" y2="74" stroke="#2F2C24" stroke-width="1"/>
+          <line x1="148" y1="26" x2="148" y2="74" stroke="#2F2C24" stroke-width="1"/>
+          <line x1="172" y1="26" x2="172" y2="74" stroke="#2F2C24" stroke-width="1"/>
+          <line x1="196" y1="26" x2="196" y2="74" stroke="#2F2C24" stroke-width="1"/>
+          <!-- coupling -->
+          <rect x="74" y="62" width="6" height="16" fill="#1F1D17"/>
+          <!-- tractor cab -->
+          <path d="M14 78 L14 38 Q14 32 20 32 L46 32 L52 18 Q54 14 60 14 L66 14 Q72 14 72 20 L72 78 Z" fill="#1F4FB8" stroke="#0E2A66" stroke-width="1"/>
+          <!-- windshield -->
+          <path d="M52 22 Q56 16 60 16 L66 16 Q70 16 70 22 L70 36 L52 36 Z" fill="#9DB6E6" opacity="0.85"/>
+          <!-- grille -->
+          <rect x="14" y="44" width="6" height="22" fill="#0E2A66"/>
+          <line x1="14" y1="48" x2="20" y2="48" stroke="#5379C4" stroke-width="0.5"/>
+          <line x1="14" y1="52" x2="20" y2="52" stroke="#5379C4" stroke-width="0.5"/>
+          <line x1="14" y1="56" x2="20" y2="56" stroke="#5379C4" stroke-width="0.5"/>
+          <line x1="14" y1="60" x2="20" y2="60" stroke="#5379C4" stroke-width="0.5"/>
+          <!-- headlight -->
+          <circle cx="18" cy="42" r="2" fill="#F4C430"/>
+          <!-- exhaust stacks -->
+          <rect x="46" y="6" width="3" height="32" fill="#322F26"/>
+          <rect x="63" y="6" width="3" height="14" fill="#322F26"/>
+          <!-- mirror -->
+          <rect x="48" y="36" width="3" height="10" fill="#322F26"/>
+          <!-- chassis -->
+          <rect x="14" y="78" width="210" height="6" fill="#0A0908"/>
+          <!-- wheels -->
+          <g id="rigWheels">
+            <circle cx="30" cy="86" r="10" fill="#0A0908" stroke="#322F26" stroke-width="1"/>
+            <circle cx="30" cy="86" r="4" fill="#322F26"/>
+            <circle cx="60" cy="86" r="10" fill="#0A0908" stroke="#322F26" stroke-width="1"/>
+            <circle cx="60" cy="86" r="4" fill="#322F26"/>
+            <circle cx="160" cy="86" r="10" fill="#0A0908" stroke="#322F26" stroke-width="1"/>
+            <circle cx="160" cy="86" r="4" fill="#322F26"/>
+            <circle cx="186" cy="86" r="10" fill="#0A0908" stroke="#322F26" stroke-width="1"/>
+            <circle cx="186" cy="86" r="4" fill="#322F26"/>
+            <circle cx="212" cy="86" r="10" fill="#0A0908" stroke="#322F26" stroke-width="1"/>
+            <circle cx="212" cy="86" r="4" fill="#322F26"/>
+          </g>
+          <!-- brand stripe -->
+          <rect x="80" y="36" width="142" height="3" fill="#F4C430" opacity="0.85"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Hero metric, big -->
+    <div style="margin-top: 36px;" class="reveal d2">
+      <div class="bignum" style="font-size: 72px;">$<span id="rev-num">28.44</span><em>B</em></div>
+      <div class="bignum"><span class="small">FY 2025 revenue · <span style="color:var(--signal)">$66.44B mkt cap</span></span></div>
+    </div>
+  </section>
+
+  <!-- RESET BEAT 1 — bridges hero into "the business" -->
+  <div class="reset">
+    <div class="meta">Interlude · §1</div>
+    <div class="display">
+      Three nameplates. <em>Two thousand</em> dealers. One company that's been moving freight since the Wright Brothers.
+    </div>
+  </div>
+
+  <!-- THE BUSINESS — three brands, three tanks of revenue -->
+  <section class="tonal">
+    <div class="eyebrow reveal">
+      <span class="bar"></span><span class="num">§ 02</span><span>How it makes money</span>
+    </div>
+    <h2 class="display reveal" style="font-size:42px; margin-top: 14px;">
+      Three streams.<br/>
+      One <em>chassis</em>.
+    </h2>
+    <p class="body reveal d1" style="margin-top: 18px;">
+      <span class="ink">Trucks</span> — Kenworth, Peterbilt, DAF — through <span class="em">2,000+ independent dealers in 100+ countries</span>. <span class="ink">Parts</span>, the high-margin aftermarket flowing through 21 distribution centers. And <span class="ink">Financial Services</span>, financing PACCAR rigs across 26 countries on four continents.
+    </p>
+
+    <!-- Three "fuel tanks" — heights map to segment % of revenue -->
+    <div class="tanks reveal d2" id="tanks">
+      <div class="tank t-truck" data-pct="68">
+        <div class="gauge"><span class="name">Truck</span><span class="pct">68%</span></div>
+        <div class="fluid" style="height:0%"></div>
+        <div class="val">$19.37<em>B</em></div>
+      </div>
+      <div class="tank t-parts" data-pct="24">
+        <div class="gauge"><span class="name">Parts</span><span class="pct">24%</span></div>
+        <div class="fluid" style="height:0%"></div>
+        <div class="val">$6.87<em>B</em></div>
+      </div>
+      <div class="tank t-fin" data-pct="8">
+        <div class="gauge"><span class="name">Fin Svcs</span><span class="pct">8%</span></div>
+        <div class="fluid" style="height:0%"></div>
+        <div class="val">$2.21<em>B</em></div>
+      </div>
+    </div>
+    <div class="tank-caption">
+      <span>Segment share · FY '25</span>
+      <span>↑ scroll to fill</span>
+    </div>
+  </section>
+
+  <!-- THE SCALE — count-up, sticky stat -->
+  <section>
+    <div class="eyebrow reveal"><span class="bar"></span><span class="num">§ 03</span><span>The scale</span></div>
+    <h2 class="display reveal" style="font-size:46px; margin-top: 14px;">
+      <em>Thirty thousand</em><br/>
+      hands on the<br/>
+      assembly line.
+    </h2>
+
+    <div style="margin-top: 32px;" class="reveal d1">
+      <div class="odo">
+        <span class="digit" id="o0">0</span>
+        <span class="digit" id="o1">0</span>
+        <span class="digit" id="o2">,</span>
+        <span class="digit" id="o3">0</span>
+        <span class="digit" id="o4">0</span>
+        <span class="digit" id="o5">0</span>
+        <span class="label">EMPLOYEES · WORLDWIDE</span>
+      </div>
+    </div>
+
+    <p class="body reveal d2" style="margin-top: 28px;">
+      Plants across the <span class="em">US, Canada, Mexico, Europe, Australia, South America</span>. A global footprint stitched together by a single thesis: build heavy-duty trucks that outlast their warranty. <span class="ink">A+/A1 credit rating.</span> S&amp;P 500 member. <span class="em">87 years</span> profitable.
+    </p>
+
+    <!-- inline stat row, no cards -->
+    <div style="margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px 18px;" class="reveal d3">
+      <div>
+        <div class="bignum" style="font-size: 40px;">$<em>22.8</em>B</div>
+        <div class="bignum"><span class="small">Loan &amp; lease portfolio</span></div>
+      </div>
+      <div>
+        <div class="bignum" style="font-size: 40px;"><em>26</em></div>
+        <div class="bignum"><span class="small">Countries financed</span></div>
+      </div>
+      <div>
+        <div class="bignum" style="font-size: 40px;"><em>21</em></div>
+        <div class="bignum"><span class="small">Parts distribution centers</span></div>
+      </div>
+      <div>
+        <div class="bignum" style="font-size: 40px;"><em>1905</em></div>
+        <div class="bignum"><span class="small">Founded · Seattle</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESET BEAT 2 — bridges to costs -->
+  <div class="reset signal">
+    <div class="meta">Interlude · §2</div>
+    <div class="display">
+      Of every dollar that rolls in the door, <em>eighty-nine cents</em> roll right back out — in steel, in rubber, in wages, in interest.
+    </div>
+  </div>
+
+  <!-- COSTS — penny grid -->
+  <section class="tonal">
+    <div class="eyebrow reveal"><span class="bar"></span><span class="num">§ 04</span><span>A hundred cents in</span></div>
+    <h2 class="display reveal" style="font-size:46px; margin-top: 14px;">
+      Where the <em>dollar</em> goes.
+    </h2>
+    <p class="body reveal d1" style="margin-top: 16px;">
+      A penny for every percent. Cost of revenue dominates — it's a <span class="em">capital-heavy</span>, supplier-heavy business. The clay-toned residual at the bottom is what's left over, before tax.
+    </p>
+
+    <div class="pennies reveal d2" id="pennies"><!-- 100 pennies populated by JS --></div>
+
+    <div class="cost-legend reveal d3">
+      <div class="row">
+        <span class="sw" style="background:var(--c-cost)"></span>
+        <span class="lbl">Cost of revenue<span class="sub">Materials, manufacturing, labor</span></span>
+        <span class="pct"><em>80</em>¢</span>
+      </div>
+      <div class="row">
+        <span class="sw" style="background:var(--c-fin)"></span>
+        <span class="lbl">Fin. services interest<span class="sub">Funding the lease portfolio</span></span>
+        <span class="pct"><em>5</em>¢</span>
+      </div>
+      <div class="row">
+        <span class="sw" style="background:var(--c-rd)"></span>
+        <span class="lbl">Research &amp; development<span class="sub">Powertrain, EV, autonomy</span></span>
+        <span class="pct"><em>2</em>¢</span>
+      </div>
+      <div class="row">
+        <span class="sw" style="background:var(--c-sga)"></span>
+        <span class="lbl">SG&amp;A<span class="sub">Selling, general, admin</span></span>
+        <span class="pct"><em>2</em>¢</span>
+      </div>
+      <div class="row surv">
+        <span class="sw" style="background:var(--c-other); box-shadow: inset 0 0 0 2px var(--ink)"></span>
+        <span class="lbl">Other &amp; what survives<span class="sub">Tax, interest, margin</span></span>
+        <span class="pct"><em>11</em>¢</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTPRINT — geographic distribution -->
+  <section>
+    <div class="eyebrow reveal"><span class="bar"></span><span class="num">§ 05</span><span>Footprint</span></div>
+    <h2 class="display reveal" style="font-size:46px; margin-top: 14px;">
+      Where the <em>wheels</em> turn.
+    </h2>
+    <p class="body reveal d1" style="margin-top: 16px;">
+      A little over half the revenue rolls in from North American highways. A third comes out of Europe — that's <span class="em">DAF</span> doing the work. The rest from down under and below the equator.
+    </p>
+
+    <!-- Hand-drawn schematic globe / world strip -->
+    <div class="globe-wrap reveal d2">
+      <svg viewBox="0 0 380 320" xmlns="http://www.w3.org/2000/svg">
+        <!-- meridian dots, soft -->
+        <g fill="none" stroke="#C9C0AA" stroke-width="0.6" opacity="0.5">
+          <ellipse cx="190" cy="160" rx="160" ry="160"/>
+          <ellipse cx="190" cy="160" rx="160" ry="60"/>
+          <ellipse cx="190" cy="160" rx="160" ry="100"/>
+          <line x1="30" y1="160" x2="350" y2="160"/>
+          <line x1="190" y1="0" x2="190" y2="320"/>
+        </g>
+        <!-- Stylized continental blobs (impressionistic, not topographic) -->
+        <!-- N America -->
+        <path id="naCa" d="M58 80 Q70 60 100 64 Q130 66 138 80 Q148 96 132 110 Q142 130 124 142 Q102 158 84 144 Q68 134 64 116 Q52 100 58 80 Z"
+          fill="#1F4FB8" stroke="#0E2A66" stroke-width="1" opacity="0.92"/>
+        <!-- Europe -->
+        <path id="eu" d="M188 78 Q205 70 226 80 Q240 88 236 102 Q230 114 214 116 Q198 118 188 108 Q178 96 188 78 Z"
+          fill="#1F4FB8" stroke="#0E2A66" stroke-width="1" opacity="0.78"/>
+        <!-- S America -->
+        <path id="sa" d="M120 192 Q138 188 144 208 Q150 230 138 252 Q126 268 116 248 Q108 230 112 212 Q116 198 120 192 Z"
+          fill="#1F4FB8" stroke="#0E2A66" stroke-width="1" opacity="0.45"/>
+        <!-- Australia -->
+        <path id="au" d="M286 214 Q310 208 322 224 Q330 240 314 250 Q298 256 288 246 Q278 232 286 214 Z"
+          fill="#1F4FB8" stroke="#0E2A66" stroke-width="1" opacity="0.5"/>
+
+        <!-- Pulse rings on N. America (the dominant region) -->
+        <circle cx="98" cy="108" r="6" fill="#FFB07F"/>
+        <circle cx="98" cy="108" r="14" fill="none" stroke="#FFB07F" stroke-width="1" opacity="0.6">
+          <animate attributeName="r" values="14;28;14" dur="3.2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.6;0;0.6" dur="3.2s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- Region labels with leader lines -->
+        <g font-family="Geist Mono, monospace" font-size="9" letter-spacing="2" fill="#5A574E">
+          <line x1="98" y1="108" x2="160" y2="40" stroke="#5A574E" stroke-width="0.6" class="draw"/>
+          <text x="160" y="36" text-anchor="start">US &amp; CANADA · 52%</text>
+
+          <line x1="210" y1="98" x2="300" y2="60" stroke="#5A574E" stroke-width="0.6" class="draw"/>
+          <text x="300" y="56" text-anchor="start">EUROPE · 33%</text>
+
+          <line x1="130" y1="222" x2="40" y2="280" stroke="#5A574E" stroke-width="0.6" class="draw"/>
+          <text x="40" y="296" text-anchor="start">S AMERICA · 7%</text>
+
+          <line x1="304" y1="232" x2="340" y2="296" stroke="#5A574E" stroke-width="0.6" class="draw"/>
+          <text x="340" y="312" text-anchor="end">AUS · 8%</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="geo-list">
+      <div class="geo-row reveal d1" data-pct="52">
+        <span class="region">United States &amp; Canada</span>
+        <span class="pct"><em>52</em>%</span>
+        <span class="bar-track"></span><span class="bar-fill"></span>
+      </div>
+      <div class="geo-row reveal d2" data-pct="33">
+        <span class="region">Europe</span>
+        <span class="pct"><em>33</em>%</span>
+        <span class="bar-track"></span><span class="bar-fill"></span>
+      </div>
+      <div class="geo-row reveal d3" data-pct="8">
+        <span class="region">Australia &amp; other</span>
+        <span class="pct"><em>8</em>%</span>
+        <span class="bar-track"></span><span class="bar-fill"></span>
+      </div>
+      <div class="geo-row reveal d3" data-pct="7">
+        <span class="region">South America</span>
+        <span class="pct"><em>7</em>%</span>
+        <span class="bar-track"></span><span class="bar-fill"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WEIGHT — debt / balance sheet, the EARNED dark band -->
+  <section class="weight-section">
+    <div class="eyebrow"><span class="bar" style="background:#807A65"></span><span class="num">§ 06</span><span>The weight</span></div>
+    <h2 class="display">
+      Seventeen billion<br/>
+      <em>in debt</em>.<br/>
+      Nineteen in equity.
+    </h2>
+    <p class="body" style="margin-top: 18px;">
+      Most of the borrowing sits inside <span class="em">Financial Services</span>, funding a $22.8B loan and lease book through commercial paper. The truck-making business itself runs <span class="ink">cash-rich and conservatively levered</span> — which is how you book a profit 87 years running.
+    </p>
+
+    <!-- The balance scale — beam tilts slightly toward equity -->
+    <div class="scale-wrap">
+      <svg viewBox="0 0 380 220" xmlns="http://www.w3.org/2000/svg">
+        <!-- post -->
+        <line x1="190" y1="40" x2="190" y2="200" stroke="#807A65" stroke-width="2"/>
+        <!-- base -->
+        <rect x="160" y="200" width="60" height="6" fill="#807A65"/>
+        <rect x="148" y="206" width="84" height="4" fill="#5A574E"/>
+        <!-- pivot -->
+        <circle cx="190" cy="40" r="6" fill="#FFB07F"/>
+        <!-- beam (slightly tilted toward equity = right side higher? equity is bigger so it's heavier — tilt right side DOWN) -->
+        <g transform="rotate(4 190 40)">
+          <line x1="50" y1="40" x2="330" y2="40" stroke="#F4EFD9" stroke-width="3" stroke-linecap="round"/>
+          <!-- left chains (debt) -->
+          <line x1="80" y1="40" x2="80" y2="86" stroke="#807A65" stroke-width="1"/>
+          <line x1="120" y1="40" x2="120" y2="86" stroke="#807A65" stroke-width="1"/>
+          <!-- left pan (debt) -->
+          <path d="M60 86 Q100 110 140 86" fill="#322F26" stroke="#807A65" stroke-width="1"/>
+          <text x="100" y="78" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#FFB07F" font-style="italic">$17.2B</text>
+          <text x="100" y="72" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="2" fill="#807A65">DEBT</text>
+
+          <!-- right chains (equity) -->
+          <line x1="260" y1="40" x2="260" y2="100" stroke="#807A65" stroke-width="1"/>
+          <line x1="300" y1="40" x2="300" y2="100" stroke="#807A65" stroke-width="1"/>
+          <!-- right pan (equity) -->
+          <path d="M240 100 Q280 124 320 100" fill="#1F4FB8" stroke="#9DB6E6" stroke-width="1"/>
+          <text x="280" y="92" text-anchor="middle" font-family="Instrument Serif" font-size="24" fill="#F4EFD9" font-style="italic">$19.3B</text>
+          <text x="280" y="86" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="2" fill="#807A65">EQUITY</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="weight-stats">
+      <div class="stat"><div class="v">$<em>6.31</em>B</div><div class="l">Cash &amp; equivalents</div></div>
+      <div class="stat"><div class="v"><em>A+</em>/A1</div><div class="l">Credit rating</div></div>
+      <div class="stat"><div class="v">$<em>4.42</em>B</div><div class="l">Operating cash flow</div></div>
+      <div class="stat"><div class="v">$<em>3.67</em>B</div><div class="l">Free cash flow</div></div>
+    </div>
+  </section>
+
+  <!-- RESET BEAT 3 -->
+  <div class="reset">
+    <div class="meta">Interlude · §3</div>
+    <div class="display">
+      The shareholder gets <em>fifty cents</em> of every dollar earned. The buyback button has barely been pressed.
+    </div>
+  </div>
+
+  <!-- THE BET — capital allocation -->
+  <section class="tonal">
+    <div class="eyebrow reveal"><span class="bar"></span><span class="num">§ 07</span><span>The bet · <span style="color:var(--signal)">capital allocated</span></span></div>
+    <h2 class="display reveal" style="font-size:46px; margin-top: 14px;">
+      <em>Dividends</em>, plant,<br/>
+      and one battery bet.
+    </h2>
+    <p class="body reveal d1" style="margin-top: 16px;">
+      PACCAR's capital playbook is <span class="em">old-school</span>: pay shareholders generously, reinvest in plant, and avoid the buyback theater. The one place that posture bends — a battery joint venture for the next chapter of trucking.
+    </p>
+
+    <div class="bet-row reveal d2">
+      <div class="pill">
+        <svg class="ico" viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="14" stroke="#1F4FB8" stroke-width="2"/>
+          <path d="M12 18l4 4 8-9" stroke="#1F4FB8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="lbl">Dividends paid<span class="sub">~50% of net income, FY '25</span></span>
+        <span class="v">$<em>2.27</em>B</span>
+      </div>
+      <div class="pill">
+        <svg class="ico" viewBox="0 0 36 36" fill="none">
+          <rect x="6" y="14" width="24" height="14" stroke="#1F4FB8" stroke-width="2"/>
+          <path d="M6 14l6-6h12l6 6" stroke="#1F4FB8" stroke-width="2" stroke-linejoin="round"/>
+          <line x1="14" y1="20" x2="22" y2="20" stroke="#1F4FB8" stroke-width="2"/>
+        </svg>
+        <span class="lbl">Capex<span class="sub">Plants, tooling, distribution</span></span>
+        <span class="v">$<em>743</em>M</span>
+      </div>
+      <div class="pill">
+        <svg class="ico" viewBox="0 0 36 36" fill="none">
+          <path d="M10 8h12l4 6v12a2 2 0 01-2 2H8a2 2 0 01-2-2V14l4-6z" stroke="#1F4FB8" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M14 18h4M14 22h8" stroke="#1F4FB8" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="lbl">Buybacks (lifetime, since '18)<span class="sub">$110M of a $500M authorization</span></span>
+        <span class="v"><em>22</em>%</span>
+      </div>
+      <div class="pill battery">
+        <svg class="ico" viewBox="0 0 36 36" fill="none">
+          <rect x="6" y="10" width="22" height="16" rx="2" stroke="#F4C430" stroke-width="2"/>
+          <rect x="28" y="14" width="3" height="8" fill="#F4C430"/>
+          <rect x="9" y="13" width="4" height="10" fill="#F4C430"/>
+          <rect x="15" y="13" width="4" height="10" fill="#F4C430" opacity="0.6"/>
+          <rect x="21" y="13" width="4" height="10" fill="#F4C430" opacity="0.3"/>
+        </svg>
+        <span class="lbl">Amplify Cell Technologies<span class="sub">Battery JV · multi-year commitment</span></span>
+        <span class="v">$<em>400–700</em>M</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPETITORS — chassis comparison -->
+  <section>
+    <div class="eyebrow reveal"><span class="bar"></span><span class="num">§ 08</span><span>The grid · who else is on the road</span></div>
+    <h2 class="display reveal" style="font-size:46px; margin-top: 14px;">
+      Five lanes,<br/>
+      <em>one PACCAR</em>.
+    </h2>
+    <p class="body reveal d1" style="margin-top: 16px;">
+      In Class 8, PACCAR's most direct rival is <span class="em">Daimler Truck</span> — the maker of Freightliner and Western Star. Beyond that, the comparison set widens to industrials and premium-brand manufacturers chasing the same EV and hydrogen markets. <span style="color:var(--ink-3); font-family:var(--font-mono); font-size:11px; letter-spacing:0.06em;">Tap a row to expand.</span>
+    </p>
+
+    <div class="comp-stage reveal d2">
+      <!-- Self -->
+      <div class="comp-row us" style="--w: 100%;">
+        <div class="head">
+          <span class="name"><em>PACCAR</em></span>
+          <span class="tk">PCAR</span>
+          <span class="mc">$<em>66.4</em>B</span>
+        </div>
+        <div class="chassis">
+          <span class="wheel l"></span><span class="wheel r"></span>
+        </div>
+      </div>
+      <!-- 3M (largest by mkt cap, anchors right end) -->
+      <div class="comp-row" data-comp="0" style="--w: 100%;">
+        <div class="head">
+          <span class="name">3M</span>
+          <span class="tk">MMM</span>
+          <span class="mc">$<em>77.5</em>B</span>
+        </div>
+        <div class="chassis"><span class="wheel l"></span><span class="wheel r"></span></div>
+        <div class="det"><div class="det-inner">
+          Diversified industrial; competitive overlap is in <span class="em">component supply chains</span> serving commercial fleet operators. Revenue $24.95B · P/E 23.84 · YoY +1.52%.
+          <div class="tap">Industrials · component supply</div>
+        </div></div>
+      </div>
+      <!-- Embraer -->
+      <div class="comp-row" data-comp="1" style="--w: 90%;">
+        <div class="head">
+          <span class="name">Embraer</span>
+          <span class="tk">EMBJ</span>
+          <span class="mc">$<em>60.0</em>B</span>
+        </div>
+        <div class="chassis"><span class="wheel l"></span><span class="wheel r"></span></div>
+        <div class="det"><div class="det-inner">
+          Premium-brand vehicle manufacturer with overlapping <span class="em">next-gen propulsion</span> and defense / logistics adjacencies. Q rev $2.00B · P/E 30.73 · YoY +18.23%.
+          <div class="tap">Aerospace · premium manufacturing</div>
+        </div></div>
+      </div>
+      <!-- Daimler (the most direct rival) — given long visual chassis to feel head-to-head -->
+      <div class="comp-row" data-comp="2" style="--w: 46%;">
+        <div class="head">
+          <span class="name">Daimler Truck</span>
+          <span class="tk">DTG</span>
+          <span class="mc">$<em>30.6</em>B</span>
+        </div>
+        <div class="chassis"><span class="wheel l"></span><span class="wheel r"></span></div>
+        <div class="det"><div class="det-inner">
+          PACCAR's <span class="em">most direct global rival</span> — Freightliner, Western Star, Mercedes-Benz Trucks, FUSO. Head-to-head in Class 8 across NA, Europe, and emerging markets. Q rev $3.53B · P/E 20.91 · YoY −15.52%.
+          <div class="tap">Trucks · class 8 head-to-head</div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSE — inverts the open. Opened with 87 years of profit; closes with 11¢ that survives. -->
+  <section class="close">
+    <div class="eyebrow reveal"><span class="bar"></span><span class="num">§ 09</span><span>The takeaway</span></div>
+    <h2 class="display reveal" style="margin-top: 14px;">
+      Eleven<br/>
+      <em>cents</em><br/>
+      survive.
+    </h2>
+    <p class="out reveal d1">
+      It takes a hundred to move a truck off the lot. Eighty-nine go right back into the chassis. <span class="em">Eleven survive</span> — and have done so, every year, for eighty-seven years running.
+    </p>
+
+    <div class="stamp-out reveal d2">
+      <span class="sig">— PCAR · FY '25</span>
+      <span class="meta-r">
+        Source: Company filings<br/>
+        Generated 24 Apr 2026<br/>
+        v.2 · Recap edition
+      </span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   Scroll-driven motion + reveals + counters
+   ============================================================ */
+(function () {
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* --- Scroll progress hairline --- */
+  const fill = $('#scrollFill');
+  const onScroll = () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const p = h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0;
+    fill.style.width = (p * 100).toFixed(2) + '%';
+
+    /* lane stripes scrub backward as user scrolls down (illusion of motion) */
+    const lane = $('.highway .lane');
+    if (lane) lane.style.setProperty('--lane-x', (-window.scrollY * 0.6) + 'px');
+
+    /* parallax on hero rig */
+    const rig = $('.highway .rig');
+    if (rig) {
+      const offset = Math.min(window.scrollY * 0.04, 14);
+      rig.style.transform = `translate(calc(-50% + ${offset}px), ${-offset*0.4}px)`;
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* --- Reveal on scroll --- */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+        // Trigger any per-element animations
+        if (e.target.id === 'tanks') fillTanks();
+        if (e.target.id === 'pennies') paintPennies();
+        if (e.target.classList.contains('geo-row')) fillGeo(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  $$('.reveal').forEach(el => io.observe(el));
+
+  /* --- Tanks fill animation --- */
+  function fillTanks() {
+    $$('.tank').forEach((t, i) => {
+      const pct = parseFloat(t.dataset.pct);
+      setTimeout(() => {
+        t.querySelector('.fluid').style.height = pct + '%';
+      }, 120 + i * 180);
+    });
+  }
+
+  /* --- Pennies grid: 80 cost-of-revenue, 5 fin, 2 r&d, 2 sga, 11 survive --- */
+  function paintPennies() {
+    const grid = $('#pennies');
+    if (grid.dataset.painted) return;
+    grid.dataset.painted = '1';
+    // build 100 pennies in a sequence that visually clusters: 80 cost, 5 fin, 2 rd, 2 sga, 11 surv
+    const seq = [
+      ...Array(80).fill('cost'),
+      ...Array(5).fill('fin'),
+      ...Array(2).fill('rd'),
+      ...Array(2).fill('sga'),
+      ...Array(11).fill('surv')
+    ];
+    seq.forEach((cls, i) => {
+      const p = document.createElement('div');
+      p.className = 'penny';
+      grid.appendChild(p);
+      // stagger in
+      setTimeout(() => {
+        p.classList.add('lit', cls);
+      }, 6 * i + 60);
+    });
+  }
+
+  /* --- Geo bars --- */
+  function fillGeo(row) {
+    const pct = parseFloat(row.dataset.pct);
+    const bar = row.querySelector('.bar-fill');
+    setTimeout(() => { bar.style.width = pct + '%'; }, 100);
+  }
+
+  /* --- Hero count-up: revenue, employees odo --- */
+  function countUp(el, to, dur=1400, decimals=0) {
+    const start = performance.now();
+    const from = 0;
+    function tick(now) {
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const v = from + (to - from) * eased;
+      el.textContent = decimals ? v.toFixed(decimals) : Math.round(v).toString();
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  /* Revenue counter on hero entrance */
+  const revNum = document.getElementById('rev-num');
+  const revIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        countUp(revNum, 28.44, 1600, 2);
+        revIo.disconnect();
+      }
+    });
+  }, { threshold: 0.4 });
+  revIo.observe(revNum);
+
+  /* Odometer count to ~30,000 */
+  const odoTarget = 30000;
+  const odoIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateOdo(odoTarget, 1800);
+        odoIo.disconnect();
+      }
+    });
+  }, { threshold: 0.5 });
+  const odoEl = document.querySelector('.odo');
+  if (odoEl) odoIo.observe(odoEl);
+
+  function animateOdo(to, dur) {
+    const start = performance.now();
+    const ids = ['o0','o1','o3','o4','o5'];
+    function tick(now) {
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const v = Math.round(to * eased);
+      const padded = String(v).padStart(5, '0');
+      // mapping: o0,o1,_,o3,o4,o5
+      document.getElementById('o0').textContent = padded[0];
+      document.getElementById('o1').textContent = padded[1];
+      document.getElementById('o3').textContent = padded[2];
+      document.getElementById('o4').textContent = padded[3];
+      document.getElementById('o5').textContent = padded[4];
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  /* --- Competitor expand on tap --- */
+  $$('.comp-row[data-comp]').forEach(row => {
+    row.addEventListener('click', () => {
+      row.classList.toggle('open');
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>ECL · Recap FY '25</title>
+<link rel="stylesheet" href="ds.css" />
+<style>
+  /* =====================================================
+     ECL Recap — palette overrides
+     The page lives in a marine / institutional water world.
+     Coral is reserved for "the bet" and one closing accent.
+     ===================================================== */
+  :root {
+    --water-50:  #EEF5FA;
+    --water-100: #DBE9F2;
+    --water-200: #B2CDDF;
+    --water-300: #7FA9C4;
+    --water-400: #4A90D9;   /* matches supplied biggest_costs blue */
+    --water-500: #2B6FB8;
+    --water-600: #1B4F8C;
+    --water-700: #103862;
+    --water-800: #082544;
+    --water-900: #04162A;
+    --paper-warm:#F7F4EC;
+    --signal:    #FF7A57;   /* coral, sparingly, for "the bet" */
+    --signal-2:  #F25A37;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #1c1c1e;
+    overflow-x: hidden;
+  }
+  body {
+    font-family: var(--font-sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ----- Mobile artifact wrapper (centered on desktop) ----- */
+  .device {
+    width: 100%;
+    max-width: 420px;
+    min-height: 100vh;
+    margin: 0 auto;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(0,0,0,0.5);
+  }
+
+  /* ---------------- STICKY CHROME ---------------- */
+  .chrome {
+    position: sticky; top: 0; z-index: 80;
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(251,250,247,0.78);
+    border-bottom: 1px solid rgba(20,20,20,0.06);
+  }
+  .chrome-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 20px 10px;
+  }
+  .chrome-tick {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-3);
+    font-weight: 400;
+  }
+  .chrome-label {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    color: var(--water-600);
+    text-transform: uppercase;
+  }
+  .chrome-progress {
+    height: 1.5px;
+    width: 100%;
+    background: rgba(0,0,0,0.05);
+    position: relative;
+  }
+  .chrome-progress::after {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+    width: var(--p, 0%);
+    background: var(--water-500);
+    transition: width 60ms linear;
+  }
+
+  /* ---------------- SHARED EDITORIAL ATOMS ---------------- */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--water-600);
+    font-weight: 500;
+  }
+  .eyebrow .dot { color: var(--ink-4); margin: 0 6px; }
+  .eyebrow .num {
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+
+  .display-h {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  .italic { font-style: italic; }
+  .signal { color: var(--signal-2); }
+  .marine { color: var(--water-600); }
+  .marine-deep { color: var(--water-800); }
+
+  .bodycopy {
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    letter-spacing: -0.005em;
+  }
+  .bodycopy em {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.06em;
+    color: var(--water-700);
+    font-weight: 400;
+  }
+
+  /* ---------------- SECTIONS ---------------- */
+  section { position: relative; }
+  .pad { padding: 0 22px; }
+
+  /* ---------- HERO: drop forms, then the thesis lands ---------- */
+  .hero {
+    background: linear-gradient(180deg, #F7F4EC 0%, #EEF5FA 60%, #DBE9F2 100%);
+    padding: 24px 22px 56px;
+    overflow: hidden;
+  }
+  .hero-eyebrow {
+    display: flex; align-items: center; gap: 10px;
+    margin: 8px 0 28px;
+  }
+  .hero-eyebrow .ticker-bubble {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    color: var(--water-700);
+    background: rgba(43,111,184,0.10);
+    border: 1px solid rgba(43,111,184,0.18);
+    border-radius: 999px;
+    padding: 4px 10px;
+  }
+  .hero-eyebrow .label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+
+  .hero-stage {
+    position: relative;
+    height: 320px;
+    margin: 0 -10px 22px;
+  }
+  .hero-stage svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+  .hero-headline {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    color: var(--water-800);
+    margin: 0 0 18px;
+    font-weight: 400;
+  }
+  .hero-headline .row { display: block; }
+  .hero-headline .it { font-style: italic; color: var(--water-600); }
+  .hero-sub {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    color: var(--ink-2);
+    line-height: 1.5;
+    max-width: 32ch;
+    margin: 0 0 28px;
+  }
+  .hero-meta {
+    display: flex; gap: 20px; padding-top: 18px;
+    border-top: 1px solid rgba(20,20,20,0.08);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .hero-meta b { display:block; color: var(--water-700); font-weight: 500; font-size: 13px; letter-spacing: 0; text-transform: none; font-family: var(--font-sans); margin-bottom: 2px; }
+
+  /* ---------- RESET BEATS ---------- */
+  .reset {
+    padding: 56px 28px;
+    text-align: left;
+    position: relative;
+  }
+  .reset.deep {
+    background: var(--water-800);
+    color: #DBE9F2;
+  }
+  .reset.warm {
+    background: var(--paper-warm);
+    color: var(--ink);
+  }
+  .reset.water {
+    background: linear-gradient(180deg, var(--water-50) 0%, #DBE9F2 100%);
+  }
+  .reset .quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1.18;
+    letter-spacing: -0.012em;
+    font-weight: 400;
+  }
+  .reset.deep .quote { color: #DBE9F2; }
+  .reset.deep .accent { color: #FFB39A; font-style: italic; }
+  .reset.warm .accent { color: var(--water-600); font-style: italic; }
+  .reset.water .accent { color: var(--water-700); font-style: italic; }
+  .reset .src {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-top: 22px;
+    display: block;
+  }
+  .reset.warm .src, .reset.water .src { color: var(--ink-4); }
+
+  /* ---------- BUSINESS: streams converging ---------- */
+  .business {
+    padding: 64px 22px 48px;
+    background: var(--paper);
+  }
+  .section-head { margin-bottom: 28px; }
+  .section-head .eyebrow { margin-bottom: 14px; display:block; }
+  .section-head h2 {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+    color: var(--ink);
+    margin: 0 0 14px;
+    max-width: 14ch;
+  }
+  .section-head h2 .it { font-style: italic; color: var(--water-600); }
+  .section-head .lede {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 38ch;
+  }
+
+  .streams {
+    height: 360px;
+    width: 100%;
+    margin: 24px -2px;
+    position: relative;
+  }
+  .streams svg { width:100%; height:100%; display:block; overflow: visible; }
+  .stream-legend {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px;
+    margin-top: 16px;
+  }
+  .stream-row { display: flex; flex-direction: column; gap: 2px; }
+  .stream-row .seg-name {
+    font-family: var(--font-sans); font-size: 13px; color: var(--ink); font-weight: 500;
+  }
+  .stream-row .seg-meta {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.04em;
+    color: var(--ink-3); text-transform: uppercase;
+  }
+  .stream-row .pip {
+    width: 18px; height: 3px; border-radius: 2px; margin-bottom: 6px;
+  }
+
+  .total-card {
+    margin: 28px 0 0;
+    padding: 22px 4px 0;
+    border-top: 1px solid var(--line);
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .total-card .lbl {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .total-card .val {
+    font-family: var(--font-display); font-size: 44px; color: var(--water-800);
+    line-height: 1; letter-spacing: -0.02em;
+  }
+  .total-card .val .sub {
+    font-family: var(--font-sans); font-size: 12px; color: var(--ink-3);
+    margin-left: 6px; letter-spacing: 0.04em;
+  }
+
+  /* ---------- SCALE ---------- */
+  .scale {
+    padding: 64px 22px 56px;
+    background: linear-gradient(180deg, var(--water-50) 0%, #ffffff 100%);
+  }
+  .scale-figs {
+    display: flex; flex-direction: column; gap: 32px; margin-top: 24px;
+  }
+  .scale-fig { position: relative; }
+  .scale-fig .num {
+    font-family: var(--font-display);
+    font-size: 84px;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    color: var(--water-800);
+    font-weight: 400;
+  }
+  .scale-fig .num .it { font-style: italic; color: var(--water-500); }
+  .scale-fig .lbl {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3); margin-top: 4px;
+  }
+  .scale-fig .note {
+    font-family: var(--font-display); font-style: italic; font-size: 16px;
+    color: var(--water-700); margin-top: 6px;
+  }
+
+  .countries-stage {
+    margin: 22px -22px -10px;
+    height: 180px;
+    background: var(--water-800);
+    position: relative;
+    overflow: hidden;
+  }
+  .countries-stage svg { width: 100%; height: 100%; display: block; }
+  .countries-stage .overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    text-align: center;
+  }
+  .countries-stage .big {
+    font-family: var(--font-display);
+    font-size: 88px;
+    line-height: 1;
+    color: #fff;
+    letter-spacing: -0.04em;
+  }
+  .countries-stage .big .plus { color: #FFB39A; font-style: italic; }
+  .countries-stage .lab {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.6); text-transform: uppercase; margin-top: 4px;
+  }
+
+  /* ---------- COSTS: stratified column ---------- */
+  .costs {
+    padding: 64px 22px 56px;
+    background: var(--paper);
+  }
+  .cost-stage {
+    display: grid; grid-template-columns: 1fr 1.5fr; gap: 16px;
+    margin-top: 24px; align-items: stretch;
+  }
+  .cost-col {
+    width: 100%;
+    height: 360px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    background: var(--water-50);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+  }
+  .cost-band {
+    position: absolute; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+  .cost-band .pct {
+    font-family: var(--font-display); font-size: 22px;
+    color: rgba(255,255,255,0.95);
+    letter-spacing: -0.02em;
+  }
+  .cost-list { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }
+  .cost-row {
+    display: grid; grid-template-columns: 12px 1fr auto; gap: 10px;
+    align-items: baseline;
+    padding-bottom: 10px;
+    border-bottom: 1px dotted rgba(20,20,20,0.10);
+  }
+  .cost-row:last-child { border-bottom: 0; }
+  .cost-row .swatch {
+    width: 12px; height: 12px; border-radius: 2px;
+    transform: translateY(2px);
+  }
+  .cost-row .nm {
+    font-family: var(--font-sans); font-size: 13.5px; color: var(--ink); font-weight: 500;
+  }
+  .cost-row .pc {
+    font-family: var(--font-display); font-size: 22px; color: var(--ink);
+    line-height: 1; letter-spacing: -0.02em;
+  }
+  .cost-foot {
+    margin-top: 18px;
+    font-family: var(--font-display); font-style: italic; font-size: 18px;
+    color: var(--water-700); line-height: 1.35;
+  }
+  .cost-foot .strong { color: var(--ink); font-style: italic; }
+
+  /* ---------- GEOGRAPHY ---------- */
+  .geo {
+    padding: 64px 22px 56px;
+    background: var(--water-900);
+    color: #DBE9F2;
+  }
+  .geo .section-head h2 { color: #fff; }
+  .geo .section-head h2 .it { color: #7FA9C4; }
+  .geo .section-head .eyebrow { color: #7FA9C4; }
+  .geo .section-head .lede { color: rgba(219,233,242,0.7); }
+  .geo-stage {
+    margin: 22px -22px;
+    height: 280px;
+    position: relative;
+    overflow: hidden;
+  }
+  .geo-stage svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .geo-list { display: flex; flex-direction: column; gap: 0; margin-top: 14px; }
+  .geo-row {
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: 12px; align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(127,169,196,0.18);
+  }
+  .geo-row:last-child { border-bottom: 0; }
+  .geo-row .pin {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--water-300);
+  }
+  .geo-row.hi .pin { background: #FFB39A; box-shadow: 0 0 0 4px rgba(255,179,154,0.18); }
+  .geo-row .nm { font-family: var(--font-sans); font-size: 14.5px; color: #fff; }
+  .geo-row .pc {
+    font-family: var(--font-display); font-size: 26px; color: #fff;
+    line-height: 1; letter-spacing: -0.02em;
+  }
+  .geo-row.hi .pc { color: #FFB39A; font-style: italic; }
+  .geo-row .bar {
+    grid-column: 1 / -1;
+    height: 2px;
+    background: rgba(127,169,196,0.18);
+    margin-top: 8px;
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+  }
+  .geo-row .bar::after {
+    content: ""; position: absolute; left:0; top:0; bottom:0;
+    width: var(--w, 0%); background: var(--water-300);
+    border-radius: 999px;
+    transition: width 600ms var(--ease-out, ease);
+  }
+  .geo-row.hi .bar::after { background: #FFB39A; }
+
+  /* ---------- THE BET (coral signal section) ---------- */
+  .bet {
+    padding: 72px 22px 64px;
+    background: var(--paper-warm);
+    position: relative;
+  }
+  .bet .section-head h2 .it { color: var(--signal-2); }
+  .bet .section-head .eyebrow { color: var(--signal-2); }
+  .bet-stage {
+    height: 280px;
+    margin: 22px -10px;
+    position: relative;
+  }
+  .bet-stage svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .bet-callouts {
+    display: flex; flex-direction: column; gap: 18px;
+    margin-top: 14px;
+  }
+  .bet-row {
+    display: grid; grid-template-columns: auto 1fr; gap: 16px;
+    align-items: baseline;
+    padding-bottom: 16px;
+    border-bottom: 1px dotted rgba(20,20,20,0.10);
+  }
+  .bet-row:last-child { border-bottom: 0; padding-bottom: 0; }
+  .bet-row .v {
+    font-family: var(--font-display); font-size: 38px; line-height: 1;
+    letter-spacing: -0.025em; color: var(--ink);
+  }
+  .bet-row .v.hot { color: var(--signal-2); font-style: italic; }
+  .bet-row .copy {
+    font-family: var(--font-sans); font-size: 13px; line-height: 1.45;
+    color: var(--ink-2);
+  }
+  .bet-row .copy b { color: var(--ink); font-weight: 500; }
+
+  /* ---------- COMPETITION ---------- */
+  .comp {
+    padding: 64px 22px 56px;
+    background: var(--paper);
+  }
+  .comp-stage {
+    height: 280px;
+    margin: 22px 0 16px;
+    position: relative;
+  }
+  .comp-stage svg { width: 100%; height: 100%; display:block; overflow: visible; }
+  .comp-list { display: flex; flex-direction: column; gap: 14px; }
+  .comp-row {
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+  }
+  .comp-row .top {
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .comp-row .nm {
+    font-family: var(--font-sans); font-size: 16px; font-weight: 500; color: var(--ink);
+  }
+  .comp-row .tk {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);
+    letter-spacing: 0.06em; margin-left: 8px;
+  }
+  .comp-row .mc {
+    font-family: var(--font-display); font-size: 22px; color: var(--water-700);
+    letter-spacing: -0.02em;
+  }
+  .comp-row .desc {
+    font-family: var(--font-sans); font-size: 12.5px; line-height: 1.45;
+    color: var(--ink-3); margin-top: 6px;
+  }
+  .comp-row .stat-row {
+    display: flex; gap: 16px; margin-top: 8px;
+    font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .comp-row .stat-row b { color: var(--ink); font-weight: 500; }
+  .comp-row.us {
+    background: var(--water-50); margin: 0 -22px 4px;
+    padding: 16px 22px; border-top: none;
+    border-left: 3px solid var(--water-500);
+  }
+  .comp-row.us .mc { color: var(--water-800); font-style: italic; }
+
+  /* ---------- TAKEAWAY ---------- */
+  .close {
+    padding: 80px 22px 64px;
+    background: linear-gradient(180deg, #FBFAF7 0%, #F4EFE5 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .close-stream {
+    height: 200px;
+    margin: 0 -22px 28px;
+    position: relative;
+  }
+  .close-stream svg { width: 100%; height: 100%; display: block; }
+  .close-h {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    font-weight: 400;
+    margin: 0 0 22px;
+  }
+  .close-h .it { font-style: italic; color: var(--water-700); }
+  .close-h .sig { font-style: italic; color: var(--signal-2); }
+  .close-body {
+    font-family: var(--font-sans); font-size: 15.5px; line-height: 1.55;
+    color: var(--ink-2); max-width: 36ch;
+  }
+  .close-body em {
+    font-family: var(--font-display); font-style: italic;
+    color: var(--water-700); font-size: 1.05em;
+  }
+  .streak {
+    margin-top: 38px; padding-top: 28px;
+    border-top: 1px solid rgba(20,20,20,0.08);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .streak .k {
+    display: flex; align-items: baseline; gap: 14px;
+  }
+  .streak .k .v {
+    font-family: var(--font-display); font-size: 64px; line-height: 0.9;
+    color: var(--water-800); letter-spacing: -0.03em;
+  }
+  .streak .k .v .it { font-style: italic; color: var(--signal-2); }
+  .streak .k .l {
+    font-family: var(--font-sans); font-size: 14px; color: var(--ink-2);
+    line-height: 1.35; max-width: 18ch;
+  }
+  .streak .barline {
+    margin-top: 8px;
+    height: 28px;
+    position: relative;
+  }
+  .streak .barline svg { width:100%; height:100%; display:block; }
+  .footer {
+    padding: 32px 22px 64px;
+    background: var(--paper-warm);
+    border-top: 1px solid rgba(20,20,20,0.06);
+  }
+  .footer .row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .footer .src {
+    margin-top: 14px;
+    font-family: var(--font-sans); font-size: 11.5px; color: var(--ink-4);
+    line-height: 1.4;
+  }
+
+  /* ---------- Reveal animation utility ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 700ms var(--ease-out, ease), transform 700ms var(--ease-out, ease);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal.delay-1 { transition-delay: 80ms; }
+  .reveal.delay-2 { transition-delay: 160ms; }
+  .reveal.delay-3 { transition-delay: 240ms; }
+  .reveal.delay-4 { transition-delay: 320ms; }
+
+  /* drop animation in hero */
+  @keyframes ripple {
+    0%   { transform: scale(0.4); opacity: 0; }
+    30%  { opacity: 0.55; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+  .ripple-circle { transform-origin: center; }
+
+  /* count-up tabular nums */
+  .num, .pc, .v, .mc, .pct { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="device" id="device">
+
+  <!-- ============================================ -->
+  <!--  STICKY CHROME                                -->
+  <!-- ============================================ -->
+  <div class="chrome">
+    <div class="chrome-row">
+      <span class="chrome-tick">ECL</span>
+      <span class="chrome-name">Ecolab</span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="chrome-progress" id="progress"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!--  HERO — water as infrastructure              -->
+  <!-- ============================================ -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="hero-eyebrow">
+      <span class="ticker-bubble">NYSE · ECL</span>
+      <span class="label">A recap, in scrolls</span>
+    </div>
+
+    <!-- Drop + ripple metaphor: a single droplet, scaled up,
+         signaling that everything begins with water. -->
+    <div class="hero-stage" id="heroStage">
+      <svg viewBox="0 0 360 320" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="dropGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#7FA9C4" />
+            <stop offset="0.5" stop-color="#2B6FB8" />
+            <stop offset="1" stop-color="#082544" />
+          </linearGradient>
+          <linearGradient id="dropHi" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ffffff" stop-opacity="0.7" />
+            <stop offset="0.6" stop-color="#ffffff" stop-opacity="0" />
+          </linearGradient>
+          <radialGradient id="rippleG" cx="0.5" cy="0.5">
+            <stop offset="0.7" stop-color="#2B6FB8" stop-opacity="0" />
+            <stop offset="1" stop-color="#2B6FB8" stop-opacity="0.4" />
+          </radialGradient>
+        </defs>
+
+        <!-- horizon hairline -->
+        <line x1="0" y1="246" x2="360" y2="246" stroke="#103862" stroke-opacity="0.15" stroke-width="1"/>
+
+        <!-- ripples -->
+        <g id="ripples" transform="translate(180 246)">
+          <ellipse class="ripple-circle r3" cx="0" cy="0" rx="120" ry="14" fill="none" stroke="#2B6FB8" stroke-opacity="0.25" stroke-width="1"/>
+          <ellipse class="ripple-circle r2" cx="0" cy="0" rx="80" ry="10" fill="none" stroke="#2B6FB8" stroke-opacity="0.4" stroke-width="1"/>
+          <ellipse class="ripple-circle r1" cx="0" cy="0" rx="46" ry="6" fill="none" stroke="#2B6FB8" stroke-opacity="0.7" stroke-width="1.4"/>
+        </g>
+
+        <!-- the drop -->
+        <g id="drop" transform="translate(180 130)">
+          <!-- classic teardrop: cubic curves -->
+          <path d="M 0 -90
+                   C 38 -40, 58 -10, 58 22
+                   A 58 58 0 1 1 -58 22
+                   C -58 -10, -38 -40, 0 -90 Z"
+                fill="url(#dropGrad)" />
+          <!-- highlight -->
+          <ellipse cx="-20" cy="-10" rx="14" ry="28" fill="url(#dropHi)" />
+          <!-- tiny inner dot for the company -->
+          <circle cx="0" cy="20" r="3" fill="#FFB39A" opacity="0.9" />
+        </g>
+
+        <!-- floating numerals — context for the drop -->
+        <g font-family="Geist Mono" font-size="9.5" letter-spacing="0.15" fill="#103862" fill-opacity="0.7">
+          <text x="36"  y="60">170 countries</text>
+          <text x="246" y="84">40 industries</text>
+          <text x="20"  y="200">$16.07B revenue</text>
+          <text x="248" y="208">170+ countries</text>
+        </g>
+        <g stroke="#103862" stroke-opacity="0.2" stroke-width="0.6">
+          <line x1="38"  y1="62"  x2="100" y2="100"/>
+          <line x1="280" y1="86"  x2="220" y2="105"/>
+          <line x1="40"  y1="196" x2="120" y2="170"/>
+          <line x1="260" y1="206" x2="220" y2="180"/>
+        </g>
+      </svg>
+    </div>
+
+    <h1 class="hero-headline reveal in">
+      <span class="row">Water,</span>
+      <span class="row">hygiene,</span>
+      <span class="row it">and the bill</span>
+      <span class="row it">that follows.</span>
+    </h1>
+    <p class="hero-sub reveal in delay-1">
+      Ecolab is the back-of-house infrastructure
+      for almost everything you eat, drink, sleep
+      in, and recover in. 170 countries.
+      $16.07B in 2025 revenue.
+    </p>
+    <div class="hero-meta reveal in delay-2">
+      <div><b>$77.61B</b>Market cap</div>
+      <div><b>48,000</b>Associates</div>
+      <div><b>170+</b>Countries</div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!--  RESET BEAT 1                                -->
+  <!-- ============================================ -->
+  <div class="reset water" data-screen-label="02 Reset 1">
+    <p class="quote reveal">
+      It looks like soap.
+      <span class="accent">It's actually infrastructure.</span>
+    </p>
+    <span class="src">Reset · 01</span>
+  </div>
+
+  <!-- ============================================ -->
+  <!--  THE BUSINESS — four streams                 -->
+  <!-- ============================================ -->
+  <section class="business" data-screen-label="03 Business">
+    <div class="section-head reveal">
+      <span class="eyebrow">Ch. 01 · How the money arrives</span>
+      <h2>Four streams, <span class="it">one drain.</span></h2>
+      <p class="lede">
+        Chemicals. Equipment. Software. Service techs in trucks.
+        Ecolab packages all four into a single, sticky relationship
+        and sells it back to forty industries.
+      </p>
+    </div>
+
+    <!-- 4 vertical streams that taper into a basin labeled $16.07B -->
+    <div class="streams reveal delay-1">
+      <svg viewBox="0 0 360 360" preserveAspectRatio="xMidYMax meet">
+        <defs>
+          <linearGradient id="sg1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2B6FB8" stop-opacity="0.0"/>
+            <stop offset="1" stop-color="#2B6FB8" stop-opacity="0.95"/>
+          </linearGradient>
+          <linearGradient id="sg2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#4A90D9" stop-opacity="0.0"/>
+            <stop offset="1" stop-color="#4A90D9" stop-opacity="0.9"/>
+          </linearGradient>
+          <linearGradient id="sg3" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#7FA9C4" stop-opacity="0.0"/>
+            <stop offset="1" stop-color="#7FA9C4" stop-opacity="0.9"/>
+          </linearGradient>
+          <linearGradient id="sg4" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#103862" stop-opacity="0.0"/>
+            <stop offset="1" stop-color="#103862" stop-opacity="0.9"/>
+          </linearGradient>
+        </defs>
+
+        <!-- stream column widths sized to revenue share -->
+        <!-- Water 50%, Inst 38%, Pest 8%, LifeSci 5% -->
+        <!-- Stream paths: top wide-y → narrow toward center basin at y=300 -->
+
+        <!-- Water -->
+        <path d="M 12 0 L 92 0 L 168 280 L 130 300 Z" fill="url(#sg1)"/>
+        <!-- Institutional -->
+        <path d="M 110 0 L 178 0 L 184 280 L 156 300 Z" fill="url(#sg2)"/>
+        <!-- Pest -->
+        <path d="M 198 0 L 232 0 L 204 280 L 184 300 Z" fill="url(#sg3)"/>
+        <!-- Life Sciences -->
+        <path d="M 252 0 L 270 0 L 220 280 L 200 300 Z" fill="url(#sg4)"/>
+
+        <!-- basin -->
+        <ellipse cx="180" cy="304" rx="80" ry="14" fill="#082544" opacity="0.95"/>
+        <ellipse cx="180" cy="300" rx="80" ry="14" fill="#103862"/>
+
+        <!-- droplet trails -->
+        <g fill="#fff" fill-opacity="0.75">
+          <circle cx="60" cy="80" r="1.6"/>
+          <circle cx="74" cy="170" r="1.4"/>
+          <circle cx="148" cy="80" r="1.4"/>
+          <circle cx="170" cy="200" r="1.4"/>
+          <circle cx="218" cy="120" r="1.2"/>
+          <circle cx="262" cy="160" r="1.0"/>
+        </g>
+
+        <!-- segment labels at top -->
+        <g font-family="Geist Mono" font-size="9" fill="#0F0E0D" fill-opacity="0.5" letter-spacing="0.12">
+          <text x="14" y="-6">WATER</text>
+          <text x="120" y="-6">INST.</text>
+          <text x="200" y="-6">PEST</text>
+          <text x="252" y="-6">L.S.</text>
+        </g>
+
+        <!-- $$$ marker -->
+        <g transform="translate(180 332)">
+          <text text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#082544" font-style="italic">$16.07B</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="stream-legend reveal delay-2">
+      <div class="stream-row">
+        <div class="pip" style="background:#2B6FB8"></div>
+        <span class="seg-name">Global Water</span>
+        <span class="seg-meta">$7.98B · 50%</span>
+      </div>
+      <div class="stream-row">
+        <div class="pip" style="background:#4A90D9"></div>
+        <span class="seg-name">Institutional & Specialty</span>
+        <span class="seg-meta">$6.10B · 38%</span>
+      </div>
+      <div class="stream-row">
+        <div class="pip" style="background:#7FA9C4"></div>
+        <span class="seg-name">Pest Elimination</span>
+        <span class="seg-meta">$1.25B · 8%</span>
+      </div>
+      <div class="stream-row">
+        <div class="pip" style="background:#103862"></div>
+        <span class="seg-name">Life Sciences</span>
+        <span class="seg-meta">$748M · 5%</span>
+      </div>
+    </div>
+
+    <div class="total-card reveal delay-3">
+      <span class="lbl">FY 2025 Revenue</span>
+      <span class="val">$16.07<span class="sub">B</span></span>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!--  RESET BEAT 2                                -->
+  <!-- ============================================ -->
+  <div class="reset deep" data-screen-label="04 Reset 2">
+    <p class="quote reveal">
+      You don't notice it until it stops.
+      <span class="accent">Then you notice nothing else.</span>
+    </p>
+    <span class="src">Reset · 02 · On hygiene & water</span>
+  </div>
+
+  <!-- ============================================ -->
+  <!--  SCALE                                        -->
+  <!-- ============================================ -->
+  <section class="scale" data-screen-label="05 Scale">
+    <div class="section-head reveal">
+      <span class="eyebrow">Ch. 02 · The labor force</span>
+      <h2>Most of it is <span class="it">people in trucks.</span></h2>
+      <p class="lede">
+        Half of Ecolab's headcount drives to a customer site every week.
+        That's the moat: chemicals, but with a uniform.
+      </p>
+    </div>
+
+    <div class="scale-figs">
+      <div class="scale-fig reveal delay-1">
+        <div class="num"><span data-count="48000" data-suffix="">0</span><span class="it">,000</span></div>
+        <div class="lbl">Total associates</div>
+        <div class="note">"all of Pittsburgh, in uniform."</div>
+      </div>
+      <div class="scale-fig reveal delay-2">
+        <div class="num"><span data-count="25000">0</span><span class="it">+</span></div>
+        <div class="lbl">Sales-and-service personnel</div>
+        <div class="note">on-site, weekly, in white pickup trucks.</div>
+      </div>
+      <div class="scale-fig reveal delay-3">
+        <div class="num"><span data-count="1100">0</span><span class="it">+</span></div>
+        <div class="lbl">Scientists & engineers</div>
+        <div class="note">behind every formulation.</div>
+      </div>
+    </div>
+
+    <!-- Country dot field -->
+    <div class="countries-stage reveal delay-4">
+      <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" id="countriesSvg" aria-hidden="true">
+        <!-- 170 dots in a soft scatter; some highlighted -->
+      </svg>
+      <div class="overlay">
+        <div class="big">170<span class="plus">+</span></div>
+        <div class="lab">Countries · One book of business</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!--  RESET BEAT 3 — bridges to the cost stack    -->
+  <!-- ============================================ -->
+  <div class="reset warm" data-screen-label="06 Reset 3">
+    <p class="quote reveal">
+      A dollar arrives clean.
+      <span class="accent">Where does it go?</span>
+    </p>
+    <span class="src">Reset · 03 · Of every dollar</span>
+  </div>
+
+  <!-- ============================================ -->
+  <!--  COSTS — stratified water column             -->
+  <!-- ============================================ -->
+  <section class="costs" data-screen-label="07 Costs">
+    <div class="section-head reveal">
+      <span class="eyebrow">Ch. 03 · The bill · 17% op. margin</span>
+      <h2>Of every dollar in, <span class="it">eighty-three pour out.</span></h2>
+      <p class="lede">
+        The cost-of-revenue band sits like sediment at the bottom of the
+        column. Everything above it is what management actually controls.
+      </p>
+    </div>
+
+    <div class="cost-stage reveal delay-1">
+      <!-- The cost column (left) -->
+      <div class="cost-col" id="costCol">
+        <!-- bands rendered with absolute positioning -->
+        <div class="cost-band" style="background:#4A90D9; bottom:0; height:56%;">
+          <span class="pct">56%</span>
+        </div>
+        <div class="cost-band" style="background:#E8734A; bottom:56%; height:19%;">
+          <span class="pct">19%</span>
+        </div>
+        <div class="cost-band" style="background:#6DBF67; bottom:75%; height:7%;">
+          <span class="pct">7%</span>
+        </div>
+        <div class="cost-band" style="background:#F1C40F; bottom:82%; height:2%; color:#0F0E0D;">
+        </div>
+        <div class="cost-band" style="background:#9B59B6; bottom:84%; height:1%;">
+        </div>
+        <!-- the 15¢ that survives — the negative space at the top -->
+        <div style="position:absolute; left:0; right:0; top:0; height:15%; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:var(--font-display); font-style:italic; font-size:24px; color:var(--water-800);">
+          <div>15¢</div>
+          <div style="font-size:10px; font-family:var(--font-mono); letter-spacing:0.14em; color:var(--ink-3); text-transform:uppercase; margin-top:2px; font-style:normal;">survives</div>
+        </div>
+      </div>
+
+      <!-- Cost legend (right) -->
+      <div class="cost-list">
+        <div class="cost-row">
+          <span class="swatch" style="background:#4A90D9"></span>
+          <div>
+            <div class="nm">Cost of revenue</div>
+            <div style="font-family:var(--font-mono); font-size:10px; color:var(--ink-3); letter-spacing:0.06em;">CHEMICALS · LOGISTICS</div>
+          </div>
+          <span class="pc">56%</span>
+        </div>
+        <div class="cost-row">
+          <span class="swatch" style="background:#E8734A"></span>
+          <div>
+            <div class="nm">SG&A</div>
+            <div style="font-family:var(--font-mono); font-size:10px; color:var(--ink-3); letter-spacing:0.06em;">PEOPLE · ROUTES</div>
+          </div>
+          <span class="pc">19%</span>
+        </div>
+        <div class="cost-row">
+          <span class="swatch" style="background:#6DBF67"></span>
+          <div>
+            <div class="nm">D&A</div>
+            <div style="font-family:var(--font-mono); font-size:10px; color:var(--ink-3); letter-spacing:0.06em;">DISPENSERS · KIT</div>
+          </div>
+          <span class="pc">7%</span>
+        </div>
+        <div class="cost-row">
+          <span class="swatch" style="background:#F1C40F"></span>
+          <div>
+            <div class="nm">Restructuring</div>
+            <div style="font-family:var(--font-mono); font-size:10px; color:var(--ink-3); letter-spacing:0.06em;">SPECIAL CHARGES</div>
+          </div>
+          <span class="pc">2%</span>
+        </div>
+        <div class="cost-row">
+          <span class="swatch" style="background:#9B59B6"></span>
+          <div>
+            <div class="nm">R&D</div>
+            <div style="font-family:var(--font-mono); font-size:10px; color:var(--ink-3); letter-spacing:0.06em;">1,100 SCIENTISTS</div>
+          </div>
+          <span class="pc">1%</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="cost-foot reveal delay-2">
+      Gross margin <span class="strong">44.5%</span> · Operating margin <span class="strong">17.0%</span>.
+      The shape of a recurring-service business: thin layers, paid weekly.
+    </p>
+  </section>
+
+  <!-- ============================================ -->
+  <!--  GEOGRAPHY                                    -->
+  <!-- ============================================ -->
+  <section class="geo" data-screen-label="08 Geography">
+    <div class="section-head reveal">
+      <span class="eyebrow">Ch. 04 · The footprint</span>
+      <h2>Half is <span class="it">at home.</span></h2>
+      <p class="lede">
+        North America still pays the bills. Europe holds steady.
+        Asia and the Middle East are where the next decade gets decided.
+      </p>
+    </div>
+
+    <!-- World as a spread of dots, with US lit hot -->
+    <div class="geo-stage" id="geoStage">
+      <svg viewBox="0 0 400 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <radialGradient id="usGlow" cx="0.5" cy="0.5">
+            <stop offset="0" stop-color="#FFB39A" stop-opacity="0.5"/>
+            <stop offset="1" stop-color="#FFB39A" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- continents drawn as dot fields, weight by distribution -->
+        <g id="continents"></g>
+
+        <!-- US glow halo -->
+        <circle cx="110" cy="120" r="60" fill="url(#usGlow)"/>
+
+        <!-- region pins with pct labels -->
+        <g font-family="Instrument Serif" font-style="italic" fill="#fff" font-size="22">
+          <text x="80" y="118" text-anchor="middle" fill="#FFB39A">53%</text>
+        </g>
+        <g font-family="Geist Mono" fill="#7FA9C4" font-size="9" letter-spacing="0.14">
+          <text x="80" y="135" text-anchor="middle">UNITED STATES</text>
+        </g>
+
+        <g font-family="Instrument Serif" font-style="italic" fill="#fff" font-size="16">
+          <text x="220" y="105" text-anchor="middle">20%</text>
+        </g>
+        <g font-family="Geist Mono" fill="#7FA9C4" font-size="9" letter-spacing="0.14">
+          <text x="220" y="120" text-anchor="middle">EUROPE</text>
+        </g>
+
+        <g font-family="Instrument Serif" font-style="italic" fill="#fff" font-size="14">
+          <text x="320" y="130" text-anchor="middle">8%</text>
+        </g>
+        <g font-family="Geist Mono" fill="#7FA9C4" font-size="9" letter-spacing="0.14">
+          <text x="320" y="145" text-anchor="middle">APAC</text>
+        </g>
+
+        <g font-family="Instrument Serif" font-style="italic" fill="#fff" font-size="13">
+          <text x="125" y="200" text-anchor="middle">7%</text>
+        </g>
+        <g font-family="Geist Mono" fill="#7FA9C4" font-size="9" letter-spacing="0.14">
+          <text x="125" y="215" text-anchor="middle">LATAM</text>
+        </g>
+
+        <g font-family="Instrument Serif" font-style="italic" fill="#fff" font-size="11">
+          <text x="240" y="190" text-anchor="middle">4%</text>
+        </g>
+        <g font-family="Geist Mono" fill="#7FA9C4" font-size="9" letter-spacing="0.14">
+          <text x="240" y="205" text-anchor="middle">MEA</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="geo-list reveal delay-1">
+      <div class="geo-row hi" style="--w:53%">
+        <span class="pin"></span>
+        <span class="nm">United States</span>
+        <span class="pc">53%</span>
+        <span class="bar"></span>
+      </div>
+      <div class="geo-row" style="--w:20%">
+        <span class="pin"></span>
+        <span class="nm">Europe</span>
+        <span class="pc">20%</span>
+        <span class="bar"></span>
+      </div>
+      <div class="geo-row" style="--w:8%">
+        <span class="pin"></span>
+        <span class="nm">Asia Pacific</span>
+        <span class="pc">8%</span>
+        <span class="bar"></span>
+      </div>
+      <div class="geo-row" style="--w:8%">
+        <span class="pin"></span>
+        <span class="nm">Canada & other</span>
+        <span class="pc">8%</span>
+        <span class="bar"></span>
+      </div>
+      <div class="geo-row" style="--w:7%">
+        <span class="pin"></span>
+        <span class="nm">Latin America</span>
+        <span class="pc">7%</span>
+        <span class="bar"></span>
+      </div>
+      <div class="geo-row" style="--w:4%">
+        <span class="pin"></span>
+        <span class="nm">Middle East & Africa</span>
+        <span class="pc">4%</span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!--  RESET BEAT 4 — bridge to "the bet"         -->
+  <!-- ============================================ -->
+  <div class="reset warm" data-screen-label="09 Reset 4">
+    <p class="quote reveal">
+      The boring part is over.
+      <span class="accent">Now they're spending.</span>
+    </p>
+    <span class="src">Reset · 04 · Capital allocation</span>
+  </div>
+
+  <!-- ============================================ -->
+  <!--  THE BET — capex pipeline + Ovivo            -->
+  <!-- ============================================ -->
+  <section class="bet" data-screen-label="10 The Bet">
+    <div class="section-head reveal">
+      <span class="eyebrow signal" style="color:#F25A37">Ch. 05 · The bet · $1.8B</span>
+      <h2>One pipe. <span class="it">Pointed at Ovivo.</span></h2>
+      <p class="lede">
+        $1.05B of capex went into the dispensers and monitors that make
+        the service sticky. On top of that, a $1.8B acquisition of Ovivo
+        deepens the water franchise — and pauses the buybacks.
+      </p>
+    </div>
+
+    <!-- Pipeline metaphor: a horizontal pipe with capital flowing through it,
+         the Ovivo acquisition rendered as a valve at the end. -->
+    <div class="bet-stage reveal delay-1">
+      <svg viewBox="0 0 380 280" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="pipeGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#F4EFE5"/>
+            <stop offset="0.2" stop-color="#FFC2AE"/>
+            <stop offset="0.55" stop-color="#FF9E82"/>
+            <stop offset="1" stop-color="#D6411F"/>
+          </linearGradient>
+          <linearGradient id="pipeShell" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#0F0E0D" stop-opacity="0.05"/>
+            <stop offset="0.5" stop-color="#0F0E0D" stop-opacity="0.18"/>
+            <stop offset="1" stop-color="#0F0E0D" stop-opacity="0.08"/>
+          </linearGradient>
+        </defs>
+
+        <!-- horizon ground -->
+        <rect x="0" y="200" width="380" height="2" fill="#0F0E0D" opacity="0.08"/>
+
+        <!-- left source: capex deployed -->
+        <g transform="translate(20 160)">
+          <text font-family="Geist Mono" font-size="9" letter-spacing="0.14" fill="#0F0E0D" fill-opacity="0.6">CAPEX</text>
+          <text y="14" font-family="Instrument Serif" font-size="22" fill="#0F0E0D">$1.05B</text>
+        </g>
+
+        <!-- pipe body -->
+        <g>
+          <!-- pipe shell -->
+          <rect x="60" y="124" width="220" height="44" fill="#F7F4EC" stroke="#0F0E0D" stroke-opacity="0.2"/>
+          <!-- pipe inner gradient: flow -->
+          <rect x="62" y="126" width="216" height="40" fill="url(#pipeGrad)"/>
+          <!-- pipe shell shadow overlay -->
+          <rect x="60" y="124" width="220" height="44" fill="url(#pipeShell)" opacity="0.6"/>
+
+          <!-- bolts on left flange -->
+          <rect x="56" y="118" width="8" height="56" fill="#3B3A37" rx="1"/>
+          <circle cx="60" cy="128" r="1.6" fill="#FBFAF7"/>
+          <circle cx="60" cy="146" r="1.6" fill="#FBFAF7"/>
+          <circle cx="60" cy="164" r="1.6" fill="#FBFAF7"/>
+
+          <!-- Ovivo valve at the end -->
+          <rect x="280" y="100" width="40" height="92" fill="#0F0E0D" rx="3"/>
+          <rect x="284" y="104" width="32" height="84" fill="#1A1917"/>
+          <!-- valve wheel on top -->
+          <circle cx="300" cy="92" r="14" fill="none" stroke="#FF7A57" stroke-width="3"/>
+          <circle cx="300" cy="92" r="2" fill="#FF7A57"/>
+          <line x1="286" y1="92" x2="314" y2="92" stroke="#FF7A57" stroke-width="2"/>
+          <line x1="300" y1="78" x2="300" y2="106" stroke="#FF7A57" stroke-width="2"/>
+          <!-- exit pipe past valve -->
+          <rect x="320" y="138" width="40" height="16" fill="#0F0E0D"/>
+
+          <!-- flow droplets -->
+          <g fill="#fff" fill-opacity="0.85">
+            <circle cx="100" cy="146" r="2.2"/>
+            <circle cx="138" cy="146" r="1.8"/>
+            <circle cx="180" cy="146" r="2.2"/>
+            <circle cx="222" cy="146" r="1.8"/>
+            <circle cx="258" cy="146" r="2.2"/>
+          </g>
+        </g>
+
+        <!-- Labels above + below -->
+        <g>
+          <line x1="170" y1="124" x2="170" y2="92" stroke="#0F0E0D" stroke-opacity="0.25"/>
+          <text x="170" y="84" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="0.14" fill="#0F0E0D" fill-opacity="0.6">DISPENSERS · MONITORS</text>
+          <text x="170" y="200" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="0.14" fill="#0F0E0D" fill-opacity="0.6">RECURRING SERVICE LOCK-IN</text>
+        </g>
+
+        <!-- Ovivo label -->
+        <g transform="translate(300 230)">
+          <text text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="0.14" fill="#F25A37">OVIVO · PENDING</text>
+          <text y="22" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#F25A37">$1.8B</text>
+        </g>
+
+        <!-- buyback pause indicator -->
+        <g transform="translate(20 230)" font-family="Geist Mono" font-size="9" letter-spacing="0.14">
+          <text fill="#0F0E0D" fill-opacity="0.6">BUYBACKS</text>
+          <text y="22" font-family="Instrument Serif" font-size="22" font-style="italic" fill="#0F0E0D" fill-opacity="0.4">paused</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="bet-callouts">
+      <div class="bet-row reveal delay-2">
+        <span class="v">$2.95B</span>
+        <span class="copy"><b>Operating cash flow.</b> Funded the year, the dividend, the buyback, and most of capex with billions to spare.</span>
+      </div>
+      <div class="bet-row reveal delay-2">
+        <span class="v">$1.90B</span>
+        <span class="copy"><b>Free cash flow.</b> Comfortably above the dividend ($753.6M) and below the combined return of capital.</span>
+      </div>
+      <div class="bet-row reveal delay-3">
+        <span class="v hot">$1.8B</span>
+        <span class="copy"><b>Ovivo, pending.</b> The bolt-on that triggered the buyback pause. A water-franchise deepening, not a pivot.</span>
+      </div>
+      <div class="bet-row reveal delay-3">
+        <span class="v">0.75×</span>
+        <span class="copy"><b>Debt-to-equity.</b> $870.4M of debt against $9.77B of equity. The balance sheet has room to make this kind of move.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!--  COMPETITION                                  -->
+  <!-- ============================================ -->
+  <section class="comp" data-screen-label="11 Competition">
+    <div class="section-head reveal">
+      <span class="eyebrow">Ch. 06 · The neighbors</span>
+      <h2>Three rivals, <span class="it">three different rooms.</span></h2>
+      <p class="lede">
+        Nobody competes with Ecolab on all four streams at once.
+        Each rival overlaps in one — coatings, ag-chem, or water.
+      </p>
+    </div>
+
+    <!-- Bubble field: ECL vs comps sized by market cap -->
+    <div class="comp-stage reveal delay-1">
+      <svg viewBox="0 0 360 280" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- bubbles sized by market cap; ECL=77.61, SHW=85.62, CTVA=53.94, VIE small  -->
+        <!-- center on ECL -->
+        <g>
+          <!-- SHW -->
+          <circle cx="240" cy="100" r="62" fill="#7FA9C4" fill-opacity="0.18" stroke="#7FA9C4" stroke-width="1"/>
+          <text x="240" y="96" text-anchor="middle" font-family="Geist" font-weight="500" font-size="13" fill="#0F0E0D">SHW</text>
+          <text x="240" y="114" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#3B3A37" letter-spacing="0.08">$85.62B</text>
+
+          <!-- CTVA -->
+          <circle cx="80" cy="190" r="50" fill="#7FA9C4" fill-opacity="0.18" stroke="#7FA9C4" stroke-width="1"/>
+          <text x="80" y="186" text-anchor="middle" font-family="Geist" font-weight="500" font-size="13" fill="#0F0E0D">CTVA</text>
+          <text x="80" y="204" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#3B3A37" letter-spacing="0.08">$53.94B</text>
+
+          <!-- VIE -->
+          <circle cx="280" cy="220" r="22" fill="#7FA9C4" fill-opacity="0.18" stroke="#7FA9C4" stroke-width="1"/>
+          <text x="280" y="218" text-anchor="middle" font-family="Geist" font-weight="500" font-size="11" fill="#0F0E0D">VIE</text>
+          <text x="280" y="232" text-anchor="middle" font-family="Geist Mono" font-size="8" fill="#3B3A37">water rival</text>
+
+          <!-- ECL center -->
+          <circle cx="160" cy="140" r="58" fill="#2B6FB8"/>
+          <circle cx="160" cy="140" r="58" fill="none" stroke="#103862" stroke-width="2"/>
+          <text x="160" y="134" text-anchor="middle" font-family="Geist" font-weight="600" font-size="15" fill="#fff">ECL</text>
+          <text x="160" y="152" text-anchor="middle" font-family="Geist Mono" font-size="10" fill="#DBE9F2" letter-spacing="0.08">$77.61B</text>
+          <text x="160" y="166" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="11" fill="#FFB39A">us</text>
+        </g>
+
+        <!-- room labels -->
+        <g font-family="Geist Mono" font-size="9" letter-spacing="0.16" fill="#0F0E0D" fill-opacity="0.5">
+          <text x="240" y="36">COATINGS · INDUSTRIAL</text>
+          <text x="80" y="262" text-anchor="middle">AG-CHEM · CROP</text>
+          <text x="280" y="258" text-anchor="middle">WATER, EU</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="comp-list">
+      <div class="comp-row us reveal">
+        <div class="top">
+          <div><span class="nm">Ecolab</span><span class="tk">ECL</span></div>
+          <span class="mc">$77.61B</span>
+        </div>
+        <div class="desc">Hygiene, water treatment, pest, life sciences. The only one running all four.</div>
+        <div class="stat-row"><span>REV <b>$16.07B</b></span><span>OP MARGIN <b>17.0%</b></span></div>
+      </div>
+
+      <div class="comp-row reveal delay-1">
+        <div class="top">
+          <div><span class="nm">Sherwin-Williams</span><span class="tk">SHW</span></div>
+          <span class="mc">$85.62B</span>
+        </div>
+        <div class="desc">Coatings overlap on industrial and food-processing facilities.</div>
+        <div class="stat-row"><span>REV <b>$23.57B</b></span><span>P/E <b>33.3</b></span><span>YoY <b>+2.06%</b></span></div>
+      </div>
+
+      <div class="comp-row reveal delay-2">
+        <div class="top">
+          <div><span class="nm">Corteva</span><span class="tk">CTVA</span></div>
+          <span class="mc">$53.94B</span>
+        </div>
+        <div class="desc">Crop protection bumps into Ecolab's food-and-beverage hygiene work.</div>
+        <div class="stat-row"><span>REV <b>$17.40B</b></span><span>P/E <b>49.3</b></span><span>YoY <b>+2.92%</b></span></div>
+      </div>
+
+      <div class="comp-row reveal delay-3">
+        <div class="top">
+          <div><span class="nm">Veolia Environnement</span><span class="tk">VIEIF</span></div>
+          <span class="mc">—</span>
+        </div>
+        <div class="desc">European water utility. The most direct rival on Ecolab's biggest stream.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!--  RESET BEAT 5 — final bridge                 -->
+  <!-- ============================================ -->
+  <div class="reset deep" data-screen-label="12 Reset 5">
+    <p class="quote reveal">
+      Forty-one years of raises.
+      <span class="accent">They tend to keep their promises.</span>
+    </p>
+    <span class="src">Reset · 05 · On the dividend</span>
+  </div>
+
+  <!-- ============================================ -->
+  <!--  TAKEAWAY — close inverts the open           -->
+  <!-- ============================================ -->
+  <section class="close" data-screen-label="13 Takeaway">
+    <span class="eyebrow" style="color:var(--water-700)">The takeaway · A drop, returned</span>
+
+    <!-- Drop, inverted: the same droplet, smaller, releasing a single
+         coral droplet of dividend back to shareholders -->
+    <div class="close-stream">
+      <svg viewBox="0 0 360 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="closeDropG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#7FA9C4" />
+            <stop offset="1" stop-color="#103862" />
+          </linearGradient>
+        </defs>
+        <!-- horizon -->
+        <line x1="0" y1="160" x2="360" y2="160" stroke="#103862" stroke-opacity="0.15"/>
+
+        <!-- the drop, smaller, off-center, falling -->
+        <g transform="translate(180 76)">
+          <path d="M 0 -38 C 18 -16, 26 -4, 26 12 A 26 26 0 1 1 -26 12 C -26 -4, -18 -16, 0 -38 Z" fill="url(#closeDropG)"/>
+        </g>
+
+        <!-- ripple at base -->
+        <ellipse cx="180" cy="160" rx="40" ry="6" fill="none" stroke="#2B6FB8" stroke-opacity="0.4"/>
+        <ellipse cx="180" cy="160" rx="62" ry="9" fill="none" stroke="#2B6FB8" stroke-opacity="0.25"/>
+        <ellipse cx="180" cy="160" rx="86" ry="12" fill="none" stroke="#2B6FB8" stroke-opacity="0.15"/>
+
+        <!-- coral droplet returning UP — the dividend -->
+        <g transform="translate(180 130)">
+          <path d="M 0 -10 C 5 -4, 7 -1, 7 3 A 7 7 0 1 1 -7 3 C -7 -1, -5 -4, 0 -10 Z" fill="#F25A37"/>
+        </g>
+
+        <!-- annotation -->
+        <g font-family="Geist Mono" font-size="9" letter-spacing="0.14" fill="#0F0E0D" fill-opacity="0.5">
+          <text x="180" y="24" text-anchor="middle">$16.07B IN</text>
+        </g>
+        <g font-family="Geist Mono" font-size="9" letter-spacing="0.14" fill="#F25A37">
+          <text x="180" y="190" text-anchor="middle">$753.6M OUT, EVERY YEAR, FOR 41 YEARS</text>
+        </g>
+      </svg>
+    </div>
+
+    <h2 class="close-h reveal">
+      <span style="display:block">A dollar in.</span>
+      <span style="display:block" class="it">Fifteen cents</span>
+      <span style="display:block" class="sig">make it home.</span>
+    </h2>
+    <p class="close-body reveal delay-1">
+      Out of <em>$16.07B</em> in revenue, <em>$1.90B</em> survives as free cash.
+      Of that, <em>$753.6M</em> walked out the door as dividends —
+      a 12% raise in December, the 41st year in a row.
+    </p>
+
+    <div class="streak">
+      <div class="k reveal delay-2">
+        <div class="v"><span data-count="41">0</span><span class="it"> yrs</span></div>
+        <div class="l">consecutive dividend increases — the most recent at +12%.</div>
+      </div>
+      <div class="barline reveal delay-3">
+        <svg viewBox="0 0 360 28" preserveAspectRatio="none">
+          <!-- 41 vertical ticks growing in height — the streak -->
+          <g id="streakBars"></g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="row">
+      <span>NYSE · ECL</span>
+      <span>FY 2025 Recap</span>
+    </div>
+    <p class="src">
+      Figures from Ecolab company filings as of FY 2025.
+      Market cap and competitor data as of recap date.
+      Q4 2025 EPS $2.08 on revenue of $4.19B.
+    </p>
+  </footer>
+
+</div>
+
+<script>
+/* ---------- 1. Sticky chrome scroll progress ---------- */
+const progress = document.getElementById('progress');
+function onScroll() {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const p = max > 0 ? (h.scrollTop || document.body.scrollTop) / max : 0;
+  progress.style.setProperty('--p', (p * 100).toFixed(2) + '%');
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+/* ---------- 2. IntersectionObserver-driven reveals ---------- */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      // count-ups
+      e.target.querySelectorAll('[data-count]').forEach(el => {
+        if (el.dataset.done) return;
+        el.dataset.done = '1';
+        const target = parseFloat(el.dataset.count);
+        const dur = 1100;
+        const start = performance.now();
+        const fmt = (n) => Math.round(n).toLocaleString();
+        function tick(t) {
+          const k = Math.min(1, (t - start) / dur);
+          const eased = 1 - Math.pow(1 - k, 3);
+          el.textContent = fmt(target * eased);
+          if (k < 1) requestAnimationFrame(tick);
+          else el.textContent = fmt(target);
+        }
+        requestAnimationFrame(tick);
+      });
+    }
+  });
+}, { threshold: 0.18 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ---------- 3. Country dot field ---------- */
+(function buildCountries(){
+  const svg = document.getElementById('countriesSvg');
+  if (!svg) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  // 170 dots in soft scatter
+  const W = 400, H = 200;
+  for (let i = 0; i < 170; i++) {
+    const x = 20 + Math.random() * (W - 40);
+    const y = 20 + Math.random() * (H - 40);
+    const r = 1 + Math.random() * 1.4;
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', x.toFixed(1));
+    c.setAttribute('cy', y.toFixed(1));
+    c.setAttribute('r', r.toFixed(2));
+    c.setAttribute('fill', '#7FA9C4');
+    c.setAttribute('opacity', (0.25 + Math.random() * 0.5).toFixed(2));
+    svg.appendChild(c);
+  }
+})();
+
+/* ---------- 4. Geographic continents as dot fields ---------- */
+(function buildContinents(){
+  const g = document.getElementById('continents');
+  if (!g) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  // rough continent regions (cx, cy, rx, ry, count, opacity, color)
+  const regions = [
+    // North America (US-heavy)
+    { cx: 95,  cy: 110, rx: 50, ry: 38, n: 60, o: 0.7, c: '#FFB39A' }, // US area
+    { cx: 110, cy: 70,  rx: 40, ry: 18, n: 14, o: 0.3, c: '#7FA9C4' }, // Canada
+    // Europe
+    { cx: 220, cy: 100, rx: 30, ry: 22, n: 28, o: 0.55, c: '#7FA9C4' },
+    // Asia
+    { cx: 290, cy: 110, rx: 50, ry: 30, n: 32, o: 0.45, c: '#7FA9C4' },
+    // SEA / Oceania
+    { cx: 320, cy: 170, rx: 30, ry: 16, n: 12, o: 0.4, c: '#7FA9C4' },
+    // Latin America
+    { cx: 130, cy: 195, rx: 28, ry: 38, n: 18, o: 0.4, c: '#7FA9C4' },
+    // MEA
+    { cx: 240, cy: 175, rx: 36, ry: 22, n: 18, o: 0.35, c: '#7FA9C4' },
+  ];
+  for (const r of regions) {
+    for (let i = 0; i < r.n; i++) {
+      // sample inside ellipse
+      let u, v;
+      do { u = Math.random()*2-1; v = Math.random()*2-1; } while (u*u + v*v > 1);
+      const x = r.cx + u * r.rx;
+      const y = r.cy + v * r.ry;
+      const c = document.createElementNS(NS, 'circle');
+      c.setAttribute('cx', x.toFixed(1));
+      c.setAttribute('cy', y.toFixed(1));
+      c.setAttribute('r', (1 + Math.random()*1.2).toFixed(2));
+      c.setAttribute('fill', r.c);
+      c.setAttribute('opacity', (r.o * (0.5 + Math.random()*0.7)).toFixed(2));
+      g.appendChild(c);
+    }
+  }
+})();
+
+/* ---------- 5. Streak bars ---------- */
+(function buildStreak(){
+  const g = document.getElementById('streakBars');
+  if (!g) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  const N = 41;
+  const W = 360, H = 28;
+  const gap = 1.5;
+  const bw = (W - (N - 1) * gap) / N;
+  for (let i = 0; i < N; i++) {
+    const t = i / (N - 1);
+    // easing: gentle exponential growth (dividend compounding visual)
+    const h = 4 + Math.pow(t, 0.65) * (H - 6);
+    const x = i * (bw + gap);
+    const y = H - h;
+    const r = document.createElementNS(NS, 'rect');
+    r.setAttribute('x', x.toFixed(2));
+    r.setAttribute('y', y.toFixed(2));
+    r.setAttribute('width', bw.toFixed(2));
+    r.setAttribute('height', h.toFixed(2));
+    r.setAttribute('fill', i === N - 1 ? '#F25A37' : '#103862');
+    r.setAttribute('opacity', (0.45 + 0.55 * t).toFixed(2));
+    g.appendChild(r);
+  }
+})();
+
+/* ---------- 6. Hero ripple — endless loop, sync to scroll ---------- */
+(function heroRipples(){
+  const r1 = document.querySelector('.r1');
+  const r2 = document.querySelector('.r2');
+  const r3 = document.querySelector('.r3');
+  if (!r1) return;
+  let t0 = performance.now();
+  function loop(t) {
+    const dt = (t - t0) / 1000;
+    const phase1 = (dt % 3) / 3;
+    const phase2 = ((dt + 1) % 3) / 3;
+    const phase3 = ((dt + 2) % 3) / 3;
+    const apply = (el, p) => {
+      const s = 0.4 + p * 1.4;
+      const o = (1 - p) * 0.55;
+      el.setAttribute('transform', `scale(${s.toFixed(3)})`);
+      el.style.opacity = o.toFixed(3);
+    };
+    apply(r1, phase1);
+    apply(r2, phase2);
+    apply(r3, phase3);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+
+/* ---------- 7. Drop bobs gently with scroll velocity ---------- */
+(function heroDropParallax(){
+  const drop = document.getElementById('drop');
+  if (!drop) return;
+  let lastY = window.scrollY;
+  function tick() {
+    const y = window.scrollY;
+    const v = (y - lastY);
+    lastY = y;
+    const tilt = Math.max(-6, Math.min(6, v * 0.5));
+    drop.setAttribute('transform', `translate(180 ${130 - y * 0.08}) rotate(${tilt})`);
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

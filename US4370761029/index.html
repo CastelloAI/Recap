@@ -1,0 +1,1615 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>HD · Recap</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  /* ---- HD-specific palette overrides — paper base, deep orange signal ---- */
+  :root {
+    --hd-paper:    #F6F1E8;     /* warmer kraft paper */
+    --hd-paper-2:  #EFE7D8;
+    --hd-paper-3:  #E6DCC7;
+    --hd-ink:      #1A1611;     /* warm ink */
+    --hd-ink-2:    #3A332A;
+    --hd-ink-3:    #6B6258;
+    --hd-line:     #D8CFB9;
+    --hd-orange:   #E05C2A;     /* HD orange — comes from biggest_costs[0] */
+    --hd-orange-d: #B84616;
+    --hd-orange-l: #FFE6D8;
+    --hd-blue:     #3B82F6;
+    --hd-purple:   #8B5CF6;
+    --hd-amber:    #F59E0B;
+    --hd-night:    #16110A;     /* dark interlude */
+    --hd-night-2:  #221A11;
+
+    --bg: var(--hd-paper);
+    --fg: var(--hd-ink);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--hd-paper);
+    color: var(--hd-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* The page is sized for mobile — center within wider viewports. */
+  .page {
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--hd-paper);
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ============ STICKY CHROME ============ */
+  .chrome {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(246, 241, 232, 0.78);
+    backdrop-filter: blur(16px) saturate(1.1);
+    -webkit-backdrop-filter: blur(16px) saturate(1.1);
+    border-bottom: 1px solid rgba(216, 207, 185, 0.6);
+  }
+  .chrome-inner {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px 12px;
+  }
+  .chrome-tic {
+    font-family: var(--font-mono);
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.04em;
+    background: var(--hd-ink);
+    color: var(--hd-paper);
+    padding: 4px 8px 3px;
+    border-radius: 4px;
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 14px; font-weight: 500;
+    color: var(--hd-ink);
+    letter-spacing: -0.005em;
+  }
+  .chrome-spacer { flex: 1; }
+  .chrome-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--hd-ink-3);
+    text-transform: uppercase;
+  }
+  .chrome-progress {
+    height: 1.5px;
+    background: var(--hd-line);
+    position: relative;
+  }
+  .chrome-progress::after {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: var(--scroll, 0%);
+    background: var(--hd-orange);
+    transition: width 80ms linear;
+  }
+
+  /* ============ TYPOGRAPHY ============ */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    color: var(--hd-ink);
+    margin: 0;
+  }
+  .display em { font-style: italic; color: var(--hd-orange); }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--hd-orange);
+    font-weight: 500;
+  }
+  .eyebrow .dot { color: var(--hd-ink-3); margin: 0 6px; }
+  .eyebrow .num { color: var(--hd-ink-2); }
+
+  p { font-size: 16px; line-height: 1.55; color: var(--hd-ink-2); margin: 0; }
+  p em { font-style: italic; font-family: var(--font-display); font-size: 1.08em; color: var(--hd-orange); }
+  p strong { font-weight: 500; color: var(--hd-ink); }
+
+  .mono { font-family: var(--font-mono); }
+
+  /* ============ SECTION RHYTHM ============ */
+  /* Major beats */
+  section { position: relative; padding: 64px 24px; }
+  section.tight { padding: 40px 24px; }
+  section.sunken { background: var(--hd-paper-2); }
+  section.full { padding: 64px 0; }
+  section.full > .pad { padding: 0 24px; }
+
+  /* Reset beat — italic-serif interlude */
+  .reset {
+    padding: 56px 28px;
+    background: var(--hd-paper-2);
+    position: relative;
+  }
+  .reset::before, .reset::after {
+    content: '';
+    position: absolute; left: 28px; right: 28px; height: 1px;
+    background: var(--hd-line);
+  }
+  .reset::before { top: 0; }
+  .reset::after  { bottom: 0; }
+  .reset .quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    color: var(--hd-ink);
+  }
+  .reset .quote .pop { color: var(--hd-orange); }
+  .reset .attrib {
+    margin-top: 14px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--hd-ink-3);
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    padding: 56px 24px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero .eyebrow { margin-bottom: 28px; }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: 68px;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    color: var(--hd-ink);
+    margin: 0;
+  }
+  .hero h1 em { font-style: italic; color: var(--hd-orange); }
+  .hero .sub {
+    margin-top: 28px;
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--hd-ink-2);
+    max-width: 320px;
+  }
+  .hero .meta-row {
+    margin-top: 36px;
+    display: flex;
+    gap: 0;
+    border-top: 1px solid var(--hd-line);
+    padding-top: 18px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--hd-ink-3);
+  }
+  .hero .meta-row > div { flex: 1; }
+  .hero .meta-row strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--hd-ink);
+    margin-bottom: 2px;
+    letter-spacing: -0.01em;
+    text-transform: none;
+  }
+
+  /* Hero scene — 2,347 boxes background */
+  .box-field {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.18;
+    pointer-events: none;
+  }
+  .hero > * { position: relative; z-index: 1; }
+
+  /* ============ THE BUSINESS — WAREHOUSE AISLE ============ */
+  .aisle {
+    margin-top: 28px;
+    border: 1px solid var(--hd-line);
+    background: var(--hd-paper);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .aisle-svg { display: block; width: 100%; height: auto; }
+
+  .biz-stats {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .biz-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--hd-line);
+  }
+  .biz-row:last-child { border-bottom: 0; }
+  .biz-row .lbl {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--hd-ink-3);
+  }
+  .biz-row .val {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1;
+    color: var(--hd-ink);
+    letter-spacing: -0.02em;
+  }
+  .biz-row .val .unit {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--hd-ink-3);
+    margin-left: 4px;
+    font-weight: 400;
+  }
+  .biz-row .val em { color: var(--hd-orange); font-style: italic; }
+
+  /* ============ SCALE — LUMBER STACK ============ */
+  .stack-wrap {
+    margin-top: 32px;
+    position: relative;
+  }
+  .stack-svg { display: block; width: 100%; height: auto; }
+  .stack-caption {
+    margin-top: 14px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--hd-ink-3);
+    text-align: center;
+  }
+
+  .scale-figure {
+    margin-top: 8px;
+  }
+  .scale-figure .big {
+    font-family: var(--font-display);
+    font-size: 96px;
+    line-height: 0.9;
+    letter-spacing: -0.035em;
+    color: var(--hd-ink);
+  }
+  .scale-figure .big em {
+    color: var(--hd-orange);
+    font-style: italic;
+  }
+  .scale-figure .sub {
+    margin-top: 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--hd-ink-3);
+  }
+
+  /* ============ COSTS — RECEIPT ============ */
+  .receipt-frame {
+    margin-top: 32px;
+    background: #FCFAF4;
+    border: 1px solid var(--hd-line);
+    box-shadow:
+      0 1px 0 var(--hd-line),
+      0 18px 24px -16px rgba(20, 20, 20, 0.16);
+    position: relative;
+  }
+  /* Receipt zigzag bottom */
+  .receipt-frame::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -10px;
+    height: 12px;
+    background:
+      linear-gradient(135deg, transparent 50%, #FCFAF4 50%) 0 0/12px 12px,
+      linear-gradient(225deg, transparent 50%, #FCFAF4 50%) 6px 0/12px 12px;
+  }
+  .receipt-inner { padding: 24px 22px 28px; }
+  .receipt-head {
+    text-align: center;
+    border-bottom: 1px dashed var(--hd-line);
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+  }
+  .receipt-head .store {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--hd-ink-2);
+  }
+  .receipt-head .total {
+    margin-top: 6px;
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--hd-ink);
+    letter-spacing: -0.01em;
+  }
+  .receipt-head .totlabel {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--hd-ink-3);
+  }
+
+  .line-item {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px dotted var(--hd-line);
+  }
+  .line-item:last-child { border-bottom: 0; }
+  .line-item .swatch {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    transform: translateY(1px);
+  }
+  .line-item .lbl {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--hd-ink);
+    flex: 1;
+  }
+  .line-item .pct {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--hd-ink-2);
+    letter-spacing: 0.02em;
+  }
+  .line-item .bar {
+    width: 100%;
+    height: 4px;
+    background: var(--hd-paper-2);
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .line-item .bar > i {
+    display: block; height: 100%;
+    background: var(--c, var(--hd-orange));
+    width: var(--w, 0%);
+    transition: width 1s var(--ease-out);
+  }
+  .line-item-row { flex: 1; }
+
+  .receipt-foot {
+    margin-top: 14px;
+    border-top: 1px dashed var(--hd-line);
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--hd-ink-2);
+  }
+  .receipt-foot .survives {
+    color: var(--hd-orange);
+    font-weight: 500;
+  }
+
+  /* ============ FOOTPRINT ============ */
+  .map-wrap {
+    margin-top: 32px;
+    position: relative;
+  }
+  .map-svg { display: block; width: 100%; height: auto; }
+  .map-callout {
+    margin-top: 24px;
+    display: flex;
+    gap: 16px;
+  }
+  .map-callout > div { flex: 1; }
+  .map-callout .pct {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .map-callout .pct em { color: var(--hd-orange); font-style: italic; }
+  .map-callout .lbl {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--hd-ink-3);
+    line-height: 1.4;
+  }
+
+  /* ============ DARK INTERLUDE — THE WEIGHT ============ */
+  .dark {
+    background: var(--hd-night);
+    color: #F0E9DD;
+    padding: 80px 24px 72px;
+    position: relative;
+    overflow: hidden;
+  }
+  .dark .eyebrow { color: #FFAA85; }
+  .dark .display { color: #F0E9DD; }
+  .dark .display em { color: #FF9468; }
+  .dark p { color: #B8B0A2; }
+  .dark p em { color: #FF9468; }
+  .dark p strong { color: #F0E9DD; }
+
+  .acquisitions {
+    margin-top: 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .acq-card {
+    border: 1px solid #2A2218;
+    background: var(--hd-night-2);
+    padding: 18px 18px 16px;
+    position: relative;
+  }
+  .acq-card .name {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #FFAA85;
+  }
+  .acq-card .price {
+    margin-top: 6px;
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 1;
+    color: #F0E9DD;
+    letter-spacing: -0.02em;
+  }
+  .acq-card .price em {
+    color: #FF9468;
+    font-style: italic;
+  }
+  .acq-card .what {
+    margin-top: 10px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #B8B0A2;
+  }
+
+  .debt-bar {
+    margin-top: 36px;
+  }
+  .debt-bar svg { display: block; width: 100%; height: auto; }
+  .debt-stats {
+    margin-top: 18px;
+    display: flex;
+    gap: 20px;
+  }
+  .debt-stats > div { flex: 1; }
+  .debt-stats .num {
+    font-family: var(--font-display);
+    font-size: 30px;
+    color: #F0E9DD;
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+  .debt-stats .num em { color: #FF9468; font-style: italic; }
+  .debt-stats .lbl {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8A8275;
+    line-height: 1.4;
+  }
+
+  .pause-note {
+    margin-top: 40px;
+    padding: 20px 18px;
+    border: 1px solid #3A2C1A;
+    background: rgba(255, 148, 104, 0.06);
+  }
+  .pause-note .label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #FF9468;
+  }
+  .pause-note .body {
+    margin-top: 10px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.2;
+    color: #F0E9DD;
+    letter-spacing: -0.005em;
+  }
+
+  /* ============ COMPETITORS — WEIGHTED LINEUP ============ */
+  .lineup {
+    margin-top: 28px;
+  }
+  .competitor {
+    padding: 22px 0 24px;
+    border-bottom: 1px solid var(--hd-line);
+    cursor: pointer;
+  }
+  .competitor:last-child { border-bottom: 0; }
+  .competitor .top {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .competitor .ticker {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--hd-orange);
+    font-weight: 500;
+  }
+  .competitor .name {
+    font-family: var(--font-sans);
+    font-size: 17px;
+    color: var(--hd-ink);
+    font-weight: 500;
+  }
+  .competitor .mcap {
+    margin-left: auto;
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--hd-ink);
+    letter-spacing: -0.01em;
+  }
+  .competitor .gauge {
+    margin-top: 12px;
+    position: relative;
+    height: 22px;
+  }
+  .competitor .gauge .track {
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%; transform: translateY(-50%);
+    height: 1px;
+    background: var(--hd-line);
+  }
+  .competitor .gauge .hd-mark {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--hd-orange);
+  }
+  .competitor .gauge .hd-mark::after {
+    content: 'HD';
+    position: absolute;
+    top: -14px; right: -2px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--hd-orange);
+  }
+  .competitor .gauge .bar {
+    position: absolute;
+    left: 0;
+    top: 50%; transform: translateY(-50%);
+    height: 6px;
+    background: var(--hd-ink-2);
+    width: var(--w, 0%);
+    transition: width 1.2s var(--ease-out);
+  }
+  .competitor .gauge .bar.threat { background: var(--hd-orange); }
+  .competitor .meta {
+    margin-top: 12px;
+    display: flex;
+    gap: 18px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--hd-ink-3);
+    letter-spacing: 0.04em;
+  }
+  .competitor .meta b {
+    display: block;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    color: var(--hd-ink);
+    font-size: 13px;
+    letter-spacing: 0;
+    margin-bottom: 2px;
+  }
+  .competitor .meta b.up { color: #137A47; }
+  .competitor .meta b.down { color: var(--hd-orange-d); }
+
+  .competitor .blurb {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.4s var(--ease-out), margin-top 0.4s var(--ease-out);
+  }
+  .competitor.open .blurb {
+    max-height: 280px;
+    margin-top: 14px;
+  }
+  .competitor .blurb p {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--hd-ink-2);
+  }
+  .competitor .tap-hint {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--hd-ink-3);
+  }
+  .competitor.open .tap-hint { color: var(--hd-orange); }
+
+  /* ============ TAKEAWAY — DOLLAR BREAKDOWN ============ */
+  .closing {
+    padding: 88px 24px 96px;
+    background: var(--hd-paper);
+    text-align: left;
+    position: relative;
+  }
+  .dollar-wrap {
+    margin: 36px 0 32px;
+  }
+  .dollar-svg { display: block; width: 100%; height: auto; }
+  .closing h2 {
+    font-family: var(--font-display);
+    font-size: 60px;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    color: var(--hd-ink);
+    margin: 0;
+  }
+  .closing h2 em { color: var(--hd-orange); font-style: italic; }
+  .closing .kicker {
+    margin-top: 24px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--hd-ink-2);
+  }
+  .closing .kicker em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--hd-orange);
+    font-size: 1.08em;
+  }
+
+  /* Footer */
+  .foot {
+    padding: 36px 24px 60px;
+    border-top: 1px solid var(--hd-line);
+    background: var(--hd-paper-2);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--hd-ink-3);
+    line-height: 1.7;
+  }
+  .foot .ticker-foot { color: var(--hd-orange); }
+
+  /* Reveal-on-scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal.d1 { transition-delay: 80ms; }
+  .reveal.d2 { transition-delay: 160ms; }
+  .reveal.d3 { transition-delay: 240ms; }
+  .reveal.d4 { transition-delay: 320ms; }
+
+  /* count-up — locked when reveal triggers */
+  .countup { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="page" id="page" data-screen-label="01 Home Depot Recap">
+
+  <!-- ============ STICKY CHROME ============ -->
+  <div class="chrome">
+    <div class="chrome-inner">
+      <span class="chrome-tic">HD</span>
+      <span class="chrome-name">The Home Depot</span>
+      <span class="chrome-spacer"></span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="chrome-progress" id="progress"></div>
+  </div>
+
+  <!-- ============ HERO / THESIS ============ -->
+  <section class="hero">
+    <!-- 2,347 box-field background -->
+    <svg class="box-field" viewBox="0 0 420 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <pattern id="boxes" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
+          <rect x="3" y="3" width="14" height="14" fill="none" stroke="#E05C2A" stroke-width="0.6"/>
+        </pattern>
+      </defs>
+      <rect width="420" height="720" fill="url(#boxes)"/>
+    </svg>
+
+    <div class="eyebrow reveal in">The thesis <span class="dot">·</span> <span class="num">No. 01</span></div>
+
+    <h1 class="reveal in">
+      2,347 orange<br/>boxes. <em>One</em><br/>country's<br/>toolkit.
+    </h1>
+
+    <p class="sub reveal d1 in">
+      Home Depot is the place America goes to fix what is broken. <strong>$164.68B</strong> a year, <strong>472,400</strong> employees, and a <em>warehouse</em> within driving distance of nearly every household in the country.
+    </p>
+
+    <div class="meta-row reveal d2 in">
+      <div>
+        <strong>$348B</strong>
+        Market Cap
+      </div>
+      <div>
+        <strong>$164.7B</strong>
+        FY '25 Revenue
+      </div>
+      <div>
+        <strong>2,347</strong>
+        Stores
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 1 ============ -->
+  <div class="reset reveal">
+    <div class="quote">
+      Founded in <span class="pop">1978</span> by four men in Atlanta who thought hardware stores ought to be <span class="pop">bigger</span>.
+    </div>
+    <div class="attrib">— Forty-seven years later</div>
+  </div>
+
+  <!-- ============ THE BUSINESS — WAREHOUSE AISLE ============ -->
+  <section>
+    <div class="eyebrow reveal">The business <span class="dot">·</span> <span class="num">No. 02</span></div>
+    <h2 class="display reveal d1" style="font-size: 44px; margin-top: 18px;">
+      Big-box. <em>Big</em> aisles.<br/>Bigger SKU count.
+    </h2>
+    <p class="reveal d2" style="margin-top: 20px;">
+      <strong>30,000</strong> products on the shelf. <strong>1,000,000</strong> online. The store is the <em>thesis</em>: drive in with a truck, drive out with the lumber.
+    </p>
+
+    <!-- Warehouse aisle SVG -->
+    <div class="aisle reveal d3">
+      <svg class="aisle-svg" viewBox="0 0 372 220" aria-hidden="true">
+        <defs>
+          <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#E6DCC7"/>
+            <stop offset="1" stop-color="#D8CFB9"/>
+          </linearGradient>
+        </defs>
+        <!-- Concrete floor with vanishing point -->
+        <rect width="372" height="220" fill="#FCFAF4"/>
+        <polygon points="0,180 372,180 280,220 92,220" fill="url(#floor)"/>
+        <!-- Floor lines (perspective) -->
+        <line x1="0" y1="180" x2="92" y2="220" stroke="#C9BFA6" stroke-width="0.7"/>
+        <line x1="372" y1="180" x2="280" y2="220" stroke="#C9BFA6" stroke-width="0.7"/>
+        <line x1="60" y1="200" x2="312" y2="200" stroke="#C9BFA6" stroke-width="0.5" stroke-dasharray="2 4"/>
+
+        <!-- Ceiling rafters -->
+        <line x1="0" y1="14" x2="372" y2="14" stroke="#C9BFA6" stroke-width="0.6"/>
+        <g stroke="#B8AE94" stroke-width="0.5">
+          <line x1="40" y1="0" x2="40" y2="14"/>
+          <line x1="100" y1="0" x2="100" y2="14"/>
+          <line x1="160" y1="0" x2="160" y2="14"/>
+          <line x1="220" y1="0" x2="220" y2="14"/>
+          <line x1="280" y1="0" x2="280" y2="14"/>
+          <line x1="340" y1="0" x2="340" y2="14"/>
+        </g>
+
+        <!-- Left racking — 3 levels -->
+        <g>
+          <!-- Uprights -->
+          <line x1="22" y1="40" x2="22" y2="180" stroke="#3A332A" stroke-width="2.2"/>
+          <line x1="86" y1="40" x2="86" y2="180" stroke="#3A332A" stroke-width="2.2"/>
+          <line x1="150" y1="40" x2="150" y2="180" stroke="#3A332A" stroke-width="2.2"/>
+          <!-- Beams -->
+          <line x1="22" y1="80" x2="150" y2="80" stroke="#3A332A" stroke-width="2"/>
+          <line x1="22" y1="120" x2="150" y2="120" stroke="#3A332A" stroke-width="2"/>
+          <line x1="22" y1="160" x2="150" y2="160" stroke="#3A332A" stroke-width="2"/>
+          <line x1="22" y1="40"  x2="150" y2="40"  stroke="#3A332A" stroke-width="2"/>
+
+          <!-- Goods -->
+          <!-- top: lumber bundles -->
+          <rect x="28" y="50" width="52" height="26" fill="#D9A86A" stroke="#9B7338" stroke-width="0.5"/>
+          <rect x="92" y="50" width="52" height="26" fill="#C8954E" stroke="#9B7338" stroke-width="0.5"/>
+          <line x1="28" y1="58" x2="80" y2="58" stroke="#9B7338" stroke-width="0.4"/>
+          <line x1="28" y1="64" x2="80" y2="64" stroke="#9B7338" stroke-width="0.4"/>
+          <line x1="28" y1="70" x2="80" y2="70" stroke="#9B7338" stroke-width="0.4"/>
+          <line x1="92" y1="58" x2="144" y2="58" stroke="#9B7338" stroke-width="0.4"/>
+          <line x1="92" y1="64" x2="144" y2="64" stroke="#9B7338" stroke-width="0.4"/>
+          <line x1="92" y1="70" x2="144" y2="70" stroke="#9B7338" stroke-width="0.4"/>
+
+          <!-- middle: orange paint cans -->
+          <g fill="#E05C2A" stroke="#B84616" stroke-width="0.5">
+            <rect x="30" y="92" width="14" height="26" rx="1"/>
+            <rect x="50" y="92" width="14" height="26" rx="1"/>
+            <rect x="70" y="92" width="14" height="26" rx="1"/>
+            <rect x="98" y="92" width="14" height="26" rx="1"/>
+            <rect x="118" y="92" width="14" height="26" rx="1"/>
+          </g>
+          <!-- can lids -->
+          <g stroke="#1A1611" stroke-width="0.6" fill="none">
+            <line x1="30" y1="96" x2="44" y2="96"/>
+            <line x1="50" y1="96" x2="64" y2="96"/>
+            <line x1="70" y1="96" x2="84" y2="96"/>
+            <line x1="98" y1="96" x2="112" y2="96"/>
+            <line x1="118" y1="96" x2="132" y2="96"/>
+          </g>
+
+          <!-- bottom: cardboard boxes -->
+          <g fill="#C8954E" stroke="#7A5C2D" stroke-width="0.5">
+            <rect x="28" y="130" width="36" height="28"/>
+            <rect x="68" y="130" width="36" height="28"/>
+            <rect x="108" y="130" width="38" height="28"/>
+          </g>
+          <g stroke="#7A5C2D" stroke-width="0.4">
+            <line x1="46" y1="130" x2="46" y2="158"/>
+            <line x1="86" y1="130" x2="86" y2="158"/>
+            <line x1="127" y1="130" x2="127" y2="158"/>
+          </g>
+        </g>
+
+        <!-- Right racking (mirrored, smaller perspective) -->
+        <g>
+          <line x1="222" y1="44" x2="222" y2="178" stroke="#3A332A" stroke-width="2"/>
+          <line x1="280" y1="46" x2="280" y2="176" stroke="#3A332A" stroke-width="2"/>
+          <line x1="338" y1="48" x2="338" y2="174" stroke="#3A332A" stroke-width="2"/>
+          <line x1="222" y1="46" x2="338" y2="50" stroke="#3A332A" stroke-width="1.8"/>
+          <line x1="222" y1="86" x2="338" y2="86" stroke="#3A332A" stroke-width="1.8"/>
+          <line x1="222" y1="124" x2="338" y2="122" stroke="#3A332A" stroke-width="1.8"/>
+          <line x1="222" y1="162" x2="338" y2="158" stroke="#3A332A" stroke-width="1.8"/>
+
+          <!-- top -->
+          <rect x="228" y="56" width="48" height="26" fill="#7AA8C9" stroke="#3F6E91" stroke-width="0.5"/>
+          <rect x="286" y="58" width="46" height="26" fill="#5C90B8" stroke="#3F6E91" stroke-width="0.5"/>
+          <!-- middle: shovels/tools (abstract) -->
+          <g stroke="#3A332A" stroke-width="1.2">
+            <line x1="232" y1="92" x2="232" y2="120"/>
+            <line x1="240" y1="92" x2="240" y2="120"/>
+            <line x1="248" y1="92" x2="248" y2="120"/>
+            <line x1="256" y1="92" x2="256" y2="120"/>
+            <line x1="290" y1="94" x2="290" y2="118"/>
+            <line x1="298" y1="94" x2="298" y2="118"/>
+            <line x1="306" y1="94" x2="306" y2="118"/>
+          </g>
+          <g fill="#3A332A">
+            <rect x="228" y="116" width="32" height="6"/>
+            <rect x="286" y="114" width="28" height="6"/>
+          </g>
+          <!-- bottom: bagged mulch -->
+          <g fill="#3A332A">
+            <rect x="226" y="134" width="50" height="26" rx="3"/>
+            <rect x="284" y="134" width="50" height="24" rx="3"/>
+          </g>
+          <g fill="#E05C2A" font-family="ui-monospace, monospace" font-size="6">
+            <text x="232" y="150">MULCH</text>
+            <text x="290" y="150">MULCH</text>
+          </g>
+        </g>
+
+        <!-- Forklift in distance -->
+        <g transform="translate(176,158)">
+          <rect x="-8" y="-12" width="16" height="14" fill="#E05C2A" stroke="#1A1611" stroke-width="0.5"/>
+          <rect x="-3" y="-22" width="10" height="10" fill="#FFE6D8" stroke="#1A1611" stroke-width="0.4"/>
+          <line x1="-8" y1="-2" x2="-14" y2="6" stroke="#1A1611" stroke-width="1"/>
+          <line x1="-14" y1="6" x2="-14" y2="2" stroke="#1A1611" stroke-width="1"/>
+          <circle cx="-5" cy="3" r="3" fill="#1A1611"/>
+          <circle cx="6"  cy="3" r="3" fill="#1A1611"/>
+        </g>
+
+        <!-- Aisle number sign -->
+        <g transform="translate(186,16)">
+          <rect x="-22" y="0" width="44" height="14" fill="#E05C2A"/>
+          <text x="0" y="10" text-anchor="middle" font-family="ui-monospace, monospace" font-size="8" fill="#FFFFFF" letter-spacing="1">AISLE 12</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="biz-stats">
+      <div class="biz-row reveal">
+        <span class="lbl">Gross margin</span>
+        <span class="val">33.3<span class="unit">%</span></span>
+      </div>
+      <div class="biz-row reveal d1">
+        <span class="lbl">Operating margin</span>
+        <span class="val">12.7<span class="unit">%</span></span>
+      </div>
+      <div class="biz-row reveal d2">
+        <span class="lbl">Q4 EPS</span>
+        <span class="val"><em>$2.72</em></span>
+      </div>
+      <div class="biz-row reveal d3">
+        <span class="lbl">Reportable segments</span>
+        <span class="val">1<span class="unit">— one shelf, one register</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 2 ============ -->
+  <div class="reset reveal">
+    <div class="quote">
+      Scale is what separates a hardware store from <span class="pop"><em>infrastructure</em></span>.
+    </div>
+    <div class="attrib">— On the size of the operation</div>
+  </div>
+
+  <!-- ============ THE SCALE — LUMBER STACK ============ -->
+  <section class="sunken">
+    <div class="eyebrow reveal">The scale <span class="dot">·</span> <span class="num">No. 03</span></div>
+
+    <div class="scale-figure reveal d1" style="margin-top: 22px;">
+      <div class="big">$<span class="countup" data-to="164.68" data-decimals="2">0.00</span><em>B</em></div>
+      <div class="sub">FY 2025 Revenue · Single segment · Worldwide</div>
+    </div>
+
+    <p class="reveal d2" style="margin-top: 24px;">
+      Stacked end-to-end, that's <em>$164.68 billion</em> in lumber, paint, plumbing and power tools — moved through the registers in a single year.
+    </p>
+
+    <div class="stack-wrap reveal d3">
+      <svg class="stack-svg" viewBox="0 0 372 260" aria-hidden="true">
+        <!-- Lumber stack — 12 boards, each tagged in $B -->
+        <g id="lumber" font-family="ui-monospace, monospace" font-size="8" fill="#1A1611">
+          <!-- Boards: y = 240 - i*16, $14B each (164.68/12 ≈ 13.7) -->
+          <!-- Bottom widest, narrower to top, slight perspective -->
+        </g>
+        <!-- Hand-built boards -->
+        <g>
+          <!-- 12 boards, oldest tones -->
+          <g stroke="#9B7338" stroke-width="0.5">
+            <rect x="20" y="232" width="332" height="14" fill="#D9A86A"/>
+            <rect x="22" y="216" width="328" height="14" fill="#C8954E"/>
+            <rect x="20" y="200" width="330" height="14" fill="#D9A86A"/>
+            <rect x="24" y="184" width="324" height="14" fill="#BD8B46"/>
+            <rect x="22" y="168" width="326" height="14" fill="#D9A86A"/>
+            <rect x="26" y="152" width="320" height="14" fill="#C8954E"/>
+            <rect x="22" y="136" width="328" height="14" fill="#D9A86A"/>
+            <rect x="28" y="120" width="316" height="14" fill="#BD8B46"/>
+            <rect x="24" y="104" width="324" height="14" fill="#D9A86A"/>
+            <rect x="26" y="88"  width="320" height="14" fill="#C8954E"/>
+            <rect x="22" y="72"  width="328" height="14" fill="#D9A86A"/>
+            <rect x="28" y="56"  width="316" height="14" fill="#BD8B46"/>
+          </g>
+          <!-- Wood grain hairlines -->
+          <g stroke="#7A5C2D" stroke-width="0.3" opacity="0.5">
+            <line x1="26" y1="240" x2="346" y2="240"/>
+            <line x1="28" y1="224" x2="346" y2="224"/>
+            <line x1="26" y1="208" x2="346" y2="208"/>
+            <line x1="32" y1="192" x2="340" y2="192"/>
+            <line x1="28" y1="176" x2="340" y2="176"/>
+            <line x1="34" y1="160" x2="336" y2="160"/>
+            <line x1="28" y1="144" x2="346" y2="144"/>
+            <line x1="36" y1="128" x2="332" y2="128"/>
+            <line x1="32" y1="112" x2="340" y2="112"/>
+            <line x1="34" y1="96"  x2="336" y2="96"/>
+            <line x1="28" y1="80"  x2="346" y2="80"/>
+            <line x1="36" y1="64"  x2="332" y2="64"/>
+          </g>
+          <!-- End-grain caps -->
+          <g fill="#7A5C2D" opacity="0.6">
+            <rect x="20" y="232" width="3" height="14"/>
+            <rect x="22" y="216" width="3" height="14"/>
+            <rect x="20" y="200" width="3" height="14"/>
+            <rect x="24" y="184" width="3" height="14"/>
+            <rect x="22" y="168" width="3" height="14"/>
+            <rect x="26" y="152" width="3" height="14"/>
+            <rect x="22" y="136" width="3" height="14"/>
+            <rect x="28" y="120" width="3" height="14"/>
+            <rect x="24" y="104" width="3" height="14"/>
+            <rect x="26" y="88"  width="3" height="14"/>
+            <rect x="22" y="72"  width="3" height="14"/>
+            <rect x="28" y="56"  width="3" height="14"/>
+          </g>
+        </g>
+
+        <!-- Tag dangling on top board -->
+        <g transform="translate(280,38)">
+          <line x1="0" y1="0" x2="0" y2="18" stroke="#1A1611" stroke-width="0.6"/>
+          <rect x="-32" y="-22" width="64" height="22" fill="#FCFAF4" stroke="#1A1611" stroke-width="0.7"/>
+          <text x="0" y="-14" text-anchor="middle" font-family="ui-monospace, monospace" font-size="6.5" fill="#6B6258" letter-spacing="0.7">FY25 REV</text>
+          <text x="0" y="-4" text-anchor="middle" font-family="Instrument Serif, serif" font-size="11" fill="#1A1611">$164.68B</text>
+        </g>
+
+        <!-- Ground line -->
+        <line x1="10" y1="252" x2="362" y2="252" stroke="#B8AE94" stroke-width="0.6"/>
+        <text x="186" y="246" text-anchor="middle" font-family="ui-monospace, monospace" font-size="7" fill="#6B6258" letter-spacing="1">12 STACKED · ~$14B EACH</text>
+      </svg>
+      <div class="stack-caption">+5.3% revenue growth implied · Q4 ran $38.20B</div>
+    </div>
+
+    <div class="biz-stats" style="margin-top: 28px;">
+      <div class="biz-row reveal">
+        <span class="lbl">Employees</span>
+        <span class="val">472,400</span>
+      </div>
+      <div class="biz-row reveal d1">
+        <span class="lbl">Stores worldwide</span>
+        <span class="val">2,347<span class="unit">+ </span></span>
+      </div>
+      <div class="biz-row reveal d2">
+        <span class="lbl">SKUs in-store / online</span>
+        <span class="val">30K<span class="unit">/ 1M</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 3 ============ -->
+  <div class="reset reveal">
+    <div class="quote">
+      Every dollar that walks in the door has <span class="pop"><em>somewhere it has to go</em></span>.
+    </div>
+    <div class="attrib">— Where it ends up</div>
+  </div>
+
+  <!-- ============ COSTS — RECEIPT ============ -->
+  <section>
+    <div class="eyebrow reveal">The bill <span class="dot">·</span> <span class="num">No. 04</span></div>
+    <h2 class="display reveal d1" style="font-size: 44px; margin-top: 18px;">
+      One hundred<br/>cents in. <em>Eighty-eight</em><br/>back out.
+    </h2>
+    <p class="reveal d2" style="margin-top: 18px;">
+      Of every dollar that crosses the register, <em>two-thirds</em> is what's on the shelf, <strong>17¢</strong> keeps the lights on, and the rest is what's left.
+    </p>
+
+    <div class="receipt-frame reveal d3">
+      <div class="receipt-inner">
+        <div class="receipt-head">
+          <div class="store">THE HOME DEPOT · #FY25</div>
+          <div class="total">$164.68B</div>
+          <div class="totlabel">Total Revenue</div>
+        </div>
+
+        <div class="line-item">
+          <span class="swatch" style="background:#E05C2A"></span>
+          <div class="line-item-row">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span class="lbl">Cost of revenue</span>
+              <span class="pct">67%</span>
+            </div>
+            <div class="bar"><i style="--c:#E05C2A; --w:67%"></i></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <span class="swatch" style="background:#3B82F6"></span>
+          <div class="line-item-row">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span class="lbl">SG&amp;A</span>
+              <span class="pct">17%</span>
+            </div>
+            <div class="bar"><i style="--c:#3B82F6; --w:17%"></i></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <span class="swatch" style="background:#8B5CF6"></span>
+          <div class="line-item-row">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span class="lbl">Depreciation &amp; amortization</span>
+              <span class="pct">3%</span>
+            </div>
+            <div class="bar"><i style="--c:#8B5CF6; --w:3%"></i></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <span class="swatch" style="background:#F59E0B"></span>
+          <div class="line-item-row">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span class="lbl">Interest expense</span>
+              <span class="pct">1%</span>
+            </div>
+            <div class="bar"><i style="--c:#F59E0B; --w:1%"></i></div>
+          </div>
+        </div>
+
+        <div class="receipt-foot">
+          <span>Subtotal costs</span>
+          <span>88¢</span>
+        </div>
+        <div class="receipt-foot" style="border-top:0; padding-top:6px;">
+          <span class="survives">Survives → operating</span>
+          <span class="survives">12¢</span>
+        </div>
+
+        <!-- barcode -->
+        <div style="margin-top: 18px; display:flex; justify-content:center;">
+          <svg viewBox="0 0 160 28" width="160" height="28" aria-hidden="true">
+            <g fill="#1A1611">
+              <rect x="2" y="0" width="2" height="22"/>
+              <rect x="6" y="0" width="1" height="22"/>
+              <rect x="10" y="0" width="3" height="22"/>
+              <rect x="16" y="0" width="1" height="22"/>
+              <rect x="20" y="0" width="2" height="22"/>
+              <rect x="25" y="0" width="3" height="22"/>
+              <rect x="32" y="0" width="1" height="22"/>
+              <rect x="36" y="0" width="2" height="22"/>
+              <rect x="42" y="0" width="3" height="22"/>
+              <rect x="48" y="0" width="1" height="22"/>
+              <rect x="52" y="0" width="2" height="22"/>
+              <rect x="58" y="0" width="2" height="22"/>
+              <rect x="64" y="0" width="3" height="22"/>
+              <rect x="70" y="0" width="1" height="22"/>
+              <rect x="74" y="0" width="2" height="22"/>
+              <rect x="80" y="0" width="3" height="22"/>
+              <rect x="86" y="0" width="1" height="22"/>
+              <rect x="90" y="0" width="2" height="22"/>
+              <rect x="96" y="0" width="2" height="22"/>
+              <rect x="102" y="0" width="1" height="22"/>
+              <rect x="106" y="0" width="3" height="22"/>
+              <rect x="112" y="0" width="1" height="22"/>
+              <rect x="116" y="0" width="2" height="22"/>
+              <rect x="122" y="0" width="3" height="22"/>
+              <rect x="128" y="0" width="1" height="22"/>
+              <rect x="132" y="0" width="2" height="22"/>
+              <rect x="138" y="0" width="3" height="22"/>
+              <rect x="144" y="0" width="1" height="22"/>
+              <rect x="148" y="0" width="2" height="22"/>
+              <rect x="154" y="0" width="2" height="22"/>
+            </g>
+            <text x="80" y="28" text-anchor="middle" font-family="ui-monospace, monospace" font-size="6" fill="#6B6258" letter-spacing="2">HD · 0164680000000</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTPRINT ============ -->
+  <section class="sunken">
+    <div class="eyebrow reveal">The footprint <span class="dot">·</span> <span class="num">No. 05</span></div>
+    <h2 class="display reveal d1" style="font-size: 44px; margin-top: 18px;">
+      An <em>American</em><br/>map, drawn in<br/>two-by-fours.
+    </h2>
+    <p class="reveal d2" style="margin-top: 18px;">
+      <strong>92%</strong> of revenue comes from inside U.S. borders. The rest leaks across into <em>Canada</em> and <em>Mexico</em> — including Puerto Rico, Guam, and the U.S. Virgin Islands.
+    </p>
+
+    <div class="map-wrap reveal d3">
+      <svg class="map-svg" viewBox="0 0 372 240" aria-hidden="true">
+        <!-- North America simplified silhouette, with US prominent -->
+        <defs>
+          <pattern id="dotgrid" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+            <circle cx="3" cy="3" r="0.6" fill="#E05C2A" opacity="0.85"/>
+          </pattern>
+          <pattern id="dotgrid-d" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+            <circle cx="3" cy="3" r="0.6" fill="#6B6258" opacity="0.6"/>
+          </pattern>
+        </defs>
+
+        <!-- Canada (top, lighter) -->
+        <path d="M 30,50 Q 40,30 90,30 L 200,28 Q 270,30 330,40 L 350,54 L 348,76 L 300,82 L 240,78 L 180,80 L 110,82 L 60,80 L 36,72 Z"
+              fill="url(#dotgrid-d)" stroke="#A4988A" stroke-width="0.6"/>
+        <text x="190" y="56" text-anchor="middle" font-family="ui-monospace, monospace" font-size="8" fill="#6B6258" letter-spacing="1.5">CANADA</text>
+
+        <!-- USA (centerpiece) -->
+        <path d="M 36,82 L 110,84 L 180,82 L 240,80 L 300,84 L 348,80 L 350,110 Q 340,140 320,150 L 300,162 L 280,158 L 250,160 L 210,156 Q 180,162 150,158 L 110,160 L 80,154 L 50,140 L 38,118 Z"
+              fill="url(#dotgrid)" stroke="#B84616" stroke-width="0.8"/>
+        <text x="186" y="120" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#1A1611" letter-spacing="3" font-weight="700">UNITED STATES</text>
+        <text x="186" y="134" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#B84616">92%</text>
+
+        <!-- Mexico (bottom, lighter) -->
+        <path d="M 110,162 L 220,168 L 270,170 L 290,184 L 280,210 L 240,220 L 200,218 L 160,206 L 130,190 Z"
+              fill="url(#dotgrid-d)" stroke="#A4988A" stroke-width="0.6"/>
+        <text x="206" y="196" text-anchor="middle" font-family="ui-monospace, monospace" font-size="8" fill="#6B6258" letter-spacing="1.5">MEXICO</text>
+
+        <!-- Store dots in US — clustered -->
+        <g fill="#1A1611">
+          <circle cx="80" cy="100" r="1.5"/>
+          <circle cx="100" cy="108" r="1.2"/>
+          <circle cx="124" cy="98" r="1.5"/>
+          <circle cx="140" cy="110" r="1.2"/>
+          <circle cx="160" cy="100" r="1.5"/>
+          <circle cx="178" cy="106" r="1.2"/>
+          <circle cx="196" cy="98" r="1.5"/>
+          <circle cx="218" cy="108" r="1.2"/>
+          <circle cx="240" cy="100" r="1.5"/>
+          <circle cx="258" cy="106" r="1.2"/>
+          <circle cx="278" cy="100" r="1.5"/>
+          <circle cx="300" cy="108" r="1.2"/>
+          <circle cx="324" cy="100" r="1.5"/>
+          <circle cx="92" cy="138" r="1.2"/>
+          <circle cx="120" cy="142" r="1.5"/>
+          <circle cx="148" cy="138" r="1.2"/>
+          <circle cx="174" cy="146" r="1.5"/>
+          <circle cx="200" cy="138" r="1.2"/>
+          <circle cx="228" cy="146" r="1.5"/>
+          <circle cx="252" cy="138" r="1.2"/>
+          <circle cx="278" cy="146" r="1.5"/>
+          <circle cx="304" cy="138" r="1.2"/>
+        </g>
+
+        <!-- Compass / scale -->
+        <g transform="translate(20,212)">
+          <line x1="0" y1="0" x2="40" y2="0" stroke="#6B6258" stroke-width="0.6"/>
+          <line x1="0" y1="-3" x2="0" y2="3" stroke="#6B6258" stroke-width="0.6"/>
+          <line x1="40" y1="-3" x2="40" y2="3" stroke="#6B6258" stroke-width="0.6"/>
+          <text x="20" y="14" text-anchor="middle" font-family="ui-monospace, monospace" font-size="6.5" fill="#6B6258" letter-spacing="1">~1,500 MI</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="map-callout reveal d4">
+      <div>
+        <div class="pct"><em>92</em>%</div>
+        <div class="lbl">United States<br/>+ Puerto Rico, Guam, USVI</div>
+      </div>
+      <div>
+        <div class="pct">8%</div>
+        <div class="lbl">Canada &amp;<br/>Mexico</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE BET — DARK INTERLUDE ============ -->
+  <section class="dark">
+    <div class="eyebrow reveal">The bet <span class="dot">·</span> <span class="num">No. 06</span></div>
+    <h2 class="display reveal d1" style="font-size: 48px; margin-top: 22px;">
+      $22.5B<br/>spent. The<br/><em>bill</em> stays.
+    </h2>
+    <p class="reveal d2" style="margin-top: 22px;">
+      Two acquisitions in two years rewrote the balance sheet. Home Depot bought its way into the <em>Pro</em> contractor's loyalty — and posted <strong>$45.9B</strong> of long-term debt to do it.
+    </p>
+
+    <div class="acquisitions">
+      <div class="acq-card reveal d3">
+        <div class="name">SRS Distribution</div>
+        <div class="price">$<span>18.25</span><em>B</em></div>
+        <div class="what">Roofing, landscape, and pool-supply distributor — the largest acquisition in Home Depot's history. Bought to deliver to the Pro on the jobsite, not the aisle.</div>
+      </div>
+      <div class="acq-card reveal d4">
+        <div class="name">GMS Inc.</div>
+        <div class="price">~$<span>4.3</span><em>B</em></div>
+        <div class="what">Drywall and ceilings specialty distribution. The follow-up. Doubles down on the Pro thesis with national job-site fulfillment.</div>
+      </div>
+    </div>
+
+    <!-- Debt bar — long, heavy -->
+    <div class="debt-bar reveal">
+      <svg viewBox="0 0 372 110" aria-hidden="true">
+        <text x="0" y="14" font-family="ui-monospace, monospace" font-size="9" fill="#FFAA85" letter-spacing="1.5">LONG-TERM DEBT (FY25 mid)</text>
+        <!-- Track -->
+        <rect x="0" y="22" width="372" height="32" fill="#221A11" stroke="#3A2C1A" stroke-width="0.5"/>
+        <!-- Bar — full -->
+        <rect x="0" y="22" width="372" height="32" fill="#FF9468"/>
+        <!-- Hatch overlay for "weight" -->
+        <defs>
+          <pattern id="hatch" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#221A11" stroke-width="1.4" opacity="0.35"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="22" width="372" height="32" fill="url(#hatch)"/>
+        <!-- Equity comparison line -->
+        <rect x="0" y="62" width="103" height="10" fill="#3A2C1A" stroke="#5A4828" stroke-width="0.5"/>
+        <text x="0" y="84" font-family="ui-monospace, monospace" font-size="8" fill="#8A8275" letter-spacing="1.2">EQUITY $12.81B</text>
+        <text x="372" y="14" text-anchor="end" font-family="Instrument Serif, serif" font-size="20" fill="#F0E9DD">$45.9B</text>
+        <text x="372" y="84" text-anchor="end" font-family="ui-monospace, monospace" font-size="8" fill="#FFAA85" letter-spacing="1.2">3.6× EQUITY</text>
+      </svg>
+    </div>
+
+    <div class="debt-stats reveal">
+      <div>
+        <div class="num">$<em>19.5</em>B</div>
+        <div class="lbl">Goodwill on books<br/>post-acquisition</div>
+      </div>
+      <div>
+        <div class="num">$9.0B</div>
+        <div class="lbl">Net intangibles<br/>added</div>
+      </div>
+      <div>
+        <div class="num">$1.39B</div>
+        <div class="lbl">Cash on hand<br/>(FY25)</div>
+      </div>
+    </div>
+
+    <div class="pause-note reveal">
+      <div class="label">Buybacks · Paused</div>
+      <div class="body">Management has put the buyback program on the shelf. The dividend stays — that's been raised every year since 2010 — but every other dollar goes toward <em>paying down what was borrowed</em>.</div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 4 ============ -->
+  <div class="reset reveal">
+    <div class="quote">
+      Across the parking lot, three rivals — none of them <span class="pop"><em>quite</em></span> the same shape.
+    </div>
+    <div class="attrib">— The lineup</div>
+  </div>
+
+  <!-- ============ THE COMPETITION ============ -->
+  <section>
+    <div class="eyebrow reveal">The lineup <span class="dot">·</span> <span class="num">No. 07</span></div>
+    <h2 class="display reveal d1" style="font-size: 44px; margin-top: 18px;">
+      Three trucks<br/>in the lot.<br/>Different <em>cargo</em>.
+    </h2>
+    <p class="reveal d2" style="margin-top: 18px;">
+      Tap any rival to see the read. Bars are sized to market cap; the orange line on the right is Home Depot at <strong>$348B</strong>.
+    </p>
+
+    <div class="lineup">
+      <!-- LOW: 140.98 / 348.01 = 40.5% -->
+      <div class="competitor reveal d3" data-comp="low">
+        <div class="top">
+          <span class="ticker">LOW</span>
+          <span class="name">Lowe's</span>
+          <span class="mcap">$140.98B</span>
+        </div>
+        <div class="gauge">
+          <div class="track"></div>
+          <div class="bar" style="--w: 40.5%"></div>
+          <div class="hd-mark"></div>
+        </div>
+        <div class="meta">
+          <div><b>$86.3B</b>Revenue</div>
+          <div><b class="up">+3.1%</b>Growth YoY</div>
+          <div><b>21.2×</b>P/E TTM</div>
+        </div>
+        <div class="blurb">
+          <p>Home Depot's <em>most direct and longstanding rival</em> — 1,700+ big-box stores across the U.S. and Canada with overlapping product assortment in building materials, tools, appliances, lawn and garden. Competes for the same DIY and Pro dollar in virtually every major U.S. market.</p>
+          <div class="tap-hint">Tap to collapse —</div>
+        </div>
+        <div class="tap-hint">Tap for the read —</div>
+      </div>
+
+      <!-- MELI: 94.09 / 348.01 = 27% -->
+      <div class="competitor reveal" data-comp="meli">
+        <div class="top">
+          <span class="ticker">MELI</span>
+          <span class="name">MercadoLibre</span>
+          <span class="mcap">$94.09B</span>
+        </div>
+        <div class="gauge">
+          <div class="track"></div>
+          <div class="bar threat" style="--w: 27%"></div>
+          <div class="hd-mark"></div>
+        </div>
+        <div class="meta">
+          <div><b>$28.9B</b>Revenue</div>
+          <div><b class="up">+39.1%</b>Growth YoY</div>
+          <div><b>47.1×</b>P/E TTM</div>
+        </div>
+        <div class="blurb">
+          <p>An <em>emerging threat</em> in Mexico, where Home Depot is expanding. MercadoLibre's Latin American e-commerce + fintech platform increasingly captures the same Pro and DIY spend, with rapid fulfillment and embedded payments displacing traditional retail.</p>
+          <div class="tap-hint">Tap to collapse —</div>
+        </div>
+        <div class="tap-hint">Tap for the read —</div>
+      </div>
+
+      <!-- TJX: 177.84 / 348.01 = 51.1% -->
+      <div class="competitor reveal d1" data-comp="tjx">
+        <div class="top">
+          <span class="ticker">TJX</span>
+          <span class="name">TJX Companies</span>
+          <span class="mcap">$177.84B</span>
+        </div>
+        <div class="gauge">
+          <div class="track"></div>
+          <div class="bar" style="--w: 51.1%"></div>
+          <div class="hd-mark"></div>
+        </div>
+        <div class="meta">
+          <div><b>$60.4B</b>Revenue</div>
+          <div><b class="up">+7.1%</b>Growth YoY</div>
+          <div><b>32.4×</b>P/E TTM</div>
+        </div>
+        <div class="blurb">
+          <p>Competes through <em>HomeGoods</em> and <em>HomeSense</em> in decor, storage, and seasonal — capturing discretionary home spending from value-oriented consumers who might otherwise shop Home Depot's decor and organization aisles.</p>
+          <div class="tap-hint">Tap to collapse —</div>
+        </div>
+        <div class="tap-hint">Tap for the read —</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TAKEAWAY — DOLLAR BREAKDOWN ============ -->
+  <section class="closing">
+    <div class="eyebrow reveal">The takeaway <span class="dot">·</span> <span class="num">No. 08</span></div>
+
+    <h2 class="reveal d1" style="margin-top: 22px;">
+      $164B<br/>in. <em>$12¢</em><br/>out, per<br/>dollar.
+    </h2>
+
+    <div class="dollar-wrap reveal d2">
+      <svg class="dollar-svg" viewBox="0 0 372 240" aria-hidden="true">
+        <!-- Dollar bill made of 100 cells, lit by category color -->
+        <defs>
+          <linearGradient id="bill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#F4EFE2"/>
+            <stop offset="1" stop-color="#E8E0CC"/>
+          </linearGradient>
+        </defs>
+        <rect x="6" y="20" width="360" height="200" rx="4" fill="url(#bill)" stroke="#1A1611" stroke-width="1"/>
+        <rect x="14" y="28" width="344" height="184" fill="none" stroke="#1A1611" stroke-width="0.4"/>
+
+        <!-- 100 cents grid: 10 wide x 10 tall, tracking percentages -->
+        <!-- 67 cost-of-rev (orange), 17 SGA (blue), 3 D&A (purple), 1 interest (amber), 12 survives (ink) -->
+        <g id="cents">
+          <!-- generated below by JS for animation; static fallback identical to JS output -->
+        </g>
+
+        <!-- Caption -->
+        <text x="186" y="52" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="16" fill="#1A1611">on every dollar</text>
+        <text x="186" y="194" text-anchor="middle" font-family="ui-monospace, monospace" font-size="8" fill="#6B6258" letter-spacing="2">100¢ · ALLOCATED</text>
+
+        <!-- Corner marks -->
+        <text x="22" y="40" font-family="Instrument Serif, serif" font-size="14" fill="#1A1611">$1</text>
+        <text x="350" y="40" text-anchor="end" font-family="Instrument Serif, serif" font-size="14" fill="#1A1611">$1</text>
+        <text x="22" y="208" font-family="ui-monospace, monospace" font-size="8" fill="#1A1611" letter-spacing="2">HD · FY25</text>
+        <text x="350" y="208" text-anchor="end" font-family="ui-monospace, monospace" font-size="8" fill="#1A1611" letter-spacing="2">100¢</text>
+      </svg>
+
+      <!-- Legend -->
+      <div style="margin-top: 18px; display:grid; grid-template-columns: 1fr 1fr; gap: 8px 16px;">
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:10px; height:10px; background:#E05C2A; border-radius:2px;"></span><span class="mono" style="font-size:11px; color:var(--hd-ink-2);">67¢ goods on shelf</span></div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:10px; height:10px; background:#3B82F6; border-radius:2px;"></span><span class="mono" style="font-size:11px; color:var(--hd-ink-2);">17¢ overhead</span></div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:10px; height:10px; background:#8B5CF6; border-radius:2px;"></span><span class="mono" style="font-size:11px; color:var(--hd-ink-2);">3¢ depreciation</span></div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:10px; height:10px; background:#F59E0B; border-radius:2px;"></span><span class="mono" style="font-size:11px; color:var(--hd-ink-2);">1¢ interest</span></div>
+        <div style="display:flex; align-items:center; gap:8px; grid-column: 1 / -1;"><span style="width:10px; height:10px; background:#1A1611; border-radius:2px;"></span><span class="mono" style="font-size:11px; color:var(--hd-orange); font-weight:500;">12¢ survives — operating profit</span></div>
+      </div>
+    </div>
+
+    <p class="kicker reveal d3">
+      The opening claim was <em>2,347 boxes</em> and <em>$164.68B</em> through the registers.<br/>
+      The closing one is simpler. <strong>Twelve cents on the dollar</strong> survive — and <em>nine billion of them</em> are coming back to shareholders as a dividend that has been raised every year since <strong>2010</strong>.
+    </p>
+
+    <p class="kicker reveal d4" style="margin-top: 22px; font-style: italic; font-family: var(--font-display); font-size: 22px; line-height: 1.25; color: var(--hd-ink);">
+      A retailer this large doesn't grow by selling more lumber. It grows by <span style="color: var(--hd-orange);">buying the trucks</span> that show up at the jobsite — and waiting for <span style="color: var(--hd-orange);">the bill</span> to settle.
+    </p>
+  </section>
+
+  <!-- ============ FOOT ============ -->
+  <div class="foot">
+    <div><span class="ticker-foot">HD</span> · The Home Depot, Inc. · NYSE</div>
+    <div>Recap · FY 2025 · Generated April '26</div>
+    <div>Atlanta · 472,400 employees · 2,347 stores</div>
+    <div style="margin-top:14px;">All figures from filings; recap is editorial.</div>
+  </div>
+
+</div>
+
+<script>
+  // ============ Scroll progress + chrome ============
+  const page = document.getElementById('page');
+  const progress = document.getElementById('progress');
+
+  function updateProgress() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+    document.documentElement.style.setProperty('--scroll', pct + '%');
+  }
+  updateProgress();
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+
+  // ============ Reveal-on-scroll ============
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        // Trigger count-ups
+        e.target.querySelectorAll('.countup').forEach(node => {
+          if (node.dataset.done) return;
+          node.dataset.done = '1';
+          const to = parseFloat(node.dataset.to);
+          const decimals = parseInt(node.dataset.decimals || '0', 10);
+          const dur = 1400;
+          const t0 = performance.now();
+          const step = (now) => {
+            const t = Math.min(1, (now - t0) / dur);
+            const eased = 1 - Math.pow(1 - t, 3);
+            const v = to * eased;
+            node.textContent = v.toFixed(decimals);
+            if (t < 1) requestAnimationFrame(step);
+            else node.textContent = to.toFixed(decimals);
+          };
+          requestAnimationFrame(step);
+        });
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // First-fold reveals are already 'in' (set inline) — no observation needed.
+
+  // ============ Competitors — tap to expand ============
+  document.querySelectorAll('.competitor').forEach(c => {
+    c.addEventListener('click', () => {
+      c.classList.toggle('open');
+      // Hide closed-state hint when open
+      const hints = c.querySelectorAll('.tap-hint');
+      // CSS handles visual; nothing else needed
+    });
+  });
+
+  // ============ Build the dollar grid (100 cents) ============
+  (function buildDollar() {
+    const g = document.getElementById('cents');
+    if (!g) return;
+    // Grid: 10 cols × 10 rows, inside x: 22..350, y: 60..186
+    const cols = 10, rows = 10;
+    const x0 = 30, y0 = 64, w = 320, h = 124;
+    const cw = w / cols, ch = h / rows;
+    // Distribution: 67 orange, 17 blue, 3 purple, 1 amber, 12 ink (survives)
+    const fills = [];
+    const push = (n, c, kind) => { for (let i=0;i<n;i++) fills.push({c, kind}); };
+    push(67, '#E05C2A', 'cost');
+    push(17, '#3B82F6', 'sga');
+    push(3,  '#8B5CF6', 'da');
+    push(1,  '#F59E0B', 'int');
+    push(12, '#1A1611', 'profit');
+    // Render row-major, so the bottom-right 12 cells are "what survives" (ink/orange-ringed)
+    let i = 0;
+    const ns = 'http://www.w3.org/2000/svg';
+    for (let r = 0; r < rows; r++) {
+      for (let col = 0; col < cols; col++) {
+        const cell = fills[i++];
+        const x = x0 + col * cw + 1.2;
+        const y = y0 + r  * ch + 1.2;
+        const cellW = cw - 2.4;
+        const cellH = ch - 2.4;
+        const rect = document.createElementNS(ns, 'rect');
+        rect.setAttribute('x', x.toFixed(2));
+        rect.setAttribute('y', y.toFixed(2));
+        rect.setAttribute('width', cellW.toFixed(2));
+        rect.setAttribute('height', cellH.toFixed(2));
+        rect.setAttribute('rx', '1.2');
+        rect.setAttribute('fill', cell.c);
+        if (cell.kind === 'profit') {
+          rect.setAttribute('stroke', '#E05C2A');
+          rect.setAttribute('stroke-width', '0.8');
+        } else {
+          rect.setAttribute('opacity', '0.92');
+        }
+        // Stagger reveal
+        rect.style.opacity = '0';
+        rect.style.transition = 'opacity 0.4s var(--ease-out)';
+        rect.style.transitionDelay = (i * 8) + 'ms';
+        g.appendChild(rect);
+      }
+    }
+    // Trigger reveal once visible
+    const dollarSvg = document.querySelector('.dollar-svg');
+    if (dollarSvg) {
+      const dio = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            g.querySelectorAll('rect').forEach(r => r.style.opacity = r.getAttribute('stroke') ? '1' : '0.92');
+            dio.disconnect();
+          }
+        });
+      }, { threshold: 0.2 });
+      dio.observe(dollarSvg);
+    }
+  })();
+</script>
+</body>
+</html>

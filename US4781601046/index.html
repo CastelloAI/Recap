@@ -1,0 +1,1684 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JNJ · Recap · FY '25</title>
+<link rel="stylesheet" href="ds/colors_and_type.css">
+<style>
+  /* =========================================================
+     JNJ Recap — palette overrides
+     The design system's coral pop doesn't read clinical for JNJ.
+     We retune to a JNJ-evocative palette: paper-cream, ledger ink,
+     a clinical signal red, and one iris-violet reserved for "the bet".
+     Everything else inherits from the design system.
+  ========================================================= */
+  :root {
+    --paper:        #F7F4EE;     /* warmer, slightly more cream */
+    --paper-2:      #EFEBE2;
+    --paper-3:      #E5E0D4;
+    --ink:          #14110E;
+    --ink-2:        #3A352E;
+    --ink-3:        #6B6459;
+    --ink-4:        #A39C8E;
+    --line:         #DCD7CB;
+    --line-strong:  #C4BEAF;
+
+    /* JNJ signal red — apothecary / clinical, not coral */
+    --signal-50:  #FFF1ED;
+    --signal-100: #FFD9CC;
+    --signal-300: #E85A3C;
+    --signal-400: #D43A1F;       /* main signal */
+    --signal-500: #B72C13;
+    --signal-600: #94200B;
+    --signal-700: #6B1808;
+
+    /* Iris reserved for "the bet" */
+    --bet:        #6F66E0;
+    --bet-soft:   #E5E2FF;
+
+    /* Semantic remap */
+    --bg:           var(--paper);
+    --bg-raised:    #FCFAF4;
+    --bg-sunken:    var(--paper-2);
+    --bg-deep:      #0E0C0A;     /* the dark interlude */
+    --accent:       var(--signal-400);
+    --accent-soft:  var(--signal-100);
+
+    --fg:           var(--ink);
+    --fg-muted:     var(--ink-2);
+    --fg-subtle:    var(--ink-3);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #2a2825;       /* OUTSIDE the mobile artifact: dim void */
+    color: var(--fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    display: flex; justify-content: center;
+    min-height: 100vh;
+  }
+
+  /* =========================================================
+     The mobile artifact itself — sized for thumb reach.
+     NOT wrapped in a phone bezel. This IS the design.
+  ========================================================= */
+  .stage {
+    width: 100%;
+    max-width: 420px;
+    background: var(--bg);
+    color: var(--fg);
+    position: relative;
+    overflow: hidden;       /* clip full-bleed bg art to the artifact */
+    box-shadow: 0 0 80px rgba(0,0,0,0.35);
+  }
+
+  /* ============= PERSISTENT CHROME ============= */
+  .chrome {
+    position: sticky; top: 0; left: 0; right: 0;
+    z-index: 50;
+    background: rgba(247,244,238,0.78);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    border-bottom: 1px solid rgba(220, 215, 203, 0.6);
+  }
+  .chrome-row {
+    display: flex; align-items: center;
+    padding: 14px 20px 12px;
+    gap: 10px;
+  }
+  .ticker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    background: var(--ink);
+    color: #F7F4EE;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    flex: 1;
+  }
+  .chrome-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .progress {
+    height: 1.5px;
+    background: transparent;
+    position: relative;
+  }
+  .progress-fill {
+    position: absolute; top: 0; left: 0;
+    height: 100%;
+    background: var(--signal-400);
+    width: 0%;
+    transition: width 80ms linear;
+  }
+
+  /* ============= GENERIC SECTION RHYTHM =============
+     No card-on-card stacks. Sections breathe with vertical
+     rhythm. Tonal alternation only when the story calls for it.
+  */
+  section { position: relative; padding: 64px 24px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--signal-400);
+    font-weight: 500;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .eyebrow .dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--signal-400);
+    display: inline-block;
+  }
+  .eyebrow .meta-num {
+    color: var(--ink-3);
+    margin-left: auto;
+  }
+
+  .display { font-family: var(--font-display); font-weight: 400; line-height: 0.96; letter-spacing: -0.022em; }
+  .italic { font-style: italic; }
+  .sig { color: var(--signal-400); }
+  .bet-c { color: var(--bet); }
+
+  p.body {
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  /* ============= RESET BEATS =============
+     Italic-serif interludes that bridge sections narratively
+     instead of enumerating them. Two to four across the page.
+  */
+  .reset {
+    padding: 56px 28px;
+    background: var(--paper-2);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .reset .interlude {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.25;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .reset .interlude .sig { font-style: italic; }
+  .reset .ix-meta {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 18px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .reset .ix-meta .rule {
+    flex: 1; height: 1px; background: var(--line-strong);
+  }
+
+  /* ============= HERO ============= */
+  .hero {
+    padding: 90px 24px 72px;
+    position: relative;
+    min-height: 92vh;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 28px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hero-eyebrow .cross {
+    display: inline-block;
+    width: 14px; height: 14px;
+    position: relative;
+  }
+  .hero-eyebrow .cross::before,
+  .hero-eyebrow .cross::after {
+    content: ""; position: absolute; background: var(--signal-400);
+  }
+  .hero-eyebrow .cross::before { left: 5px; top: 0; width: 4px; height: 14px; }
+  .hero-eyebrow .cross::after  { top: 5px; left: 0; width: 14px; height: 4px; }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 60px;
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin: 0 0 28px;
+    text-wrap: balance;
+  }
+  .hero h1 .num { font-feature-settings: "lnum"; }
+  .hero h1 .red-dot {
+    display: inline-block;
+    width: 12px; height: 12px;
+    background: var(--signal-400);
+    border-radius: 50%;
+    margin-left: 4px;
+    vertical-align: 0.18em;
+  }
+
+  .hero-sub {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.4;
+    color: var(--ink-2);
+    margin-bottom: 36px;
+    max-width: 26ch;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px 12px;
+    margin-top: 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .hero-stat .v {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .hero-stat .l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 6px;
+    line-height: 1.3;
+  }
+
+  /* Hero capsule — slowly rotates, tilted; this is the dominant metaphor */
+  .hero-capsule-wrap {
+    position: absolute;
+    right: -40px;
+    top: 110px;
+    width: 320px; height: 320px;
+    pointer-events: none;
+    opacity: 0.95;
+  }
+  .capsule-svg {
+    width: 100%; height: 100%;
+    filter: drop-shadow(0 28px 40px rgba(180, 50, 30, 0.18));
+    animation: capspin 32s linear infinite;
+    transform-origin: 50% 50%;
+  }
+  @keyframes capspin {
+    from { transform: rotate(-12deg); }
+    to   { transform: rotate(348deg); }
+  }
+
+  /* ============= THE SPLIT (segments) ============= */
+  .split {
+    background: var(--bg);
+    padding-top: 88px;
+  }
+  .split .lede {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1.05;
+    color: var(--ink);
+    letter-spacing: -0.018em;
+    margin: 18px 0 12px;
+    text-wrap: balance;
+  }
+  .split .lede em { color: var(--signal-400); font-style: italic; }
+  .split-graphic {
+    margin: 42px -24px 36px;
+    padding: 0 24px;
+  }
+  .pill-split {
+    width: 100%;
+    height: 220px;
+  }
+  .seg-rows {
+    margin-top: 24px;
+    display: grid; gap: 18px;
+  }
+  .seg-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .seg-row:last-child { border-bottom: none; }
+  .seg-pct {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1;
+    width: 78px;
+  }
+  .seg-pct .of { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.1em; display:block; margin-top: 4px; }
+  .seg-name {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .seg-name .drugs {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-top: 6px;
+    font-weight: 400;
+  }
+  .seg-rev {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .seg-rev .b { color: var(--ink-3); font-size: 10px; letter-spacing: 0.1em; display: block; }
+
+  /* ============= SCALE ============= */
+  .scale h2.lede {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.04;
+    margin: 14px 0 16px;
+    letter-spacing: -0.018em;
+  }
+  .scale h2.lede em { color: var(--signal-400); font-style: italic; }
+  .bignum {
+    margin: 36px 0 24px;
+  }
+  .bignum .v {
+    font-family: var(--font-display);
+    font-size: 108px;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    display: block;
+  }
+  .bignum .v .dot { color: var(--signal-400); }
+  .bignum .l {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 12px;
+    display: block;
+  }
+
+  .margin-bar {
+    margin-top: 28px;
+  }
+  .mb-track {
+    height: 22px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+  .mb-fill {
+    height: 100%; width: 0%;
+    background: var(--ink);
+    transition: width 1s var(--ease-out);
+    position: relative;
+  }
+  .mb-fill::after {
+    content: "";
+    position: absolute; top: 0; right: 0; bottom: 0;
+    width: 1px; background: var(--signal-400);
+  }
+  .mb-labels {
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    margin-top: 10px;
+  }
+  .mb-labels .pct { color: var(--ink); font-weight: 500; }
+
+  .scale-grid {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 18px;
+  }
+  .sg-tile .v {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .sg-tile .v em { font-style: italic; color: var(--signal-400); }
+  .sg-tile .l {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+
+  /* ============= COUNTRIES STRIP ============= */
+  .countries {
+    margin-top: 48px;
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+  }
+  .countries .head {
+    display: flex; justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+  }
+  .countries .num {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--ink);
+  }
+  .countries .lab {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .country-grid {
+    display: grid;
+    grid-template-columns: repeat(25, 1fr);
+    gap: 3px;
+  }
+  .country-cell {
+    aspect-ratio: 1;
+    background: var(--ink);
+    border-radius: 1px;
+    opacity: 0.85;
+  }
+  .country-cell.faded { background: var(--paper-3); opacity: 1; }
+
+  /* ============= DOLLAR-CENT GRID ============= */
+  .dollar {
+    background: var(--paper-2);
+    padding: 88px 24px 88px;
+  }
+  .dollar h2 {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.04;
+    margin: 14px 0 12px;
+    letter-spacing: -0.018em;
+  }
+  .dollar .sub {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-2);
+    line-height: 1.4;
+    margin-bottom: 36px;
+  }
+  .cent-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px;
+    margin: 28px 0 24px;
+  }
+  .cent {
+    aspect-ratio: 1;
+    background: var(--paper-3);
+    border-radius: 2px;
+    transition: background 400ms var(--ease-out);
+    position: relative;
+  }
+  .cent .glyph {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 500;
+  }
+  .cent.lit .glyph { color: rgba(255,255,255,0.7); }
+  .cent.net {
+    background: var(--ink) !important;
+    box-shadow: 0 0 0 1.5px var(--signal-400);
+  }
+  .cent.net .glyph { color: var(--signal-400); font-weight: 500; }
+
+  .legend {
+    display: grid;
+    gap: 12px;
+    margin-top: 28px;
+  }
+  .legend-row {
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .legend-row:last-child { border-bottom: none; }
+  .legend-sw {
+    width: 14px; height: 14px;
+    border-radius: 2px;
+  }
+  .legend-name {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .legend-name .ann {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+  .legend-pct {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .legend-row.net .legend-name { font-weight: 500; }
+  .legend-row.net .legend-pct { color: var(--signal-400); font-weight: 500; }
+
+  /* ============= FOOTPRINT ============= */
+  .footprint {
+    padding: 88px 24px;
+  }
+  .footprint h2 {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.04;
+    margin: 14px 0 12px;
+    letter-spacing: -0.018em;
+  }
+  .footprint h2 em { color: var(--signal-400); font-style: italic; }
+  .map-svg {
+    width: 100%;
+    margin: 38px 0 12px;
+    overflow: visible;
+  }
+  .geo-rows {
+    display: grid; gap: 0;
+    margin-top: 12px;
+  }
+  .geo-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .geo-row:last-child { border-bottom: none; }
+  .geo-pct {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1;
+    width: 64px;
+    color: var(--ink);
+  }
+  .geo-name {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .geo-bar {
+    grid-column: 1 / -1;
+    height: 2px;
+    background: var(--paper-2);
+    border-radius: 1px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .geo-bar-fill {
+    height: 100%;
+    background: var(--ink);
+    width: 0;
+    transition: width 0.9s var(--ease-out);
+  }
+
+  /* ============= THE BET ============= */
+  .bet {
+    background: var(--bg);
+    padding: 88px 24px;
+  }
+  .bet .lede {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.05;
+    margin: 14px 0 24px;
+    letter-spacing: -0.018em;
+  }
+  .bet .lede em.b { color: var(--bet); font-style: italic; }
+
+  /* dividend ladder — 63 horizontal lines, growing in length */
+  .ladder-wrap {
+    margin: 40px 0 32px;
+    padding: 22px 0 6px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .ladder-meta {
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 16px;
+  }
+  .ladder {
+    display: grid;
+    gap: 2.5px;
+    align-items: stretch;
+  }
+  .ladder-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ladder-line {
+    height: 2px;
+    background: var(--ink);
+    flex: 1;
+    transform-origin: left;
+  }
+  .ladder-row.now .ladder-line { background: var(--signal-400); height: 3px; }
+  .ladder-yr {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ink-3);
+    width: 22px;
+    text-align: right;
+    letter-spacing: 0.05em;
+  }
+  .ladder-row.now .ladder-yr { color: var(--signal-400); }
+  .ladder-foot {
+    margin-top: 18px;
+    display: grid; grid-template-columns: 1fr auto; gap: 10px;
+    align-items: baseline;
+  }
+  .ladder-foot .v {
+    font-family: var(--font-display); font-size: 30px; line-height: 1; color: var(--ink);
+  }
+  .ladder-foot .l {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); line-height: 1.3; text-align: right;
+  }
+
+  .alloc {
+    margin-top: 32px;
+    display: grid; gap: 18px;
+  }
+  .alloc-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .alloc-row:last-child { border-bottom: none; }
+  .alloc-row .name {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .alloc-row .name .ann {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+    text-transform: none;
+  }
+  .alloc-row .v {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--ink);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .alloc-row.bet-row .v { color: var(--bet); font-style: italic; }
+  .alloc-row.bet-row .name .ann { color: var(--bet); }
+
+  /* ============= DEBT (DARK INTERLUDE) ============= */
+  .debt {
+    background: var(--bg-deep);
+    color: #F0EDE6;
+    padding: 96px 24px;
+    position: relative;
+  }
+  .debt .eyebrow { color: #FF8B6A; }
+  .debt .eyebrow .dot { background: #FF8B6A; }
+  .debt h2 {
+    font-family: var(--font-display);
+    font-size: 42px;
+    line-height: 1.02;
+    color: #F4F0E8;
+    letter-spacing: -0.02em;
+    margin: 16px 0 12px;
+    text-wrap: balance;
+  }
+  .debt h2 em { font-style: italic; color: #FF8B6A; }
+  .debt p.body { color: rgba(244, 240, 232, 0.66); }
+
+  .balance-svg { width: 100%; margin: 36px 0 16px; }
+
+  .balance-rows {
+    margin-top: 28px;
+    display: grid; gap: 0;
+  }
+  .balance-row {
+    display: grid; grid-template-columns: 1fr auto; gap: 8px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(244,240,232,0.12);
+    align-items: baseline;
+  }
+  .balance-row:last-child { border-bottom: none; }
+  .balance-row .name {
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    color: rgba(244, 240, 232, 0.85);
+  }
+  .balance-row .name .ann {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(244,240,232,0.45);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .balance-row .v {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: #F4F0E8;
+    line-height: 1;
+  }
+  .balance-row.debt-row .v { color: #FF8B6A; }
+
+  /* ============= COMPETITORS ============= */
+  .competitors {
+    background: var(--bg);
+    padding: 88px 24px;
+  }
+  .competitors h2 {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.04;
+    margin: 14px 0 12px;
+    letter-spacing: -0.018em;
+  }
+  .competitors h2 em { color: var(--signal-400); font-style: italic; }
+
+  .comp-bars {
+    margin-top: 36px;
+    display: grid; gap: 22px;
+  }
+  .comp {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .comp-head {
+    display: flex; align-items: baseline; gap: 10px;
+    font-family: var(--font-sans);
+  }
+  .comp-tick {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+  }
+  .comp-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    flex: 1;
+  }
+  .comp-mcap {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--ink);
+  }
+  .comp.self .comp-mcap { color: var(--signal-400); }
+  .comp.self .comp-name { color: var(--ink); }
+  .comp-bar {
+    height: 12px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+  .comp-bar-fill {
+    height: 100%;
+    background: var(--ink-2);
+    width: 0;
+    transition: width 1.1s var(--ease-out);
+  }
+  .comp.self .comp-bar-fill { background: var(--signal-400); }
+  .comp-meta {
+    display: flex; gap: 16px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    margin-top: 4px;
+  }
+  .comp-meta .k { color: var(--ink); }
+  .comp-rel {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.4;
+    margin-top: 4px;
+  }
+
+  /* ============= TAKEAWAY ============= */
+  .takeaway {
+    padding: 110px 24px 80px;
+    background: var(--bg-raised);
+    border-top: 1px solid var(--line);
+    text-align: left;
+  }
+  .takeaway .open {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 24px;
+  }
+  .takeaway .a {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1.05;
+    color: var(--ink-3);
+    letter-spacing: -0.018em;
+    text-decoration: line-through;
+    text-decoration-color: var(--line-strong);
+    text-wrap: balance;
+  }
+  .takeaway .arrow {
+    font-family: var(--font-mono);
+    color: var(--signal-400);
+    font-size: 22px;
+    margin: 28px 0 18px;
+    letter-spacing: 0.08em;
+  }
+  .takeaway .b {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+  .takeaway .b em { color: var(--signal-400); font-style: italic; }
+  .takeaway .b .big {
+    font-size: 76px;
+    display: block;
+    margin-top: 4px;
+  }
+  .takeaway .b .big em { color: var(--signal-400); font-style: italic; }
+  .takeaway .colophon {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .takeaway .colophon .red { color: var(--signal-400); }
+
+  /* ============= SCROLL REVEAL ============= */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* tap-to-deepen affordance for legend rows */
+  .legend-row, .alloc-row, .balance-row, .seg-row, .geo-row, .comp {
+    cursor: pointer;
+  }
+  .src {
+    display: none;
+    grid-column: 1 / -1;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+  .open .src { display: block; }
+  .balance-row.open .src,
+  .balance-row .src { color: rgba(244,240,232,0.55); }
+
+  /* mobile-only layout safety */
+  @media (min-width: 460px) {
+    .stage { box-shadow: 0 0 100px rgba(0,0,0,0.4); }
+  }
+
+  /* hairline mark on full bleed */
+  .full-bleed-hair {
+    height: 1px;
+    background: var(--line);
+    margin: 0 24px;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- ===== PERSISTENT CHROME ===== -->
+  <div class="chrome">
+    <div class="chrome-row">
+      <span class="ticker">JNJ</span>
+      <span class="chrome-name">Johnson &amp; Johnson</span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progress"></div></div>
+  </div>
+
+  <!-- ===== HERO / THESIS ===== -->
+  <section class="hero">
+    <div>
+      <div class="hero-eyebrow"><span class="cross"></span><span>NYSE · AAA · est. 1886</span></div>
+      <h1>
+        Ninety-four<br>
+        <span class="italic" style="font-style:italic">billion in</span><br>
+        pills, scalpels<br>
+        &amp; lenses<span class="red-dot"></span>
+      </h1>
+      <div class="hero-sub">
+        One company. <span class="sig">175 countries.</span><br>
+        A hundred and forty years of compounding.
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="v">$94.19<span style="color:var(--signal-400)">B</span></div>
+        <div class="l">FY'25 Revenue</div>
+      </div>
+      <div class="hero-stat">
+        <div class="v">$564B</div>
+        <div class="l">Market Cap</div>
+      </div>
+      <div class="hero-stat">
+        <div class="v">AAA</div>
+        <div class="l">Credit · 1 of 2 in U.S.</div>
+      </div>
+    </div>
+
+    <!-- Capsule metaphor — split into Innovative Medicine / MedTech -->
+    <div class="hero-capsule-wrap" aria-hidden="true">
+      <svg class="capsule-svg" viewBox="0 0 320 320">
+        <defs>
+          <linearGradient id="capL" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#D43A1F"/>
+            <stop offset="100%" stop-color="#94200B"/>
+          </linearGradient>
+          <linearGradient id="capR" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#F7F4EE"/>
+            <stop offset="100%" stop-color="#DCD7CB"/>
+          </linearGradient>
+        </defs>
+        <!-- Capsule body, drawn horizontally -->
+        <g transform="translate(160 160) rotate(-30)">
+          <!-- left half (red) -->
+          <path d="M -120 -42 Q -160 -42 -160 0 Q -160 42 -120 42 L 0 42 L 0 -42 Z" fill="url(#capL)"/>
+          <!-- right half (cream) -->
+          <path d="M 0 -42 L 120 -42 Q 160 -42 160 0 Q 160 42 120 42 L 0 42 Z" fill="url(#capR)" stroke="#C4BEAF" stroke-width="1"/>
+          <!-- highlight on red -->
+          <path d="M -120 -28 Q -148 -28 -148 -2" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="3" stroke-linecap="round"/>
+          <!-- divider line -->
+          <line x1="0" y1="-42" x2="0" y2="42" stroke="#FBFAF7" stroke-width="2"/>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ===== RESET BEAT 1 ===== -->
+  <div class="reset">
+    <div class="ix-meta"><span class="rule"></span><span>Pause</span></div>
+    <div class="interlude">
+      One capsule, two halves. <span class="sig italic">Sixty-four cents</span> from the medicine. Thirty-six from everything else they sell to a hospital.
+    </div>
+  </div>
+
+  <!-- ===== THE SPLIT ===== -->
+  <section class="split">
+    <div class="eyebrow"><span class="dot"></span><span>The split · 64/36</span><span class="meta-num">II</span></div>
+    <div class="lede">Two segments<br>do <em>all of it</em>.</div>
+
+    <div class="split-graphic">
+      <!-- Stacked horizontal pill split -->
+      <svg class="pill-split" viewBox="0 0 380 220" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <clipPath id="pillClip">
+            <rect x="0" y="60" width="380" height="100" rx="50" ry="50"/>
+          </clipPath>
+        </defs>
+
+        <!-- Pill outline -->
+        <rect x="0.5" y="60.5" width="379" height="99" rx="49.5" ry="49.5" fill="#FCFAF4" stroke="#C4BEAF" stroke-width="1"/>
+
+        <!-- Innovative Medicine — 64% of width -->
+        <g clip-path="url(#pillClip)">
+          <rect x="0" y="60" width="243.2" height="100" fill="#D43A1F" id="seg-ino"/>
+          <!-- divider -->
+          <line x1="243.2" y1="55" x2="243.2" y2="165" stroke="#F7F4EE" stroke-width="3"/>
+          <!-- shine -->
+          <rect x="0" y="60" width="243.2" height="14" fill="rgba(255,255,255,0.18)"/>
+        </g>
+
+        <!-- Drug pin marks on the medicine half -->
+        <g font-family="Geist Mono, monospace" font-size="9" fill="rgba(255,255,255,0.92)" letter-spacing="0.12em">
+          <text x="20"  y="118">DARZALEX</text>
+          <text x="100" y="118">·</text>
+          <text x="110" y="118">TREMFYA</text>
+          <text x="20"  y="135">CARVYKTI</text>
+          <text x="105" y="135">·</text>
+          <text x="115" y="135">+ MORE</text>
+        </g>
+
+        <!-- MedTech labels on cream side -->
+        <g font-family="Geist Mono, monospace" font-size="9" fill="#3A352E" letter-spacing="0.12em">
+          <text x="255" y="118">ETHICON</text>
+          <text x="255" y="135">DEPUY · OTTAVA</text>
+        </g>
+
+        <!-- Top labels with leaders -->
+        <g font-family="Instrument Serif, serif" fill="#14110E">
+          <text x="0" y="36" font-size="38" font-style="italic">64%</text>
+          <text x="0" y="52" font-size="10" font-family="Geist Mono, monospace" fill="#6B6459" letter-spacing="0.12em">INNOVATIVE MEDICINE</text>
+          <text x="380" y="36" font-size="38" text-anchor="end">36%</text>
+          <text x="380" y="52" font-size="10" font-family="Geist Mono, monospace" fill="#6B6459" letter-spacing="0.12em" text-anchor="end">MEDTECH</text>
+        </g>
+
+        <!-- Bottom revenue tags -->
+        <g font-family="Geist Mono, monospace" font-size="11" fill="#14110E">
+          <text x="0" y="196">$60.40B</text>
+          <text x="380" y="196" text-anchor="end">$33.79B</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="seg-rows">
+      <div class="seg-row" data-toggle>
+        <div class="seg-pct">64%<span class="of">of revenue</span></div>
+        <div class="seg-name">Innovative Medicine
+          <span class="drugs">Oncology · Immunology · Neuroscience · CV · Infectious</span>
+        </div>
+        <div class="seg-rev">$60.40B<span class="b">FY'25</span></div>
+        <div class="src">Source: company FY2025 segment disclosure. Lead drugs: DARZALEX, TREMFYA, CARVYKTI.</div>
+      </div>
+      <div class="seg-row" data-toggle>
+        <div class="seg-pct">36%<span class="of">of revenue</span></div>
+        <div class="seg-name">MedTech
+          <span class="drugs">Interventional · Orthopedics · Surgery · Vision</span>
+        </div>
+        <div class="seg-rev">$33.79B<span class="b">FY'25</span></div>
+        <div class="src">Source: company FY2025 segment disclosure. Brands: Ethicon, DePuy Synthes, OTTAVA robotic platform.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SCALE ===== -->
+  <section class="scale">
+    <div class="eyebrow"><span class="dot"></span><span>The scale</span><span class="meta-num">III</span></div>
+    <h2 class="lede">Sixty-eight cents<br>on the dollar are <em>gross margin</em>.</h2>
+
+    <div class="bignum">
+      <span class="v" data-count="94.19" data-suffix="B">$0.00<span class="dot">B</span></span>
+      <span class="l">FY'25 revenue · pharma + devices</span>
+    </div>
+
+    <div class="margin-bar">
+      <div class="mb-track"><div class="mb-fill" id="mbFill" data-width="67.9"></div></div>
+      <div class="mb-labels"><span><span class="pct">67.9%</span> gross margin</span><span>cost of doing business · 32.1%</span></div>
+    </div>
+
+    <div class="scale-grid">
+      <div class="sg-tile">
+        <div class="v">$26.80<em>B</em></div>
+        <div class="l">Net income · FY'25</div>
+      </div>
+      <div class="sg-tile">
+        <div class="v">$2.70</div>
+        <div class="l">EPS · Q1 '26</div>
+      </div>
+      <div class="sg-tile">
+        <div class="v">138K</div>
+        <div class="l">Employees worldwide</div>
+      </div>
+      <div class="sg-tile">
+        <div class="v"><em>175</em></div>
+        <div class="l">Countries served</div>
+      </div>
+    </div>
+
+    <div class="countries">
+      <div class="head">
+        <div class="num">175 countries</div>
+        <div class="lab">one in every market that has one</div>
+      </div>
+      <!-- 195 cells; 175 dark, 20 faded — visual scale of "almost everywhere" -->
+      <div class="country-grid" id="countryGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===== RESET BEAT 2 ===== -->
+  <div class="reset">
+    <div class="ix-meta"><span>A hundred cents in</span><span class="rule"></span></div>
+    <div class="interlude">
+      Then the bill arrives. <span class="sig italic">Sixty-eight cents</span> become product. Eighteen become salesmen and admin. <span class="sig italic">Sixteen</span> get spent looking for the next drug. Five vanish into the ghosts of past acquisitions. What's left⁠—
+    </div>
+  </div>
+
+  <!-- ===== DOLLAR — WHERE THE MONEY GOES ===== -->
+  <section class="dollar">
+    <div class="eyebrow"><span class="dot"></span><span>Where the dollar goes · 100¢</span><span class="meta-num">IV</span></div>
+    <h2>One dollar in.<br>How much makes it out?</h2>
+    <div class="sub">A penny per square. Color-coded. Watch the survivors.</div>
+
+    <div class="cent-grid" id="centGrid"></div>
+
+    <div class="legend">
+      <div class="legend-row" data-toggle data-key="rev">
+        <div class="legend-sw" style="background:#4E79A7"></div>
+        <div class="legend-name">Cost of revenue
+          <span class="ann">making the product</span>
+        </div>
+        <div class="legend-pct">32¢</div>
+        <div class="src">Includes manufacturing, raw materials, royalties on in-licensed compounds.</div>
+      </div>
+      <div class="legend-row" data-toggle data-key="sga">
+        <div class="legend-sw" style="background:#59A14F"></div>
+        <div class="legend-name">Selling, general &amp; admin
+          <span class="ann">salesforce, corporate, overhead</span>
+        </div>
+        <div class="legend-pct">18¢</div>
+        <div class="src">Sales reps detailing physicians, marketing, corporate functions.</div>
+      </div>
+      <div class="legend-row" data-toggle data-key="rd">
+        <div class="legend-sw" style="background:#F28E2B"></div>
+        <div class="legend-name">Research &amp; development
+          <span class="ann">the next drug</span>
+        </div>
+        <div class="legend-pct">16¢</div>
+        <div class="src">Discovery, preclinical, Phase I-III trials, regulatory submission.</div>
+      </div>
+      <div class="legend-row" data-toggle data-key="amort">
+        <div class="legend-sw" style="background:#B07AA1"></div>
+        <div class="legend-name">Intangible amortization
+          <span class="ann">ghosts of acquisitions past</span>
+        </div>
+        <div class="legend-pct">5¢</div>
+        <div class="src">Non-cash charge against IP and developed technology from M&amp;A.</div>
+      </div>
+      <div class="legend-row net" data-toggle data-key="net">
+        <div class="legend-sw" style="background:var(--ink); box-shadow:0 0 0 1.5px var(--signal-400)"></div>
+        <div class="legend-name">What survives
+          <span class="ann" style="color:var(--signal-400)">net income · per dollar</span>
+        </div>
+        <div class="legend-pct">≈ 28¢</div>
+        <div class="src">$26.80B net income on $94.19B revenue. Tax + interest + everything else accounts for the remainder.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTPRINT ===== -->
+  <section class="footprint">
+    <div class="eyebrow"><span class="dot"></span><span>Footprint · by region</span><span class="meta-num">V</span></div>
+    <h2>The home market<br>still pays <em>most of the bill</em>.</h2>
+
+    <!-- Concentric ring map: scale of geographic revenue -->
+    <svg class="map-svg" viewBox="0 0 380 260" aria-hidden="true">
+      <defs>
+        <radialGradient id="ringGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#FFD9CC" stop-opacity="0.55"/>
+          <stop offset="100%" stop-color="#FFD9CC" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <!-- glow -->
+      <circle cx="190" cy="130" r="125" fill="url(#ringGlow)"/>
+
+      <!-- Ring sizes by % of revenue -->
+      <!-- 5% RoW outer -->
+      <circle cx="190" cy="130" r="118" fill="none" stroke="#C4BEAF" stroke-width="1" stroke-dasharray="2 4"/>
+      <!-- 16% Asia-Pacific -->
+      <circle cx="190" cy="130" r="100" fill="none" stroke="#3A352E" stroke-width="1.2"/>
+      <!-- 22% Europe -->
+      <circle cx="190" cy="130" r="78" fill="none" stroke="#3A352E" stroke-width="1.6"/>
+      <!-- 57% US — filled disc -->
+      <circle cx="190" cy="130" r="56" fill="#D43A1F"/>
+      <text x="190" y="126" font-family="Instrument Serif, serif" font-size="34" fill="#F7F4EE" text-anchor="middle">57%</text>
+      <text x="190" y="146" font-family="Geist Mono, monospace" font-size="9" fill="rgba(247,244,238,0.85)" text-anchor="middle" letter-spacing="0.18em">UNITED STATES</text>
+
+      <!-- Labels on rings, leader lines -->
+      <g font-family="Geist Mono, monospace" font-size="10" fill="#14110E" letter-spacing="0.1em">
+        <line x1="268" y1="130" x2="320" y2="130" stroke="#3A352E" stroke-width="1"/>
+        <text x="324" y="126">22%</text>
+        <text x="324" y="138" font-size="9" fill="#6B6459">EUROPE</text>
+
+        <line x1="290" y1="130" x2="290" y2="60" stroke="#3A352E" stroke-width="1"/>
+        <line x1="290" y1="60" x2="338" y2="60" stroke="#3A352E" stroke-width="1"/>
+        <text x="338" y="56" text-anchor="end">16%</text>
+        <text x="338" y="68" font-size="9" fill="#6B6459" text-anchor="end">APAC + AFRICA</text>
+
+        <line x1="308" y1="130" x2="308" y2="220" stroke="#C4BEAF" stroke-width="1"/>
+        <line x1="308" y1="220" x2="350" y2="220" stroke="#C4BEAF" stroke-width="1"/>
+        <text x="350" y="216" text-anchor="end">5%</text>
+        <text x="350" y="228" font-size="9" fill="#6B6459" text-anchor="end">REST OF WORLD</text>
+      </g>
+    </svg>
+
+    <div class="geo-rows">
+      <div class="geo-row" data-toggle>
+        <div class="geo-pct">57%</div>
+        <div class="geo-name">United States</div>
+        <div></div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="100"></div></div>
+      </div>
+      <div class="geo-row" data-toggle>
+        <div class="geo-pct">22%</div>
+        <div class="geo-name">Europe</div>
+        <div></div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="38.6"></div></div>
+      </div>
+      <div class="geo-row" data-toggle>
+        <div class="geo-pct">16%</div>
+        <div class="geo-name">Asia-Pacific &amp; Africa</div>
+        <div></div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="28"></div></div>
+      </div>
+      <div class="geo-row" data-toggle>
+        <div class="geo-pct">5%</div>
+        <div class="geo-name">Rest of world</div>
+        <div></div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="8.8"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESET BEAT 3 ===== -->
+  <div class="reset">
+    <div class="ix-meta"><span class="rule"></span><span>The bet</span></div>
+    <div class="interlude">
+      Most of the dividend goes back to shareholders the same way it has for <span class="sig italic">sixty-three years.</span> The rest? Gets spent looking for what's next.
+    </div>
+  </div>
+
+  <!-- ===== THE BET ===== -->
+  <section class="bet">
+    <div class="eyebrow"><span class="dot"></span><span>Capital allocation · '25</span><span class="meta-num">VI</span></div>
+    <h2 class="lede">Pay the shareholders.<br>Buy the <em class="b">next drug</em>.</h2>
+
+    <div class="ladder-wrap">
+      <div class="ladder-meta"><span>1962 → 2025</span><span>63 raises · uninterrupted</span></div>
+      <div class="ladder" id="ladder"></div>
+      <div class="ladder-foot">
+        <div><span class="v">$5.14</span><span style="font-family:var(--font-mono); font-size:11px; color:var(--ink-3); margin-left:8px; letter-spacing:0.1em;">PER SHARE · '25</span></div>
+        <div class="l">Dividend · 63rd<br>consecutive raise</div>
+      </div>
+    </div>
+
+    <div class="alloc">
+      <div class="alloc-row" data-toggle>
+        <div class="name">Buybacks
+          <span class="ann">shares retired off the float</span>
+        </div>
+        <div class="v">$6.0B</div>
+        <div class="src">FY2025 share repurchases.</div>
+      </div>
+      <div class="alloc-row" data-toggle>
+        <div class="name">Capex
+          <span class="ann">plants, equipment, capacity</span>
+        </div>
+        <div class="v">$4.83B</div>
+        <div class="src">Capital expenditures funded from $19.70B FY'25 free cash flow.</div>
+      </div>
+      <div class="alloc-row bet-row" data-toggle>
+        <div class="name">Intra-Cellular Therapies
+          <span class="ann">closed early 2025 · the bet</span>
+        </div>
+        <div class="v">$14.6B</div>
+        <div class="src">Largest M&amp;A of the year. Adds CNS / psychiatric pipeline. Goodwill + intangibles now ≈ $97.95B mid-2025.</div>
+      </div>
+      <div class="alloc-row" data-toggle>
+        <div class="name">Operating cash flow
+          <span class="ann">the engine</span>
+        </div>
+        <div class="v">$24.53B</div>
+        <div class="src">FY2025 operating cash flow funded all of the above.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DEBT — DARK INTERLUDE ===== -->
+  <section class="debt">
+    <div class="eyebrow"><span class="dot"></span><span>The bill · weighed</span><span class="meta-num">VII</span></div>
+    <h2>$48B in debt.<br>$82B in <em>equity</em>.<br>$20B in cash.</h2>
+    <p class="body">A AAA balance sheet. The kind two American companies still have. Equity outweighs debt by roughly seventy percent — the conservative leverage profile that earns the rating.</p>
+
+    <!-- Balance scale SVG -->
+    <svg class="balance-svg" viewBox="0 0 380 220" aria-hidden="true">
+      <!-- pivot -->
+      <line x1="190" y1="40" x2="190" y2="180" stroke="#3B3835" stroke-width="2"/>
+      <!-- beam, tilted toward equity (heavier) -->
+      <g transform="rotate(-7 190 60)">
+        <line x1="40" y1="60" x2="340" y2="60" stroke="#F4F0E8" stroke-width="2"/>
+        <!-- left ropes -->
+        <line x1="80" y1="60" x2="80" y2="100" stroke="rgba(244,240,232,0.5)" stroke-width="1"/>
+        <line x1="120" y1="60" x2="120" y2="100" stroke="rgba(244,240,232,0.5)" stroke-width="1"/>
+        <!-- left pan: equity (largest) -->
+        <rect x="60" y="100" width="80" height="56" fill="none" stroke="#F4F0E8" stroke-width="1.5"/>
+        <text x="100" y="130" font-family="Instrument Serif, serif" font-size="22" fill="#F4F0E8" text-anchor="middle">$81.5B</text>
+        <text x="100" y="148" font-family="Geist Mono, monospace" font-size="8" fill="rgba(244,240,232,0.6)" text-anchor="middle" letter-spacing="0.16em">EQUITY</text>
+
+        <!-- right ropes -->
+        <line x1="260" y1="60" x2="260" y2="92" stroke="rgba(244,240,232,0.5)" stroke-width="1"/>
+        <line x1="300" y1="60" x2="300" y2="92" stroke="rgba(244,240,232,0.5)" stroke-width="1"/>
+        <!-- right pan: debt (smaller) -->
+        <rect x="248" y="92" width="64" height="44" fill="none" stroke="#FF8B6A" stroke-width="1.5"/>
+        <text x="280" y="118" font-family="Instrument Serif, serif" font-size="18" fill="#FF8B6A" text-anchor="middle">$47.9B</text>
+        <text x="280" y="132" font-family="Geist Mono, monospace" font-size="8" fill="rgba(255,139,106,0.7)" text-anchor="middle" letter-spacing="0.16em">DEBT</text>
+      </g>
+      <!-- base -->
+      <path d="M 160 180 L 220 180 L 230 195 L 150 195 Z" fill="#3B3835" stroke="#F4F0E8" stroke-width="1"/>
+      <!-- AAA tag floating -->
+      <text x="20" y="32" font-family="Geist Mono, monospace" font-size="10" fill="rgba(244,240,232,0.55)" letter-spacing="0.18em">AAA · 1 OF 2 IN U.S.</text>
+    </svg>
+
+    <div class="balance-rows">
+      <div class="balance-row" data-toggle>
+        <div class="name">Shareholders' equity
+          <span class="ann">book value</span>
+        </div>
+        <div class="v">$81.54B</div>
+        <div class="src">Mid-2025 balance sheet.</div>
+      </div>
+      <div class="balance-row debt-row" data-toggle>
+        <div class="name">Total debt
+          <span class="ann">long + short term</span>
+        </div>
+        <div class="v">$47.93B</div>
+        <div class="src">Conservative leverage; supports the AAA rating.</div>
+      </div>
+      <div class="balance-row" data-toggle>
+        <div class="name">Cash &amp; equivalents
+          <span class="ann">on hand</span>
+        </div>
+        <div class="v">$19.71B</div>
+        <div class="src">Liquidity cushion.</div>
+      </div>
+      <div class="balance-row" data-toggle>
+        <div class="name">Goodwill + intangibles
+          <span class="ann">paid for things you can't touch</span>
+        </div>
+        <div class="v">$97.95B</div>
+        <div class="src">Elevated by Shockwave Medical and Intra-Cellular acquisitions.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== COMPETITORS ===== -->
+  <section class="competitors">
+    <div class="eyebrow"><span class="dot"></span><span>The competition</span><span class="meta-num">VIII</span></div>
+    <h2>Three rivals.<br>Three <em>different</em> wars.</h2>
+
+    <div class="comp-bars">
+      <div class="comp self" data-toggle>
+        <div class="comp-head">
+          <span class="comp-tick">JNJ</span>
+          <span class="comp-name">Johnson &amp; Johnson</span>
+          <span class="comp-mcap">$564B</span>
+        </div>
+        <div class="comp-bar"><div class="comp-bar-fill" data-w="100"></div></div>
+        <div class="comp-meta"><span>Rev <span class="k">$94.2B</span></span><span>Margin <span class="k">67.9%</span></span></div>
+      </div>
+
+      <div class="comp" data-toggle>
+        <div class="comp-head">
+          <span class="comp-tick">ABBV</span>
+          <span class="comp-name">AbbVie</span>
+          <span class="comp-mcap">$369B</span>
+        </div>
+        <div class="comp-bar"><div class="comp-bar-fill" data-w="65.3"></div></div>
+        <div class="comp-meta"><span>Rev <span class="k">$61.2B</span></span><span>YoY <span class="k">+8.6%</span></span><span>P/E <span class="k">87.2</span></span></div>
+        <div class="comp-rel">SKYRIZI &amp; RINVOQ vs. <span class="sig italic">TREMFYA &amp; STELARA</span> — the immunology fight.</div>
+        <div class="src">Direct overlap in immunology and oncology.</div>
+      </div>
+
+      <div class="comp" data-toggle>
+        <div class="comp-head">
+          <span class="comp-tick">MRK</span>
+          <span class="comp-name">Merck</span>
+          <span class="comp-mcap">$294B</span>
+        </div>
+        <div class="comp-bar"><div class="comp-bar-fill" data-w="52.2"></div></div>
+        <div class="comp-meta"><span>Rev <span class="k">$65.0B</span></span><span>YoY <span class="k">+1.3%</span></span><span>P/E <span class="k">16.1</span></span></div>
+        <div class="comp-rel">KEYTRUDA vs. <span class="sig italic">DARZALEX &amp; CARVYKTI</span> — head-to-head in oncology.</div>
+        <div class="src">Cardiovascular &amp; oncology overlap.</div>
+      </div>
+
+      <div class="comp" data-toggle>
+        <div class="comp-head">
+          <span class="comp-tick">ISRG</span>
+          <span class="comp-name">Intuitive Surgical</span>
+          <span class="comp-mcap">$163B</span>
+        </div>
+        <div class="comp-bar"><div class="comp-bar-fill" data-w="28.9"></div></div>
+        <div class="comp-meta"><span>Rev <span class="k">$10.1B</span></span><span>YoY <span class="k">+20.5%</span></span><span>P/E <span class="k">57.1</span></span></div>
+        <div class="comp-rel">da Vinci vs. <span class="sig italic">OTTAVA &amp; Ethicon</span> — the robot in the OR.</div>
+        <div class="src">MedTech rival; growing fastest of the three.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TAKEAWAY — closes by inverting the open ===== -->
+  <section class="takeaway">
+    <div class="open">FY '25 · The page closes</div>
+    <div class="a">Ninety-four billion in pills, scalpels &amp; lenses.</div>
+    <div class="arrow">↓ what survives ↓</div>
+    <div class="b">
+      <em>≈ 28¢</em> on every dollar
+      <span class="big">make it <em>out</em>.</span>
+    </div>
+
+    <div class="colophon">
+      <span>JNJ · NYSE</span>
+      <span class="red">●</span>
+      <span>Recap · FY '25</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ============= PROGRESS BAR + REVEAL =============
+  const progress = document.getElementById('progress');
+  const stage = document.getElementById('stage');
+
+  function onScroll() {
+    const sc = window.scrollY;
+    const max = document.body.scrollHeight - window.innerHeight;
+    const pct = max > 0 ? Math.min(100, (sc / max) * 100) : 0;
+    progress.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Reveal-on-scroll for any element with .reveal — and auto-promote major blocks
+  document.querySelectorAll('section > *').forEach(el => el.classList.add('reveal'));
+  document.querySelectorAll('.reset > *').forEach(el => el.classList.add('reveal'));
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ============= COUNTRY GRID =============
+  // 195 cells. 175 dark (countries served), 20 faded.
+  // Spread the 20 faded among the cells, semi-randomly.
+  (function buildCountries() {
+    const grid = document.getElementById('countryGrid');
+    const total = 200;
+    const served = 175;
+    const fadedIdx = new Set();
+    // pick 25 spots to fade (200 - 175)
+    while (fadedIdx.size < (total - served)) {
+      fadedIdx.add(Math.floor(Math.random() * total));
+    }
+    let frag = '';
+    for (let i = 0; i < total; i++) {
+      frag += `<div class="country-cell ${fadedIdx.has(i) ? 'faded' : ''}"></div>`;
+    }
+    grid.innerHTML = frag;
+  })();
+
+  // ============= CENT GRID — 100 cents =============
+  (function buildCents() {
+    const grid = document.getElementById('centGrid');
+    // Order: 32 cost of rev (#4E79A7), 18 SGA (#59A14F),
+    //        16 R&D (#F28E2B), 5 amort (#B07AA1), 28 net (ink)
+    // (gap of 1 left as "tax + interest + other" but folded into the visual
+    // by sizing net = 28; the legend explains).
+    const buckets = [
+      { n: 32, color: '#4E79A7', glyph: '¢' },
+      { n: 18, color: '#59A14F', glyph: '¢' },
+      { n: 16, color: '#F28E2B', glyph: '¢' },
+      { n: 5,  color: '#B07AA1', glyph: '¢' },
+      { n: 1,  color: '#A39C8E', glyph: '·' }, // tax & other - faded paper
+      { n: 28, color: 'var(--ink)', glyph: '¢', net: true }
+    ];
+    let html = '';
+    buckets.forEach(b => {
+      for (let i = 0; i < b.n; i++) {
+        const styleBg = b.color.startsWith('var') ? `background:${b.color}` : `background:${b.color}`;
+        html += `<div class="cent ${b.net ? 'net' : 'lit'}" style="${styleBg}"><span class="glyph">${b.glyph}</span></div>`;
+      }
+    });
+    grid.innerHTML = html;
+  })();
+
+  // ============= NUMBER COUNT-UP for the bignum =============
+  (function setupCount() {
+    const v = document.querySelector('.bignum .v');
+    if (!v) return;
+    const target = parseFloat(v.dataset.count);
+    const suffix = v.dataset.suffix || '';
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const dur = 1400;
+        const t0 = performance.now();
+        function tick(t) {
+          const k = Math.min(1, (t - t0) / dur);
+          const eased = 1 - Math.pow(1 - k, 3);
+          const cur = (target * eased).toFixed(2);
+          v.innerHTML = `$${cur}<span class="dot">${suffix}</span>`;
+          if (k < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        obs.unobserve(e.target);
+      });
+    }, { threshold: 0.5 });
+    obs.observe(v);
+  })();
+
+  // ============= MARGIN BAR & GEO BARS — animate when in view =============
+  function inViewAnimateWidth(selector) {
+    document.querySelectorAll(selector).forEach(el => {
+      const w = parseFloat(el.dataset.w || el.dataset.width);
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          requestAnimationFrame(() => { el.style.width = w + '%'; });
+          obs.unobserve(e.target);
+        });
+      }, { threshold: 0.4 });
+      obs.observe(el);
+    });
+  }
+  inViewAnimateWidth('.mb-fill');
+  inViewAnimateWidth('.geo-bar-fill');
+  inViewAnimateWidth('.comp-bar-fill');
+
+  // ============= DIVIDEND LADDER — 63 lines, growing =============
+  (function ladder() {
+    const root = document.getElementById('ladder');
+    if (!root) return;
+    const N = 63;
+    let html = '';
+    for (let i = 0; i < N; i++) {
+      // Year label every 10
+      const year = 1962 + i;
+      const lab = (i === 0 || i === N - 1 || (year % 10 === 0)) ? year : '';
+      // length grows: dividend has compounded ~over time
+      // we'll let CSS flex handle it but use width via style for an arc-ish growth
+      const w = 22 + (i / (N - 1)) * 78; // 22% → 100%
+      const isNow = i === N - 1;
+      html += `<div class="ladder-row ${isNow ? 'now' : ''}">
+                  <span class="ladder-yr">${lab || ''}</span>
+                  <span class="ladder-line" style="max-width:${w}%"></span>
+                </div>`;
+    }
+    root.innerHTML = html;
+
+    // Animate them in sequentially when in view
+    const lines = root.querySelectorAll('.ladder-line');
+    lines.forEach(l => { l.style.transform = 'scaleX(0)'; l.style.transition = 'transform 0.6s var(--ease-out)'; });
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        lines.forEach((l, i) => {
+          setTimeout(() => l.style.transform = 'scaleX(1)', i * 18);
+        });
+        obs.unobserve(e.target);
+      });
+    }, { threshold: 0.2 });
+    obs.observe(root);
+  })();
+
+  // ============= TAP-TO-DEEPEN =============
+  document.querySelectorAll('[data-toggle]').forEach(row => {
+    row.addEventListener('click', () => {
+      row.classList.toggle('open');
+    });
+  });
+
+  // ============= CAPSULE PARALLAX =============
+  // Small parallax on the hero capsule for depth feel
+  const cap = document.querySelector('.hero-capsule-wrap');
+  if (cap) {
+    window.addEventListener('scroll', () => {
+      const y = Math.min(180, window.scrollY * 0.35);
+      cap.style.transform = `translateY(${y}px)`;
+    }, { passive: true });
+  }
+</script>
+</body>
+</html>

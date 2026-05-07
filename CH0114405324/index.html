@@ -1,0 +1,1269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>GRMN · Recap FY '25</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<style>
+  /* ------------------------------------------------------------------
+     Garmin recap — palette anchored to topographic / instrument feel.
+     Deep ink, paper cream, contour green ("topo"), signal coral for one beat.
+     ------------------------------------------------------------------ */
+  :root{
+    --topo-ink:    #11201C;     /* near-black with green undertone */
+    --topo-ink-2:  #1F3530;
+    --topo-paper:  #F1ECDF;     /* warm map paper */
+    --topo-paper-2:#E5DEC9;     /* deeper paper */
+    --topo-paper-3:#D8CFB5;
+    --topo-line:   #B7AC8C;     /* contour line on paper */
+    --topo-line-2: #95895E;
+    --topo-green:  #2C5E4A;     /* contour signal */
+    --topo-green-2:#3F8266;
+    --topo-blue:   #1F4D6B;     /* marine */
+    --topo-rust:   #B85C2F;     /* aviation/altitude warning */
+    --signal:      #E05C5C;     /* the supplied red — used as singular signal */
+  }
+
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body{
+    background: var(--topo-paper);
+    color: var(--topo-ink);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Mobile artifact: ~420px wide, content extends in height */
+  .page{
+    max-width: 440px;
+    margin: 0 auto;
+    position: relative;
+    background: var(--topo-paper);
+    /* faint paper grain */
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(0,0,0,0.025), transparent 40%),
+      radial-gradient(circle at 80% 60%, rgba(0,0,0,0.02), transparent 40%);
+    overflow: hidden;
+  }
+
+  /* ---------- PERSISTENT CHROME ---------- */
+  .chrome{
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    background: rgba(241, 236, 223, 0.78);
+    border-bottom: 1px solid rgba(17,32,28,0.08);
+  }
+  .chrome-row{
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 20px 10px;
+  }
+  .chrome-mark{
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 1.5px solid var(--topo-ink);
+    position: relative; flex: 0 0 auto;
+  }
+  .chrome-mark::before, .chrome-mark::after{
+    content:""; position: absolute; background: var(--topo-ink);
+  }
+  .chrome-mark::before{ left: 50%; top: 2px; bottom: 2px; width: 1.5px; transform: translateX(-50%); }
+  .chrome-mark::after{ top: 50%; left: 2px; right: 2px; height: 1.5px; transform: translateY(-50%); }
+  .chrome-ticker{
+    font-family: var(--font-mono); font-size: 13px; font-weight: 500;
+    letter-spacing: 0.06em; color: var(--topo-ink);
+  }
+  .chrome-name{
+    font-family: var(--font-display); font-size: 17px; line-height: 1;
+    color: var(--topo-ink); margin-right: auto;
+  }
+  .chrome-label{
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.18em; color: var(--topo-ink-2);
+    text-transform: uppercase;
+  }
+  .progress{
+    height: 1.5px; background: transparent; position: relative;
+  }
+  .progress-fill{
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--topo-green);
+    width: 0%;
+    transition: width 80ms linear;
+  }
+
+  /* ---------- TYPOGRAPHY HELPERS ---------- */
+  .eyebrow-mono{
+    font-family: var(--font-mono); font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--topo-ink-2);
+  }
+  .eyebrow-mono .dot{ color: var(--topo-green); padding: 0 4px; }
+  .display-xl{
+    font-family: var(--font-display); font-weight: 400;
+    line-height: 0.92; letter-spacing: -0.02em;
+    color: var(--topo-ink);
+  }
+  .display-it{ font-style: italic; }
+  .lede{
+    font-family: var(--font-sans); font-size: 15px; line-height: 1.55;
+    color: var(--topo-ink-2);
+  }
+  .body-text{
+    font-family: var(--font-sans); font-size: 14.5px; line-height: 1.6;
+    color: var(--topo-ink-2);
+  }
+  .num-mono{ font-family: var(--font-mono); font-feature-settings: "tnum" 1, "lnum" 1; }
+  em.editorial{ font-family: var(--font-display); font-style: italic; font-weight: 400; }
+  em.signal { color: var(--signal); }
+  em.green  { color: var(--topo-green); }
+
+  /* ---------- SECTIONS / RHYTHM ---------- */
+  section{
+    position: relative;
+    padding: 56px 22px;
+  }
+  section.tone-2{ background: var(--topo-paper-2); }
+  section.dark{
+    background: var(--topo-ink);
+    color: var(--topo-paper);
+  }
+  section.dark .body-text{ color: rgba(241, 236, 223, 0.78); }
+  section.dark .eyebrow-mono{ color: rgba(241, 236, 223, 0.6); }
+  section.dark .display-xl{ color: var(--topo-paper); }
+
+  .reset{
+    padding: 38px 28px;
+    text-align: left;
+    background: var(--topo-paper-2);
+    border-top: 1px solid rgba(17,32,28,0.06);
+    border-bottom: 1px solid rgba(17,32,28,0.06);
+  }
+  .reset p{
+    font-family: var(--font-display); font-style: italic;
+    font-size: 22px; line-height: 1.25;
+    color: var(--topo-ink);
+    margin: 0;
+  }
+  .reset .accent{ color: var(--topo-green); }
+  .reset.dark{ background: var(--topo-ink); }
+  .reset.dark p{ color: var(--topo-paper); }
+  .reset.dark .accent{ color: #B7E1CB; }
+
+  /* ---------- HERO / THESIS ---------- */
+  .hero{
+    padding: 32px 22px 64px;
+    position: relative;
+    min-height: 78vh;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .hero-topo{
+    position: absolute; inset: 0;
+    pointer-events: none;
+  }
+  .hero-meta{
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 12px;
+  }
+  .coord{
+    font-family: var(--font-mono); font-size: 10.5px;
+    letter-spacing: 0.14em; color: var(--topo-ink-2);
+  }
+  .hero-h1{
+    font-family: var(--font-display); font-weight: 400;
+    font-size: 64px; line-height: 0.93; letter-spacing: -0.025em;
+    margin-top: auto;
+    color: var(--topo-ink);
+  }
+  .hero-h1 .it{ font-style: italic; }
+  .hero-h1 .green{ color: var(--topo-green); }
+  .hero-sub{
+    margin-top: 20px;
+    font-family: var(--font-sans); font-size: 14px; line-height: 1.55;
+    color: var(--topo-ink-2);
+    max-width: 320px;
+  }
+  .hero-stat-row{
+    margin-top: 28px;
+    display: flex; gap: 24px;
+    border-top: 1px solid rgba(17,32,28,0.12);
+    padding-top: 16px;
+  }
+  .hero-stat{ display: flex; flex-direction: column; gap: 2px; }
+  .hero-stat .v{
+    font-family: var(--font-display); font-size: 28px; line-height: 1;
+    color: var(--topo-ink);
+  }
+  .hero-stat .l{
+    font-family: var(--font-mono); font-size: 9.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--topo-ink-2);
+  }
+
+  /* ---------- COMPASS / FIVE WORLDS ---------- */
+  .compass-wrap{
+    margin-top: 28px;
+    aspect-ratio: 1;
+    width: 100%;
+    position: relative;
+  }
+  .compass-wrap svg{ width: 100%; height: 100%; display: block; }
+  .compass-readout{
+    margin-top: 18px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px 22px;
+  }
+  .seg{
+    display: flex; flex-direction: column; gap: 2px;
+    border-top: 1px solid rgba(17,32,28,0.18);
+    padding-top: 8px;
+  }
+  .seg .seg-name{
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--topo-ink-2);
+  }
+  .seg .seg-rev{
+    font-family: var(--font-display); font-size: 22px;
+    color: var(--topo-ink);
+  }
+
+  /* ---------- SCALE BARS ---------- */
+  .scale-figure{
+    margin-top: 24px;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .scale-row{ display: flex; flex-direction: column; gap: 6px; }
+  .scale-label{
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--topo-ink-2);
+  }
+  .scale-label .v{
+    font-family: var(--font-display); font-size: 22px;
+    letter-spacing: -0.01em; text-transform: none;
+    color: var(--topo-ink);
+  }
+  .scale-bar{
+    height: 14px; background: var(--topo-paper-3); border-radius: 2px;
+    overflow: hidden; position: relative;
+  }
+  .scale-bar .fill{
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 0%;
+    background: var(--topo-green);
+    transition: width 900ms var(--ease-out);
+  }
+  .scale-bar.alt .fill{ background: var(--topo-blue); }
+
+  /* ---------- DOLLAR (cost breakdown) ---------- */
+  .stack{
+    margin-top: 30px;
+    width: 100%;
+    height: 380px;
+    position: relative;
+    border-bottom: 1.5px solid var(--topo-ink);
+  }
+  .stack-bar{
+    position: absolute; left: 0; right: 0;
+    display: flex; align-items: center;
+    padding: 0 12px;
+    color: white;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    border-top: 1px solid rgba(255,255,255,0.18);
+    overflow: hidden;
+  }
+  .stack-bar .pct{
+    margin-left: auto;
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-style: normal;
+    letter-spacing: -0.01em;
+  }
+  .stack-bar .lbl{
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .stack-survives{
+    position: absolute; left: 0; right: 0; bottom: 0; height: 0;
+    background: repeating-linear-gradient(45deg,
+      rgba(17,32,28,0.06) 0 6px,
+      transparent 6px 12px);
+    border-top: 1.5px dashed var(--topo-ink);
+    display: flex; align-items: center; padding: 0 12px;
+  }
+  .dollar-caption{
+    margin-top: 22px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 12px;
+  }
+  .dollar-caption .big{
+    font-family: var(--font-display); font-size: 64px;
+    line-height: 0.9; color: var(--topo-ink);
+  }
+  .dollar-caption .big .it{ font-style: italic; color: var(--topo-green); }
+  .dollar-caption .small{
+    font-family: var(--font-sans); font-size: 13px; line-height: 1.5;
+    color: var(--topo-ink-2);
+    max-width: 180px; text-align: right;
+  }
+
+  /* ---------- FOOTPRINT ---------- */
+  .map-wrap{
+    margin-top: 24px;
+    width: 100%; aspect-ratio: 1.4;
+    position: relative;
+    background: var(--topo-paper-2);
+    border: 1px solid rgba(17,32,28,0.1);
+    overflow: hidden;
+  }
+  .map-wrap svg{ width: 100%; height: 100%; display: block; }
+  .map-legend{
+    margin-top: 18px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .map-row{
+    display: grid; grid-template-columns: 16px 1fr auto;
+    gap: 12px; align-items: center;
+  }
+  .map-row .swatch{
+    width: 14px; height: 14px; border-radius: 2px;
+  }
+  .map-row .nm{
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--topo-ink-2);
+  }
+  .map-row .pc{
+    font-family: var(--font-display); font-size: 24px; color: var(--topo-ink);
+  }
+
+  /* ---------- BALANCE SHEET (DARK) ---------- */
+  .scale-glyph{
+    margin-top: 24px;
+    width: 100%; aspect-ratio: 1.05;
+    position: relative;
+  }
+  .scale-glyph svg{ width: 100%; height: 100%; }
+  .balance-figs{
+    margin-top: 24px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 18px 18px;
+  }
+  .balance-figs .fig{
+    border-top: 1px solid rgba(241,236,223,0.18);
+    padding-top: 8px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .balance-figs .fig .v{
+    font-family: var(--font-display); font-size: 28px;
+    color: var(--topo-paper);
+  }
+  .balance-figs .fig .l{
+    font-family: var(--font-mono); font-size: 9.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(241,236,223,0.55);
+  }
+
+  /* ---------- THE BET ---------- */
+  .bet-glyph{
+    margin-top: 22px;
+    width: 100%;
+    aspect-ratio: 1.3;
+    background: var(--topo-paper-2);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(17,32,28,0.12);
+  }
+  .bet-glyph svg{ width: 100%; height: 100%; display: block; }
+  .bet-list{
+    margin-top: 22px;
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .bet-item{
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: 14px; align-items: baseline;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(17,32,28,0.12);
+  }
+  .bet-item:last-child{ border-bottom: 0; }
+  .bet-item .num{
+    font-family: var(--font-mono); font-size: 10.5px;
+    letter-spacing: 0.14em; color: var(--topo-ink-3, #6B6A65);
+  }
+  .bet-item .label{
+    font-family: var(--font-sans); font-size: 14px; line-height: 1.4;
+    color: var(--topo-ink);
+  }
+  .bet-item .label em{ font-family: var(--font-display); font-style: italic; color: var(--topo-green); font-size: 16px; }
+  .bet-item .v{
+    font-family: var(--font-display); font-size: 22px;
+    color: var(--topo-ink);
+  }
+
+  /* ---------- COMPETITORS ---------- */
+  .competitors-vis{
+    margin-top: 30px;
+    width: 100%;
+    aspect-ratio: 1.05;
+    position: relative;
+  }
+  .competitors-vis svg{ width: 100%; height: 100%; display: block; }
+  .competitors-list{
+    margin-top: 26px;
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .comp-item{
+    padding: 16px 0;
+    border-top: 1px solid rgba(17,32,28,0.12);
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 6px 16px;
+    cursor: pointer;
+  }
+  .comp-item:last-child{ border-bottom: 1px solid rgba(17,32,28,0.12); }
+  .comp-name{
+    font-family: var(--font-display); font-size: 22px; color: var(--topo-ink);
+    letter-spacing: -0.01em;
+  }
+  .comp-ticker{
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+    color: var(--topo-ink-2);
+    align-self: center;
+  }
+  .comp-cap{
+    grid-column: 1 / -1;
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.04em; color: var(--topo-ink-2);
+  }
+  .comp-desc{
+    grid-column: 1 / -1;
+    font-family: var(--font-sans); font-size: 13.5px; line-height: 1.55;
+    color: var(--topo-ink-2);
+    max-height: 0; opacity: 0;
+    overflow: hidden;
+    transition: max-height 360ms var(--ease-out), opacity 240ms var(--ease-out), margin-top 240ms;
+    margin-top: 0;
+  }
+  .comp-item.open .comp-desc{
+    max-height: 280px; opacity: 1;
+    margin-top: 8px;
+  }
+  .comp-item .chev{
+    font-family: var(--font-mono); font-size: 14px;
+    color: var(--topo-ink-2);
+    transition: transform 260ms var(--ease-out);
+    align-self: center;
+  }
+  .comp-item.open .chev{ transform: rotate(45deg); }
+
+  /* ---------- CLOSE ---------- */
+  .close-h{
+    font-family: var(--font-display); font-weight: 400;
+    font-size: 56px; line-height: 0.95; letter-spacing: -0.02em;
+  }
+  .close-h .it{ font-style: italic; color: var(--topo-green); }
+  .close-cap{
+    margin-top: 22px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--topo-ink-2);
+  }
+  .close-coord{
+    margin-top: 8px;
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--topo-ink-2);
+  }
+  .colophon{
+    padding: 30px 22px 50px;
+    border-top: 1px solid rgba(17,32,28,0.12);
+    background: var(--topo-paper);
+    color: var(--topo-ink-2);
+  }
+  .colophon .meta{
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--topo-ink-2);
+  }
+  .colophon .row{
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-top: 12px;
+  }
+
+  /* ---------- REVEAL ANIM ---------- */
+  .reveal{ opacity: 0; transform: translateY(14px); transition: opacity 520ms var(--ease-out), transform 520ms var(--ease-out); }
+  .reveal.in{ opacity: 1; transform: none; }
+
+  /* prevent rubber-band selection on numbers */
+  .num-mono, .display-xl, .seg .seg-rev, .hero-stat .v { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ============== STICKY CHROME ============== -->
+  <div class="chrome">
+    <div class="chrome-row">
+      <div class="chrome-mark" aria-hidden="true"></div>
+      <span class="chrome-ticker">GRMN</span>
+      <span class="chrome-name">Garmin</span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- ============== HERO ============== -->
+  <section class="hero">
+    <!-- topographic background -->
+    <svg class="hero-topo" viewBox="0 0 440 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <radialGradient id="topoFade" cx="50%" cy="50%" r="55%">
+          <stop offset="0%" stop-color="#11201C" stop-opacity="0.18"/>
+          <stop offset="60%" stop-color="#11201C" stop-opacity="0.08"/>
+          <stop offset="100%" stop-color="#11201C" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <g stroke="#11201C" stroke-width="0.6" fill="none" opacity="0.22">
+        <!-- Concentric topo rings, irregular -->
+        <path d="M220,380 m-300,0 a300,260 0 1,0 600,0 a300,260 0 1,0 -600,0" />
+        <path d="M220,380 m-260,-10 a260,230 0 1,0 520,20 a260,230 0 1,0 -520,-20" />
+        <path d="M220,380 m-220,-20 a220,200 0 1,0 440,30 a220,200 0 1,0 -440,-30" />
+        <path d="M225,378 m-180,-15 a180,170 0 1,0 360,30 a180,170 0 1,0 -360,-30" />
+        <path d="M222,376 m-140,-12 a140,140 0 1,0 280,24 a140,140 0 1,0 -280,-24" />
+        <path d="M220,378 m-100,-8 a100,110 0 1,0 200,16 a100,110 0 1,0 -200,-16" />
+        <path d="M220,380 m-60,-4 a60,75 0 1,0 120,8 a60,75 0 1,0 -120,-8" />
+        <path d="M220,380 m-30,0 a30,40 0 1,0 60,0 a30,40 0 1,0 -60,0" />
+      </g>
+      <rect width="100%" height="100%" fill="url(#topoFade)"/>
+      <!-- crosshair -->
+      <g stroke="#2C5E4A" stroke-width="1" opacity="0.85">
+        <line x1="220" y1="370" x2="220" y2="390"/>
+        <line x1="210" y1="380" x2="230" y2="380"/>
+        <circle cx="220" cy="380" r="4" fill="#2C5E4A" stroke="none"/>
+      </g>
+    </svg>
+
+    <div class="hero-meta">
+      <span class="coord">N 38°53'</span>
+      <span class="coord">·</span>
+      <span class="coord">W 94°48'</span>
+      <span class="coord">·</span>
+      <span class="coord">OLATHE, KS</span>
+    </div>
+
+    <h1 class="hero-h1">
+      Five worlds.<br/>
+      <span class="it green">One coordinate.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Garmin Ltd. — incorporated in Schaffhausen, run from Olathe — sells precision in five places at once: <em class="editorial">on the wrist, in the cockpit, on the water, on the trail,</em> and quietly in the dashboard. Founded 1989. Still steering.
+    </p>
+
+    <div class="hero-stat-row">
+      <div class="hero-stat">
+        <div class="v num-mono">$7.25<span style="font-size: 0.55em; vertical-align: 0.25em;">B</span></div>
+        <div class="l">FY'25 Revenue</div>
+      </div>
+      <div class="hero-stat">
+        <div class="v num-mono" style="color: var(--topo-green);">+15.06%</div>
+        <div class="l">YoY</div>
+      </div>
+      <div class="hero-stat">
+        <div class="v num-mono">$51.5<span style="font-size: 0.55em; vertical-align: 0.25em;">B</span></div>
+        <div class="l">Mkt Cap</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== RESET BEAT 1 ============== -->
+  <div class="reset">
+    <p>Most companies pick a domain. <span class="accent">Garmin picked five</span> — and built one engine to power all of them.</p>
+  </div>
+
+  <!-- ============== FIVE WORLDS / COMPASS ============== -->
+  <section>
+    <div class="eyebrow-mono">The business <span class="dot">·</span> five worlds</div>
+    <h2 class="display-xl" style="font-size: 44px; margin-top: 14px;">
+      One <em class="editorial green">compass.</em><br/>Five faces.
+    </h2>
+    <p class="body-text" style="margin-top: 14px;">
+      The same vertically integrated engine — chips, antennas, software, and ~23,000 people across <span class="num-mono">37 countries</span> — pointed at five very different needles.
+    </p>
+
+    <div class="compass-wrap">
+      <svg viewBox="0 0 400 400" id="compassSvg">
+        <defs>
+          <pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#11201C" stroke-width="0.6" opacity="0.2"/>
+          </pattern>
+        </defs>
+        <!-- Outer ring -->
+        <circle cx="200" cy="200" r="180" fill="none" stroke="#11201C" stroke-width="1" opacity="0.5"/>
+        <circle cx="200" cy="200" r="155" fill="none" stroke="#11201C" stroke-width="0.5" opacity="0.3"/>
+        <circle cx="200" cy="200" r="58" fill="none" stroke="#11201C" stroke-width="0.6" opacity="0.4"/>
+        <!-- Tick marks every 9 deg -->
+        <g stroke="#11201C" opacity="0.45">
+          <!-- generated below in JS for cleanliness; here as static -->
+        </g>
+        <g id="ticks"></g>
+
+        <!-- Five wedges: Fitness 33, Outdoor 22, Aviation 18, Marine 16, Auto 11 (illustrative weighting from segment description; Fitness is largest) -->
+        <g id="wedges"></g>
+
+        <!-- Compass cardinal labels -->
+        <g font-family="Geist Mono, monospace" font-size="10" letter-spacing="2" fill="#11201C" opacity="0.7" text-anchor="middle">
+          <text x="200" y="20">N</text>
+          <text x="386" y="204">E</text>
+          <text x="200" y="392">S</text>
+          <text x="14"  y="204">W</text>
+        </g>
+
+        <!-- Center pin -->
+        <circle cx="200" cy="200" r="5" fill="#11201C"/>
+        <circle cx="200" cy="200" r="2" fill="#F1ECDF"/>
+
+        <!-- Needle -->
+        <g id="needle" transform="translate(200,200)">
+          <polygon points="0,-160 8,0 0,12 -8,0" fill="#2C5E4A"/>
+          <polygon points="0,160 8,0 0,-12 -8,0" fill="#11201C" opacity="0.55"/>
+        </g>
+
+        <!-- segment labels around ring -->
+        <g font-family="Instrument Serif, serif" font-size="22" fill="#11201C">
+          <text x="200" y="48"  text-anchor="middle" font-style="italic">Fitness</text>
+          <text x="358" y="148" text-anchor="end">Outdoor</text>
+          <text x="350" y="278" text-anchor="end">Aviation</text>
+          <text x="60"  y="278" text-anchor="start">Marine</text>
+          <text x="60"  y="148" text-anchor="start">Auto OEM</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="compass-readout">
+      <div class="seg">
+        <span class="seg-name">Fitness</span>
+        <span class="seg-rev">$2.36B<span style="color: var(--topo-ink-3, #6B6A65); font-family: var(--font-mono); font-size: 10px; margin-left: 6px;">LARGEST</span></span>
+      </div>
+      <div class="seg">
+        <span class="seg-name">Outdoor</span>
+        <span class="seg-rev">Adventure</span>
+      </div>
+      <div class="seg">
+        <span class="seg-name">Aviation</span>
+        <span class="seg-rev">Flight decks</span>
+      </div>
+      <div class="seg">
+        <span class="seg-name">Marine</span>
+        <span class="seg-rev">Chartplotters</span>
+      </div>
+      <div class="seg" style="grid-column: 1 / -1;">
+        <span class="seg-name">Auto OEM</span>
+        <span class="seg-rev">Domain controllers · infotainment</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== SCALE ============== -->
+  <section class="tone-2">
+    <div class="eyebrow-mono">The scale <span class="dot">·</span> by the numbers</div>
+    <h2 class="display-xl" style="font-size: 44px; margin-top: 14px;">
+      Margin is the <em class="editorial green">moat.</em>
+    </h2>
+    <p class="body-text" style="margin-top: 14px;">
+      Vertical integration — designing and manufacturing most products in-house — buys Garmin a gross margin most consumer-electronics firms can only sketch on a slide.
+    </p>
+
+    <div class="scale-figure">
+      <div class="scale-row">
+        <div class="scale-label"><span>Gross Margin</span><span class="v num-mono">58.7%</span></div>
+        <div class="scale-bar"><div class="fill" data-w="58.7"></div></div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-label"><span>Operating Margin</span><span class="v num-mono">25.9%</span></div>
+        <div class="scale-bar alt"><div class="fill" data-w="25.9"></div></div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-label"><span>Revenue Growth (YoY)</span><span class="v num-mono">15.1%</span></div>
+        <div class="scale-bar"><div class="fill" data-w="15.06"></div></div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-label"><span>Q4 EPS</span><span class="v num-mono">$2.79</span></div>
+        <div class="scale-bar alt"><div class="fill" data-w="46"></div></div>
+      </div>
+    </div>
+
+    <div style="margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+      <div class="seg" style="border-color: rgba(17,32,28,0.18);">
+        <span class="seg-name">Employees</span>
+        <span class="seg-rev num-mono">~23,000</span>
+      </div>
+      <div class="seg" style="border-color: rgba(17,32,28,0.18);">
+        <span class="seg-name">Countries</span>
+        <span class="seg-rev num-mono">37</span>
+      </div>
+      <div class="seg" style="border-color: rgba(17,32,28,0.18);">
+        <span class="seg-name">Founded</span>
+        <span class="seg-rev num-mono">1989</span>
+      </div>
+      <div class="seg" style="border-color: rgba(17,32,28,0.18);">
+        <span class="seg-name">Total Assets</span>
+        <span class="seg-rev num-mono">~$11.0B</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== RESET BEAT 2 ============== -->
+  <div class="reset">
+    <p>A dollar walks into Garmin. <span class="accent">Forty-one cents</span> never make it past the factory floor.</p>
+  </div>
+
+  <!-- ============== WHERE THE MONEY GOES ============== -->
+  <section>
+    <div class="eyebrow-mono">Where the dollar goes <span class="dot">·</span> $1.00 in</div>
+    <h2 class="display-xl" style="font-size: 44px; margin-top: 14px;">
+      The cost <em class="editorial">stack.</em>
+    </h2>
+    <p class="body-text" style="margin-top: 14px;">
+      Pour a dollar of revenue into the column. Cost of goods drains it first; R&amp;D buys the next product line. What's left is what shareholders get to argue over.
+    </p>
+
+    <!-- Vertical altimeter-style stack -->
+    <div class="stack" id="costStack">
+      <!-- bars injected by JS so we can animate fill heights -->
+    </div>
+
+    <div class="dollar-caption">
+      <div class="big">24<span class="it">¢</span></div>
+      <div class="small">left after the five biggest cost lines — the <em class="editorial">operating</em> wedge.</div>
+    </div>
+  </section>
+
+  <!-- ============== FOOTPRINT ============== -->
+  <section class="tone-2">
+    <div class="eyebrow-mono">The footprint <span class="dot">·</span> 37 countries</div>
+    <h2 class="display-xl" style="font-size: 44px; margin-top: 14px;">
+      Three <em class="editorial green">parallels.</em>
+    </h2>
+    <p class="body-text" style="margin-top: 14px;">
+      Revenue clusters along the temperate latitudes — wherever there are runners, pilots, sailors, or pickup trucks with infotainment.
+    </p>
+
+    <div class="map-wrap">
+      <svg viewBox="0 0 600 420" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="mapBg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E5DEC9"/>
+            <stop offset="100%" stop-color="#D8CFB5"/>
+          </linearGradient>
+        </defs>
+        <rect width="600" height="420" fill="url(#mapBg)"/>
+
+        <!-- latitude lines -->
+        <g stroke="#11201C" stroke-width="0.4" opacity="0.18">
+          <line x1="0" y1="80"  x2="600" y2="80"/>
+          <line x1="0" y1="140" x2="600" y2="140"/>
+          <line x1="0" y1="200" x2="600" y2="200"/>
+          <line x1="0" y1="260" x2="600" y2="260"/>
+          <line x1="0" y1="320" x2="600" y2="320"/>
+          <line x1="0" y1="380" x2="600" y2="380"/>
+        </g>
+        <g stroke="#11201C" stroke-width="0.4" opacity="0.12">
+          <line x1="100" y1="0" x2="100" y2="420"/>
+          <line x1="200" y1="0" x2="200" y2="420"/>
+          <line x1="300" y1="0" x2="300" y2="420"/>
+          <line x1="400" y1="0" x2="400" y2="420"/>
+          <line x1="500" y1="0" x2="500" y2="420"/>
+        </g>
+        <!-- equator emphasized -->
+        <line x1="0" y1="230" x2="600" y2="230" stroke="#11201C" stroke-width="0.8" opacity="0.35" stroke-dasharray="3 4"/>
+
+        <!-- Stylized continents — geometric blobs -->
+        <g fill="#11201C" opacity="0.92">
+          <!-- North America -->
+          <path d="M70,90 Q100,70 140,80 L170,95 Q190,110 180,140 L165,180 Q150,210 120,205 L90,210 Q60,200 55,170 L52,135 Q55,105 70,90 Z"/>
+          <!-- South America -->
+          <path d="M150,225 Q170,220 175,250 L170,300 Q160,335 145,345 L132,330 Q125,295 130,260 Q140,235 150,225 Z"/>
+          <!-- Europe -->
+          <path d="M260,100 Q285,90 310,100 L325,120 Q330,140 315,150 L290,155 Q270,150 260,135 Z"/>
+          <!-- Africa -->
+          <path d="M285,165 Q310,160 325,180 L335,225 Q330,270 310,290 L290,295 Q275,275 275,240 Q278,200 285,165 Z"/>
+          <!-- Asia -->
+          <path d="M340,90 Q400,75 460,100 L490,135 Q495,160 470,170 L420,175 Q380,170 355,155 Q340,130 340,90 Z"/>
+          <!-- Australia -->
+          <path d="M460,260 Q495,255 515,275 L520,300 Q505,315 478,310 L460,300 Q450,280 460,260 Z"/>
+        </g>
+
+        <!-- Region overlays: dot-density representing share -->
+        <!-- AMERICAS 45% -->
+        <g id="region-americas">
+          <ellipse cx="120" cy="160" rx="80" ry="70" fill="#2C5E4A" opacity="0.18"/>
+          <circle cx="120" cy="160" r="8" fill="#2C5E4A"/>
+          <text x="120" y="115" text-anchor="middle" font-family="Geist Mono, monospace" font-size="11" letter-spacing="2" fill="#2C5E4A" font-weight="500">45%</text>
+        </g>
+        <!-- EMEA 38% -->
+        <g id="region-emea">
+          <ellipse cx="305" cy="180" rx="70" ry="100" fill="#1F4D6B" opacity="0.18"/>
+          <circle cx="305" cy="180" r="7" fill="#1F4D6B"/>
+          <text x="305" y="100" text-anchor="middle" font-family="Geist Mono, monospace" font-size="11" letter-spacing="2" fill="#1F4D6B" font-weight="500">38%</text>
+        </g>
+        <!-- Asia-Pac 17% -->
+        <g id="region-apac">
+          <ellipse cx="450" cy="195" rx="70" ry="80" fill="#B85C2F" opacity="0.18"/>
+          <circle cx="450" cy="195" r="5" fill="#B85C2F"/>
+          <text x="450" y="115" text-anchor="middle" font-family="Geist Mono, monospace" font-size="11" letter-spacing="2" fill="#B85C2F" font-weight="500">17%</text>
+        </g>
+
+        <!-- Olathe origin marker -->
+        <g>
+          <line x1="105" y1="155" x2="60" y2="125" stroke="#11201C" stroke-width="0.6" opacity="0.6"/>
+          <text x="55" y="120" text-anchor="end" font-family="Geist Mono, monospace" font-size="9" letter-spacing="2" fill="#11201C" opacity="0.7">OLATHE</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="map-legend">
+      <div class="map-row">
+        <div class="swatch" style="background: #2C5E4A;"></div>
+        <div class="nm">Americas</div>
+        <div class="pc">45%</div>
+      </div>
+      <div class="map-row">
+        <div class="swatch" style="background: #1F4D6B;"></div>
+        <div class="nm">EMEA</div>
+        <div class="pc">38%</div>
+      </div>
+      <div class="map-row">
+        <div class="swatch" style="background: #B85C2F;"></div>
+        <div class="nm">Asia-Pacific</div>
+        <div class="pc">17%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== RESET BEAT 3 — into the dark ============== -->
+  <div class="reset dark">
+    <p>What sits underneath all of it: <span class="accent">a balance sheet with no horizon line.</span></p>
+  </div>
+
+  <!-- ============== BALANCE SHEET — DARK INTERLUDE ============== -->
+  <section class="dark">
+    <div class="eyebrow-mono">The fortress <span style="color:#B7E1CB; padding: 0 4px;">·</span> the balance sheet</div>
+    <h2 class="display-xl" style="font-size: 44px; margin-top: 14px;">
+      <em class="editorial" style="color: #B7E1CB;">Cash heavy.</em><br/>Debt light.
+    </h2>
+    <p class="body-text" style="margin-top: 14px; color: rgba(241,236,223,0.78);">
+      A debt-to-equity ratio of <span class="num-mono" style="color: #B7E1CB;">~0.23x</span> — and even that's mostly leases. Garmin's pans tilt heavily toward equity, with cash piled on the same side.
+    </p>
+
+    <!-- A balance scale that visually shows equity overwhelming debt -->
+    <div class="scale-glyph">
+      <svg viewBox="0 0 400 400" aria-hidden="true">
+        <!-- ground -->
+        <line x1="40" y1="380" x2="360" y2="380" stroke="#F1ECDF" stroke-width="0.6" opacity="0.4"/>
+        <!-- post -->
+        <line x1="200" y1="80" x2="200" y2="370" stroke="#F1ECDF" stroke-width="2" opacity="0.6"/>
+        <circle cx="200" cy="375" r="6" fill="#F1ECDF" opacity="0.6"/>
+        <!-- beam tilted slightly toward equity (left) -->
+        <g id="balanceBeam" transform="rotate(-9 200 100)">
+          <line x1="60" y1="100" x2="340" y2="100" stroke="#F1ECDF" stroke-width="2.2"/>
+          <circle cx="200" cy="100" r="5" fill="#F1ECDF"/>
+          <!-- chains -->
+          <line x1="80"  y1="100" x2="80"  y2="180" stroke="#F1ECDF" stroke-width="0.8" opacity="0.7"/>
+          <line x1="120" y1="100" x2="120" y2="180" stroke="#F1ECDF" stroke-width="0.8" opacity="0.7"/>
+          <line x1="280" y1="100" x2="280" y2="170" stroke="#F1ECDF" stroke-width="0.8" opacity="0.7"/>
+          <line x1="320" y1="100" x2="320" y2="170" stroke="#F1ECDF" stroke-width="0.8" opacity="0.7"/>
+
+          <!-- Equity pan (heavy, left) -->
+          <g>
+            <path d="M60,180 L140,180 L155,200 L130,250 L70,250 L45,200 Z"
+                  fill="none" stroke="#B7E1CB" stroke-width="1.5"/>
+            <text x="100" y="220" text-anchor="middle"
+                  font-family="Instrument Serif, serif" font-size="28" fill="#B7E1CB" font-style="italic">$8.97B</text>
+            <text x="100" y="240" text-anchor="middle"
+                  font-family="Geist Mono, monospace" font-size="9" letter-spacing="2" fill="rgba(241,236,223,0.55)">EQUITY</text>
+          </g>
+
+          <!-- Debt pan (light, right, raised) -->
+          <g>
+            <path d="M260,170 L340,170 L355,190 L330,225 L270,225 L245,190 Z"
+                  fill="none" stroke="rgba(241,236,223,0.5)" stroke-width="1.2"/>
+            <text x="300" y="200" text-anchor="middle"
+                  font-family="Instrument Serif, serif" font-size="22" fill="rgba(241,236,223,0.85)">~0</text>
+            <text x="300" y="218" text-anchor="middle"
+                  font-family="Geist Mono, monospace" font-size="9" letter-spacing="2" fill="rgba(241,236,223,0.55)">LT DEBT</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="balance-figs">
+      <div class="fig">
+        <span class="v num-mono">$2.28B</span>
+        <span class="l">Cash &amp; equivalents</span>
+      </div>
+      <div class="fig">
+        <span class="v num-mono">$1.63B</span>
+        <span class="l">Op. cash flow</span>
+      </div>
+      <div class="fig">
+        <span class="v num-mono">$1.36B</span>
+        <span class="l">Free cash flow</span>
+      </div>
+      <div class="fig">
+        <span class="v num-mono">0.23x</span>
+        <span class="l">Debt / equity</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== THE BET ============== -->
+  <section>
+    <div class="eyebrow-mono">The bet <span class="dot">·</span> capital allocation</div>
+    <h2 class="display-xl" style="font-size: 44px; margin-top: 14px;">
+      The board <em class="editorial green">leans in.</em>
+    </h2>
+    <p class="body-text" style="margin-top: 14px;">
+      With $1.36B of free cash flow generating itself each year, Garmin is sending more of it home: a fatter dividend, a fresh buyback, and a modest capex line that says <em class="editorial">build, don't borrow.</em>
+    </p>
+
+    <!-- Capital allocation as a downhill flow -->
+    <div class="bet-glyph">
+      <svg viewBox="0 0 400 300" aria-hidden="true">
+        <!-- Source: FCF -->
+        <g>
+          <text x="20" y="40" font-family="Geist Mono, monospace" font-size="10" letter-spacing="2" fill="#11201C" opacity="0.7">FCF · $1.36B</text>
+          <rect x="18" y="50" width="120" height="14" fill="#2C5E4A"/>
+        </g>
+        <!-- Three streams flowing down -->
+        <path d="M138,57 C200,57 200,140 240,140" stroke="#2C5E4A" stroke-width="14" fill="none" stroke-linecap="butt" opacity="0.85"/>
+        <path d="M138,57 C200,57 200,200 260,200" stroke="#1F4D6B" stroke-width="10" fill="none" stroke-linecap="butt" opacity="0.85"/>
+        <path d="M138,57 C200,57 200,255 240,255" stroke="#B85C2F" stroke-width="6"  fill="none" stroke-linecap="butt" opacity="0.85"/>
+
+        <!-- Endpoint blocks -->
+        <g>
+          <rect x="240" y="133" width="140" height="14" fill="#2C5E4A"/>
+          <text x="385" y="128" text-anchor="end" font-family="Geist Mono, monospace" font-size="10" letter-spacing="2" fill="#11201C" opacity="0.75">DIVIDENDS · $663.88M</text>
+        </g>
+        <g>
+          <rect x="260" y="193" width="120" height="10" fill="#1F4D6B"/>
+          <text x="385" y="188" text-anchor="end" font-family="Geist Mono, monospace" font-size="10" letter-spacing="2" fill="#11201C" opacity="0.75">BUYBACK · $500M new</text>
+        </g>
+        <g>
+          <rect x="240" y="250" width="80" height="6" fill="#B85C2F"/>
+          <text x="385" y="246" text-anchor="end" font-family="Geist Mono, monospace" font-size="10" letter-spacing="2" fill="#11201C" opacity="0.75">CAPEX · $270.45M</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="bet-list">
+      <div class="bet-item">
+        <span class="num">01</span>
+        <span class="label">Dividend bumped <em>+17%</em> to <span class="num-mono">$4.20</span> annually</span>
+        <span class="v num-mono">$4.20</span>
+      </div>
+      <div class="bet-item">
+        <span class="num">02</span>
+        <span class="label">Fresh buyback authorization, <em>announced</em></span>
+        <span class="v num-mono">$500M</span>
+      </div>
+      <div class="bet-item">
+        <span class="num">03</span>
+        <span class="label">Capex stays disciplined — <em>build the next thing</em></span>
+        <span class="v num-mono">$270M</span>
+      </div>
+      <div class="bet-item">
+        <span class="num">04</span>
+        <span class="label">R&amp;D as <em>share of OpEx</em></span>
+        <span class="v num-mono">15%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== RESET BEAT 4 ============== -->
+  <div class="reset">
+    <p>And on the next ridge over: <span class="accent">a four-trillion-dollar competitor</span> with a watch on its wrist.</p>
+  </div>
+
+  <!-- ============== COMPETITORS ============== -->
+  <section class="tone-2">
+    <div class="eyebrow-mono">The competition <span class="dot">·</span> by market cap</div>
+    <h2 class="display-xl" style="font-size: 44px; margin-top: 14px;">
+      The <em class="editorial">scale</em> on the wrist.
+    </h2>
+    <p class="body-text" style="margin-top: 14px;">
+      Garmin's named peers don't sit in the same product market — except one. Apple's wearable line aims at Garmin's largest segment with all the lift the iPhone can give it.
+    </p>
+
+    <div class="competitors-vis">
+      <svg viewBox="0 0 400 400" aria-hidden="true">
+        <!-- Concentric rings showing scale: each ring = log(market cap) -->
+        <!-- AAPL $3.97T : enormous -->
+        <circle cx="200" cy="200" r="195" fill="none" stroke="#11201C" stroke-width="1" opacity="0.35" stroke-dasharray="2 4"/>
+        <text x="200" y="20" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" letter-spacing="2" fill="#11201C" opacity="0.75">AAPL · $3.97T</text>
+
+        <!-- GRMN $51.5B (own) -->
+        <circle cx="200" cy="200" r="60" fill="#2C5E4A" opacity="0.15"/>
+        <circle cx="200" cy="200" r="60" fill="none" stroke="#2C5E4A" stroke-width="1.5"/>
+        <text x="200" y="195" text-anchor="middle" font-family="Instrument Serif, serif" font-size="26" fill="#11201C" font-style="italic">GRMN</text>
+        <text x="200" y="215" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="2" fill="#11201C" opacity="0.7">$51.5B</text>
+
+        <!-- CMG $46.67B — same neighborhood -->
+        <circle cx="118" cy="285" r="56" fill="none" stroke="#11201C" stroke-width="1" opacity="0.45"/>
+        <text x="118" y="285" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" letter-spacing="2" fill="#11201C">CMG</text>
+        <text x="118" y="300" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" letter-spacing="2" fill="#11201C" opacity="0.6">$46.7B</text>
+
+        <!-- MNSO $38.56B -->
+        <circle cx="290" cy="280" r="50" fill="none" stroke="#11201C" stroke-width="1" opacity="0.45"/>
+        <text x="290" y="280" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" letter-spacing="2" fill="#11201C">MNSO</text>
+        <text x="290" y="295" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" letter-spacing="2" fill="#11201C" opacity="0.6">$38.6B</text>
+
+        <!-- Apple looming arrow -->
+        <g opacity="0.85">
+          <path d="M200,5 L200,135" stroke="#E05C5C" stroke-width="1.2" stroke-dasharray="3 4"/>
+          <polygon points="200,140 196,130 204,130" fill="#E05C5C"/>
+        </g>
+
+        <!-- compass tick marks at corners for instrument feel -->
+        <g stroke="#11201C" stroke-width="0.6" opacity="0.4">
+          <line x1="0" y1="0" x2="14" y2="0"/><line x1="0" y1="0" x2="0" y2="14"/>
+          <line x1="400" y1="0" x2="386" y2="0"/><line x1="400" y1="0" x2="400" y2="14"/>
+          <line x1="0" y1="400" x2="14" y2="400"/><line x1="0" y1="400" x2="0" y2="386"/>
+          <line x1="400" y1="400" x2="386" y2="400"/><line x1="400" y1="400" x2="400" y2="386"/>
+        </g>
+      </svg>
+    </div>
+
+    <p class="body-text" style="margin-top: 6px; font-size: 13px;">
+      <em class="editorial signal">Tap a name</em> to read why each one matters.
+    </p>
+
+    <div class="competitors-list">
+      <div class="comp-item" data-comp>
+        <div class="comp-name">Apple<span style="color: var(--topo-ink-3, #6B6A65);"> · AAPL</span></div>
+        <div class="chev" aria-hidden="true">＋</div>
+        <div class="comp-cap num-mono">$3.97T <span style="color: var(--topo-green); margin-left: 8px;">+10.07% YoY</span></div>
+        <div class="comp-desc">
+          Apple Watch and the broader health-tracking ecosystem aim straight at Garmin's Fitness and Outdoor segments — same premium consumer, deeper smartphone integration, an expanding sensor suite that threatens Garmin's share among mainstream fitness users. Revenue $416.16B, P/E 33.68x.
+        </div>
+      </div>
+      <div class="comp-item" data-comp>
+        <div class="comp-name">Chipotle<span style="color: var(--topo-ink-3, #6B6A65);"> · CMG</span></div>
+        <div class="chev" aria-hidden="true">＋</div>
+        <div class="comp-cap num-mono">$46.67B <span style="color: var(--topo-green); margin-left: 8px;">+5.41% YoY</span></div>
+        <div class="comp-desc">
+          Same Consumer Discretionary bucket, no real product overlap. The relevant non-list rival here is <em class="editorial">Samsung</em> — Galaxy Watch goes head-on with Garmin's premium smartwatches. Revenue $11.93B, P/E 30.39x.
+        </div>
+      </div>
+      <div class="comp-item" data-comp>
+        <div class="comp-name">MINISO<span style="color: var(--topo-ink-3, #6B6A65);"> · MNSO</span></div>
+        <div class="chev" aria-hidden="true">＋</div>
+        <div class="comp-cap num-mono">$38.56B <span style="color: var(--topo-green); margin-left: 8px;">+26.18% YoY</span></div>
+        <div class="comp-desc">
+          A fast-growing consumer-goods retailer, not a direct rival. The stronger strategic threat is <em class="editorial">Coupang</em> (CPNG, $39.40B, +14.09% YoY) — its Asia-Pacific e-commerce dominance pressures Garmin's distribution economics in a key growth region. Revenue $5.80B (Q), P/E 27.85x.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== RESET BEAT 5 ============== -->
+  <div class="reset">
+    <p>The compass needle <span class="accent">always returns</span> to where it started.</p>
+  </div>
+
+  <!-- ============== CLOSE — INVERTS THE OPEN ============== -->
+  <section>
+    <div class="eyebrow-mono">The takeaway <span class="dot">·</span> back to coordinates</div>
+
+    <h2 class="close-h">
+      Five worlds.<br/>
+      <span class="it">One signal,</span><br/>
+      still locked.
+    </h2>
+
+    <p class="body-text" style="margin-top: 22px;">
+      The page opened on a coordinate. Five segments later — through margins, maps, a fortress balance sheet, a three-pronged capital plan, and a competitor four trillion dollars heavier — it lands where Garmin started: a small instrument company in <em class="editorial">Olathe, Kansas,</em> still selling precision in five places at once.
+    </p>
+
+    <div class="close-cap">N 38°53'12.4" · W 94°48'07.1"</div>
+    <div class="close-coord">FIX ACQUIRED · FY '25</div>
+  </section>
+
+  <div class="colophon">
+    <div class="meta">GRMN · Recap · FY '25</div>
+    <div class="row">
+      <span class="meta">Source · 10-K, Q4 release</span>
+      <span class="meta">Olathe → SIX</span>
+    </div>
+    <div class="row" style="margin-top: 22px;">
+      <span class="meta" style="opacity: 0.6;">Scroll the page to read the full story.</span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   Scroll progress bar
+   ===================================================================== */
+(function(){
+  const fill = document.getElementById('progressFill');
+  function onScroll(){
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = Math.max(0, Math.min(1, window.scrollY / h));
+    fill.style.width = (pct * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+/* =====================================================================
+   Compass: ticks + segment wedges
+   ===================================================================== */
+(function(){
+  const ticks = document.getElementById('ticks');
+  if(!ticks) return;
+  const cx = 200, cy = 200;
+  let html = '';
+  for(let a=0; a<360; a+=6){
+    const r1 = a%30===0 ? 165 : 173;
+    const r2 = 180;
+    const x1 = cx + r1 * Math.cos((a-90)*Math.PI/180);
+    const y1 = cy + r1 * Math.sin((a-90)*Math.PI/180);
+    const x2 = cx + r2 * Math.cos((a-90)*Math.PI/180);
+    const y2 = cy + r2 * Math.sin((a-90)*Math.PI/180);
+    const w  = a%30===0 ? 1.2 : 0.5;
+    html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#11201C" stroke-width="${w}" opacity="0.6"/>`;
+  }
+  ticks.innerHTML = html;
+
+  // wedge slices showing segment weights (illustrative — Fitness largest)
+  // We don't have all segment % so we render uniform soft wedges with Fitness highlighted.
+  const wedges = document.getElementById('wedges');
+  if(!wedges) return;
+  const slices = [
+    { name: 'fitness',  start: -36, end:  36, color: '#2C5E4A', op: 0.18 },  // top
+    { name: 'outdoor',  start:  36, end: 108, color: '#3F8266', op: 0.10 },
+    { name: 'aviation', start: 108, end: 180, color: '#1F4D6B', op: 0.10 },
+    { name: 'marine',   start: 180, end: 252, color: '#2B8CC4', op: 0.10 },
+    { name: 'auto',     start: 252, end: 324, color: '#B85C2F', op: 0.10 },
+  ];
+  function arc(start, end, r){
+    const s = (start-90)*Math.PI/180;
+    const e = (end-90)*Math.PI/180;
+    const x1 = cx + r*Math.cos(s), y1 = cy + r*Math.sin(s);
+    const x2 = cx + r*Math.cos(e), y2 = cy + r*Math.sin(e);
+    const large = (end - start) > 180 ? 1 : 0;
+    return `M ${cx},${cy} L ${x1.toFixed(1)},${y1.toFixed(1)} A ${r},${r} 0 ${large} 1 ${x2.toFixed(1)},${y2.toFixed(1)} Z`;
+  }
+  let w = '';
+  slices.forEach(s => {
+    w += `<path d="${arc(s.start, s.end, 155)}" fill="${s.color}" opacity="${s.op}"/>`;
+  });
+  wedges.innerHTML = w;
+})();
+
+/* =====================================================================
+   Compass needle — gentle scroll-driven rotation
+   ===================================================================== */
+(function(){
+  const needle = document.getElementById('needle');
+  const svg = document.getElementById('compassSvg');
+  if(!needle || !svg) return;
+  function update(){
+    const r = svg.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const t = 1 - Math.max(0, Math.min(1, (r.top + r.height/2) / vh));
+    // map t (0..1) to -25deg..+15deg, with hover at 0
+    const deg = -25 + t * 40;
+    needle.setAttribute('transform', `translate(200,200) rotate(${deg.toFixed(2)})`);
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+/* =====================================================================
+   Cost stack — vertical stacked bars from supplied hexes
+   ===================================================================== */
+(function(){
+  const stack = document.getElementById('costStack');
+  if(!stack) return;
+  // From JSON, in order
+  const costs = [
+    { pct: 41, color: '#E05C5C', label: 'Cost of Revenue' },
+    { pct: 15, color: '#5B8FF9', label: 'Research & Development' },
+    { pct: 13, color: '#5AD8A6', label: 'SG&A' },
+    { pct:  3, color: '#F6BD16', label: 'D & A' },
+    { pct:  4, color: '#9B59B6', label: 'CapEx' },
+  ];
+  const H = 380;                 // total height in px
+  const totalPct = costs.reduce((s,c)=>s+c.pct, 0); // 76
+  const survivesPct = 100 - totalPct;               // 24
+
+  // Build bars from the top down (most expensive first)
+  let yAcc = 0;
+  costs.forEach((c) => {
+    const h = (c.pct / 100) * H;
+    const div = document.createElement('div');
+    div.className = 'stack-bar';
+    div.style.background = c.color;
+    div.style.top    = yAcc + 'px';
+    div.style.height = h + 'px';
+    div.innerHTML = `
+      <span class="lbl">${c.label}</span>
+      <span class="pct">${c.pct}¢</span>`;
+    stack.appendChild(div);
+    yAcc += h;
+  });
+
+  // The "survives" wedge — operating remainder
+  const surv = document.createElement('div');
+  surv.className = 'stack-survives';
+  surv.style.height = ((survivesPct/100) * H) + 'px';
+  surv.innerHTML = `
+    <span style="font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--topo-ink-2);">What survives</span>
+    <span style="margin-left: auto; font-family: var(--font-display); font-style: italic; font-size: 24px; color: var(--topo-green);">${survivesPct}¢</span>`;
+  stack.appendChild(surv);
+})();
+
+/* =====================================================================
+   Reveal-on-scroll (scale bars and general reveals)
+   ===================================================================== */
+(function(){
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        if(e.target.classList.contains('fill')){
+          const w = parseFloat(e.target.getAttribute('data-w')) || 0;
+          // scale: bars max out at 100; we cap visually at 100
+          e.target.style.width = Math.min(100, w) + '%';
+        }
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.25 });
+  document.querySelectorAll('.fill').forEach(el => io.observe(el));
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+})();
+
+/* =====================================================================
+   Competitors expand
+   ===================================================================== */
+(function(){
+  document.querySelectorAll('[data-comp]').forEach(item => {
+    item.addEventListener('click', () => {
+      item.classList.toggle('open');
+    });
+  });
+})();
+</script>
+</body>
+</html>

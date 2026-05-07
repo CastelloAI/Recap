@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TMO · Recap FY '25</title>
+<meta name="viewport" content="width=390, initial-scale=1, maximum-scale=1, viewer-fit=cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* ============================================================
+   TMO — Thermo Fisher Scientific recap
+   Aesthetic: lab notebook + ledger. Cream paper, ledger ink,
+   instrument teal as signal color. Editorial pacing.
+   ============================================================ */
+
+:root {
+  /* Paper-and-ink base */
+  --paper:    #F2EEE5;     /* manila lab paper */
+  --paper-2:  #E8E2D3;     /* envelope/folder */
+  --paper-3:  #DDD6C2;     /* deeper folder */
+  --cream:    #F8F4EB;     /* lighter raised */
+  --ink:      #14181C;     /* deep ledger ink */
+  --ink-2:    #2A3138;
+  --ink-3:    #5C6068;
+  --ink-4:    #8A8E96;
+  --line:     #C9C2B0;
+  --line-2:   #B6AE99;
+
+  /* Signal color — instrument teal. Reserved for emphasis. */
+  --signal:   #134E5E;     /* deep teal, like scrubs/calibrated glass */
+  --signal-2: #1B6478;
+  --signal-3: #2A8FA9;
+  --signal-soft: #B8D4DC;
+
+  /* The "weight" tone, used for the bet/debt section */
+  --night:    #0E1518;
+  --night-2:  #1A2226;
+  --night-fg: #EFEAE0;
+
+  /* Cost chart colors — supplied, never used elsewhere */
+  --cost-1: #4A90D9;
+  --cost-2: #E8734A;
+  --cost-3: #6DBF67;
+  --cost-4: #9B59B6;
+
+  /* Type */
+  --serif: 'Instrument Serif', 'Times New Roman', serif;
+  --sans:  'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --mono:  'Geist Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  /* Subtle paper grain via SVG noise */
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.08  0 0 0 0 0.07  0 0 0 0 0.05  0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 240px 240px;
+}
+
+/* The page: a fixed mobile column. Centered on desktop. */
+.page {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--paper);
+  background-image: inherit;
+  overflow: hidden;
+  box-shadow: 0 0 80px -20px rgba(0,0,0,0.18);
+  min-height: 100vh;
+}
+
+/* ================== PERSISTENT CHROME ================== */
+.chrome {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(242, 238, 229, 0.82);
+  backdrop-filter: saturate(1.2) blur(14px);
+  -webkit-backdrop-filter: saturate(1.2) blur(14px);
+  border-bottom: 1px solid rgba(20, 24, 28, 0.06);
+}
+.chrome-inner {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 18px 10px;
+}
+.chrome-ticker {
+  font-family: var(--mono);
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  padding: 4px 8px;
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  background: rgba(255,255,255,0.4);
+}
+.chrome-name {
+  font-family: var(--sans);
+  font-size: 13px; font-weight: 500;
+  color: var(--ink-2);
+  letter-spacing: -0.005em;
+  flex: 1;
+}
+.chrome-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.chrome-progress {
+  height: 1.5px;
+  background: rgba(20,24,28,0.06);
+  position: relative;
+}
+.chrome-progress::after {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: var(--p, 0%);
+  background: var(--signal);
+  transition: width 80ms linear;
+}
+
+/* ================== SHARED PRIMITIVES ================== */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--signal);
+  font-weight: 500;
+}
+.eyebrow .dot { color: var(--ink-4); margin: 0 8px; font-weight: 400; }
+.eyebrow .num { color: var(--ink-3); }
+
+.section { padding: 64px 24px; position: relative; }
+.section.tight { padding: 40px 24px; }
+.section.cream { background: var(--cream); }
+.section.folder { background: var(--paper-2); }
+.section.night { background: var(--night); color: var(--night-fg); }
+.section.night .eyebrow { color: var(--signal-3); }
+
+.serif { font-family: var(--serif); font-weight: 400; letter-spacing: -0.015em; }
+.serif-it { font-family: var(--serif); font-style: italic; font-weight: 400; }
+
+.display {
+  font-family: var(--serif);
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.body-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  font-weight: 400;
+  text-wrap: pretty;
+  max-width: 34ch;
+}
+.section.night .body-text { color: #BFB8AA; }
+
+.signal { color: var(--signal); }
+.it-em { font-style: italic; font-family: var(--serif); color: var(--signal); font-size: 1.05em; }
+
+/* ================== RESET BEAT ================== */
+.reset {
+  padding: 56px 32px;
+  background: var(--signal);
+  color: #EAF1F3;
+  position: relative;
+  text-align: left;
+}
+.reset.invert { background: var(--paper-3); color: var(--ink); }
+.reset .pull {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+.reset .pull em {
+  font-style: italic;
+  color: #FFD9C5;
+}
+.reset.invert .pull em { color: var(--signal); }
+.reset .credit {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-top: 18px;
+  color: rgba(255,255,255,0.55);
+}
+.reset.invert .credit { color: var(--ink-3); }
+
+/* ================== SCROLL REVEAL ================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 700ms var(--ease, cubic-bezier(0.22,1,0.36,1)),
+              transform 700ms cubic-bezier(0.22,1,0.36,1);
+}
+.reveal.in { opacity: 1; transform: none; }
+.stagger > * { transition-delay: calc(var(--i, 0) * 80ms); }
+
+/* ================================================================
+   1. HERO — "The instruments behind the science"
+   ================================================================ */
+.hero { padding: 56px 24px 72px; position: relative; }
+.hero-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.hero-eyebrow .live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--signal-3);
+  box-shadow: 0 0 0 0 rgba(42,143,169,0.5);
+  animation: pulse 2.4s infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(42,143,169,0.55); }
+  70% { box-shadow: 0 0 0 8px rgba(42,143,169,0); }
+  100% { box-shadow: 0 0 0 0 rgba(42,143,169,0); }
+}
+.hero h1 {
+  font-family: var(--serif);
+  font-size: 56px;
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  margin: 0;
+  font-weight: 400;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--signal);
+}
+.hero h1 .small-line {
+  display: block;
+  font-size: 28px;
+  margin-top: 14px;
+  font-style: italic;
+  color: var(--ink-2);
+  letter-spacing: -0.01em;
+}
+.hero-sub {
+  margin-top: 28px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-3);
+  max-width: 32ch;
+}
+.hero-sub em { font-family: var(--serif); font-style: italic; color: var(--signal); font-size: 1.05em; }
+
+/* The pipette/instrument scene */
+.pipette-scene {
+  margin-top: 44px;
+  position: relative;
+  height: 280px;
+}
+.pipette-scene svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.pipette-fill { transform-origin: center top; }
+
+.hero-stats {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.hero-stat {
+  padding: 18px 4px 18px 0;
+  border-right: 1px solid var(--line);
+}
+.hero-stat:nth-child(2n) { border-right: none; padding-left: 18px; }
+.hero-stat:nth-child(n+3) { border-top: 1px solid var(--line); }
+.hero-stat .num {
+  font-family: var(--serif);
+  font-size: 36px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--ink);
+}
+.hero-stat .num em { font-style: italic; color: var(--signal); }
+.hero-stat .label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 8px;
+}
+
+/* ================================================================
+   2. THE BUSINESS — four segments, dramatized as flasks/beakers
+   ================================================================ */
+.segments {
+  margin-top: 36px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  height: 280px;
+}
+.flask {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  position: relative;
+}
+.flask-svg { flex: 1; width: 100%; position: relative; }
+.flask-svg svg { width: 100%; height: 100%; display: block; }
+.flask-pct {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-style: italic;
+  color: var(--signal);
+  margin-top: 8px;
+  letter-spacing: -0.01em;
+}
+.flask-label {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 4px;
+  text-align: center;
+  line-height: 1.3;
+  height: 26px;
+}
+.segment-detail {
+  margin-top: 28px;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+}
+.segment-detail-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  padding: 14px 0;
+  align-items: baseline;
+  border-bottom: 1px dashed var(--line);
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+.segment-detail-row:last-child { border-bottom: none; }
+.segment-detail-row .pct {
+  font-family: var(--serif); font-style: italic;
+  color: var(--signal); font-size: 22px;
+  width: 48px;
+}
+.segment-detail-row .name {
+  font-family: var(--sans);
+  font-weight: 500;
+  color: var(--ink);
+  font-size: 13.5px;
+  letter-spacing: -0.005em;
+}
+.segment-detail-row .desc {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  margin-top: 2px;
+  line-height: 1.45;
+}
+.segment-detail-row .col-right {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+}
+
+/* ================================================================
+   3. SCALE — a calibrated cylinder showing $44.56B revenue
+   ================================================================ */
+.scale-scene {
+  position: relative;
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 20px;
+  align-items: stretch;
+}
+.cylinder { position: relative; height: 380px; }
+.cylinder svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.scale-callouts { display: flex; flex-direction: column; justify-content: space-between; padding: 8px 0; }
+.callout {
+  position: relative;
+  padding-left: 22px;
+}
+.callout::before {
+  content: '';
+  position: absolute; left: 0; top: 8px;
+  width: 14px; height: 1px;
+  background: var(--line-2);
+}
+.callout .v {
+  font-family: var(--serif);
+  font-size: 26px; line-height: 1;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.callout .v em { font-style: italic; color: var(--signal); }
+.callout .l {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 6px;
+}
+
+/* ================================================================
+   4. COSTS — pipette rack with colored fill (supplied hex colors)
+   ================================================================ */
+.cost-rack {
+  margin-top: 36px;
+  position: relative;
+}
+.cost-vials {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  align-items: end;
+  height: 320px;
+}
+.vial {
+  position: relative;
+  display: flex; flex-direction: column;
+  height: 100%;
+  align-items: center;
+}
+.vial-tube {
+  width: 100%;
+  flex: 1;
+  position: relative;
+  background: rgba(255,255,255,0.5);
+  border: 1px solid var(--line-2);
+  border-radius: 4px 4px 8px 8px;
+  overflow: hidden;
+  box-shadow: inset 1px 0 0 rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.04);
+}
+.vial-tube::before {
+  /* graduation marks */
+  content: '';
+  position: absolute; right: 4px; top: 6px; bottom: 6px; width: 8px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(20,24,28,0.18) 0,
+    rgba(20,24,28,0.18) 1px,
+    transparent 1px,
+    transparent 8%
+  );
+}
+.vial-fill {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: var(--h, 0%);
+  background: var(--c, var(--signal));
+  transition: height 1100ms cubic-bezier(0.22,1,0.36,1);
+  box-shadow: inset 0 6px 0 rgba(255,255,255,0.18);
+}
+.vial-fill::before {
+  /* meniscus */
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: rgba(255,255,255,0.35);
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+.vial-cap {
+  width: 70%;
+  height: 8px;
+  background: var(--ink-2);
+  border-radius: 4px 4px 2px 2px;
+  margin-bottom: -2px;
+  position: relative; z-index: 2;
+}
+.vial-pct {
+  font-family: var(--serif); font-style: italic;
+  font-size: 22px;
+  color: var(--ink);
+  margin-top: 10px;
+  letter-spacing: -0.01em;
+}
+.vial-pct .cents { color: var(--ink-3); font-size: 13px; font-style: normal; font-family: var(--mono); margin-left: 2px; letter-spacing: 0.04em; }
+.vial-label {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  text-align: center;
+  margin-top: 3px;
+  line-height: 1.25;
+  height: 26px;
+}
+
+.cost-leftover {
+  margin-top: 32px;
+  padding: 22px 20px;
+  background: var(--signal);
+  color: #F0F4F5;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.cost-leftover .big {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 48px;
+  line-height: 0.9;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+}
+.cost-leftover .big .pct { font-family: var(--mono); font-style: normal; font-size: 16px; color: #BAD3DA; margin-left: 4px; letter-spacing: 0.04em; vertical-align: super; }
+.cost-leftover .txt {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(240,244,245,0.85);
+}
+.cost-leftover .txt em { font-style: italic; font-family: var(--serif); color: #FFD9C5; font-size: 1.1em; }
+
+/* ================================================================
+   5. FOOTPRINT — concentric arcs / hemispheres
+   ================================================================ */
+.geo-scene {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: 1fr 140px;
+  gap: 16px;
+  align-items: center;
+}
+.geo-svg { aspect-ratio: 1; width: 140px; }
+.geo-svg svg { width: 100%; height: 100%; display: block; }
+.geo-list { display: flex; flex-direction: column; gap: 2px; }
+.geo-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.geo-row:last-child { border-bottom: none; }
+.geo-row .region {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 500;
+}
+.geo-row .pct {
+  font-family: var(--serif); font-style: italic;
+  font-size: 22px; color: var(--signal);
+  letter-spacing: -0.01em;
+}
+.geo-bar {
+  grid-column: 1 / -1;
+  height: 2px;
+  background: var(--line);
+  margin-top: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.geo-bar::after {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: var(--w, 0%);
+  background: var(--signal);
+  transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
+}
+.geo-row.dim .pct { color: var(--ink-3); }
+.geo-row.dim .geo-bar::after { background: var(--ink-3); }
+
+/* ================================================================
+   6. THE BET — capital allocation, dark/night section
+   ================================================================ */
+.section.night .display { color: var(--night-fg); }
+.section.night .body-text em { color: var(--signal-3); font-family: var(--serif); font-style: italic; }
+
+.bet-flow {
+  margin-top: 36px;
+  position: relative;
+}
+.bet-source {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.bet-source .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase; color: rgba(239,234,224,0.55); }
+.bet-source .v { font-family: var(--serif); font-size: 26px; font-style: italic; color: var(--night-fg); letter-spacing: -0.01em; }
+.bet-source .v em { color: var(--signal-3); font-style: italic; }
+
+.bet-tree {
+  margin-top: 28px;
+  position: relative;
+}
+.bet-line {
+  position: relative;
+  padding: 18px 0 18px 28px;
+  border-bottom: 1px dashed rgba(255,255,255,0.1);
+}
+.bet-line:last-child { border-bottom: none; }
+.bet-line::before {
+  content: '';
+  position: absolute; left: 0; top: 26px;
+  width: 16px; height: 1px;
+  background: rgba(255,255,255,0.18);
+}
+.bet-line::after {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 1px;
+  background: rgba(255,255,255,0.1);
+}
+.bet-line:last-child::after { bottom: 50%; }
+
+.bet-line .v {
+  font-family: var(--serif);
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  color: var(--night-fg);
+  line-height: 1;
+}
+.bet-line .v em { font-style: italic; color: var(--signal-3); }
+.bet-line .lbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: rgba(239,234,224,0.5);
+  margin-top: 8px;
+}
+.bet-line .desc {
+  font-size: 13px;
+  color: rgba(239,234,224,0.65);
+  margin-top: 4px;
+  line-height: 1.45;
+  max-width: 32ch;
+}
+
+.balance-bar {
+  margin-top: 36px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.balance-bar .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase; color: rgba(239,234,224,0.55); margin-bottom: 14px; }
+.balance-row {
+  display: flex;
+  height: 38px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  position: relative;
+}
+.balance-equity {
+  background: var(--signal-3);
+  display: flex; align-items: center; padding: 0 10px;
+  font-family: var(--mono); font-size: 10px; color: #07181D;
+  letter-spacing: 0.06em; font-weight: 500;
+  flex: 53.41;
+}
+.balance-debt {
+  background: rgba(255,255,255,0.18);
+  display: flex; align-items: center; padding: 0 10px;
+  font-family: var(--mono); font-size: 10px; color: var(--night-fg);
+  letter-spacing: 0.06em; font-weight: 500;
+  flex: 3.53;
+  white-space: nowrap;
+}
+.balance-row .label-l, .balance-row .label-r {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: rgba(239,234,224,0.55);
+}
+.balance-key {
+  display: flex; justify-content: space-between;
+  margin-top: 10px;
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: rgba(239,234,224,0.45);
+}
+
+/* ================================================================
+   7. COMPETITORS — sized circles + lab notebook rows
+   ================================================================ */
+.comp-arena {
+  margin-top: 36px;
+  position: relative;
+  height: 240px;
+}
+.comp-arena svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.comp-list {
+  margin-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.comp-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: baseline;
+  cursor: pointer;
+}
+.comp-row .ticker {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  font-weight: 500;
+  width: 36px;
+}
+.comp-row .name {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+.comp-row .name .rev {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  margin-left: 6px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.comp-row .delta {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--signal);
+  letter-spacing: -0.01em;
+}
+.comp-row .delta.neg { color: var(--ink-3); }
+.comp-row .desc {
+  grid-column: 2 / 4;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  line-height: 1.5;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 380ms cubic-bezier(0.22,1,0.36,1), margin-top 380ms;
+  margin-top: 0;
+}
+.comp-row.open .desc {
+  max-height: 200px;
+  margin-top: 10px;
+}
+.comp-row .chev {
+  font-family: var(--mono);
+  font-size: 16px; color: var(--ink-3);
+  transition: transform 240ms;
+}
+.comp-row.open .chev { transform: rotate(180deg); color: var(--signal); }
+
+/* ================================================================
+   8. CLOSE — restate thesis
+   ================================================================ */
+.close { padding: 80px 24px 96px; }
+.close h2 {
+  font-family: var(--serif);
+  font-size: 52px;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.close h2 em { font-style: italic; color: var(--signal); }
+.close .frame {
+  margin-top: 44px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 28px 0;
+}
+.close .frame-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.close .frame-row:last-child { border-bottom: none; }
+.close .frame-row .l {
+  font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.close .frame-row .v {
+  font-family: var(--serif); font-style: italic;
+  font-size: 26px; color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.close .frame-row .v.signal { color: var(--signal); }
+
+.close-foot {
+  margin-top: 44px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  text-align: center;
+}
+
+/* ================================================================
+   Section heads — eyebrow + display title
+   ================================================================ */
+.head {
+  margin-bottom: 28px;
+}
+.head .eyebrow { display: block; margin-bottom: 18px; }
+.head h2 {
+  font-family: var(--serif);
+  font-size: 40px;
+  line-height: 0.98;
+  letter-spacing: -0.022em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+  font-weight: 400;
+}
+.head h2 em { font-style: italic; color: var(--signal); }
+.section.night .head h2 { color: var(--night-fg); }
+.head .lede {
+  margin-top: 20px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 34ch;
+}
+.section.night .head .lede { color: rgba(239,234,224,0.7); }
+.head .lede em { font-style: italic; font-family: var(--serif); color: var(--signal); font-size: 1.07em; }
+.section.night .head .lede em { color: var(--signal-3); }
+
+/* tiny utilities */
+.row { display: flex; align-items: baseline; gap: 8px; }
+@media (max-width: 380px) {
+  .hero h1 { font-size: 48px; }
+  .head h2 { font-size: 34px; }
+  .close h2 { font-size: 44px; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="page" data-screen-label="01 TMO Recap">
+
+  <!-- ===================== PERSISTENT CHROME ===================== -->
+  <div class="chrome">
+    <div class="chrome-inner">
+      <span class="chrome-ticker">TMO</span>
+      <span class="chrome-name">Thermo Fisher Scientific</span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="chrome-progress" id="progress"></div>
+  </div>
+
+  <!-- ===================== 1. HERO ===================== -->
+  <section class="section hero" data-screen-label="Hero">
+    <div class="hero-eyebrow reveal">
+      <span class="live-dot"></span>
+      <span class="eyebrow">Opening · The instrument</span>
+    </div>
+
+    <h1 class="reveal">
+      It doesn't<br>make the drugs.<br>
+      <em>It makes</em><br>
+      <span class="small-line">the science possible.</span>
+    </h1>
+
+    <p class="hero-sub reveal">
+      Thermo Fisher is the <em>arms dealer</em> of life sciences — pipettes, mass spectrometers,
+      reagents, and the contract factories that turn molecules into medicine. <em>Behind every
+      blockbuster, a TMO part number.</em>
+    </p>
+
+    <!-- Pipette + droplet metaphor scene -->
+    <div class="pipette-scene reveal" id="pipette-scene">
+      <svg viewBox="0 0 360 280" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="liq" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#2A8FA9" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#134E5E" stop-opacity="0.95"/>
+          </linearGradient>
+          <linearGradient id="glass" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.7)"/>
+            <stop offset="50%" stop-color="rgba(255,255,255,0.1)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0.05)"/>
+          </linearGradient>
+        </defs>
+
+        <!-- bench surface -->
+        <line x1="0" y1="248" x2="360" y2="248" stroke="#C9C2B0" stroke-width="1"/>
+        <line x1="0" y1="252" x2="360" y2="252" stroke="#C9C2B0" stroke-width="0.5" stroke-dasharray="2 4"/>
+
+        <!-- pipette body -->
+        <g transform="translate(155, 18)">
+          <!-- plunger -->
+          <rect x="14" y="0" width="22" height="18" rx="3" fill="#2A3138"/>
+          <rect x="18" y="-6" width="14" height="8" rx="2" fill="#5C6068"/>
+          <!-- barrel -->
+          <rect x="10" y="18" width="30" height="80" fill="#F8F4EB" stroke="#5C6068" stroke-width="1"/>
+          <!-- digital display -->
+          <rect x="14" y="32" width="22" height="14" fill="#0E1518"/>
+          <text x="25" y="42" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#2A8FA9">200</text>
+          <!-- ergonomic neck -->
+          <path d="M10 98 L8 130 L42 130 L40 98 Z" fill="#F8F4EB" stroke="#5C6068" stroke-width="1"/>
+          <!-- shaft -->
+          <path d="M14 130 L12 178 L38 178 L36 130 Z" fill="#FFFFFF" stroke="#5C6068" stroke-width="0.8"/>
+          <!-- tip (translucent) -->
+          <path d="M14 178 L21 220 L29 220 L36 178 Z" fill="rgba(184,212,220,0.4)" stroke="#5C6068" stroke-width="0.6"/>
+          <!-- droplet at tip -->
+          <ellipse id="droplet" cx="25" cy="226" rx="6" ry="8" fill="url(#liq)">
+            <animate attributeName="cy" values="220;226;232;226;220" dur="3s" repeatCount="indefinite"/>
+            <animate attributeName="ry" values="6;8;9;7;6" dur="3s" repeatCount="indefinite"/>
+          </ellipse>
+        </g>
+
+        <!-- four receiving wells (the four segments) -->
+        <g id="wells">
+          <g transform="translate(40, 234)">
+            <rect x="0" y="0" width="44" height="14" rx="2" fill="rgba(184,212,220,0.35)" stroke="#1B6478" stroke-width="0.6"/>
+            <rect class="well-fill" x="0" y="0" width="44" height="14" fill="#134E5E" opacity="0.85" style="transform-origin: 22px 14px;"/>
+          </g>
+          <g transform="translate(108, 234)">
+            <rect x="0" y="0" width="44" height="14" rx="2" fill="rgba(184,212,220,0.35)" stroke="#1B6478" stroke-width="0.6"/>
+            <rect class="well-fill" x="0" y="0" width="44" height="14" fill="#1B6478" opacity="0.8"/>
+          </g>
+          <g transform="translate(208, 234)">
+            <rect x="0" y="0" width="44" height="14" rx="2" fill="rgba(184,212,220,0.35)" stroke="#1B6478" stroke-width="0.6"/>
+            <rect class="well-fill" x="0" y="0" width="44" height="14" fill="#2A8FA9" opacity="0.65"/>
+          </g>
+          <g transform="translate(276, 234)">
+            <rect x="0" y="0" width="44" height="14" rx="2" fill="rgba(184,212,220,0.35)" stroke="#1B6478" stroke-width="0.6"/>
+            <rect class="well-fill" x="0" y="0" width="44" height="14" fill="#2A8FA9" opacity="0.4"/>
+          </g>
+        </g>
+
+        <!-- ticks/calibration marks down the side -->
+        <g stroke="#8A8E96" stroke-width="0.6" font-family="Geist Mono, monospace" font-size="7" fill="#8A8E96">
+          <line x1="14" y1="40" x2="22" y2="40"/>
+          <text x="0" y="43">$45B</text>
+          <line x1="14" y1="100" x2="22" y2="100"/>
+          <text x="0" y="103">$30B</text>
+          <line x1="14" y1="160" x2="22" y2="160"/>
+          <text x="0" y="163">$15B</text>
+          <line x1="14" y1="220" x2="22" y2="220"/>
+          <text x="0" y="223">$0</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-stats reveal">
+      <div class="hero-stat">
+        <div class="num"><em>$172.91<span style="font-size:0.6em;">B</span></em></div>
+        <div class="label">Market cap</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">125<span style="font-size:0.6em;">K</span></div>
+        <div class="label">Employees · 50+ countries</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">$44.56<span style="font-size:0.6em;">B</span></div>
+        <div class="label">FY'25 revenue</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num"><em>17.4%</em></div>
+        <div class="label">Operating margin</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RESET BEAT 1 ===================== -->
+  <div class="reset reveal">
+    <p class="pull">Every drug, every diagnostic, every genome read in this decade — <em>passed through TMO equipment first.</em></p>
+    <div class="credit">Reset · 01</div>
+  </div>
+
+  <!-- ===================== 2. THE BUSINESS ===================== -->
+  <section class="section folder" data-screen-label="Business">
+    <div class="head reveal">
+      <span class="eyebrow">The business · Four flasks</span>
+      <h2>Sell the <em>shovel</em>.<br>Then sell the <em>service</em>.<br>Then bottle <em>the gold</em>.</h2>
+      <p class="lede">Four segments, woven across the drug value chain. The <em>biggest</em> is also the most invisible: distributing the supplies that other companies' science depends on.</p>
+    </div>
+
+    <!-- Flask shapes sized by segment % -->
+    <div class="segments reveal stagger">
+      <!-- Lab / Biopharma · 49% -->
+      <div class="flask" style="--i:0;">
+        <div class="flask-svg">
+          <svg viewBox="0 0 60 200" preserveAspectRatio="xMidYEnd meet">
+            <defs>
+              <clipPath id="fl1"><path d="M22 8 L22 60 L8 180 Q8 192 20 192 L40 192 Q52 192 52 180 L38 60 L38 8 Z"/></clipPath>
+            </defs>
+            <path d="M22 8 L22 60 L8 180 Q8 192 20 192 L40 192 Q52 192 52 180 L38 60 L38 8 Z" fill="rgba(255,255,255,0.5)" stroke="#2A3138" stroke-width="1"/>
+            <rect x="20" y="0" width="20" height="10" fill="#2A3138" rx="1"/>
+            <rect x="76" y="106" width="60" height="200" fill="#134E5E" clip-path="url(#fl1)" style="transform: translate(-76px, 0); transform-origin: 0 192px;"/>
+            <line x1="42" y1="100" x2="46" y2="100" stroke="#5C6068" stroke-width="0.5"/>
+            <line x1="42" y1="130" x2="46" y2="130" stroke="#5C6068" stroke-width="0.5"/>
+            <line x1="42" y1="160" x2="46" y2="160" stroke="#5C6068" stroke-width="0.5"/>
+          </svg>
+        </div>
+        <div class="flask-pct">49%</div>
+        <div class="flask-label">Lab Products<br>& Biopharma</div>
+      </div>
+      <!-- Life sciences · 23% -->
+      <div class="flask" style="--i:1;">
+        <div class="flask-svg">
+          <svg viewBox="0 0 60 200" preserveAspectRatio="xMidYEnd meet">
+            <path d="M22 8 L22 80 L8 180 Q8 192 20 192 L40 192 Q52 192 52 180 L38 80 L38 8 Z" fill="rgba(255,255,255,0.5)" stroke="#2A3138" stroke-width="1"/>
+            <rect x="20" y="0" width="20" height="10" fill="#2A3138" rx="1"/>
+            <path d="M22 80 L8 180 Q8 192 20 192 L40 192 Q52 192 52 180 L38 80 Z" fill="#1B6478" opacity="0.55"/>
+            <path d="M10 145 L50 145" stroke="#FFFFFF" stroke-width="0.5" stroke-dasharray="1 2" opacity="0.4"/>
+          </svg>
+        </div>
+        <div class="flask-pct">23%</div>
+        <div class="flask-label">Life Sciences<br>Solutions</div>
+      </div>
+      <!-- Analytical instruments · 17% -->
+      <div class="flask" style="--i:2;">
+        <div class="flask-svg">
+          <svg viewBox="0 0 60 200" preserveAspectRatio="xMidYEnd meet">
+            <path d="M22 8 L22 90 L8 180 Q8 192 20 192 L40 192 Q52 192 52 180 L38 90 L38 8 Z" fill="rgba(255,255,255,0.5)" stroke="#2A3138" stroke-width="1"/>
+            <rect x="20" y="0" width="20" height="10" fill="#2A3138" rx="1"/>
+            <path d="M22 90 L11 165 Q8 180 8 180 Q8 192 20 192 L40 192 Q52 192 52 180 Q52 180 49 165 L38 90 Z" fill="#2A8FA9" opacity="0.55"/>
+          </svg>
+        </div>
+        <div class="flask-pct">17%</div>
+        <div class="flask-label">Analytical<br>Instruments</div>
+      </div>
+      <!-- Specialty Diagnostics · 11% -->
+      <div class="flask" style="--i:3;">
+        <div class="flask-svg">
+          <svg viewBox="0 0 60 200" preserveAspectRatio="xMidYEnd meet">
+            <path d="M22 8 L22 100 L8 180 Q8 192 20 192 L40 192 Q52 192 52 180 L38 100 L38 8 Z" fill="rgba(255,255,255,0.5)" stroke="#2A3138" stroke-width="1"/>
+            <rect x="20" y="0" width="20" height="10" fill="#2A3138" rx="1"/>
+            <path d="M22 100 L13 175 Q8 188 8 188 Q8 192 20 192 L40 192 Q52 192 52 188 Q52 188 47 175 L38 100 Z" fill="#2A8FA9" opacity="0.4"/>
+          </svg>
+        </div>
+        <div class="flask-pct">11%</div>
+        <div class="flask-label">Specialty<br>Diagnostics</div>
+      </div>
+    </div>
+
+    <div class="segment-detail reveal">
+      <div class="segment-detail-row">
+        <div class="pct">49%</div>
+        <div>
+          <div class="name">Lab Products & Biopharma Services</div>
+          <div class="desc">Lab supply distribution · Patheon contract pharma manufacturing · PPD clinical research.</div>
+        </div>
+        <div class="col-right">~$21.8B</div>
+      </div>
+      <div class="segment-detail-row">
+        <div class="pct">23%</div>
+        <div>
+          <div class="name">Life Sciences Solutions</div>
+          <div class="desc">Reagents · bioproduction · genetic sciences. The recurring-revenue engine.</div>
+        </div>
+        <div class="col-right">~$10.2B</div>
+      </div>
+      <div class="segment-detail-row">
+        <div class="pct">17%</div>
+        <div>
+          <div class="name">Analytical Instruments</div>
+          <div class="desc">Mass spectrometry · chromatography · electron microscopy.</div>
+        </div>
+        <div class="col-right">~$7.6B</div>
+      </div>
+      <div class="segment-detail-row">
+        <div class="pct">11%</div>
+        <div>
+          <div class="name">Specialty Diagnostics</div>
+          <div class="desc">Clinical and transplant diagnostics in hospital labs.</div>
+        </div>
+        <div class="col-right">~$4.9B</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 3. SCALE ===================== -->
+  <section class="section" data-screen-label="Scale">
+    <div class="head reveal">
+      <span class="eyebrow">The scale · A graduated cylinder</span>
+      <h2><em>$44.56B</em><br>passed through<br>the apparatus.</h2>
+    </div>
+
+    <div class="scale-scene">
+      <div class="cylinder reveal">
+        <svg viewBox="0 0 110 380" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <linearGradient id="cylLiq" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#2A8FA9" stop-opacity="0.95"/>
+              <stop offset="100%" stop-color="#134E5E" stop-opacity="1"/>
+            </linearGradient>
+          </defs>
+
+          <!-- top spout -->
+          <path d="M30 8 L30 18 L22 26 L22 34 L88 34 L88 26 L80 18 L80 8 Z" fill="rgba(255,255,255,0.4)" stroke="#5C6068" stroke-width="1"/>
+          <!-- glass body -->
+          <rect x="22" y="34" width="66" height="320" fill="rgba(255,255,255,0.35)" stroke="#5C6068" stroke-width="1"/>
+          <!-- base -->
+          <ellipse cx="55" cy="358" rx="36" ry="6" fill="#5C6068" opacity="0.4"/>
+          <rect x="14" y="354" width="82" height="10" rx="2" fill="rgba(255,255,255,0.4)" stroke="#5C6068" stroke-width="1"/>
+
+          <!-- liquid fill (animated by JS) -->
+          <g id="cyl-fill" style="transform: translateY(280px); transition: transform 1.6s cubic-bezier(0.22,1,0.36,1);">
+            <rect x="22.5" y="34" width="65" height="320" fill="url(#cylLiq)"/>
+            <!-- meniscus -->
+            <ellipse cx="55" cy="34" rx="32.5" ry="5" fill="#2A8FA9" opacity="0.6"/>
+            <ellipse cx="55" cy="34" rx="32.5" ry="3.5" fill="rgba(255,255,255,0.25)"/>
+          </g>
+
+          <!-- graduation ticks + labels (right side) -->
+          <g stroke="#5C6068" font-family="Geist Mono, monospace" font-size="8" fill="#5C6068">
+            <line x1="88" y1="64"  x2="98" y2="64"  stroke-width="1"/>
+            <line x1="88" y1="100" x2="94" y2="100" stroke-width="0.6"/>
+            <line x1="88" y1="136" x2="94" y2="136" stroke-width="0.6"/>
+            <line x1="88" y1="172" x2="98" y2="172" stroke-width="1"/>
+            <line x1="88" y1="208" x2="94" y2="208" stroke-width="0.6"/>
+            <line x1="88" y1="244" x2="94" y2="244" stroke-width="0.6"/>
+            <line x1="88" y1="280" x2="98" y2="280" stroke-width="1"/>
+            <line x1="88" y1="316" x2="94" y2="316" stroke-width="0.6"/>
+            <line x1="88" y1="352" x2="98" y2="352" stroke-width="1"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="scale-callouts reveal stagger">
+        <div class="callout" style="--i:0">
+          <div class="v"><em>$44.56B</em></div>
+          <div class="l">Revenue · FY'25</div>
+        </div>
+        <div class="callout" style="--i:1">
+          <div class="v">$11.01B</div>
+          <div class="l">Q1 '26 quarter</div>
+        </div>
+        <div class="callout" style="--i:2">
+          <div class="v">$7.82B</div>
+          <div class="l">Operating cash flow</div>
+        </div>
+        <div class="callout" style="--i:3">
+          <div class="v">$6.70B</div>
+          <div class="l">Net income</div>
+        </div>
+        <div class="callout" style="--i:4">
+          <div class="v">$5.44</div>
+          <div class="l">Q1'26 EPS</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RESET BEAT 2 ===================== -->
+  <div class="reset invert reveal">
+    <p class="pull">Of every dollar that flows in, <em>fifteen cents</em> survive to the bottom line. The other eighty-five buy the science.</p>
+    <div class="credit">Reset · 02</div>
+  </div>
+
+  <!-- ===================== 4. WHERE THE MONEY GOES ===================== -->
+  <section class="section" data-screen-label="Costs">
+    <div class="head reveal">
+      <span class="eyebrow">A hundred cents in · The cost stack</span>
+      <h2>The dollar<br>gets <em>distilled.</em></h2>
+      <p class="lede">Four vials. The supplied colors. The largest is also the dullest: <em>the cost of the goods themselves.</em></p>
+    </div>
+
+    <div class="cost-rack reveal">
+      <div class="cost-vials">
+        <div class="vial">
+          <div class="vial-cap"></div>
+          <div class="vial-tube">
+            <div class="vial-fill" style="--c:#4A90D9; --h:59%;"></div>
+          </div>
+          <div class="vial-pct">59<span class="cents">¢</span></div>
+          <div class="vial-label">Cost of<br>revenue</div>
+        </div>
+        <div class="vial">
+          <div class="vial-cap"></div>
+          <div class="vial-tube">
+            <div class="vial-fill" style="--c:#E8734A; --h:16%;"></div>
+          </div>
+          <div class="vial-pct">16<span class="cents">¢</span></div>
+          <div class="vial-label">SG&amp;A</div>
+        </div>
+        <div class="vial">
+          <div class="vial-cap"></div>
+          <div class="vial-tube">
+            <div class="vial-fill" style="--c:#9B59B6; --h:4%;"></div>
+          </div>
+          <div class="vial-pct">4<span class="cents">¢</span></div>
+          <div class="vial-label">Amortization<br>of intangibles</div>
+        </div>
+        <div class="vial">
+          <div class="vial-cap"></div>
+          <div class="vial-tube">
+            <div class="vial-fill" style="--c:#6DBF67; --h:3%;"></div>
+          </div>
+          <div class="vial-pct">3<span class="cents">¢</span></div>
+          <div class="vial-label">R&amp;D</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cost-leftover reveal">
+      <div class="big">15<span class="pct">¢</span></div>
+      <div class="txt">survives to <em>net income</em>. Operating margin <em>17.4%</em>; the rest is the <em>price of catalyzing</em> someone else's discovery.</div>
+    </div>
+  </section>
+
+  <!-- ===================== 5. FOOTPRINT ===================== -->
+  <section class="section folder" data-screen-label="Footprint">
+    <div class="head reveal">
+      <span class="eyebrow">Footprint · 50+ countries</span>
+      <h2>The lab<br>is <em>everywhere.</em></h2>
+    </div>
+
+    <div class="geo-scene">
+      <div class="geo-list reveal stagger">
+        <div class="geo-row" style="--i:0">
+          <div class="region">North America</div>
+          <div class="pct">54%</div>
+          <div class="geo-bar" style="--w:54%;"></div>
+        </div>
+        <div class="geo-row" style="--i:1">
+          <div class="region">Europe</div>
+          <div class="pct">25%</div>
+          <div class="geo-bar" style="--w:25%;"></div>
+        </div>
+        <div class="geo-row" style="--i:2">
+          <div class="region">Asia-Pacific</div>
+          <div class="pct">18%</div>
+          <div class="geo-bar" style="--w:18%;"></div>
+        </div>
+        <div class="geo-row dim" style="--i:3">
+          <div class="region">Rest of world</div>
+          <div class="pct">3%</div>
+          <div class="geo-bar" style="--w:3%;"></div>
+        </div>
+      </div>
+      <div class="geo-svg reveal">
+        <svg viewBox="0 0 140 140">
+          <defs>
+            <radialGradient id="globe" cx="0.35" cy="0.3" r="0.9">
+              <stop offset="0%" stop-color="#2A8FA9" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#134E5E" stop-opacity="0.95"/>
+            </radialGradient>
+          </defs>
+          <circle cx="70" cy="70" r="62" fill="url(#globe)" stroke="#0E2B33" stroke-width="0.5"/>
+          <!-- meridians -->
+          <ellipse cx="70" cy="70" rx="62" ry="22" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.6"/>
+          <ellipse cx="70" cy="70" rx="62" ry="44" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.6"/>
+          <line x1="70" y1="8" x2="70" y2="132" stroke="rgba(255,255,255,0.18)" stroke-width="0.6"/>
+          <ellipse cx="70" cy="70" rx="22" ry="62" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="0.4"/>
+          <ellipse cx="70" cy="70" rx="44" ry="62" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="0.4"/>
+
+          <!-- region pins, sized by % -->
+          <g>
+            <!-- NA 54% -->
+            <circle cx="46" cy="58" r="13" fill="#FFD9C5" opacity="0.92" />
+            <circle cx="46" cy="58" r="13" fill="none" stroke="#FFFFFF" stroke-width="0.5" opacity="0.8"/>
+            <text x="46" y="61" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" font-weight="500" fill="#0E2B33">54</text>
+            <!-- EU 25% -->
+            <circle cx="78" cy="50" r="8" fill="#B8D4DC" opacity="0.95"/>
+            <text x="78" y="53" text-anchor="middle" font-family="Geist Mono, monospace" font-size="7" font-weight="500" fill="#0E2B33">25</text>
+            <!-- APAC 18% -->
+            <circle cx="102" cy="76" r="7" fill="#B8D4DC" opacity="0.85"/>
+            <text x="102" y="79" text-anchor="middle" font-family="Geist Mono, monospace" font-size="6.5" font-weight="500" fill="#0E2B33">18</text>
+            <!-- ROW 3% -->
+            <circle cx="78" cy="100" r="3.5" fill="#B8D4DC" opacity="0.6"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <p class="body-text reveal" style="margin-top: 36px; max-width:34ch;">
+      Over <em>half</em> of revenue still comes from North America — but every continent is a customer base, and the <em>same instrument</em> ships from Waltham to Shenzhen.
+    </p>
+  </section>
+
+  <!-- ===================== 6. THE BET (DARK INTERLUDE) ===================== -->
+  <section class="section night" data-screen-label="The Bet">
+    <div class="head reveal">
+      <span class="eyebrow">The bet · Capital, deployed</span>
+      <h2>$13B <em>out the door</em><br>to buy more <em>of what makes</em><br>the science possible.</h2>
+      <p class="lede">2025 was an acquisition year. Free cash flow funded dividends and buybacks; the balance sheet absorbed the rest. <em>Conservatively levered, aggressively shopping.</em></p>
+    </div>
+
+    <div class="bet-flow reveal">
+      <div class="bet-source">
+        <span class="lbl">Free cash flow · FY'25</span>
+        <span class="v"><em>$6.29B</em></span>
+      </div>
+
+      <div class="bet-tree">
+        <div class="bet-line">
+          <div class="v">~<em>$13B</em></div>
+          <div class="lbl">M&amp;A committed</div>
+          <div class="desc">Solventum's filtration business plus the pending <em>$8.88B Clario</em> acquisition.</div>
+        </div>
+        <div class="bet-line">
+          <div class="v"><em>$5B</em></div>
+          <div class="lbl">Buyback authorized</div>
+          <div class="desc">New, no expiration. ~$3B repurchased during the year.</div>
+        </div>
+        <div class="bet-line">
+          <div class="v"><em>$1.52B</em></div>
+          <div class="lbl">Capex</div>
+          <div class="desc">Capacity, automation, the next bench.</div>
+        </div>
+        <div class="bet-line">
+          <div class="v"><em>$636M</em></div>
+          <div class="lbl">Dividend paid</div>
+          <div class="desc">$0.43/qtr, raised 10% in Q1. <em>Nine years</em> of consecutive raises. Payout ratio ~9.5%.</div>
+        </div>
+      </div>
+
+      <div class="balance-bar">
+        <div class="lbl">Capital structure</div>
+        <div class="balance-row" id="balance-row">
+          <div class="balance-equity">$53.41B equity</div>
+          <div class="balance-debt">$3.53B</div>
+        </div>
+        <div class="balance-key">
+          <span>Equity 94%</span>
+          <span>Debt 6%</span>
+        </div>
+        <p class="body-text" style="color: rgba(239,234,224,0.7); margin-top: 20px; max-width: 36ch;">
+          Goodwill of <em>$49.36B</em> tells the story: the company has been <em>built by acquisition</em>, and the balance sheet has stayed clean enough to keep buying.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RESET BEAT 3 ===================== -->
+  <div class="reset reveal">
+    <p class="pull">In a market this big, you don't <em>defeat</em> the competition. You <em>buy adjacent</em> to them.</p>
+    <div class="credit">Reset · 03</div>
+  </div>
+
+  <!-- ===================== 7. COMPETITORS ===================== -->
+  <section class="section" data-screen-label="Competitors">
+    <div class="head reveal">
+      <span class="eyebrow">The arena · Three rivals</span>
+      <h2>Three labs<br>across <em>the bench.</em></h2>
+      <p class="lede">Tap a row to read the <em>angle of attack.</em></p>
+    </div>
+
+    <!-- Bubble arena: TMO sits center, rivals orbit at scaled distance -->
+    <div class="comp-arena reveal" id="comp-arena">
+      <svg viewBox="0 0 360 240" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="tmoG" cx="0.4" cy="0.4" r="0.7">
+            <stop offset="0%" stop-color="#2A8FA9"/>
+            <stop offset="100%" stop-color="#134E5E"/>
+          </radialGradient>
+          <radialGradient id="rivalG" cx="0.4" cy="0.4" r="0.7">
+            <stop offset="0%" stop-color="#E8E2D3"/>
+            <stop offset="100%" stop-color="#B6AE99"/>
+          </radialGradient>
+        </defs>
+
+        <!-- orbit guides -->
+        <circle cx="180" cy="120" r="60" fill="none" stroke="#C9C2B0" stroke-width="0.5" stroke-dasharray="2 4"/>
+        <circle cx="180" cy="120" r="100" fill="none" stroke="#C9C2B0" stroke-width="0.5" stroke-dasharray="2 4"/>
+
+        <!-- TMO: market cap 172.91B, scaled -->
+        <g class="bubble" data-r="44">
+          <circle cx="180" cy="120" r="44" fill="url(#tmoG)"/>
+          <text x="180" y="115" text-anchor="middle" font-family="Geist Mono, monospace" font-size="11" font-weight="500" fill="#FFFFFF">TMO</text>
+          <text x="180" y="130" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#B8D4DC">$172.9B</text>
+        </g>
+
+        <!-- ABT 168.61B -->
+        <g class="bubble">
+          <circle cx="80" cy="80" r="42" fill="url(#rivalG)" stroke="#5C6068" stroke-width="0.5"/>
+          <text x="80" y="76" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" font-weight="500" fill="#14181C">ABT</text>
+          <text x="80" y="89" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#5C6068">$168.6B</text>
+        </g>
+
+        <!-- DHR 137.41B -->
+        <g class="bubble">
+          <circle cx="295" cy="80" r="36" fill="url(#rivalG)" stroke="#5C6068" stroke-width="0.5"/>
+          <text x="295" y="77" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" font-weight="500" fill="#14181C">DHR</text>
+          <text x="295" y="89" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#5C6068">$137.4B</text>
+        </g>
+
+        <!-- A 34.44B -->
+        <g class="bubble">
+          <circle cx="290" cy="180" r="20" fill="url(#rivalG)" stroke="#5C6068" stroke-width="0.5"/>
+          <text x="290" y="178" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" font-weight="500" fill="#14181C">A</text>
+          <text x="290" y="190" text-anchor="middle" font-family="Geist Mono, monospace" font-size="7" fill="#5C6068">$34.4B</text>
+        </g>
+
+        <!-- caption -->
+        <text x="180" y="232" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.5" fill="#8A8E96">BUBBLES SIZED BY MARKET CAP</text>
+      </svg>
+    </div>
+
+    <div class="comp-list">
+      <div class="comp-row" data-comp>
+        <div class="ticker">ABT</div>
+        <div class="name">Abbott Laboratories <span class="rev">$44.33B · +6.59%</span></div>
+        <div class="chev">⌄</div>
+        <div class="desc">Targets <em>Specialty Diagnostics</em>. Immunoassay, molecular, point-of-care, rapid testing — same hospital labs as customers. P/E 26.87.</div>
+      </div>
+      <div class="comp-row" data-comp>
+        <div class="ticker">DHR</div>
+        <div class="name">Danaher Corp <span class="rev">$24.57B · +2.90%</span></div>
+        <div class="chev">⌄</div>
+        <div class="desc">The big shadow. Cytiva and Pall in <em>bioprocessing</em>; water and diagnostics platforms overlap with Life Sciences and Analytical Instruments. P/E 38.02.</div>
+      </div>
+      <div class="comp-row" data-comp>
+        <div class="ticker">A</div>
+        <div class="name">Agilent Technologies <span class="rev">$6.95B · +8.14%</span></div>
+        <div class="chev">⌄</div>
+        <div class="desc">Pure-play instrument rival. LC, mass spec, genomics, cell analysis — head-to-head for <em>the same lab budget.</em> P/E 26.70.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 8. CLOSE — restate the open ===================== -->
+  <section class="section close" data-screen-label="Close">
+    <span class="eyebrow reveal" style="display:block; margin-bottom: 24px;">The takeaway · The bench restated</span>
+    <h2 class="reveal">It still doesn't<br>make the drugs.<br><em>It just owns</em><br>the bench.</h2>
+
+    <div class="frame reveal">
+      <div class="frame-row">
+        <span class="l">Revenue · FY'25</span>
+        <span class="v signal">$44.56B</span>
+      </div>
+      <div class="frame-row">
+        <span class="l">Survives to net income</span>
+        <span class="v">15¢ on the dollar</span>
+      </div>
+      <div class="frame-row">
+        <span class="l">Bought, in 2025</span>
+        <span class="v">~$13B of more bench</span>
+      </div>
+      <div class="frame-row">
+        <span class="l">Customers</span>
+        <span class="v">Pharma · biotech · academia</span>
+      </div>
+      <div class="frame-row">
+        <span class="l">Countries served</span>
+        <span class="v signal">50<span style="font-size:0.7em; font-style: normal; font-family: var(--mono);">+</span></span>
+      </div>
+    </div>
+
+    <p class="body-text reveal" style="margin-top: 32px; max-width: 34ch;">
+      <em>Every blockbuster needs a barrel.</em> Every diagnostic, a reagent. Every assay, an instrument.<br>
+      Thermo Fisher built the supply chain — then quietly bought what was missing.
+    </p>
+
+    <div class="close-foot">— END · TMO · FY '25 RECAP —</div>
+  </section>
+
+</div>
+
+<script>
+// ============================================================
+// Scroll progress + reveals + interactions
+// ============================================================
+(function () {
+  const page = document.querySelector('.page');
+  const progress = document.getElementById('progress');
+
+  function updateProgress() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = max > 0 ? Math.min(100, (scrollTop / max) * 100) : 0;
+    progress.style.setProperty('--p', pct + '%');
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+  updateProgress();
+
+  // ----- IntersectionObserver reveals -----
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        // stagger children
+        const children = e.target.querySelectorAll(':scope > *');
+        children.forEach((c, i) => { c.style.setProperty('--i', i); });
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  reveals.forEach(r => io.observe(r));
+
+  // ----- Cylinder fill: animate to 88% as it scrolls into view -----
+  const cyl = document.getElementById('cyl-fill');
+  const cylSection = cyl ? cyl.closest('.section') : null;
+  if (cyl && cylSection) {
+    const cio = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          // 320px fill area. Fill 88% (looks great, leaves room for callouts).
+          cyl.style.transform = 'translateY(38px)';
+          cio.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    cio.observe(cylSection);
+  }
+
+  // ----- Vials: re-trigger fill animation -----
+  const vialFills = document.querySelectorAll('.vial-fill');
+  vialFills.forEach(v => {
+    const target = v.style.getPropertyValue('--h');
+    v.style.setProperty('--h', '0%');
+    const vio = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          // delay slightly per vial
+          const idx = [...vialFills].indexOf(v);
+          setTimeout(() => { v.style.setProperty('--h', target); }, 160 + idx * 110);
+          vio.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    vio.observe(v.closest('.cost-rack'));
+  });
+
+  // ----- Geo bars -----
+  const geoBars = document.querySelectorAll('.geo-bar');
+  geoBars.forEach(b => {
+    const target = b.style.getPropertyValue('--w');
+    b.style.setProperty('--w', '0%');
+    const gio = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const idx = [...geoBars].indexOf(b);
+          setTimeout(() => { b.style.setProperty('--w', target); }, 120 + idx * 110);
+          gio.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    gio.observe(b);
+  });
+
+  // ----- Competitor rows: tap to expand -----
+  document.querySelectorAll('.comp-row[data-comp]').forEach(row => {
+    row.addEventListener('click', () => {
+      row.classList.toggle('open');
+    });
+  });
+
+  // ----- Hero pipette: subtle scroll-tilt -----
+  const pipetteScene = document.getElementById('pipette-scene');
+  if (pipetteScene) {
+    let rafId = null;
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        const rect = pipetteScene.getBoundingClientRect();
+        const center = window.innerHeight / 2;
+        const offset = (rect.top + rect.height / 2 - center) / center;
+        const tilt = Math.max(-1, Math.min(1, offset)) * -3;
+        pipetteScene.style.transform = `rotate(${tilt}deg)`;
+        rafId = null;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+})();
+</script>
+
+</body>
+</html>

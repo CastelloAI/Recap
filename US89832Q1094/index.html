@@ -1,0 +1,1208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>TFC · Recap FY '25</title>
+<link rel="stylesheet" href="design-system.css" />
+<style>
+  /* ---------- page foundation ---------- */
+  :root{
+    --page-w: 420px;
+    --vault: #0E1F3A;       /* deep institutional navy — debt interlude */
+    --vault-2:#16294A;
+    --vault-ink:#E9ECF3;
+    --vault-mute:#8C9BB6;
+    --carolina: #1F4E8C;    /* primary blue, mined from the institution */
+    --carolina-2:#3B6FB0;
+    --carolina-soft:#E8EFF8;
+    --signal: var(--coral-400); /* coral reserved for "the bet" */
+    --rule: #E4E1D9;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#2A2826;-webkit-font-smoothing:antialiased}
+  body{
+    display:flex; justify-content:center;
+    font-family: var(--font-sans);
+  }
+  /* the page is the design — sized for mobile, no device frame */
+  .page{
+    width:100%;
+    max-width:var(--page-w);
+    background:var(--paper);
+    color:var(--ink);
+    overflow:hidden;
+    position:relative;
+  }
+
+  /* ---------- persistent chrome ---------- */
+  .chrome{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    background: rgba(251,250,247,0.78);
+    border-bottom:1px solid rgba(228,225,217,0.7);
+  }
+  .chrome-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 14px 20px 10px;
+    gap: 10px;
+  }
+  .chrome-left{display:flex; align-items:baseline; gap:10px; min-width:0}
+  .ticker{
+    font-family:var(--font-mono); font-size:13px; font-weight:500;
+    letter-spacing:0.08em; color:var(--ink);
+  }
+  .ticker .dot{display:inline-block; width:6px; height:6px; border-radius:99px; background:var(--carolina); margin-right:8px; transform:translateY(-2px)}
+  .name{
+    font-family:var(--font-display); font-size:17px; font-style:italic;
+    color:var(--ink-2); letter-spacing:-0.005em;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .recap{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em;
+    color:var(--ink-3); text-transform:uppercase;
+  }
+  .progress{height:1.5px; background:transparent; position:relative}
+  .progress-fill{
+    position:absolute; left:0; top:0; height:100%;
+    background:var(--carolina);
+    width:0%;
+  }
+
+  /* ---------- generic section scaffolding ---------- */
+  section{padding: 0 24px; position:relative}
+  .eyebrow{
+    font-family:var(--font-mono); font-size:10.5px; font-weight:500;
+    letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--carolina);
+  }
+  .eyebrow .sep{margin:0 8px; color:var(--ink-4)}
+  .display{ font-family:var(--font-display); font-weight:400; line-height:0.95; letter-spacing:-0.022em }
+  .display em{ font-style:italic; }
+  .body{ font-family:var(--font-sans); font-size:15.5px; line-height:1.55; color:var(--ink-2); margin:0 }
+  .body em{ font-family:var(--font-display); font-style:italic; font-size:1.1em; line-height:1; }
+  .body em.signal{ color:var(--carolina); }
+  .meta-line{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em; color:var(--ink-3); text-transform:uppercase }
+
+  /* ---------- reset beat (italic-serif interlude) ---------- */
+  .reset{
+    padding: 56px 28px;
+    background:var(--paper-2);
+    border-top:1px solid var(--paper-3);
+    border-bottom:1px solid var(--paper-3);
+    text-align:left;
+  }
+  .reset p{
+    font-family:var(--font-display); font-style:italic;
+    font-size:24px; line-height:1.18;
+    color:var(--ink); margin:0; letter-spacing:-0.005em;
+  }
+  .reset p .accent{ color:var(--carolina); }
+  .reset .mark{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.2em;
+    color:var(--ink-3); text-transform:uppercase; margin-bottom:18px; display:block;
+  }
+
+  /* ============================================================
+     1) HERO — thesis: deposits-as-columns
+     ============================================================ */
+  .hero{
+    padding: 28px 24px 56px;
+    background:
+      radial-gradient(120% 70% at 50% 0%, rgba(31,78,140,0.06), transparent 60%),
+      var(--paper);
+    position:relative; overflow:hidden;
+  }
+  .hero .label{ margin-top: 18px; }
+  .hero h1{
+    font-family:var(--font-display); font-weight:400;
+    font-size: 60px; line-height:0.94; letter-spacing:-0.025em;
+    margin: 18px 0 0;
+  }
+  .hero h1 .blue{ color:var(--carolina); }
+  .hero h1 em{ font-style:italic; color:var(--ink-2); }
+  .hero .sub{
+    margin-top: 22px; max-width:340px;
+  }
+  .hero-figure{
+    position:relative; height: 280px; margin: 32px -8px 0;
+  }
+  .hero-figure svg{ width:100%; height:100%; display:block }
+  .hero-stat-row{
+    display:flex; gap:14px; margin-top: 10px;
+    border-top:1px solid var(--rule);
+    padding-top:18px;
+  }
+  .hero-stat{ flex:1 }
+  .hero-stat .num{
+    font-family:var(--font-display); font-size:28px; line-height:1; color:var(--ink);
+    letter-spacing:-0.015em;
+  }
+  .hero-stat .lab{
+    font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.16em;
+    color:var(--ink-3); text-transform:uppercase; margin-top:6px;
+  }
+
+  /* ============================================================
+     2) THE BUSINESS — spread between deposits & loans
+     ============================================================ */
+  .business{
+    padding-top: 64px; padding-bottom: 56px;
+  }
+  .business h2{
+    font-family:var(--font-display); font-size:38px; line-height:1.02; letter-spacing:-0.018em;
+    margin: 14px 0 18px;
+  }
+  .business h2 em{ font-style:italic; color:var(--carolina); }
+  .spread-figure{
+    margin: 26px -4px 18px; height: 240px; position:relative;
+  }
+  .spread-figure svg{ width:100%; height:100% }
+  .spread-legend{
+    display:flex; gap:20px; margin-top:6px;
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em;
+    color:var(--ink-3); text-transform:uppercase;
+  }
+  .spread-legend .swatch{ display:inline-block; width:10px; height:10px; margin-right:8px; vertical-align:middle; border-radius:2px }
+  .spread-callout{
+    margin-top: 28px;
+    padding: 18px 18px 18px 18px;
+    border-left: 2px solid var(--carolina);
+    background: linear-gradient(90deg, rgba(31,78,140,0.05), transparent 60%);
+  }
+  .spread-callout .k{
+    font-family:var(--font-display); font-size:36px; line-height:1; color:var(--ink);
+  }
+  .spread-callout .k em{ font-style:italic; color:var(--carolina) }
+  .spread-callout .d{
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em; color:var(--ink-3);
+    text-transform:uppercase; margin-top:8px;
+  }
+
+  /* ============================================================
+     3) SCALE — count-up + columnar tally
+     ============================================================ */
+  .scale{ padding-top: 64px; padding-bottom: 64px; }
+  .scale h2{
+    font-family:var(--font-display); font-size:36px; line-height:1.04; letter-spacing:-0.015em;
+    margin:14px 0 8px;
+  }
+  .scale-grid{
+    margin-top: 28px;
+    display:grid; grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .scale-cell{
+    padding: 22px 4px 18px;
+    border-top:1px solid var(--rule);
+  }
+  .scale-cell.spans{ grid-column: 1 / -1; }
+  .scale-cell .num{
+    font-family:var(--font-display); font-weight:400;
+    font-size: 44px; line-height:0.95; letter-spacing:-0.02em;
+    color:var(--ink);
+  }
+  .scale-cell .num em{ font-style:italic; color:var(--carolina); }
+  .scale-cell .lab{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em;
+    color:var(--ink-3); text-transform:uppercase; margin-top:10px;
+  }
+  .scale-cell .gloss{
+    font-family:var(--font-sans); font-size:13px; color:var(--ink-2); margin-top:8px;
+    line-height:1.45;
+  }
+  .branch-figure{
+    margin: 18px -4px 0; height: 92px;
+  }
+  .branch-figure svg{ width:100%; height:100% }
+
+  /* ============================================================
+     4) COSTS — supplied hex colors honored, columnar metaphor
+     ============================================================ */
+  .costs{
+    padding-top: 56px; padding-bottom: 64px;
+    background: var(--paper-2);
+    margin-top: 12px;
+  }
+  .costs h2{
+    font-family:var(--font-display); font-size:36px; line-height:1.04; letter-spacing:-0.015em;
+    margin:14px 0 6px;
+  }
+  .costs .lede{ margin-top:14px; max-width: 340px; }
+  .costs-figure{
+    margin: 32px -4px 18px; height: 320px; position:relative;
+  }
+  .costs-figure svg{ width:100%; height:100% }
+  .costs-legend{
+    margin-top: 8px; display:flex; flex-direction:column; gap:0;
+    border-top:1px solid var(--paper-3);
+  }
+  .cost-row{
+    display:grid; grid-template-columns: 14px 1fr auto;
+    gap: 12px; align-items:center;
+    padding: 12px 0;
+    border-bottom:1px solid var(--paper-3);
+  }
+  .cost-row .sw{ width:14px; height:14px; border-radius:3px }
+  .cost-row .lab{ font-family:var(--font-sans); font-size:13px; color:var(--ink); line-height:1.3 }
+  .cost-row .pct{ font-family:var(--font-mono); font-size:13px; color:var(--ink-2) }
+
+  /* ============================================================
+     5) FOOTPRINT — Southeast-weighted dot map
+     ============================================================ */
+  .footprint{
+    padding-top: 64px; padding-bottom: 64px;
+  }
+  .footprint h2{
+    font-family:var(--font-display); font-size:36px; line-height:1.04; letter-spacing:-0.015em;
+    margin:14px 0 12px;
+  }
+  .map-figure{
+    margin: 24px -8px 4px; height: 300px; position:relative;
+  }
+  .map-figure svg{ width:100%; height:100% }
+  .geo-list{
+    margin-top: 28px; padding-top: 18px;
+    border-top:1px solid var(--rule);
+  }
+  .geo-row{
+    display:grid; grid-template-columns: 56px 1fr 36px;
+    gap: 12px; align-items:center;
+    padding: 14px 0;
+    border-bottom:1px solid var(--rule);
+  }
+  .geo-row .pct{
+    font-family:var(--font-display); font-size:24px; line-height:1; color:var(--ink); letter-spacing:-0.01em;
+  }
+  .geo-row .reg{ font-family:var(--font-sans); font-size:14px; color:var(--ink-2) }
+  .geo-row .bar{
+    height:3px; background:var(--paper-2); position:relative; border-radius:2px; overflow:hidden;
+  }
+  .geo-row .bar i{
+    position:absolute; left:0; top:0; bottom:0; background:var(--carolina);
+  }
+
+  /* ============================================================
+     6) THE BET — dark interlude (debt + buybacks)
+     ============================================================ */
+  .bet{
+    background: var(--vault);
+    color: var(--vault-ink);
+    padding: 72px 24px 80px;
+    position:relative; overflow:hidden;
+  }
+  .bet::before{
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(80% 60% at 80% 10%, rgba(255,122,87,0.10), transparent 60%),
+      radial-gradient(50% 40% at 10% 90%, rgba(255,122,87,0.06), transparent 60%);
+    pointer-events:none;
+  }
+  .bet .eyebrow{ color: var(--signal); }
+  .bet h2{
+    font-family:var(--font-display); font-size:42px; line-height:1.0; letter-spacing:-0.02em;
+    margin:14px 0 18px; color:var(--vault-ink); position:relative;
+  }
+  .bet h2 em{ font-style:italic; color:var(--signal); }
+  .bet .body{ color:#BFC9DC; position:relative; }
+  .bet .body em.signal{ color: var(--signal); }
+  .scale-figure{
+    margin: 36px -4px 24px; height: 260px; position:relative;
+  }
+  .scale-figure svg{ width:100%; height:100% }
+  .bet-rail{
+    display:flex; gap:10px; margin-top: 26px;
+    border-top:1px solid rgba(255,255,255,0.08);
+    padding-top: 22px;
+  }
+  .bet-cell{ flex:1; }
+  .bet-cell .n{
+    font-family:var(--font-display); font-size:30px; line-height:1; color:var(--vault-ink);
+  }
+  .bet-cell .n em{ font-style:italic; color:var(--signal) }
+  .bet-cell .l{
+    font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.14em;
+    color:var(--vault-mute); text-transform:uppercase; margin-top:8px;
+  }
+
+  /* ============================================================
+     7) COMPETITORS — comparative columns
+     ============================================================ */
+  .compete{ padding-top: 72px; padding-bottom: 64px; }
+  .compete h2{
+    font-family:var(--font-display); font-size:36px; line-height:1.04; letter-spacing:-0.015em;
+    margin:14px 0 18px;
+  }
+  .rivals{ margin-top: 24px; display:flex; flex-direction:column; gap:0 }
+  .rival{
+    padding: 22px 0;
+    border-top: 1px solid var(--rule);
+  }
+  .rival:last-child{ border-bottom: 1px solid var(--rule); }
+  .rival-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+  .rival-name{ font-family:var(--font-display); font-size:22px; color:var(--ink); letter-spacing:-0.005em }
+  .rival-tick{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; color:var(--ink-3) }
+  .rival-bar{
+    margin-top: 14px; position:relative;
+    height: 38px;
+  }
+  .rival-bar .axis{
+    position:absolute; left:0; right:0; bottom:0;
+    height:1px; background:var(--rule);
+  }
+  .rival-bar .col{
+    position:absolute; bottom:1px; width:18px;
+    border-radius:2px 2px 0 0;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+  }
+  .rival-bar .col.tfc{ background:var(--carolina) }
+  .rival-bar .col.them{ background:var(--ink-3) }
+  .rival-bar .col .v{
+    position:absolute; top:-16px;
+    font-family:var(--font-mono); font-size:10px; color:var(--ink-2); letter-spacing:0.04em;
+  }
+  .rival-bar .col .who{
+    position:absolute; bottom:-18px;
+    font-family:var(--font-mono); font-size:9px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--ink-3);
+  }
+  .rival-desc{
+    margin-top: 38px; font-family:var(--font-sans); font-size:13.5px; line-height:1.5;
+    color:var(--ink-2);
+  }
+  .rival-desc em{ font-family:var(--font-display); font-style:italic; color:var(--carolina); font-size:1.05em }
+
+  /* ============================================================
+     8) CLOSE — 100¢ grid inversion
+     ============================================================ */
+  .close{
+    padding: 72px 24px 96px;
+    background:
+      linear-gradient(180deg, var(--paper) 0%, var(--carolina-soft) 120%);
+  }
+  .close h2{
+    font-family:var(--font-display); font-size:48px; line-height:0.96; letter-spacing:-0.02em;
+    margin: 14px 0 0;
+  }
+  .close h2 em{ font-style:italic; color:var(--carolina) }
+  .close .body{ margin-top: 20px; max-width: 340px; }
+  .cents-figure{ margin: 36px -4px 0; height: 280px; }
+  .cents-figure svg{ width:100%; height:100% }
+  .colophon{
+    margin-top: 56px; padding-top: 22px;
+    border-top: 1px solid rgba(31,78,140,0.18);
+    display:flex; align-items:baseline; justify-content:space-between;
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em;
+    color:var(--ink-3); text-transform:uppercase;
+  }
+
+  /* ---------- scroll reveal ---------- */
+  .reveal{
+    opacity:0; transform: translateY(14px);
+    transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+  }
+  .reveal.in{ opacity:1; transform: translateY(0); }
+
+  /* ---------- count-up monospace fix ---------- */
+  .num, .n, .k, .pct{ font-variant-numeric: tabular-nums; }
+
+  /* selection */
+  ::selection{ background: rgba(31,78,140,0.18); }
+</style>
+</head>
+<body>
+<div class="page" data-screen-label="01 Truist Recap">
+
+  <!-- ======================== PERSISTENT CHROME ======================== -->
+  <header class="chrome" aria-label="Persistent recap orientation">
+    <div class="chrome-row">
+      <div class="chrome-left">
+        <span class="ticker"><span class="dot"></span>TFC</span>
+        <span class="name">Truist Financial</span>
+      </div>
+      <span class="recap">Recap · FY '25</span>
+    </div>
+    <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+  </header>
+
+  <!-- ======================== 1. HERO ======================== -->
+  <section class="hero" data-screen-label="Hero · Thesis">
+    <div class="eyebrow">The thesis<span class="sep">·</span>$400.4B deposited</div>
+    <h1 class="reveal">
+      Four hundred billion<br/>
+      dollars,<br/>
+      <em>parked</em> <span class="blue">here.</span>
+    </h1>
+    <p class="body sub reveal">
+      A bank is not a building. It is <em class="signal">a promise</em> — kept by 38,711 people across 1,928 doors — that the money you set down today will be here tomorrow, and worth a little more.
+    </p>
+
+    <!-- Hero figure: 400 columns of deposits, with a single coral marker = "the bet" -->
+    <figure class="hero-figure reveal" id="heroFigure" aria-label="Four hundred billion in deposits, visualized as columns">
+      <svg viewBox="0 0 400 280" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="depGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#3B6FB0" stop-opacity="0.95"/>
+            <stop offset="1" stop-color="#1F4E8C" stop-opacity="1"/>
+          </linearGradient>
+          <linearGradient id="depFade" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#1F4E8C" stop-opacity="0"/>
+            <stop offset="1" stop-color="#1F4E8C" stop-opacity="0.18"/>
+          </linearGradient>
+        </defs>
+        <!-- Floor line -->
+        <line x1="0" y1="240" x2="400" y2="240" stroke="#CFCBC0" stroke-width="0.6"/>
+        <!-- Reflection floor wash -->
+        <rect x="0" y="240" width="400" height="40" fill="url(#depFade)"/>
+        <g id="depColumns"></g>
+
+        <!-- Annotations -->
+        <g font-family="Geist Mono" font-size="9" fill="#6B6A65" letter-spacing="1.5">
+          <text x="6" y="18">DEPOSITS · 400.4B</text>
+          <text x="6" y="32" fill="#A4A29C">100 columns · $4B each</text>
+        </g>
+      </svg>
+    </figure>
+
+    <div class="hero-stat-row reveal">
+      <div class="hero-stat">
+        <div class="num"><span data-count-to="63.17" data-decimals="2">0</span>B</div>
+        <div class="lab">Market cap</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">$<span data-count-to="5.31" data-decimals="2">0</span>B</div>
+        <div class="lab">FY'25 net income</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">#<span data-count-to="10" data-decimals="0">0</span></div>
+        <div class="lab">U.S. bank by size</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- reset beat -->
+  <div class="reset reveal">
+    <span class="mark">— § —</span>
+    <p>A bank holding company turns <span class="accent">trust</span> into <span class="accent">spread</span>. Watch the money move.</p>
+  </div>
+
+  <!-- ======================== 2. THE BUSINESS ======================== -->
+  <section class="business" data-screen-label="Business · Spread">
+    <div class="eyebrow">How it makes money<span class="sep">·</span>NII + fees</div>
+    <h2 class="reveal">Money in <em>at one rate</em>,<br/>out at another.</h2>
+    <p class="body reveal">
+      Two segments — <em>Consumer & Small Business</em> and <em>Wholesale</em> — feed the same machine. Deposits come in cheap; loans go out dearer; fees from investment banking, trading, and wealth round out the rest.
+    </p>
+
+    <figure class="spread-figure reveal" id="spreadFigure" aria-label="Deposits flowing in at low rate, loans flowing out at higher rate">
+      <svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="inGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#1F4E8C" stop-opacity="0"/>
+            <stop offset="1" stop-color="#1F4E8C" stop-opacity="0.9"/>
+          </linearGradient>
+          <linearGradient id="outGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#1F4E8C" stop-opacity="0.9"/>
+            <stop offset="1" stop-color="#3B6FB0" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <!-- top: deposits inbound -->
+        <text x="6" y="20" font-family="Geist Mono" font-size="9" fill="#6B6A65" letter-spacing="1.5">DEPOSITS IN · $400.4B</text>
+        <g id="depFlow"></g>
+
+        <!-- middle: the bank (a column) -->
+        <g id="bankCore">
+          <rect x="170" y="80" width="60" height="80" fill="#1F4E8C"/>
+          <rect x="170" y="80" width="60" height="6" fill="#3B6FB0"/>
+          <text x="200" y="128" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#FBFAF7" font-style="italic">spread</text>
+          <text x="200" y="148" text-anchor="middle" font-family="Geist Mono" font-size="8" fill="#9DB6D8" letter-spacing="1.5">NII ENGINE</text>
+        </g>
+
+        <!-- bottom: loans outbound -->
+        <text x="240" y="232" font-family="Geist Mono" font-size="9" fill="#6B6A65" letter-spacing="1.5">LOANS OUT · $323.6B</text>
+        <g id="loanFlow"></g>
+
+        <!-- side fees -->
+        <g id="feeBranch">
+          <path d="M 230 120 Q 290 110 360 90" stroke="#3B6FB0" stroke-width="0.8" fill="none" stroke-dasharray="2 3"/>
+          <circle cx="360" cy="90" r="3" fill="#3B6FB0"/>
+          <text x="356" y="80" text-anchor="end" font-family="Geist Mono" font-size="8" fill="#6B6A65" letter-spacing="1.2">FEES · IB · WEALTH</text>
+        </g>
+      </svg>
+    </figure>
+
+    <div class="spread-legend">
+      <span><span class="swatch" style="background:#1F4E8C"></span>Deposits</span>
+      <span><span class="swatch" style="background:#3B6FB0"></span>Loans</span>
+      <span><span class="swatch" style="background:transparent;border:1px dashed #3B6FB0"></span>Fees</span>
+    </div>
+
+    <div class="spread-callout reveal">
+      <div class="k">$<em>5.20B</em></div>
+      <div class="d">Q1 '26 revenue · EPS $1.09</div>
+    </div>
+  </section>
+
+  <!-- reset beat -->
+  <div class="reset reveal">
+    <span class="mark">— § —</span>
+    <p>Charlotte to Washington, a hundred and fifty-four years in. <span class="accent">The math now lives at scale.</span></p>
+  </div>
+
+  <!-- ======================== 3. SCALE ======================== -->
+  <section class="scale" data-screen-label="Scale">
+    <div class="eyebrow">The size of it<span class="sep">·</span>FY '25</div>
+    <h2 class="reveal">A balance sheet<br/>over half a trillion.</h2>
+
+    <div class="scale-grid">
+      <div class="scale-cell reveal">
+        <div class="num">$<em data-count-to="547.5" data-decimals="1">0</em>B</div>
+        <div class="lab">Total assets</div>
+      </div>
+      <div class="scale-cell reveal">
+        <div class="num">$<em data-count-to="323.6" data-decimals="1">0</em>B</div>
+        <div class="lab">Loans on the book</div>
+      </div>
+
+      <div class="scale-cell spans reveal">
+        <div class="num"><em data-count-to="1928" data-decimals="0">0</em></div>
+        <div class="lab">Branches · 15 states + D.C.</div>
+        <div class="gloss">A physical lattice from the Carolinas to the Beltway. Most of the network sits where Truist was born.</div>
+        <figure class="branch-figure" aria-label="1,928 branches as a dot lattice">
+          <svg viewBox="0 0 400 92" preserveAspectRatio="xMidYMid meet">
+            <g id="branchLattice"></g>
+          </svg>
+        </figure>
+      </div>
+
+      <div class="scale-cell reveal">
+        <div class="num"><em data-count-to="38711" data-decimals="0" data-format="comma">0</em></div>
+        <div class="lab">Employees</div>
+      </div>
+      <div class="scale-cell reveal">
+        <div class="num"><em data-count-to="11.0" data-decimals="1">0</em>%</div>
+        <div class="lab">CET1 capital ratio</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== 4. COSTS ======================== -->
+  <section class="costs" data-screen-label="Costs">
+    <div class="eyebrow">Where the dollar goes<span class="sep">·</span>FY '25</div>
+    <h2 class="reveal">Five buckets,<br/>one bill.</h2>
+    <p class="body lede reveal">People first; the cost of money second; everything else, in line. <em>A bank's cost stack</em> looks like its mission statement, ordered by truth.</p>
+
+    <figure class="costs-figure reveal" id="costsFigure" aria-label="Cost breakdown columns honoring supplied palette">
+      <svg viewBox="0 0 400 320" preserveAspectRatio="xMidYMid meet" id="costsSvg">
+        <!-- baseline -->
+        <line x1="20" y1="280" x2="380" y2="280" stroke="#CFCBC0" stroke-width="0.6"/>
+        <text x="20" y="22" font-family="Geist Mono" font-size="9" fill="#6B6A65" letter-spacing="1.5">EXPENSE MIX</text>
+        <text x="20" y="34" font-family="Geist Mono" font-size="9" fill="#A4A29C" letter-spacing="1.5">% OF DISCLOSED COSTS</text>
+        <!-- bars drawn by JS -->
+        <g id="costBars"></g>
+      </svg>
+    </figure>
+
+    <div class="costs-legend">
+      <div class="cost-row"><span class="sw" style="background:#4F86C6"></span><span class="lab">Noninterest expense — Salaries & benefits</span><span class="pct">32%</span></div>
+      <div class="cost-row"><span class="sw" style="background:#E07B54"></span><span class="lab">Interest expense — Deposits & borrowings</span><span class="pct">22%</span></div>
+      <div class="cost-row"><span class="sw" style="background:#6DBF82"></span><span class="lab">Provision for credit losses</span><span class="pct">8%</span></div>
+      <div class="cost-row"><span class="sw" style="background:#A97DC9"></span><span class="lab">Technology & operations</span><span class="pct">7%</span></div>
+      <div class="cost-row"><span class="sw" style="background:#F2C94C"></span><span class="lab">Occupancy & equipment</span><span class="pct">5%</span></div>
+    </div>
+  </section>
+
+  <!-- ======================== 5. FOOTPRINT ======================== -->
+  <section class="footprint" data-screen-label="Footprint">
+    <div class="eyebrow">Where the doors are<span class="sep">·</span>15 states + D.C.</div>
+    <h2 class="reveal">The Southeast,<br/>thickly drawn.</h2>
+    <p class="body reveal">Fifty-five cents of every branch sits in the region that named it. The map tells you the franchise.</p>
+
+    <figure class="map-figure reveal" id="mapFigure" aria-label="Branch density concentrated in Southeast US">
+      <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="seGlow" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#1F4E8C" stop-opacity="0.18"/>
+            <stop offset="1" stop-color="#1F4E8C" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- soft Southeast glow under dot map -->
+        <ellipse cx="245" cy="190" rx="120" ry="80" fill="url(#seGlow)"/>
+        <ellipse cx="200" cy="150" rx="80" ry="55" fill="url(#seGlow)" opacity="0.6"/>
+        <g id="mapDots"></g>
+
+        <!-- region pull-tags -->
+        <g font-family="Geist Mono" font-size="9" fill="#3B3A37" letter-spacing="1.4">
+          <line x1="240" y1="200" x2="320" y2="240" stroke="#A4A29C" stroke-width="0.5"/>
+          <text x="324" y="244">SOUTHEAST · 55%</text>
+          <line x1="245" y1="135" x2="325" y2="105" stroke="#A4A29C" stroke-width="0.5"/>
+          <text x="328" y="108">MID-ATL · 25%</text>
+          <line x1="160" y1="155" x2="80" y2="115" stroke="#A4A29C" stroke-width="0.5"/>
+          <text x="76" y="118" text-anchor="end">OTHER US · 18%</text>
+          <line x1="200" y1="80" x2="200" y2="50" stroke="#A4A29C" stroke-width="0.5"/>
+          <text x="200" y="42" text-anchor="middle">INTL · 2%</text>
+        </g>
+      </svg>
+    </figure>
+
+    <div class="geo-list">
+      <div class="geo-row reveal"><span class="pct">55%</span><span class="reg">Southeast US</span><span class="bar"><i style="width:100%"></i></span></div>
+      <div class="geo-row reveal"><span class="pct">25%</span><span class="reg">Mid-Atlantic US</span><span class="bar"><i style="width:45%"></i></span></div>
+      <div class="geo-row reveal"><span class="pct">18%</span><span class="reg">Other US — TX, PA, NJ</span><span class="bar"><i style="width:33%"></i></span></div>
+      <div class="geo-row reveal"><span class="pct">2%</span><span class="reg">International</span><span class="bar"><i style="width:4%"></i></span></div>
+    </div>
+  </section>
+
+  <!-- reset beat — coral hits here, since coral is "the bet" -->
+  <div class="reset reveal" style="background:#0E1F3A;border-color:#0E1F3A">
+    <span class="mark" style="color:#8C9BB6">— § —</span>
+    <p style="color:#E9ECF3">You don't run a half-trillion balance sheet without <span class="accent" style="color:#FF7A57">a thesis on weight.</span></p>
+  </div>
+
+  <!-- ======================== 6. THE BET ======================== -->
+  <section class="bet" data-screen-label="The Bet · Capital">
+    <div class="eyebrow">The bet<span class="sep">·</span>$10B authorized</div>
+    <h2 class="reveal">Pay shareholders.<br/><em>Buy the stock.</em><br/>Keep the cushion.</h2>
+    <p class="body reveal">$5.74B of operating cash, deployed with a banker's restraint: <em class="signal">$2.67B in dividends</em>, $2.5B in buybacks, the rest held against a CET1 ratio of 11%. The capital plan reads like a balance scale.</p>
+
+    <!-- A balance-scale metaphor: cash IN vs cash OUT (dividends + buybacks + retained) -->
+    <figure class="scale-figure reveal" id="scaleFigure" aria-label="Operating cash balanced against dividends, buybacks, and retained capital">
+      <svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="vaultBlock" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#FF9E82"/>
+            <stop offset="1" stop-color="#F25A37"/>
+          </linearGradient>
+        </defs>
+        <!-- fulcrum -->
+        <polygon points="200,170 188,200 212,200" fill="#9DB6D8" opacity="0.5"/>
+        <line x1="200" y1="170" x2="200" y2="220" stroke="#3B6FB0" stroke-width="1" opacity="0.4"/>
+        <!-- beam (rotates slightly) -->
+        <g id="beamGroup" transform="rotate(0 200 170)">
+          <line x1="60" y1="170" x2="340" y2="170" stroke="#9DB6D8" stroke-width="2" opacity="0.7"/>
+          <!-- left pan: operating cash $5.74B -->
+          <g id="panLeft">
+            <line x1="100" y1="170" x2="100" y2="120" stroke="#9DB6D8" stroke-width="0.6" opacity="0.6"/>
+            <rect x="60" y="100" width="80" height="22" fill="#3B6FB0"/>
+            <text x="100" y="116" text-anchor="middle" font-family="Geist Mono" font-size="10" fill="#fff" letter-spacing="1">CASH FLOW</text>
+            <text x="100" y="92" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#E9ECF3">$5.74B</text>
+          </g>
+          <!-- right pan stack: dividends + buybacks + retained -->
+          <g id="panRight">
+            <line x1="300" y1="170" x2="300" y2="60" stroke="#9DB6D8" stroke-width="0.6" opacity="0.6"/>
+            <rect id="payRetained" x="265" y="148" width="70" height="20" fill="#16294A" stroke="#3B6FB0" stroke-width="0.6"/>
+            <text x="300" y="162" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#9DB6D8" letter-spacing="1.2">RETAINED · $0.57B</text>
+
+            <rect id="payBuy" x="265" y="118" width="70" height="26" fill="url(#vaultBlock)"/>
+            <text x="300" y="135" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#0E1F3A" letter-spacing="1.2">BUYBACKS · $2.5B</text>
+
+            <rect id="payDiv" x="265" y="80" width="70" height="34" fill="#E9ECF3"/>
+            <text x="300" y="100" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#0E1F3A" letter-spacing="1.2">DIVIDENDS</text>
+            <text x="300" y="111" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#0E1F3A" letter-spacing="1.2">$2.67B</text>
+          </g>
+        </g>
+
+        <!-- ground -->
+        <line x1="20" y1="220" x2="380" y2="220" stroke="#3B6FB0" stroke-width="0.5" opacity="0.4"/>
+        <text x="20" y="240" font-family="Geist Mono" font-size="9" fill="#8C9BB6" letter-spacing="1.4">CASH IN</text>
+        <text x="380" y="240" text-anchor="end" font-family="Geist Mono" font-size="9" fill="#8C9BB6" letter-spacing="1.4">CASH RETURNED</text>
+      </svg>
+    </figure>
+
+    <div class="bet-rail reveal">
+      <div class="bet-cell">
+        <div class="n">$<em data-count-to="10" data-decimals="0">0</em>B</div>
+        <div class="l">Buyback authorized · '26</div>
+      </div>
+      <div class="bet-cell">
+        <div class="n">$<em data-count-to="69.80" data-decimals="2">0</em>B</div>
+        <div class="l">Total debt</div>
+      </div>
+      <div class="bet-cell">
+        <div class="n">$<em data-count-to="65.19" data-decimals="2">0</em>B</div>
+        <div class="l">Total equity</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- reset beat -->
+  <div class="reset reveal">
+    <span class="mark">— § —</span>
+    <p>Three rivals, three angles of attack. <span class="accent">One a mirror, one a peer, one a question.</span></p>
+  </div>
+
+  <!-- ======================== 7. COMPETITORS ======================== -->
+  <section class="compete" data-screen-label="Competitors">
+    <div class="eyebrow">The competition<span class="sep">·</span>By market cap</div>
+    <h2 class="reveal">Three rivals,<br/>three angles.</h2>
+
+    <div class="rivals">
+      <!-- Lloyds: mirror — retail/commercial -->
+      <div class="rival reveal">
+        <div class="rival-head">
+          <span class="rival-name">Lloyds Banking Group</span>
+          <span class="rival-tick">LYG · UK</span>
+        </div>
+        <div class="rival-bar">
+          <span class="axis"></span>
+          <!-- TFC bar always 100% reference, market caps scaled -->
+          <span class="col tfc" style="left:18%; height:100%;"><span class="v">$63.17B</span><span class="who">TFC</span></span>
+          <span class="col them" style="left:38%; height:95.2%;"><span class="v">$60.15B</span><span class="who">LYG</span></span>
+          <!-- side annotation: revenue + growth -->
+          <text></text>
+        </div>
+        <p class="rival-desc">Same playbook, different ocean. Consumer deposits, mortgages, small business — Lloyds <em>matches Truist's left hand</em>. Q rev. $4.64B · P/E 10.23 · YoY +11.96%.</p>
+      </div>
+
+      <!-- Barclays: peer — wholesale/IB -->
+      <div class="rival reveal">
+        <div class="rival-head">
+          <span class="rival-name">Barclays</span>
+          <span class="rival-tick">BCS · UK</span>
+        </div>
+        <div class="rival-bar">
+          <span class="axis"></span>
+          <span class="col tfc" style="left:18%; height:100%;"><span class="v">$63.17B</span><span class="who">TFC</span></span>
+          <span class="col them" style="left:38%; height:94.9%;"><span class="v">$59.92B</span><span class="who">BCS</span></span>
+        </div>
+        <p class="rival-desc">Truist's right hand: wholesale, capital markets, mid-market lending. Barclays <em>plays the same wholesale piano</em>. Q rev. $7.17B · P/E 5.46.</p>
+      </div>
+
+      <!-- Coinbase: a question -->
+      <div class="rival reveal">
+        <div class="rival-head">
+          <span class="rival-name">Coinbase</span>
+          <span class="rival-tick">COIN · US</span>
+        </div>
+        <div class="rival-bar">
+          <span class="axis"></span>
+          <span class="col tfc" style="left:18%; height:100%;"><span class="v">$63.17B</span><span class="who">TFC</span></span>
+          <span class="col them" style="left:38%; height:86.3%; background:#FF7A57;"><span class="v">$54.49B</span><span class="who">COIN</span></span>
+        </div>
+        <p class="rival-desc">Not a bank — yet a <em>question to a bank</em>. Custody, payments, retail invest. The same digitally-engaged customer Truist is courting. Annual rev. $7.18B · P/E 43.23 · YoY +9.40%.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- reset beat — return to thesis -->
+  <div class="reset reveal">
+    <span class="mark">— § —</span>
+    <p>You opened with <span class="accent">four hundred billion in.</span> Here's what stays.</p>
+  </div>
+
+  <!-- ======================== 8. CLOSE ======================== -->
+  <section class="close" data-screen-label="Close · Inversion">
+    <div class="eyebrow">The takeaway<span class="sep">·</span>11¢ kept</div>
+    <h2 class="reveal">Of every <em>dollar</em><br/>on the books,<br/>eleven cents are<br/><em>set aside.</em></h2>
+    <p class="body reveal">CET1 of <em class="signal">11.0%</em> is the cushion regulators ask for and the cushion shareholders accept. Everything else — the loans, the dividends, the ten-billion authorization — works inside that ratio.</p>
+
+    <figure class="cents-figure reveal" id="centsFigure" aria-label="100-cent grid with 11 cents lit, representing CET1 ratio">
+      <svg viewBox="0 0 400 280" preserveAspectRatio="xMidYMid meet">
+        <g id="centsGrid"></g>
+        <!-- caption -->
+        <text x="200" y="262" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#6B6A65" letter-spacing="2">
+          ONE HUNDRED CENTS · ELEVEN HELD
+        </text>
+      </svg>
+    </figure>
+
+    <div class="colophon">
+      <span>TFC · Recap</span>
+      <span>FY '25 · Q1 '26</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ---------------------- count-up + scroll progress ---------------------- */
+(function(){
+  const fmt = (v, decimals, format) => {
+    if (format === 'comma') return Math.round(v).toLocaleString();
+    return v.toFixed(decimals);
+  };
+  const counters = [...document.querySelectorAll('[data-count-to]')];
+  const animateCount = (el) => {
+    if (el.dataset.done) return;
+    el.dataset.done = '1';
+    const to = parseFloat(el.dataset.countTo);
+    const dec = parseInt(el.dataset.decimals || '0', 10);
+    const fmtType = el.dataset.format || '';
+    const dur = 1100;
+    const start = performance.now();
+    const ease = t => 1 - Math.pow(1 - t, 3);
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / dur);
+      const v = to * ease(t);
+      el.textContent = fmt(v, dec, fmtType);
+      if (t < 1) requestAnimationFrame(tick);
+      else el.textContent = fmt(to, dec, fmtType);
+    };
+    requestAnimationFrame(tick);
+  };
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        e.target.querySelectorAll && e.target.querySelectorAll('[data-count-to]').forEach(animateCount);
+        if (e.target.matches && e.target.matches('[data-count-to]')) animateCount(e.target);
+      }
+    });
+  }, { threshold: 0.18 });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // scroll progress hairline
+  const fill = document.getElementById('progressFill');
+  const onScroll = () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const p = h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0;
+    fill.style.width = (p * 100).toFixed(2) + '%';
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+/* ---------------------- HERO: 100 columns of deposits ---------------------- */
+(function(){
+  const g = document.getElementById('depColumns');
+  if (!g) return;
+  const N = 100;
+  const left = 6, right = 394;
+  const w = (right - left) / N;
+  const colW = Math.max(2.2, w - 0.8);
+  // deterministic-ish height variance for organic feel
+  const rand = (i) => {
+    const s = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
+    return s - Math.floor(s);
+  };
+  const baseY = 240;
+  for (let i = 0; i < N; i++){
+    const x = left + i * w;
+    // a bell-ish silhouette taller in the middle
+    const center = (i - N/2) / (N/2); // -1 .. 1
+    const bell = 1 - center * center * 0.55;
+    const jitter = 0.78 + rand(i) * 0.22;
+    const targetH = 130 * bell * jitter + 14;
+    const y = baseY - targetH;
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    r.setAttribute('x', x.toFixed(2));
+    r.setAttribute('y', baseY.toFixed(2)); // start at floor, animate up
+    r.setAttribute('width', colW.toFixed(2));
+    r.setAttribute('height', '0');
+    r.setAttribute('fill', 'url(#depGrad)');
+    r.setAttribute('data-target-y', y.toFixed(2));
+    r.setAttribute('data-target-h', targetH.toFixed(2));
+    g.appendChild(r);
+  }
+  // animate when in view
+  const fig = document.getElementById('heroFigure');
+  const cols = [...g.children];
+  const animate = () => {
+    cols.forEach((c, i) => {
+      const ty = parseFloat(c.getAttribute('data-target-y'));
+      const th = parseFloat(c.getAttribute('data-target-h'));
+      c.style.transition = `all 700ms cubic-bezier(0.22,1,0.36,1) ${i*8}ms`;
+      requestAnimationFrame(() => {
+        c.setAttribute('y', ty);
+        c.setAttribute('height', th);
+      });
+    });
+  };
+  const io = new IntersectionObserver((es) => {
+    es.forEach(e => { if (e.isIntersecting){ animate(); io.disconnect(); } });
+  }, { threshold: 0.25 });
+  io.observe(fig);
+})();
+
+/* ---------------------- BUSINESS: deposit & loan flow streams ---------------------- */
+(function(){
+  const inG = document.getElementById('depFlow');
+  const outG = document.getElementById('loanFlow');
+  if (!inG || !outG) return;
+  // top stream: 14 short bars sliding right toward bank (x=170..230)
+  for (let i = 0; i < 16; i++){
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    const x = 6 + i * 10;
+    r.setAttribute('x', x);
+    r.setAttribute('y', 40 + (i % 3) * 4);
+    r.setAttribute('width', 7);
+    r.setAttribute('height', 4);
+    r.setAttribute('fill', '#1F4E8C');
+    r.setAttribute('opacity', 0.55 + (i / 32));
+    r.setAttribute('rx', '1');
+    inG.appendChild(r);
+  }
+  // arrow into bank
+  const arr1 = document.createElementNS('http://www.w3.org/2000/svg','path');
+  arr1.setAttribute('d', 'M 165 60 L 180 78');
+  arr1.setAttribute('stroke', '#1F4E8C');
+  arr1.setAttribute('stroke-width', '1.2');
+  arr1.setAttribute('fill','none');
+  arr1.setAttribute('marker-end','url(#arrIn)');
+  inG.appendChild(arr1);
+
+  // bottom stream: 14 short bars sliding right out from bank
+  for (let i = 0; i < 14; i++){
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    const x = 240 + i * 10;
+    r.setAttribute('x', x);
+    r.setAttribute('y', 200 + (i % 3) * 4);
+    r.setAttribute('width', 7);
+    r.setAttribute('height', 4);
+    r.setAttribute('fill', '#3B6FB0');
+    r.setAttribute('opacity', 0.95 - (i / 28));
+    r.setAttribute('rx', '1');
+    outG.appendChild(r);
+  }
+  const arr2 = document.createElementNS('http://www.w3.org/2000/svg','path');
+  arr2.setAttribute('d', 'M 220 165 L 235 195');
+  arr2.setAttribute('stroke', '#3B6FB0');
+  arr2.setAttribute('stroke-width', '1.2');
+  arr2.setAttribute('fill','none');
+  outG.appendChild(arr2);
+})();
+
+/* ---------------------- SCALE: 1928 branch lattice ---------------------- */
+(function(){
+  const g = document.getElementById('branchLattice');
+  if (!g) return;
+  // 1928 dots? too dense. Use 1928 small ticks: 64 cols × 30 rows = 1920, + 8 extra
+  // For perceptual readability, use 64 cols x 30 rows on a tight grid.
+  const cols = 64, rows = 30;
+  const left = 4, top = 6, right = 396, bottom = 86;
+  const dx = (right - left) / (cols - 1);
+  const dy = (bottom - top) / (rows - 1);
+  for (let i = 0; i < cols * rows; i++){
+    const c = i % cols;
+    const r = Math.floor(i / cols);
+    const x = left + c * dx;
+    const y = top + r * dy;
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx', x.toFixed(2));
+    dot.setAttribute('cy', y.toFixed(2));
+    dot.setAttribute('r', 0.9);
+    // weight density in the southeast band — slight visual gradient
+    const k = 1 - (c / cols) * 0.5; // east-leaning
+    dot.setAttribute('fill', '#1F4E8C');
+    dot.setAttribute('opacity', (0.35 + 0.5 * k).toFixed(2));
+    g.appendChild(dot);
+  }
+  // 8 extra to reach 1928 — small accent dots
+  for (let i = 0; i < 8; i++){
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx', 14 + i * 10);
+    dot.setAttribute('cy', 86);
+    dot.setAttribute('r', 1.2);
+    dot.setAttribute('fill', '#FF7A57');
+    g.appendChild(dot);
+  }
+})();
+
+/* ---------------------- COSTS: hex-honored bars ---------------------- */
+(function(){
+  const g = document.getElementById('costBars');
+  if (!g) return;
+  const data = [
+    { pct: 32, color: '#4F86C6', label: 'Salaries\n& benefits' },
+    { pct: 22, color: '#E07B54', label: 'Interest\nexpense' },
+    { pct: 8,  color: '#6DBF82', label: 'Credit\nlosses' },
+    { pct: 7,  color: '#A97DC9', label: 'Tech &\nops' },
+    { pct: 5,  color: '#F2C94C', label: 'Occupancy' }
+  ];
+  const left = 30, right = 380, baseline = 280;
+  const slot = (right - left) / data.length;
+  const colW = slot * 0.62;
+  const maxPct = 36; // give headroom above 32
+  const maxH = 220;
+
+  data.forEach((d, i) => {
+    const cx = left + slot * i + slot / 2;
+    const x = cx - colW / 2;
+    const h = (d.pct / maxPct) * maxH;
+    const y = baseline - h;
+
+    // column
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    r.setAttribute('x', x.toFixed(2));
+    r.setAttribute('y', baseline);
+    r.setAttribute('width', colW.toFixed(2));
+    r.setAttribute('height', 0);
+    r.setAttribute('fill', d.color);
+    r.setAttribute('rx', '2');
+    r.setAttribute('data-target-y', y.toFixed(2));
+    r.setAttribute('data-target-h', h.toFixed(2));
+    g.appendChild(r);
+
+    // pct label
+    const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    t.setAttribute('x', cx);
+    t.setAttribute('y', y - 8);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('font-family', 'Instrument Serif');
+    t.setAttribute('font-size', '20');
+    t.setAttribute('fill', '#141414');
+    t.textContent = d.pct + '%';
+    g.appendChild(t);
+
+    // bottom label
+    const lbl = d.label.split('\n');
+    lbl.forEach((line, k) => {
+      const tt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      tt.setAttribute('x', cx);
+      tt.setAttribute('y', baseline + 14 + k * 11);
+      tt.setAttribute('text-anchor', 'middle');
+      tt.setAttribute('font-family', 'Geist Mono');
+      tt.setAttribute('font-size', '8.5');
+      tt.setAttribute('fill', '#3B3A37');
+      tt.setAttribute('letter-spacing', '0.6');
+      tt.textContent = line.toUpperCase();
+      g.appendChild(tt);
+    });
+  });
+
+  // animate columns when in view
+  const fig = document.getElementById('costsFigure');
+  const bars = [...g.querySelectorAll('rect')];
+  const animate = () => {
+    bars.forEach((b, i) => {
+      const ty = parseFloat(b.getAttribute('data-target-y'));
+      const th = parseFloat(b.getAttribute('data-target-h'));
+      b.style.transition = `all 800ms cubic-bezier(0.34,1.56,0.64,1) ${i * 90}ms`;
+      requestAnimationFrame(() => {
+        b.setAttribute('y', ty);
+        b.setAttribute('height', th);
+      });
+    });
+  };
+  const io = new IntersectionObserver((es) => {
+    es.forEach(e => { if (e.isIntersecting){ animate(); io.disconnect(); } });
+  }, { threshold: 0.3 });
+  io.observe(fig);
+})();
+
+/* ---------------------- FOOTPRINT: weighted dot map ---------------------- */
+(function(){
+  const g = document.getElementById('mapDots');
+  if (!g) return;
+  // Hand-built dot map of US silhouette, weighted by region
+  // Regions: Southeast (1060), Mid-Atlantic (482), Other US (347), Intl (39)  ≈ 1928 dots
+  const regions = [
+    // Southeast — broad cluster centered ~ (245, 195)
+    { count: 1060, cx: 245, cy: 195, rx: 95, ry: 60, color: '#1F4E8C', alpha: [0.55, 0.95] },
+    // Mid-Atlantic — tighter cluster ~ (260, 130)
+    { count: 482, cx: 270, cy: 130, rx: 55, ry: 32, color: '#3B6FB0', alpha: [0.55, 0.9] },
+    // Other US — diffuse west swath
+    { count: 347, cx: 140, cy: 160, rx: 95, ry: 70, color: '#9DB6D8', alpha: [0.4, 0.7] },
+    // International — small specks at top
+    { count: 39, cx: 200, cy: 70, rx: 90, ry: 16, color: '#A4A29C', alpha: [0.4, 0.7] }
+  ];
+  let seed = 1;
+  const rnd = () => {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  };
+  regions.forEach((reg) => {
+    for (let i = 0; i < reg.count; i++){
+      // sample inside ellipse with biased density toward center
+      let u = rnd(), v = rnd();
+      const r = Math.sqrt(u);
+      const a = v * Math.PI * 2;
+      const x = reg.cx + Math.cos(a) * r * reg.rx;
+      const y = reg.cy + Math.sin(a) * r * reg.ry;
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', x.toFixed(1));
+      dot.setAttribute('cy', y.toFixed(1));
+      dot.setAttribute('r', 1.05);
+      dot.setAttribute('fill', reg.color);
+      const al = reg.alpha[0] + (reg.alpha[1] - reg.alpha[0]) * rnd();
+      dot.setAttribute('opacity', al.toFixed(2));
+      g.appendChild(dot);
+    }
+  });
+})();
+
+/* ---------------------- BET: balance scale tilts on scroll ---------------------- */
+(function(){
+  const beam = document.getElementById('beamGroup');
+  const fig = document.getElementById('scaleFigure');
+  if (!beam || !fig) return;
+  const onScroll = () => {
+    const r = fig.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const center = (r.top + r.height / 2);
+    // -1 above, 0 centered, 1 below
+    const t = Math.max(-1.2, Math.min(1.2, (center - vh / 2) / (vh / 2)));
+    // tilt: cash-out side heavier as scroll progresses (right side dips)
+    const angle = -t * 6 + 2; // resting tilt: right slightly heavy (more paid out than retained)
+    beam.setAttribute('transform', `rotate(${angle.toFixed(2)} 200 170)`);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+/* ---------------------- CLOSE: 100-cent grid, 11 lit ---------------------- */
+(function(){
+  const g = document.getElementById('centsGrid');
+  if (!g) return;
+  const cols = 10, rows = 10;
+  const left = 70, top = 30, size = 24, gap = 6;
+  for (let i = 0; i < cols * rows; i++){
+    const c = i % cols;
+    const r = Math.floor(i / cols);
+    const x = left + c * (size + gap);
+    const y = top + r * (size + gap);
+    const lit = i < 11; // first 11 cents = CET1 cushion
+    // hexagonal-ish coin: circle
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', x + size/2);
+    circle.setAttribute('cy', y + size/2);
+    circle.setAttribute('r', size/2 - 1);
+    circle.setAttribute('fill', lit ? '#1F4E8C' : 'transparent');
+    circle.setAttribute('stroke', lit ? '#1F4E8C' : '#CFCBC0');
+    circle.setAttribute('stroke-width', lit ? '0' : '1');
+    circle.setAttribute('data-lit', lit ? '1' : '0');
+    circle.style.opacity = '0';
+    circle.style.transform = 'scale(0.6)';
+    circle.style.transformBox = 'fill-box';
+    circle.style.transformOrigin = 'center';
+    circle.style.transition = `opacity 500ms cubic-bezier(0.22,1,0.36,1) ${i*14}ms, transform 500ms cubic-bezier(0.34,1.56,0.64,1) ${i*14}ms`;
+    g.appendChild(circle);
+
+    // cent label inside lit
+    if (lit){
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x', x + size/2);
+      t.setAttribute('y', y + size/2 + 4);
+      t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-family','Geist Mono');
+      t.setAttribute('font-size','9');
+      t.setAttribute('fill','#FBFAF7');
+      t.setAttribute('letter-spacing','0.6');
+      t.textContent = '¢';
+      t.style.opacity = '0';
+      t.style.transition = `opacity 400ms cubic-bezier(0.22,1,0.36,1) ${i*14 + 220}ms`;
+      g.appendChild(t);
+    }
+  }
+  const fig = document.getElementById('centsFigure');
+  const io = new IntersectionObserver((es) => {
+    es.forEach(e => {
+      if (e.isIntersecting){
+        [...g.querySelectorAll('circle')].forEach(c => {
+          c.style.opacity = '1';
+          c.style.transform = 'scale(1)';
+        });
+        [...g.querySelectorAll('text')].forEach(t => { t.style.opacity = '1'; });
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+  io.observe(fig);
+})();
+</script>
+</body>
+</html>

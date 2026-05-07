@@ -1,0 +1,1344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=440, initial-scale=1" />
+<title>NTAP · Recap FY '25</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" />
+<style>
+  /* ---------- Tokens (NetApp dialect of Zair system) ---------- */
+  :root {
+    --paper:   #F4F2ED;
+    --paper-2: #ECEAE3;
+    --paper-3: #DEDBD2;
+    --ink:     #0F1318;
+    --ink-2:   #2B3138;
+    --ink-3:   #5C636B;
+    --ink-4:   #98a0a8;
+    --line:    #DAD6CB;
+    --line-2:  #C1BCAD;
+
+    /* NetApp signal: a deep storage steel + a single coral accent for "the bet" */
+    --steel-50:  #E8EFF6;
+    --steel-100: #C9D7E5;
+    --steel-200: #8FA9C3;
+    --steel-300: #4A6A8A;
+    --steel-400: #2B486A;
+    --steel-500: #16314D;
+    --steel-600: #0B1F33;
+
+    --coral:   #FF6A3D;
+    --coral-2: #F25A37;
+
+    --font-display: 'Instrument Serif', 'Times New Roman', serif;
+    --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono:    'Geist Mono', ui-monospace, Menlo, monospace;
+
+    --w: 440px;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  html { background: #0B1F33; }
+  body {
+    font-family: var(--font-sans);
+    color: var(--ink);
+    background: var(--paper);
+    width: 100%;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* The page sits centered on a dark gutter so it reads as a mobile artifact */
+  .page {
+    width: var(--w);
+    margin: 0 auto;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ---------- Sticky chrome ---------- */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    width: var(--w);
+    margin: 0 auto;
+    backdrop-filter: blur(18px) saturate(1.1);
+    -webkit-backdrop-filter: blur(18px) saturate(1.1);
+    background: rgba(244,242,237,0.78);
+    border-bottom: 1px solid rgba(218,214,203,0.6);
+  }
+  .chrome-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px 10px;
+  }
+  .chrome-tick {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ink-3);
+    letter-spacing: -0.005em;
+  }
+  .chrome-name b { color: var(--ink); font-weight: 500; }
+  .chrome-label {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .chrome-progress {
+    height: 1.5px;
+    background: transparent;
+    position: relative;
+  }
+  .chrome-progress::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: var(--p, 0%);
+    background: linear-gradient(90deg, var(--steel-400), var(--coral));
+    transition: width 80ms linear;
+  }
+
+  /* ---------- Type primitives ---------- */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--coral); display: inline-block; }
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+  }
+  .display em { font-style: italic; }
+  .body {
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    letter-spacing: -0.005em;
+  }
+  .body em { font-family: var(--font-display); font-style: italic; font-size: 1.06em; color: var(--steel-400); }
+  .body em.coral { color: var(--coral-2); }
+  .mono { font-family: var(--font-mono); }
+
+  /* ---------- Section base ---------- */
+  section { position: relative; padding: 56px 24px; }
+  section.tight { padding: 36px 24px; }
+  section.dense { padding: 64px 24px 72px; }
+  .reset {
+    padding: 36px 28px 38px;
+    background: var(--paper-2);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .reset p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.32;
+    color: var(--ink-2);
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .reset .pp { color: var(--ink); }
+  .reset .coral { color: var(--coral-2); }
+
+  /* dark band variant */
+  .dark {
+    background: var(--steel-600);
+    color: var(--steel-50);
+  }
+  .dark .body { color: rgba(232,239,246,0.78); }
+  .dark .body em { color: #FFB497; }
+  .dark .display { color: var(--steel-50); }
+  .dark .eyebrow { color: rgba(232,239,246,0.55); }
+  .dark .eyebrow .dot { background: var(--coral); }
+  .dark .reset p { color: rgba(232,239,246,0.85); }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 28px 24px 60px;
+    background: linear-gradient(180deg, var(--paper) 0%, var(--paper) 60%, var(--paper-2) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-eyebrow { margin-top: 24px; }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 52px;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    margin: 18px 0 22px;
+    color: var(--ink);
+  }
+  .hero h1 em { font-style: italic; color: var(--steel-400); }
+  .hero h1 .accent { color: var(--coral-2); font-style: italic; }
+  .hero-sub {
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--ink-3);
+    margin: 0 0 28px;
+    max-width: 38ch;
+  }
+  .hero-stage {
+    height: 320px;
+    position: relative;
+    margin: 8px -8px 0;
+  }
+
+  /* ---------- Thesis count line ---------- */
+  .thesis-stat {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 18px 14px;
+    align-items: baseline;
+    padding: 24px 22px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    margin-top: 16px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 20px -16px rgba(20,30,50,0.18);
+  }
+  .thesis-stat .big {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.9;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+  }
+  .thesis-stat .big em { font-style: italic; color: var(--coral-2); }
+  .thesis-stat .lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .thesis-stat .desc { grid-column: 1 / -1; font-size: 14px; color: var(--ink-2); line-height: 1.5; padding-top: 6px; border-top: 1px solid var(--line); }
+
+  /* ---------- BUSINESS — four revenue streams ---------- */
+  .biz-stage { margin: 24px -4px 0; height: 360px; position: relative; }
+  .biz-stream-row {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .biz-stream-row:last-child { border-bottom: 0; }
+  .biz-stream-row .pct {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    text-align: right;
+  }
+  .biz-stream-row .name { font-size: 14.5px; color: var(--ink); font-weight: 500; }
+  .biz-stream-row .name span { display: block; font-size: 12px; color: var(--ink-3); font-weight: 400; margin-top: 1px; }
+  .biz-stream-row .swatch {
+    width: 16px; height: 16px; border-radius: 4px; opacity: .9;
+  }
+
+  /* ---------- SCALE ---------- */
+  .scale-figure {
+    margin: 8px -4px 8px;
+    padding: 4px 0 0;
+  }
+  .big-num {
+    font-family: var(--font-display);
+    font-size: 96px;
+    line-height: 0.86;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+  }
+  .big-num em { font-style: italic; color: var(--coral-2); }
+  .big-num .unit {
+    font-style: normal;
+    color: var(--ink-3);
+    font-size: 0.4em;
+    letter-spacing: -0.01em;
+    margin-left: 2px;
+    vertical-align: 0.5em;
+  }
+  .scale-foot {
+    display: flex;
+    gap: 12px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+  }
+  .scale-chip {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 12px 7px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    color: var(--ink-2);
+    background: rgba(255,255,255,0.6);
+  }
+  .scale-chip b { color: var(--ink); font-weight: 500; }
+
+  .scale-grid {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 18px;
+  }
+  .scale-cell .num {
+    font-family: var(--font-display);
+    font-size: 42px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .scale-cell .num em { font-style: italic; color: var(--steel-400); }
+  .scale-cell .lbl {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .scale-cell .desc { font-size: 12.5px; color: var(--ink-3); margin-top: 6px; line-height: 1.45; }
+
+  /* ---------- COSTS ---------- */
+  .cost-eyebrow { margin-bottom: 14px; }
+  .cost-h {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0 0 18px;
+  }
+  .cost-h em { font-style: italic; color: var(--coral-2); }
+  .cost-stage {
+    margin: 8px -4px 0;
+    height: 360px;
+    position: relative;
+  }
+  .cost-rows { margin-top: 18px; }
+  .cost-row {
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .cost-row:last-child { border-bottom: 0; }
+  .cost-row .sw { width: 12px; height: 12px; border-radius: 3px; }
+  .cost-row .lbl { font-size: 14px; color: var(--ink); }
+  .cost-row .pct { font-family: var(--font-mono); font-size: 13px; color: var(--ink-2); }
+
+  /* ---------- GEO ---------- */
+  .geo-stage { margin: 16px -4px 18px; height: 320px; position: relative; }
+  .geo-rows { margin-top: 8px; }
+  .geo-row {
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 4px 8px;
+  }
+  .geo-row:last-child { border-bottom: 0; }
+  .geo-row .reg {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--steel-50);
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+  .geo-row .pct {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--coral);
+    letter-spacing: 0.02em;
+  }
+  .geo-row .meta {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    color: rgba(232,239,246,0.45);
+    text-transform: uppercase;
+    grid-column: 1 / -1;
+  }
+
+  /* ---------- CAPITAL — the bet ---------- */
+  .cap-fig {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 18px;
+  }
+  .cap-cell .num {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .cap-cell .num em { font-style: italic; color: var(--coral-2); }
+  .cap-cell .lbl {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .cap-cell .desc { font-size: 12.5px; color: var(--ink-2); margin-top: 6px; line-height: 1.45; }
+  .cap-stage { margin: 26px -4px 0; height: 220px; position: relative; }
+
+  /* ---------- COMPETITORS ---------- */
+  .comp-stage { margin: 22px -4px 6px; height: 240px; position: relative; }
+  .comp-rows { margin-top: 6px; }
+  .comp-row {
+    padding: 18px 0 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .comp-row:last-child { border-bottom: 0; }
+  .comp-head {
+    display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px;
+  }
+  .comp-head .nm { font-family: var(--font-display); font-size: 26px; line-height: 1; color: var(--ink); letter-spacing: -0.01em; }
+  .comp-head .tk { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.04em; }
+  .comp-head .mc { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); margin-left: auto; }
+  .comp-bar {
+    height: 4px;
+    background: var(--paper-2);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 8px 0 8px;
+    position: relative;
+  }
+  .comp-bar .fill {
+    height: 100%;
+    background: var(--steel-300);
+    border-radius: 999px;
+    transition: width 700ms var(--ease, cubic-bezier(0.22,1,0.36,1));
+  }
+  .comp-row.us .comp-bar .fill { background: var(--coral); }
+  .comp-row.us .comp-head .nm { color: var(--coral-2); }
+  .comp-meta {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);
+    margin-top: 4px;
+  }
+  .comp-meta span { display: inline-flex; gap: 4px; }
+  .comp-meta b { color: var(--ink); font-weight: 500; }
+  .comp-desc { font-size: 13px; color: var(--ink-2); line-height: 1.5; margin-top: 10px; }
+
+  /* ---------- CLOSE ---------- */
+  .close-h {
+    font-family: var(--font-display);
+    font-size: 60px;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin: 6px 0 18px;
+  }
+  .close-h em { font-style: italic; color: var(--coral-2); }
+  .penny-stage { margin: 22px -4px 6px; height: 380px; position: relative; }
+
+  /* ---------- footer / tail ---------- */
+  .tail {
+    padding: 36px 24px 64px;
+    background: var(--steel-600);
+    color: rgba(232,239,246,0.5);
+  }
+  .tail .ticker {
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--steel-50);
+    margin: 0 0 6px;
+  }
+  .tail .ticker em { font-style: italic; color: var(--coral); }
+  .tail .meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(232,239,246,0.4);
+    margin-top: 18px;
+  }
+  .tail .src {
+    font-size: 11.5px;
+    color: rgba(232,239,246,0.4);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* ---------- subtle background gridding for the dot-grid section ---------- */
+  .dotgrid {
+    background-image: radial-gradient(rgba(11,31,51,0.10) 1px, transparent 1px);
+    background-size: 18px 18px;
+    background-position: 0 0;
+  }
+
+  /* shared SVG strokes */
+  svg .stroke-coral { stroke: var(--coral); }
+  svg .fill-coral { fill: var(--coral); }
+  svg .stroke-steel { stroke: var(--steel-400); }
+  svg .fill-steel { fill: var(--steel-400); }
+
+  /* reveal-on-scroll */
+  .rv {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 600ms var(--ease, cubic-bezier(0.22,1,0.36,1)),
+                transform 600ms var(--ease, cubic-bezier(0.22,1,0.36,1));
+  }
+  .rv.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rv { opacity: 1; transform: none; transition: none; }
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page" id="page">
+
+  <!-- ============ STICKY CHROME ============ -->
+  <div class="chrome" data-screen-label="00 Chrome">
+    <div class="chrome-row">
+      <span class="chrome-tick">NTAP</span>
+      <span class="chrome-name">NetApp&nbsp;<b>·</b>&nbsp;Inc.</span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="chrome-progress" id="progress"></div>
+  </div>
+
+  <!-- ============ HERO / THESIS ============ -->
+  <section class="hero" data-screen-label="01 Thesis">
+    <div class="eyebrow hero-eyebrow"><span class="dot"></span>The thesis · NTAP</div>
+
+    <h1 class="rv">
+      Three&nbsp;clouds.<br/>
+      <em>One</em> filesystem<br/>
+      <span class="accent">underneath.</span>
+    </h1>
+
+    <p class="hero-sub rv">
+      NetApp is the only enterprise-grade storage service natively embedded
+      across Amazon AWS, Microsoft Azure, and Google Cloud — the data layer
+      that follows you when the workload moves.
+    </p>
+
+    <div class="hero-stage" id="heroStage" aria-hidden="true">
+      <!-- 3 cloud nodes converging into one storage vessel, scroll-scrubbed -->
+      <svg viewBox="0 0 400 320" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="vesselFill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#2B486A"/>
+            <stop offset="1" stop-color="#0B1F33"/>
+          </linearGradient>
+          <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0" stop-color="#FF6A3D" stop-opacity="0.45"/>
+            <stop offset="1" stop-color="#FF6A3D" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- three hyperscaler nodes -->
+        <g id="hyper" font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.08em" fill="#5C636B" text-anchor="middle">
+          <g transform="translate(70,60)">
+            <circle r="22" fill="#fff" stroke="#C1BCAD"/>
+            <circle r="6" fill="#FF6A3D" class="hyper-dot" data-i="0"/>
+            <text y="44">AWS</text>
+          </g>
+          <g transform="translate(200,40)">
+            <circle r="22" fill="#fff" stroke="#C1BCAD"/>
+            <circle r="6" fill="#2B486A" class="hyper-dot" data-i="1"/>
+            <text y="44">AZURE</text>
+          </g>
+          <g transform="translate(330,60)">
+            <circle r="22" fill="#fff" stroke="#C1BCAD"/>
+            <circle r="6" fill="#2BB673" class="hyper-dot" data-i="2"/>
+            <text y="44">GCP</text>
+          </g>
+        </g>
+
+        <!-- converging paths -->
+        <g fill="none" stroke-width="1.2" stroke="#5C636B" stroke-dasharray="200" stroke-dashoffset="200" id="heroPaths">
+          <path d="M70 82 C 90 160, 160 200, 200 220" />
+          <path d="M200 62 C 200 140, 200 180, 200 220" />
+          <path d="M330 82 C 310 160, 240 200, 200 220" />
+        </g>
+
+        <!-- the unified vessel — ONTAP storage cylinder -->
+        <g transform="translate(140,210)">
+          <ellipse cx="60" cy="0" rx="60" ry="14" fill="#0B1F33"/>
+          <rect x="0" y="0" width="120" height="80" fill="url(#vesselFill)"/>
+          <ellipse cx="60" cy="80" rx="60" ry="14" fill="#0B1F33"/>
+          <!-- liquid level -->
+          <clipPath id="vClip"><rect x="0" y="0" width="120" height="80"/></clipPath>
+          <g clip-path="url(#vClip)">
+            <rect id="liquid" x="0" y="80" width="120" height="0" fill="#FF6A3D" opacity="0.85"/>
+            <rect id="liquid2" x="0" y="80" width="120" height="0" fill="#FF8B6A" opacity="0.5"/>
+          </g>
+          <!-- ribs -->
+          <line x1="0" y1="20" x2="120" y2="20" stroke="rgba(255,255,255,0.06)"/>
+          <line x1="0" y1="40" x2="120" y2="40" stroke="rgba(255,255,255,0.06)"/>
+          <line x1="0" y1="60" x2="120" y2="60" stroke="rgba(255,255,255,0.06)"/>
+          <text x="60" y="105" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.18em" fill="#5C636B">ONTAP</text>
+        </g>
+
+        <!-- glow under -->
+        <ellipse cx="200" cy="295" rx="120" ry="14" fill="url(#glow)"/>
+      </svg>
+    </div>
+
+    <div class="thesis-stat rv">
+      <div class="big"><em>$6.57</em><span class="mono" style="font-size:18px; color:var(--ink-3); margin-left:2px;">B</span></div>
+      <div>
+        <div class="lbl">FY '25 revenue</div>
+        <div class="body" style="font-size:14px; line-height:1.5; margin-top:4px;">
+          Built on <em class="coral">enterprise-class</em> storage. Sold across <em>two segments</em>.
+          Hybrid Cloud carries the weight; Public Cloud is the pivot.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 1 ============ -->
+  <div class="reset" data-screen-label="02 Reset 1">
+    <p>Storage isn't a product anymore. <span class="coral"><em>It's a fabric</em></span> — and the question is how revenue arrives once the fabric is everywhere.</p>
+  </div>
+
+  <!-- ============ THE BUSINESS — four pipes ============ -->
+  <section class="dense" data-screen-label="03 Business">
+    <div class="eyebrow"><span class="dot"></span>The business · four streams</div>
+    <h2 class="display" style="font-size:44px; margin: 14px 0 8px;">
+      Four pipes,<br/>
+      <em>one</em> tank.
+    </h2>
+    <p class="body" style="margin-top: 12px; max-width: 38ch;">
+      Hardware and licenses come in fast, support contracts come in <em>steady</em>, and a thin cloud line is widening behind it all.
+    </p>
+
+    <div class="biz-stage" id="bizStage">
+      <svg viewBox="0 0 400 360" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="tankGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#2B486A"/>
+            <stop offset="1" stop-color="#0B1F33"/>
+          </linearGradient>
+        </defs>
+
+        <!-- four streams with droplets -->
+        <g font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.08em" fill="#5C636B">
+          <!-- pipe 1 -->
+          <g>
+            <path d="M30 30 L 30 200 L 160 230" fill="none" stroke="#C1BCAD" stroke-width="1"/>
+            <text x="30" y="22" text-anchor="middle">PRODUCT</text>
+            <text x="30" y="14" text-anchor="middle" fill="#0F1318" font-family="Instrument Serif, serif" font-size="14" font-style="italic">45%</text>
+          </g>
+          <!-- pipe 2 -->
+          <g>
+            <path d="M130 30 L 130 200 L 175 230" fill="none" stroke="#C1BCAD" stroke-width="1"/>
+            <text x="130" y="22" text-anchor="middle">SUPPORT</text>
+            <text x="130" y="14" text-anchor="middle" fill="#0F1318" font-family="Instrument Serif, serif" font-size="14" font-style="italic">40%</text>
+          </g>
+          <!-- pipe 3 -->
+          <g>
+            <path d="M230 30 L 230 200 L 200 230" fill="none" stroke="#C1BCAD" stroke-width="1"/>
+            <text x="230" y="22" text-anchor="middle">PRO SVCS</text>
+            <text x="230" y="14" text-anchor="middle" fill="#0F1318" font-family="Instrument Serif, serif" font-size="14" font-style="italic">5%</text>
+          </g>
+          <!-- pipe 4 — the cloud one, coral -->
+          <g>
+            <path d="M340 30 L 340 200 L 230 230" fill="none" stroke="#FF6A3D" stroke-width="1.4"/>
+            <text x="340" y="22" text-anchor="middle" fill="#F25A37">PUB CLOUD</text>
+            <text x="340" y="14" text-anchor="middle" fill="#F25A37" font-family="Instrument Serif, serif" font-size="14" font-style="italic">10%</text>
+          </g>
+        </g>
+
+        <!-- droplets — animated via CSS -->
+        <g id="droplets" fill="#2B486A">
+          <circle class="drop d1" cx="30" cy="30" r="3"/>
+          <circle class="drop d2" cx="130" cy="30" r="3"/>
+          <circle class="drop d3" cx="230" cy="30" r="3"/>
+          <circle class="drop d4" cx="340" cy="30" r="3" fill="#FF6A3D"/>
+        </g>
+
+        <!-- the tank -->
+        <g transform="translate(140,225)">
+          <ellipse cx="60" cy="0" rx="62" ry="13" fill="#0B1F33"/>
+          <rect x="-2" y="0" width="124" height="100" fill="url(#tankGrad)"/>
+          <ellipse cx="60" cy="100" rx="62" ry="13" fill="#0B1F33"/>
+          <line x1="-2" y1="25" x2="122" y2="25" stroke="rgba(255,255,255,0.06)"/>
+          <line x1="-2" y1="50" x2="122" y2="50" stroke="rgba(255,255,255,0.06)"/>
+          <line x1="-2" y1="75" x2="122" y2="75" stroke="rgba(255,255,255,0.06)"/>
+          <text x="60" y="125" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.18em" fill="#5C636B">$6.57B · FY '25</text>
+        </g>
+      </svg>
+    </div>
+
+    <div style="margin-top: 18px;">
+      <div class="biz-stream-row">
+        <div class="swatch" style="background:#2B486A;"></div>
+        <div class="name">Product<span>Hardware + software licenses</span></div>
+        <div class="pct">45%</div>
+      </div>
+      <div class="biz-stream-row">
+        <div class="swatch" style="background:#4A6A8A;"></div>
+        <div class="name">Support services<span>≈92% gross margin</span></div>
+        <div class="pct">40%</div>
+      </div>
+      <div class="biz-stream-row">
+        <div class="swatch" style="background:#8FA9C3;"></div>
+        <div class="name">Professional services<span>Consulting & implementation</span></div>
+        <div class="pct">5%</div>
+      </div>
+      <div class="biz-stream-row">
+        <div class="swatch" style="background:#FF6A3D;"></div>
+        <div class="name">Public cloud<span><em style="font-family:var(--font-display); font-style:italic;">+43% YoY</em> · $416M</span></div>
+        <div class="pct">10%</div>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top: 24px;">
+      All-flash arrays alone now run at a <em>$4.1B</em> annualized clip — the spine of the Hybrid Cloud segment.
+    </p>
+  </section>
+
+  <!-- ============ SCALE ============ -->
+  <section data-screen-label="04 Scale" style="background: var(--paper-2);">
+    <div class="eyebrow"><span class="dot"></span>The scale · FY '25</div>
+    <div class="scale-figure rv">
+      <div class="big-num"><em>$6.57</em><span class="unit">B</span></div>
+      <div class="meta" style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--ink-3); text-transform: uppercase; margin-top: 14px;">Total revenue · fiscal '25</div>
+    </div>
+
+    <div class="scale-foot">
+      <span class="scale-chip"><b>70.2%</b> gross</span>
+      <span class="scale-chip"><b>20.3%</b> operating</span>
+      <span class="scale-chip"><b>$1.34B</b> FCF</span>
+    </div>
+
+    <div class="scale-grid rv">
+      <div class="scale-cell">
+        <div class="num"><em>11,700</em></div>
+        <div class="lbl">Employees · global</div>
+        <div class="desc">Headquartered in San&nbsp;Jose, CA. Founded 1992.</div>
+      </div>
+      <div class="scale-cell">
+        <div class="num"><em>$20.6</em>B</div>
+        <div class="lbl">Market cap</div>
+        <div class="desc">Public on NASDAQ. Two segments — Hybrid &amp; Public Cloud.</div>
+      </div>
+      <div class="scale-cell">
+        <div class="num"><em>$4.1</em>B</div>
+        <div class="lbl">All-flash ARR</div>
+        <div class="desc">The all-flash array portfolio's annualized run rate.</div>
+      </div>
+      <div class="scale-cell">
+        <div class="num"><em>+43%</em></div>
+        <div class="lbl">Public cloud YoY</div>
+        <div class="desc">$416M segment, growing into the recurring model.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 2 ============ -->
+  <div class="reset" data-screen-label="05 Reset 2">
+    <p>Six-and-a-half billion arrives. <span class="coral"><em>Where does it go</em></span> — and what does it leave behind?</p>
+  </div>
+
+  <!-- ============ COSTS — dollar bisected ============ -->
+  <section class="dense dotgrid" data-screen-label="06 Costs">
+    <div class="eyebrow cost-eyebrow"><span class="dot"></span>A hundred cents in</div>
+    <h2 class="cost-h">Cost of doing<br/>infrastructure, <em>per dollar</em>.</h2>
+
+    <div class="cost-stage" id="costStage">
+      <!-- 100-cent grid: 10x10 = 100 cells -->
+      <svg viewBox="0 0 400 360" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" id="costGrid">
+        <!-- generated by JS -->
+      </svg>
+    </div>
+
+    <div class="cost-rows">
+      <div class="cost-row"><div class="sw" style="background:#4F86C6;"></div><div class="lbl">Cost of revenue</div><div class="pct">30¢</div></div>
+      <div class="cost-row"><div class="sw" style="background:#6DBF82;"></div><div class="lbl">Sales &amp; marketing</div><div class="pct">18¢</div></div>
+      <div class="cost-row"><div class="sw" style="background:#F4845F;"></div><div class="lbl">Research &amp; development</div><div class="pct">16¢</div></div>
+      <div class="cost-row"><div class="sw" style="background:#A78BFA;"></div><div class="lbl">General &amp; administrative</div><div class="pct">6¢</div></div>
+      <div class="cost-row"><div class="sw" style="background:#FBBF24;"></div><div class="lbl">Stock-based compensation</div><div class="pct">5¢</div></div>
+      <div class="cost-row" style="border-top: 1px solid var(--line-2); padding-top: 14px;">
+        <div class="sw" style="background:var(--coral); border-radius:50%;"></div>
+        <div class="lbl"><em style="font-family:var(--font-display); font-style:italic; color:var(--coral-2); font-size:1.05em;">What survives</em> · operating</div>
+        <div class="pct" style="color:var(--coral-2); font-weight:500;">25¢</div>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top: 22px;">
+      Three quarters of every dollar gets spent before margin is counted. The remaining <em class="coral">twenty-five</em> are what NetApp returns and reinvests.
+    </p>
+  </section>
+
+  <!-- ============ FOOTPRINT — dark interlude ============ -->
+  <section class="dark" data-screen-label="07 Footprint">
+    <div class="eyebrow"><span class="dot"></span>Footprint · FY '25</div>
+    <h2 class="display" style="font-size: 44px; margin: 14px 0 8px;">
+      The data <em style="color:#FFB497;">follows</em><br/>
+      the enterprise.
+    </h2>
+    <p class="body" style="margin-top: 12px; max-width: 36ch;">
+      A majority of revenue lands in the Americas. <em>A third</em> in EMEA. The rest from Asia-Pacific.
+    </p>
+
+    <div class="geo-stage" id="geoStage">
+      <!-- a stylized globe with three concentric rings sized by region -->
+      <svg viewBox="0 0 400 320" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="globeFill" cx="40%" cy="40%" r="60%">
+            <stop offset="0" stop-color="#2B486A"/>
+            <stop offset="1" stop-color="#0B1F33"/>
+          </radialGradient>
+        </defs>
+        <!-- meridian rings -->
+        <g fill="none" stroke="rgba(232,239,246,0.08)" stroke-width="1">
+          <ellipse cx="200" cy="160" rx="130" ry="130"/>
+          <ellipse cx="200" cy="160" rx="130" ry="40"/>
+          <ellipse cx="200" cy="160" rx="40" ry="130"/>
+          <ellipse cx="200" cy="160" rx="80" ry="130"/>
+          <ellipse cx="200" cy="160" rx="130" ry="80"/>
+        </g>
+        <circle cx="200" cy="160" r="130" fill="url(#globeFill)" stroke="rgba(232,239,246,0.15)"/>
+
+        <!-- region arcs sized by % -->
+        <g fill="none" stroke-linecap="round" id="geoArcs">
+          <!-- Americas 51% -->
+          <circle cx="200" cy="160" r="148" stroke="#FF6A3D" stroke-width="6"
+                  stroke-dasharray="930" stroke-dashoffset="930" id="arcAmer"
+                  transform="rotate(-90 200 160)"/>
+          <!-- EMEA 34% -->
+          <circle cx="200" cy="160" r="158" stroke="#8FA9C3" stroke-width="3"
+                  stroke-dasharray="993" stroke-dashoffset="993" id="arcEmea"
+                  transform="rotate(83 200 160)"/>
+          <!-- APAC 15% -->
+          <circle cx="200" cy="160" r="168" stroke="#4A6A8A" stroke-width="2"
+                  stroke-dasharray="1056" stroke-dashoffset="1056" id="arcApac"
+                  transform="rotate(205 200 160)"/>
+        </g>
+
+        <!-- region pins -->
+        <g font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.1em" fill="rgba(232,239,246,0.7)">
+          <g transform="translate(140,130)"><circle r="3" fill="#FF6A3D"/><text x="-8" y="-8" text-anchor="end">AMERICAS</text></g>
+          <g transform="translate(220,108)"><circle r="3" fill="#8FA9C3"/><text x="8" y="-8">EMEA</text></g>
+          <g transform="translate(260,200)"><circle r="3" fill="#4A6A8A"/><text x="8" y="14">APAC</text></g>
+        </g>
+
+        <!-- center label -->
+        <text x="200" y="164" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="22" fill="rgba(232,239,246,0.85)">$6.57B</text>
+        <text x="200" y="183" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.18em" fill="rgba(232,239,246,0.5)">REVENUE</text>
+      </svg>
+    </div>
+
+    <div class="geo-rows">
+      <div class="geo-row">
+        <div class="reg">Americas</div>
+        <div class="pct">51%</div>
+        <div class="meta">Domestic + Latin America</div>
+      </div>
+      <div class="geo-row">
+        <div class="reg"><em>Europe,</em> Middle East &amp; Africa</div>
+        <div class="pct">34%</div>
+        <div class="meta">EMEA</div>
+      </div>
+      <div class="geo-row">
+        <div class="reg">Asia-Pacific</div>
+        <div class="pct">15%</div>
+        <div class="meta">APAC</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 3 ============ -->
+  <div class="reset" data-screen-label="08 Reset 3">
+    <p>Capex-light, capital-loaded. <span class="coral"><em>The bet isn't on land — it's on shareholders.</em></span></p>
+  </div>
+
+  <!-- ============ THE BET — capital allocation ============ -->
+  <section class="dense" data-screen-label="09 The Bet">
+    <div class="eyebrow"><span class="dot"></span>The bet · capital allocation</div>
+    <h2 class="display" style="font-size: 42px; margin: 14px 0 6px;">
+      Cash out the<br/>
+      <em>front door.</em>
+    </h2>
+    <p class="body" style="margin-top: 10px; max-width: 38ch;">
+      $1.34B in free cash flow last year. Most of it left in dividends and repurchases — buybacks <em>up 28% YoY</em>.
+    </p>
+
+    <div class="cap-stage" id="capStage">
+      <svg viewBox="0 0 400 220" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+        <!-- inflow -->
+        <g font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#5C636B">
+          <text x="20" y="40" text-anchor="start">FREE CASH FLOW</text>
+          <text x="20" y="54" text-anchor="start" fill="#0F1318" font-family="Instrument Serif, serif" font-style="italic" font-size="22">$1.34B</text>
+
+          <text x="380" y="40" text-anchor="end">CAPEX (LIGHT)</text>
+          <text x="380" y="54" text-anchor="end" fill="#0F1318" font-family="Instrument Serif, serif" font-style="italic" font-size="22">$168M</text>
+        </g>
+
+        <!-- the splitter — three streams out -->
+        <g fill="none" stroke-width="2.4" stroke-linecap="round" id="capStreams">
+          <path d="M40 80 C 100 80, 130 130, 200 130" stroke="#FF6A3D"
+                stroke-dasharray="220" stroke-dashoffset="220" id="capDiv"/>
+          <path d="M40 80 C 120 80, 160 175, 240 175" stroke="#2B486A"
+                stroke-dasharray="260" stroke-dashoffset="260" id="capBuy"/>
+          <path d="M360 80 C 320 90, 290 110, 260 110" stroke="#A78BFA"
+                stroke-dasharray="160" stroke-dashoffset="160" id="capCapex"/>
+        </g>
+
+        <!-- end nodes -->
+        <g font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.1em">
+          <g transform="translate(210,130)">
+            <circle r="6" fill="#FF6A3D"/>
+            <text x="14" y="-6" fill="#0F1318" font-family="Instrument Serif, serif" font-style="italic" font-size="20">$424M</text>
+            <text x="14" y="10" fill="#5C636B">DIVIDENDS</text>
+          </g>
+          <g transform="translate(250,175)">
+            <circle r="6" fill="#2B486A"/>
+            <text x="14" y="-6" fill="#0F1318" font-family="Instrument Serif, serif" font-style="italic" font-size="20">~$1.1B</text>
+            <text x="14" y="10" fill="#5C636B">BUYBACKS · +28% YOY</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="cap-fig">
+      <div class="cap-cell">
+        <div class="num"><em>$2.74</em>B</div>
+        <div class="lbl">Cash &amp; equivalents</div>
+        <div class="desc">Against $2.48B debt — a modest <em style="font-family:var(--font-display); font-style:italic;">net cash</em> position.</div>
+      </div>
+      <div class="cap-cell">
+        <div class="num"><em>$1.51</em>B</div>
+        <div class="lbl">Operating cash flow</div>
+        <div class="desc">Capital-light model; M&amp;A posture is selective and bolt-on.</div>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top: 26px;">
+      Equity sits at <em>$1.04B</em> — compressed by years of repurchases. Book value down, ROE up. The choice is deliberate: organic investment in <em class="coral">AI infrastructure</em> and cloud storage, not large-scale M&amp;A.
+    </p>
+  </section>
+
+  <!-- ============ COMPETITORS ============ -->
+  <section data-screen-label="10 Competitors" style="background: var(--paper-2);">
+    <div class="eyebrow"><span class="dot"></span>The field · sized by market cap</div>
+    <h2 class="display" style="font-size: 40px; margin: 14px 0 12px;">
+      The neighbors<br/>
+      <em>at the rack.</em>
+    </h2>
+    <p class="body" style="max-width: 38ch;">
+      Storage's edges blur into security, application delivery, and zero-trust. Three of the closest threats — sized in <em>market cap</em>.
+    </p>
+
+    <div class="comp-stage" id="compStage">
+      <svg viewBox="0 0 400 240" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+        <!-- horizontal axis -->
+        <line x1="20" y1="220" x2="380" y2="220" stroke="#C1BCAD"/>
+        <!-- bubbles sized by market cap -->
+        <g id="compBubbles">
+          <!-- NTAP -->
+          <g transform="translate(140,150)">
+            <circle r="44" fill="#FF6A3D" fill-opacity="0.14" stroke="#FF6A3D"/>
+            <circle r="6" fill="#FF6A3D"/>
+            <text x="0" y="-54" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#F25A37">NTAP</text>
+            <text x="0" y="-40" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#5C636B">$20.6B</text>
+          </g>
+          <!-- ZM -->
+          <g transform="translate(260,140)">
+            <circle r="48" fill="#2B486A" fill-opacity="0.10" stroke="#4A6A8A"/>
+            <circle r="6" fill="#4A6A8A"/>
+            <text x="0" y="-58" text-anchor="middle" font-family="Instrument Serif, serif" font-size="18" fill="#0F1318">ZM</text>
+            <text x="0" y="-44" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#5C636B">$23.7B</text>
+          </g>
+          <!-- ZS -->
+          <g transform="translate(330,180)">
+            <circle r="42" fill="#2B486A" fill-opacity="0.10" stroke="#4A6A8A"/>
+            <circle r="6" fill="#4A6A8A"/>
+            <text x="0" y="-52" text-anchor="middle" font-family="Instrument Serif, serif" font-size="18" fill="#0F1318">ZS</text>
+            <text x="0" y="-38" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#5C636B">$20.0B</text>
+          </g>
+          <!-- FFIV -->
+          <g transform="translate(60,180)">
+            <circle r="38" fill="#2B486A" fill-opacity="0.10" stroke="#4A6A8A"/>
+            <circle r="6" fill="#4A6A8A"/>
+            <text x="0" y="-48" text-anchor="middle" font-family="Instrument Serif, serif" font-size="18" fill="#0F1318">FFIV</text>
+            <text x="0" y="-34" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#5C636B">$17.6B</text>
+          </g>
+        </g>
+
+        <!-- axis labels -->
+        <g font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.12em" fill="#98a0a8">
+          <text x="20" y="234">$15B</text>
+          <text x="380" y="234" text-anchor="end">$25B · MARKET CAP</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="comp-rows">
+      <div class="comp-row us">
+        <div class="comp-head">
+          <div class="nm">NetApp</div>
+          <div class="tk">NTAP</div>
+          <div class="mc">$20.6B</div>
+        </div>
+        <div class="comp-bar"><div class="fill" data-w="82.5"></div></div>
+        <div class="comp-meta">
+          <span><b>$6.57B</b> rev</span><span>·</span>
+          <span><b>+43%</b> public cloud</span><span>·</span>
+          <span><b>70.2%</b> gross</span>
+        </div>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-head">
+          <div class="nm">Zoom</div>
+          <div class="tk">ZM</div>
+          <div class="mc">$23.7B</div>
+        </div>
+        <div class="comp-bar"><div class="fill" data-w="94.8"></div></div>
+        <div class="comp-meta">
+          <span><b>$4.87B</b> rev</span><span>·</span>
+          <span><b>P/E 12.5</b></span><span>·</span>
+          <span><b>+4.4%</b> YoY</span>
+        </div>
+        <div class="comp-desc">Within the candidate pool — competes in the enterprise software infrastructure layer where NetApp's cloud data services increasingly operate.</div>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-head">
+          <div class="nm">Zscaler</div>
+          <div class="tk">ZS</div>
+          <div class="mc">$20.0B</div>
+        </div>
+        <div class="comp-bar"><div class="fill" data-w="80"></div></div>
+        <div class="comp-meta">
+          <span><b>$2.67B</b> rev</span><span>·</span>
+          <span><b>+23.9%</b> YoY</span>
+        </div>
+        <div class="comp-desc">The zero-trust threat — pulling data security and ransomware protection budget into unified cloud platforms.</div>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-head">
+          <div class="nm">F5</div>
+          <div class="tk">FFIV</div>
+          <div class="mc">$17.6B</div>
+        </div>
+        <div class="comp-bar"><div class="fill" data-w="70"></div></div>
+        <div class="comp-meta">
+          <span><b>$3.09B</b> rev</span><span>·</span>
+          <span><b>P/E 24.9</b></span><span>·</span>
+          <span><b>+8.8%</b> YoY</span>
+        </div>
+        <div class="comp-desc">Application delivery and security, converging onto the same hybrid- and multi-cloud territory.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 4 ============ -->
+  <div class="reset" data-screen-label="11 Reset 4">
+    <p>Three clouds opened the page. <span class="coral"><em>One number closes it.</em></span></p>
+  </div>
+
+  <!-- ============ CLOSE — restate the thesis ============ -->
+  <section class="dense" data-screen-label="12 Close" style="background: linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);">
+    <div class="eyebrow"><span class="dot"></span>The bottom line</div>
+    <h2 class="close-h">
+      Twenty cents<br/>
+      <em>operating</em>,<br/>
+      per dollar in.
+    </h2>
+    <p class="body">
+      That's the answer the page has been building toward. Three clouds at the top; one filesystem underneath. <em>$6.57B in.</em> <em class="coral">~20¢ operating out</em>, and most of those cents handed back to shareholders.
+    </p>
+
+    <div class="penny-stage" id="pennyStage">
+      <svg viewBox="0 0 400 380" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+        <!-- one-dollar field of 100 cells; 20 are coral; rest are dim -->
+        <g id="pennyGrid"></g>
+        <!-- annotation -->
+        <g font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.14em" fill="#5C636B">
+          <text x="20" y="20">PER DOLLAR · FY '25</text>
+        </g>
+        <line x1="20" y1="380" x2="380" y2="380" stroke="#C1BCAD"/>
+      </svg>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px;">
+      <div>
+        <div class="meta" style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; color: var(--ink-3); text-transform: uppercase;">Operating margin</div>
+        <div class="display" style="font-size: 38px; margin-top: 4px;"><em>20.3%</em></div>
+      </div>
+      <div>
+        <div class="meta" style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; color: var(--ink-3); text-transform: uppercase;">Gross margin</div>
+        <div class="display" style="font-size: 38px; margin-top: 4px;">70.2%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TAIL ============ -->
+  <div class="tail" data-screen-label="13 Tail">
+    <div class="ticker"><em>NTAP.</em></div>
+    <div style="font-family: var(--font-display); font-style: italic; font-size: 22px; color: rgba(232,239,246,0.7); line-height: 1.3;">
+      Three&nbsp;clouds. One filesystem. Six-and-a-half billion. <span style="color:#FFB497;">Twenty cents survive.</span>
+    </div>
+    <div class="meta">RECAP · FY '25 · NetApp Inc.</div>
+    <div class="src">San Jose, CA · founded 1992 · ≈11,700 employees · NASDAQ: NTAP</div>
+  </div>
+
+</div>
+
+<style>
+  /* drop animation */
+  @keyframes drop1 { 0%, 70% { cy: 30; opacity: 1; } 100% { cy: 230; opacity: 0; } }
+  .drop {
+    animation: dropFall 2.2s linear infinite;
+  }
+  @keyframes dropFall {
+    0%   { transform: translateY(0); opacity: 0; }
+    10%  { opacity: 1; }
+    80%  { opacity: 1; }
+    100% { transform: translateY(195px); opacity: 0; }
+  }
+  .drop.d1 { animation-delay: 0s; }
+  .drop.d2 { animation-delay: 0.5s; }
+  .drop.d3 { animation-delay: 1.1s; }
+  .drop.d4 { animation-delay: 0.25s; }
+</style>
+
+<script>
+(function () {
+  const page = document.getElementById('page');
+  const progress = document.getElementById('progress');
+
+  // ---------- Scroll progress ----------
+  function onScroll () {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = Math.max(0, Math.min(1, window.scrollY / Math.max(1, total)));
+    progress.style.setProperty('--p', (pct * 100).toFixed(2) + '%');
+
+    // Hero scroll-scrubbed: hyperscaler paths fill in, then liquid rises in vessel.
+    const heroH = document.querySelector('.hero').offsetHeight;
+    const heroT = document.querySelector('.hero').offsetTop;
+    const heroProgress = Math.max(0, Math.min(1, (window.scrollY + 200) / (heroT + heroH)));
+    // Path dash drain
+    const heroPaths = document.querySelectorAll('#heroPaths path');
+    heroPaths.forEach((p, i) => {
+      const len = p.getTotalLength ? p.getTotalLength() : 200;
+      p.style.strokeDasharray = len;
+      const off = Math.max(0, len * (1 - heroProgress * 1.1));
+      p.style.strokeDashoffset = off;
+    });
+    // liquid level: 0 -> 60px height
+    const liquidH = Math.min(60, heroProgress * 80);
+    const liquid = document.getElementById('liquid');
+    const liquid2 = document.getElementById('liquid2');
+    if (liquid) {
+      liquid.setAttribute('y', 80 - liquidH);
+      liquid.setAttribute('height', liquidH);
+    }
+    if (liquid2) {
+      liquid2.setAttribute('y', 80 - liquidH + 4);
+      liquid2.setAttribute('height', Math.max(0, liquidH - 4));
+    }
+
+    // Hyperscaler dots pulse with scroll (subtle)
+    const k = (Math.sin(window.scrollY / 80) + 1) / 2;
+    document.querySelectorAll('.hyper-dot').forEach((d, i) => {
+      d.setAttribute('r', 5 + k * 2 + i * 0.3);
+    });
+
+    // Geo arcs draw-in based on section visibility
+    const geoSec = document.querySelector('[data-screen-label="07 Footprint"]');
+    if (geoSec) {
+      const r = geoSec.getBoundingClientRect();
+      const vis = Math.max(0, Math.min(1, 1 - r.top / window.innerHeight));
+      // Americas 51%, EMEA 34%, APAC 15%
+      const arcAmer = document.getElementById('arcAmer');
+      const arcEmea = document.getElementById('arcEmea');
+      const arcApac = document.getElementById('arcApac');
+      if (arcAmer) {
+        const total = 2 * Math.PI * 148;
+        const draw = total * 0.51 * vis;
+        arcAmer.setAttribute('stroke-dasharray', draw + ' ' + total);
+        arcAmer.setAttribute('stroke-dashoffset', 0);
+      }
+      if (arcEmea) {
+        const total = 2 * Math.PI * 158;
+        const draw = total * 0.34 * vis;
+        arcEmea.setAttribute('stroke-dasharray', draw + ' ' + total);
+        arcEmea.setAttribute('stroke-dashoffset', 0);
+      }
+      if (arcApac) {
+        const total = 2 * Math.PI * 168;
+        const draw = total * 0.15 * vis;
+        arcApac.setAttribute('stroke-dasharray', draw + ' ' + total);
+        arcApac.setAttribute('stroke-dashoffset', 0);
+      }
+    }
+
+    // Capital streams draw-in
+    const capSec = document.querySelector('[data-screen-label="09 The Bet"]');
+    if (capSec) {
+      const r = capSec.getBoundingClientRect();
+      const vis = Math.max(0, Math.min(1, 1 - r.top / window.innerHeight));
+      const ids = ['capDiv', 'capBuy', 'capCapex'];
+      ids.forEach(id => {
+        const p = document.getElementById(id);
+        if (!p) return;
+        const len = p.getTotalLength ? p.getTotalLength() : 240;
+        p.style.strokeDasharray = len;
+        p.style.strokeDashoffset = Math.max(0, len * (1 - vis * 1.15));
+      });
+    }
+
+    // Competitor bars
+    const compSec = document.querySelector('[data-screen-label="10 Competitors"]');
+    if (compSec) {
+      const r = compSec.getBoundingClientRect();
+      const vis = Math.max(0, Math.min(1, 1 - r.top / window.innerHeight));
+      document.querySelectorAll('.comp-bar .fill').forEach(f => {
+        const target = parseFloat(f.dataset.w);
+        f.style.width = (target * vis).toFixed(1) + '%';
+      });
+    }
+  }
+
+  // ---------- Reveal-on-scroll ----------
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('in');
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+  // Auto-mark blocks
+  document.querySelectorAll('section h2, section .body, section .scale-grid, section .cost-rows, section .geo-rows, section .comp-rows, section .cap-fig, section .cap-stage, section .penny-stage, section .biz-stage, section .cost-stage, section .geo-stage, section .comp-stage, section .scale-foot, section .scale-figure').forEach(el => {
+    if (!el.classList.contains('rv')) {
+      el.classList.add('rv');
+      io.observe(el);
+    }
+  });
+
+  // ---------- Build the 100-cent grid ----------
+  // 10 cols × 10 rows. Fill order: cost of revenue (30), S&M (18), R&D (16), G&A (6), SBC (5) = 75. Surplus = 25 (the operating margin region).
+  (function buildCostGrid () {
+    const svg = document.getElementById('costGrid');
+    if (!svg) return;
+    const cols = 10, rows = 10;
+    const cellW = 30, cellH = 30, gap = 4;
+    const startX = 30, startY = 30;
+    const segments = [
+      { color: '#4F86C6', n: 30, label: 'COR' },
+      { color: '#6DBF82', n: 18, label: 'S&M' },
+      { color: '#F4845F', n: 16, label: 'R&D' },
+      { color: '#A78BFA', n: 6,  label: 'G&A' },
+      { color: '#FBBF24', n: 5,  label: 'SBC' },
+    ];
+    // remaining 25 = operating margin (coral, hollow)
+    const cells = [];
+    let idx = 0;
+    segments.forEach(s => { for (let k=0; k<s.n; k++) cells.push({ color: s.color, kind: 'cost' }); });
+    while (cells.length < 100) cells.push({ color: '#FF6A3D', kind: 'op' });
+
+    let html = '';
+    for (let r=0; r<rows; r++) {
+      for (let c=0; c<cols; c++) {
+        const i = r * cols + c;
+        const cell = cells[i];
+        const x = startX + c * (cellW + gap);
+        const y = startY + r * (cellH + gap);
+        if (cell.kind === 'op') {
+          html += `<rect x="${x}" y="${y}" width="${cellW}" height="${cellH}" rx="4" fill="${cell.color}" fill-opacity="0.95" />`;
+        } else {
+          html += `<rect x="${x}" y="${y}" width="${cellW}" height="${cellH}" rx="4" fill="${cell.color}" fill-opacity="0.85" />`;
+        }
+      }
+    }
+    // Add subtle frame
+    html += `<rect x="${startX-6}" y="${startY-6}" width="${cols*(cellW+gap)-gap+12}" height="${rows*(cellH+gap)-gap+12}" rx="10" fill="none" stroke="#C1BCAD" stroke-width="1"/>`;
+    // Op margin annotation
+    html += `<text x="${startX-6}" y="${startY-12}" font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.14em" fill="#5C636B">100¢ · ONE DOLLAR IN</text>`;
+    svg.innerHTML = html;
+  })();
+
+  // ---------- Build the 20¢ "what survives" grid for close ----------
+  (function buildPennyGrid () {
+    const svg = document.getElementById('pennyGrid');
+    if (!svg) return;
+    const cols = 10, rows = 10;
+    const cellW = 30, cellH = 30, gap = 4;
+    const startX = 30, startY = 40;
+    let html = '';
+    for (let r=0; r<rows; r++) {
+      for (let c=0; c<cols; c++) {
+        const i = r * cols + c;
+        const x = startX + c * (cellW + gap);
+        const y = startY + r * (cellH + gap);
+        // 20 of 100 — the LAST 20 in reading order are the coral ones
+        const isOp = i >= 80;
+        if (isOp) {
+          html += `<rect x="${x}" y="${y}" width="${cellW}" height="${cellH}" rx="4" fill="#FF6A3D" fill-opacity="0.95" class="penny on" />`;
+        } else {
+          html += `<rect x="${x}" y="${y}" width="${cellW}" height="${cellH}" rx="4" fill="#DAD6CB" fill-opacity="0.6" />`;
+        }
+      }
+    }
+    html += `<rect x="${startX-6}" y="${startY-6}" width="${cols*(cellW+gap)-gap+12}" height="${rows*(cellH+gap)-gap+12}" rx="10" fill="none" stroke="#C1BCAD" stroke-width="1"/>`;
+    // Brace + label on the coral block
+    const lastY = startY + 8 * (cellH + gap);
+    html += `<text x="${startX + cols*(cellW+gap) - gap + 14}" y="${lastY + 18}" font-family="Instrument Serif, serif" font-style="italic" font-size="22" fill="#F25A37">20¢</text>`;
+    html += `<text x="${startX + cols*(cellW+gap) - gap + 14}" y="${lastY + 36}" font-family="Geist Mono, monospace" font-size="9" letter-spacing="0.14em" fill="#5C636B">SURVIVE</text>`;
+    svg.innerHTML = html;
+  })();
+
+  // count-ups
+  function animateCount (el, target, duration = 1100, decimals = 0, prefix='', suffix='') {
+    const start = performance.now();
+    function tick (now) {
+      const t = Math.max(0, Math.min(1, (now - start) / duration));
+      const eased = 1 - Math.pow(1 - t, 3);
+      const v = target * eased;
+      el.textContent = prefix + v.toFixed(decimals) + suffix;
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

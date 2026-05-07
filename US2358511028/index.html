@@ -1,0 +1,1374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=420, initial-scale=1" />
+<title>DHR · FY '25 Recap</title>
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  /* ============================================================
+     DHR Recap — clinical-institutional palette
+     - Paper neutrals from system
+     - Signal: lab teal (deep diagnostic green-blue)
+     - Coral reserved for ONE earned moment (the bet)
+     ============================================================ */
+  :root {
+    --teal-50:  #E6F0EE;
+    --teal-100: #C6DDD8;
+    --teal-200: #8FBDB4;
+    --teal-300: #4F948A;
+    --teal-400: #1B7872;        /* signal */
+    --teal-500: #0F4F4A;        /* deep ink-teal */
+    --teal-600: #073A36;
+    --bone:     #F1EDE3;        /* paper variant — manila */
+    --ledger:   #E8E1CF;        /* ledger band */
+    --ink-deep: #0E0D0B;
+  }
+
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    /* Mobile-sized standalone page; centered if viewport is wider */
+    min-height: 100vh;
+  }
+
+  /* The page itself sits on a darker background so 420px page reads as artifact */
+  .page-bg {
+    background: #1A1816;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+  .page {
+    width: 100%;
+    max-width: 420px;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ---------- Persistent chrome ---------- */
+  .chrome {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(251, 250, 247, 0.78);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border-bottom: 1px solid rgba(228, 225, 217, 0.6);
+  }
+  .chrome-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 12px;
+  }
+  .chrome-left { display: flex; align-items: baseline; gap: 10px; }
+  .chrome-ticker {
+    font-family: var(--font-mono); font-size: 13px; font-weight: 500;
+    letter-spacing: 0.06em; color: var(--ink);
+  }
+  .chrome-ticker .dot {
+    display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--teal-400); margin-right: 8px; vertical-align: middle;
+    transform: translateY(-1px);
+  }
+  .chrome-name {
+    font-family: var(--font-display); font-size: 17px; font-style: italic;
+    color: var(--ink); letter-spacing: -0.01em;
+  }
+  .chrome-label {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .progress-rail {
+    height: 1.5px; background: transparent; position: relative;
+  }
+  .progress-fill {
+    height: 100%; background: var(--teal-400); width: 0%;
+    transition: width 80ms linear;
+  }
+
+  /* ---------- General section frame ---------- */
+  section {
+    position: relative;
+    padding: 0 24px;
+  }
+  .eyebrow-mono {
+    font-family: var(--font-mono); font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--teal-500); font-weight: 500;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .eyebrow-mono::before {
+    content: ''; display: inline-block; width: 14px; height: 1px;
+    background: var(--teal-500);
+  }
+  .display {
+    font-family: var(--font-display); font-weight: 400;
+    line-height: 0.96; letter-spacing: -0.022em; color: var(--ink-deep);
+  }
+  .italic { font-style: italic; }
+  .body-copy {
+    font-family: var(--font-sans); font-size: 15.5px; line-height: 1.55;
+    color: var(--ink-2); text-wrap: pretty;
+  }
+  .body-copy em {
+    font-family: var(--font-display); font-style: italic;
+    font-size: 1.06em; color: var(--teal-500);
+  }
+  .body-copy .signal {
+    font-family: var(--font-display); font-style: italic;
+    color: var(--coral-500);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 36px 24px 80px;
+    background: var(--paper);
+    position: relative;
+  }
+  .hero-eyebrow { margin-bottom: 28px; }
+  .hero-thesis {
+    font-size: 52px; line-height: 0.92; letter-spacing: -0.028em;
+    color: var(--ink-deep);
+  }
+  .hero-thesis .em {
+    font-style: italic; color: var(--teal-500);
+  }
+  .hero-thesis .small {
+    display: block; font-size: 32px; margin-top: 10px;
+    color: var(--ink-2);
+  }
+  .hero-sub {
+    margin-top: 28px; font-family: var(--font-sans); font-size: 14.5px;
+    line-height: 1.55; color: var(--ink-2); max-width: 34ch;
+  }
+  .hero-meta {
+    margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    border-top: 1px solid var(--line); padding-top: 18px;
+  }
+  .hero-meta .cell .k {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 6px;
+  }
+  .hero-meta .cell .v {
+    font-family: var(--font-display); font-size: 28px; color: var(--ink);
+    letter-spacing: -0.015em;
+  }
+  .hero-meta .cell .v .it { font-style: italic; color: var(--teal-500); }
+
+  /* DBS system glyph — concentric petri dishes that breathe */
+  .dbs-glyph {
+    position: absolute; right: -40px; top: 60px;
+    width: 280px; height: 280px; opacity: 0.55;
+    pointer-events: none;
+  }
+  .dbs-glyph circle { transform-origin: 140px 140px; }
+
+  /* ---------- RESET BEATS ---------- */
+  .reset-beat {
+    background: var(--bone);
+    padding: 56px 32px;
+    border-top: 1px solid rgba(0,0,0,0.04);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+  }
+  .reset-beat p {
+    font-family: var(--font-display); font-style: italic;
+    font-size: 24px; line-height: 1.25;
+    color: var(--ink-2); letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+  .reset-beat p .accent { color: var(--teal-500); }
+  .reset-beat p .signal { color: var(--coral-500); }
+  .reset-beat .source {
+    margin-top: 20px; font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);
+  }
+
+  /* ---------- SECTION: business / vials ---------- */
+  .business {
+    padding: 80px 24px;
+  }
+  .business h2 {
+    font-size: 40px; line-height: 1.0; letter-spacing: -0.025em;
+    margin-top: 14px; color: var(--ink-deep);
+  }
+  .business h2 .em { font-style: italic; color: var(--teal-500); }
+  .business p {
+    margin-top: 18px; max-width: 36ch;
+  }
+  .vials {
+    margin-top: 44px; display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 18px; align-items: end;
+  }
+  .vial {
+    position: relative;
+  }
+  .vial-svg { width: 100%; height: 220px; display: block; }
+  .vial-cap {
+    margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line);
+  }
+  .vial-pct {
+    font-family: var(--font-display); font-size: 32px; color: var(--ink);
+    letter-spacing: -0.015em;
+  }
+  .vial-pct .it { font-style: italic; color: var(--teal-500); }
+  .vial-label {
+    font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-3); margin-top: 4px;
+  }
+  .vial-brands {
+    font-family: var(--font-sans); font-size: 11.5px; color: var(--ink-2);
+    margin-top: 6px; line-height: 1.35;
+  }
+
+  /* ---------- SECTION: scale ---------- */
+  .scale {
+    padding: 80px 24px;
+    background: var(--bg-raised);
+    border-top: 1px solid var(--line);
+  }
+  .scale .display-num {
+    font-size: 88px; line-height: 0.88; letter-spacing: -0.035em;
+    color: var(--ink-deep); font-family: var(--font-display);
+  }
+  .scale .display-num .it {
+    font-style: italic; color: var(--teal-500); font-size: 0.55em;
+    letter-spacing: -0.01em;
+  }
+  .scale .display-cap {
+    margin-top: 14px; font-family: var(--font-display); font-style: italic;
+    font-size: 22px; color: var(--ink-2); line-height: 1.25; max-width: 28ch;
+  }
+  .scale-grid {
+    margin-top: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px 24px;
+    border-top: 1px solid var(--line); padding-top: 28px;
+  }
+  .scale-cell .k {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 8px;
+  }
+  .scale-cell .v {
+    font-family: var(--font-display); font-size: 32px; color: var(--ink);
+    letter-spacing: -0.015em; line-height: 1;
+  }
+  .scale-cell .v .it { font-style: italic; }
+  .scale-cell .sub {
+    margin-top: 6px; font-family: var(--font-sans); font-size: 12.5px;
+    color: var(--ink-3); line-height: 1.4;
+  }
+
+  /* Margins as twin gauges */
+  .margins {
+    margin-top: 48px; padding-top: 28px; border-top: 1px solid var(--line);
+  }
+  .gauge { margin-top: 22px; }
+  .gauge-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .gauge-row .v {
+    font-family: var(--font-display); font-style: italic; font-size: 20px;
+    text-transform: none; letter-spacing: -0.01em; color: var(--teal-500);
+  }
+  .gauge-bar {
+    margin-top: 8px; height: 3px; background: var(--paper-3); position: relative;
+    border-radius: 1.5px; overflow: hidden;
+  }
+  .gauge-bar .fill {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 0%;
+    background: var(--teal-400);
+  }
+
+  /* ---------- SECTION: where money goes (cents grid) ---------- */
+  .cents {
+    padding: 88px 24px 96px;
+  }
+  .cents h2 {
+    font-size: 40px; line-height: 1.0; letter-spacing: -0.025em;
+    margin-top: 14px; color: var(--ink-deep);
+  }
+  .cents h2 .em { font-style: italic; color: var(--teal-500); }
+  .cents p { margin-top: 18px; max-width: 36ch; }
+
+  .grid100 {
+    margin: 40px auto 0; display: grid;
+    grid-template-columns: repeat(10, 1fr); gap: 4px;
+    width: 100%;
+  }
+  .cent {
+    aspect-ratio: 1/1; background: var(--paper-3); border-radius: 2px;
+    transition: background 280ms var(--ease-out), transform 280ms var(--ease-out);
+  }
+  .cent.lit { background: var(--lit-color, var(--teal-400)); }
+  .cent.surplus {
+    background: #14322F;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset;
+  }
+  .cents-legend {
+    margin-top: 28px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .legend-row {
+    display: grid; grid-template-columns: 16px 1fr auto; align-items: center;
+    gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line);
+  }
+  .legend-row:last-child { border-bottom: none; }
+  .legend-swatch { width: 14px; height: 14px; border-radius: 3px; }
+  .legend-label {
+    font-family: var(--font-sans); font-size: 13px; color: var(--ink);
+  }
+  .legend-pct {
+    font-family: var(--font-display); font-size: 20px; color: var(--ink);
+    font-style: italic; letter-spacing: -0.01em;
+  }
+  .cents-callout {
+    margin-top: 36px; padding: 24px; background: var(--bone);
+    border-left: 2px solid var(--teal-500);
+  }
+  .cents-callout .big {
+    font-family: var(--font-display); font-size: 56px; line-height: 0.95;
+    color: var(--ink-deep); letter-spacing: -0.025em;
+  }
+  .cents-callout .big .it { font-style: italic; color: var(--teal-500); }
+  .cents-callout .cap {
+    margin-top: 10px; font-family: var(--font-display); font-style: italic;
+    font-size: 18px; color: var(--ink-2); max-width: 32ch; line-height: 1.3;
+  }
+
+  /* ---------- SECTION: footprint ---------- */
+  .footprint {
+    padding: 88px 24px;
+    background: var(--bg-raised);
+    border-top: 1px solid var(--line);
+  }
+  .footprint h2 {
+    font-size: 40px; line-height: 1.0; letter-spacing: -0.025em;
+    margin-top: 14px;
+  }
+  .footprint h2 .em { font-style: italic; color: var(--teal-500); }
+  .footprint p { margin-top: 18px; max-width: 36ch; }
+
+  .geo-globe {
+    margin-top: 36px; width: 100%; aspect-ratio: 1/1; max-width: 320px;
+    margin-left: auto; margin-right: auto;
+    position: relative;
+  }
+  .geo-globe svg { width: 100%; height: 100%; display: block; }
+
+  .geo-list {
+    margin-top: 32px;
+  }
+  .geo-row {
+    display: grid; grid-template-columns: 28px 1fr auto; align-items: center;
+    gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line);
+  }
+  .geo-row:last-child { border: none; }
+  .geo-pct {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--ink-3); letter-spacing: 0.04em;
+  }
+  .geo-bar {
+    height: 2px; background: var(--paper-3); position: relative; border-radius: 1px;
+    overflow: hidden;
+  }
+  .geo-bar .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--teal-400); width: 0%;
+  }
+  .geo-label {
+    font-family: var(--font-sans); font-size: 13.5px; color: var(--ink);
+  }
+  .geo-num {
+    font-family: var(--font-display); font-size: 22px; color: var(--ink);
+    font-style: italic; letter-spacing: -0.01em; min-width: 50px; text-align: right;
+  }
+
+  /* ---------- SECTION: the bet (DARK INTERLUDE — earned drama) ---------- */
+  .bet {
+    background: var(--ink-deep);
+    color: var(--paper);
+    padding: 96px 24px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bet::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 12px 12px; pointer-events: none;
+  }
+  .bet .eyebrow-mono { color: var(--coral-300); }
+  .bet .eyebrow-mono::before { background: var(--coral-300); }
+  .bet h2 {
+    font-family: var(--font-display); font-size: 44px; line-height: 0.96;
+    letter-spacing: -0.028em; margin-top: 16px; color: var(--paper);
+    position: relative; z-index: 1;
+  }
+  .bet h2 .signal {
+    font-style: italic; color: var(--coral-400);
+  }
+  .bet .lede {
+    margin-top: 22px; font-family: var(--font-sans); font-size: 15px;
+    line-height: 1.6; color: rgba(244, 242, 237, 0.72); max-width: 36ch;
+    position: relative; z-index: 1;
+  }
+  .bet .lede em {
+    font-family: var(--font-display); font-style: italic; color: var(--coral-300);
+  }
+
+  /* Cash flow waterfall */
+  .waterfall {
+    margin-top: 48px; position: relative; z-index: 1;
+  }
+  .waterfall .source {
+    text-align: center;
+  }
+  .waterfall .source .k {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em;
+    color: rgba(255,255,255,0.45); text-transform: uppercase;
+  }
+  .waterfall .source .v {
+    margin-top: 6px; font-family: var(--font-display); font-size: 56px;
+    color: var(--paper); letter-spacing: -0.025em;
+  }
+  .waterfall .source .v .it { font-style: italic; color: var(--coral-300); }
+  .waterfall .stem {
+    margin: 16px auto 8px; width: 1px; height: 40px;
+    background: linear-gradient(to bottom, rgba(255,156,128,0.6), rgba(255,156,128,0.1));
+  }
+  .waterfall .splits {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;
+    align-items: stretch;
+  }
+  .split {
+    padding: 18px 12px; background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-top: 2px solid var(--coral-400);
+  }
+  .split .pct-bar {
+    height: 4px; background: rgba(255,255,255,0.08);
+    margin-bottom: 14px; position: relative; overflow: hidden;
+  }
+  .split .pct-bar .fill {
+    position: absolute; inset: 0 100% 0 0; background: var(--coral-400);
+  }
+  .split .v {
+    font-family: var(--font-display); font-size: 24px; color: var(--paper);
+    letter-spacing: -0.01em; line-height: 1;
+  }
+  .split .v .it { font-style: italic; color: var(--coral-300); }
+  .split .k {
+    margin-top: 6px; font-family: var(--font-mono); font-size: 9.5px;
+    letter-spacing: 0.12em; color: rgba(255,255,255,0.55); text-transform: uppercase;
+    line-height: 1.4;
+  }
+  .split .sub {
+    margin-top: 6px; font-family: var(--font-sans); font-size: 11.5px;
+    color: rgba(255,255,255,0.6); line-height: 1.35;
+  }
+
+  .bet-bottom {
+    margin-top: 42px; padding-top: 28px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    position: relative; z-index: 1;
+  }
+  .bet-bottom .auth {
+    font-family: var(--font-display); font-size: 30px; line-height: 1.1;
+    color: var(--paper); letter-spacing: -0.018em;
+  }
+  .bet-bottom .auth .signal {
+    font-style: italic; color: var(--coral-400);
+  }
+  .bet-bottom .auth-cap {
+    margin-top: 10px; font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* ---------- SECTION: competitors ---------- */
+  .competition {
+    padding: 96px 24px 80px;
+  }
+  .competition h2 {
+    font-size: 40px; line-height: 1.0; letter-spacing: -0.025em;
+    margin-top: 14px; color: var(--ink-deep);
+  }
+  .competition h2 .em { font-style: italic; color: var(--teal-500); }
+  .competition .lede { margin-top: 18px; max-width: 36ch; }
+
+  .market-cap-arena {
+    margin-top: 48px; position: relative; height: 360px;
+  }
+  .market-cap-arena svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+  .competitors-list {
+    margin-top: 40px;
+  }
+  .competitor {
+    padding: 22px 0; border-top: 1px solid var(--line);
+    cursor: pointer; transition: background 220ms var(--ease-out);
+    margin: 0 -24px; padding-left: 24px; padding-right: 24px;
+  }
+  .competitor:last-child { border-bottom: 1px solid var(--line); }
+  .competitor-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 12px;
+  }
+  .competitor-name {
+    font-family: var(--font-display); font-size: 24px; color: var(--ink);
+    letter-spacing: -0.012em; line-height: 1.1;
+  }
+  .competitor-name .it { font-style: italic; color: var(--teal-500); }
+  .competitor-ticker {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);
+    letter-spacing: 0.08em;
+  }
+  .competitor-stats {
+    margin-top: 10px; display: flex; gap: 18px;
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-2);
+    letter-spacing: 0.04em;
+  }
+  .competitor-stats span strong {
+    font-family: var(--font-display); font-style: italic; font-weight: 400;
+    font-size: 14px; color: var(--ink); letter-spacing: -0.005em;
+    margin-left: 4px;
+  }
+  .competitor-stats .yoy-pos { color: var(--teal-500); }
+  .competitor-stats .yoy-neg { color: var(--coral-600); }
+  .competitor-desc {
+    margin-top: 14px; font-family: var(--font-sans); font-size: 13.5px;
+    line-height: 1.5; color: var(--ink-2);
+    max-height: 0; overflow: hidden;
+    transition: max-height 380ms var(--ease-out), margin 380ms var(--ease-out), opacity 280ms var(--ease-out);
+    opacity: 0;
+  }
+  .competitor.open .competitor-desc {
+    max-height: 320px; opacity: 1;
+  }
+  .competitor-toggle {
+    margin-top: 12px; font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal-500);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .competitor-toggle .arrow { transition: transform 220ms var(--ease-out); display: inline-block; }
+  .competitor.open .competitor-toggle .arrow { transform: rotate(90deg); }
+
+  /* ---------- TAKEAWAY ---------- */
+  .takeaway {
+    padding: 100px 24px 120px;
+    background: var(--bone);
+    border-top: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .takeaway::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(15,79,74,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(15,79,74,0.04) 1px, transparent 1px);
+    background-size: 24px 24px; pointer-events: none;
+  }
+  .takeaway-inner { position: relative; z-index: 1; }
+  .takeaway h2 {
+    font-family: var(--font-display); font-size: 60px; line-height: 0.94;
+    letter-spacing: -0.03em; margin-top: 24px; color: var(--ink-deep);
+  }
+  .takeaway h2 .em { font-style: italic; color: var(--teal-500); }
+  .takeaway h2 .small {
+    display: block; font-size: 36px; margin-top: 12px; color: var(--ink-2);
+  }
+  .takeaway .signoff {
+    margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono); font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .takeaway .signoff .right {
+    font-family: var(--font-display); font-style: italic; font-size: 16px;
+    text-transform: none; letter-spacing: 0; color: var(--teal-500);
+  }
+
+  /* Reveal-on-scroll setup */
+  .reveal {
+    opacity: 0; transform: translateY(14px);
+    transition: opacity 620ms var(--ease-out), transform 620ms var(--ease-out);
+  }
+  .reveal.in {
+    opacity: 1; transform: translateY(0);
+  }
+  .reveal.d1 { transition-delay: 80ms; }
+  .reveal.d2 { transition-delay: 160ms; }
+  .reveal.d3 { transition-delay: 240ms; }
+  .reveal.d4 { transition-delay: 320ms; }
+
+  /* Vial liquid animation */
+  .vial-liquid {
+    transition: transform 1100ms var(--ease-out);
+    transform-origin: 50% 100%;
+    transform: scaleY(0);
+  }
+  .vial.in .vial-liquid { transform: scaleY(1); }
+
+  /* Container query-ish: prevent text overflow on tiny screens */
+  @media (max-width: 360px) {
+    .hero-thesis { font-size: 44px; }
+    .scale .display-num { font-size: 72px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-bg">
+<div class="page" id="page">
+
+  <!-- ========== PERSISTENT CHROME ========== -->
+  <header class="chrome">
+    <div class="chrome-inner">
+      <div class="chrome-left">
+        <span class="chrome-ticker"><span class="dot"></span>DHR</span>
+        <span class="chrome-name">Danaher</span>
+      </div>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+  </header>
+
+  <!-- ========== HERO ========== -->
+  <section class="hero">
+    <!-- Concentric DBS petri-glyph in the corner -->
+    <svg class="dbs-glyph" viewBox="0 0 280 280" aria-hidden="true">
+      <g fill="none" stroke="#1B7872" stroke-width="0.6">
+        <circle cx="140" cy="140" r="130" opacity="0.18"/>
+        <circle cx="140" cy="140" r="108" opacity="0.22"/>
+        <circle cx="140" cy="140" r="86"  opacity="0.28"/>
+        <circle cx="140" cy="140" r="64"  opacity="0.36"/>
+        <circle cx="140" cy="140" r="42"  opacity="0.5"/>
+        <circle cx="140" cy="140" r="22"  opacity="0.7"/>
+      </g>
+      <circle cx="140" cy="140" r="4" fill="#1B7872"/>
+      <!-- tick marks -->
+      <g stroke="#1B7872" stroke-width="0.7" opacity="0.5">
+        <line x1="140" y1="6"   x2="140" y2="16"/>
+        <line x1="140" y1="264" x2="140" y2="274"/>
+        <line x1="6"   y1="140" x2="16"  y2="140"/>
+        <line x1="264" y1="140" x2="274" y2="140"/>
+      </g>
+    </svg>
+
+    <div class="eyebrow-mono hero-eyebrow reveal">The thesis</div>
+    <h1 class="hero-thesis display reveal d1">
+      Sixty thousand<br>people. Fifteen<br><span class="em">brands.</span>
+      <span class="small">One operating system.</span>
+    </h1>
+    <p class="hero-sub reveal d2">
+      Danaher is what happens when a 1984 Washington tools company decides its real product is <em style="font-family:var(--font-display);font-style:italic;color:var(--teal-500)">discipline</em> — and then buys fifteen biotech, life-sciences, and diagnostics businesses to apply it to.
+    </p>
+
+    <div class="hero-meta reveal d3">
+      <div class="cell">
+        <span class="k">Market cap</span>
+        <span class="v"><span class="it">$</span>137.41<span style="font-size:0.6em;color:var(--ink-3)">B</span></span>
+      </div>
+      <div class="cell">
+        <span class="k">FY'25 Revenue</span>
+        <span class="v"><span class="it">$</span>24.57<span style="font-size:0.6em;color:var(--ink-3)">B</span></span>
+      </div>
+      <div class="cell">
+        <span class="k">Countries</span>
+        <span class="v">~50</span>
+      </div>
+      <div class="cell">
+        <span class="k">Employees</span>
+        <span class="v">~60K</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RESET BEAT ========== -->
+  <div class="reset-beat">
+    <p>
+      They don't sell drugs. They sell <span class="accent">the bench, the column, the cytometer, the assay</span> — and the consumables that keep them running long after the instrument is paid for.
+    </p>
+    <div class="source">§ The business · how it works</div>
+  </div>
+
+  <!-- ========== BUSINESS ========== -->
+  <section class="business">
+    <div class="eyebrow-mono reveal">Three vessels · one workflow</div>
+    <h2 class="display reveal d1">
+      Recurring revenue, by the <span class="em">milliliter.</span>
+    </h2>
+    <p class="body-copy reveal d2">
+      The instrument is the foothold. The <em>consumables, reagents, and service contracts</em> are the moat — sold direct, weighted toward repeat orders, and split across three segments that collectively post a 59.1% gross margin.
+    </p>
+
+    <div class="vials" id="vials">
+      <!-- Vial 1: Biotechnology 28% -->
+      <div class="vial" data-pct="28">
+        <svg class="vial-svg" viewBox="0 0 80 220" aria-hidden="true">
+          <defs>
+            <clipPath id="clip-v1">
+              <path d="M22 28 L22 174 Q22 200 40 200 Q58 200 58 174 L58 28 Z"/>
+            </clipPath>
+          </defs>
+          <!-- Cap -->
+          <rect x="26" y="14" width="28" height="14" rx="2" fill="#3B3A37"/>
+          <rect x="20" y="22" width="40" height="9" rx="1" fill="#0F4F4A"/>
+          <!-- Glass outline -->
+          <path d="M22 28 L22 174 Q22 200 40 200 Q58 200 58 174 L58 28 Z"
+                fill="rgba(15,79,74,0.04)" stroke="#0F4F4A" stroke-width="1.1"/>
+          <!-- Liquid (28% from bottom, fills 0..1 via scaleY) -->
+          <g clip-path="url(#clip-v1)">
+            <rect class="vial-liquid" x="20" y="148" width="40" height="52" fill="#1B7872"/>
+            <!-- Meniscus highlight -->
+            <rect class="vial-liquid" x="20" y="148" width="40" height="2" fill="#4F948A" opacity="0.7"/>
+          </g>
+          <!-- Graduations -->
+          <g stroke="#0F4F4A" stroke-width="0.6" opacity="0.45">
+            <line x1="22" y1="60"  x2="30" y2="60"/>
+            <line x1="22" y1="92"  x2="30" y2="92"/>
+            <line x1="22" y1="124" x2="30" y2="124"/>
+            <line x1="22" y1="156" x2="30" y2="156"/>
+            <line x1="22" y1="188" x2="30" y2="188"/>
+          </g>
+        </svg>
+        <div class="vial-cap">
+          <div class="vial-pct"><span class="it">28</span>%</div>
+          <div class="vial-label">Biotechnology</div>
+          <div class="vial-brands">Cytiva · Pall<br>Bioprocessing</div>
+        </div>
+      </div>
+
+      <!-- Vial 2: Life Sciences 31% -->
+      <div class="vial" data-pct="31">
+        <svg class="vial-svg" viewBox="0 0 80 220" aria-hidden="true">
+          <defs>
+            <clipPath id="clip-v2">
+              <path d="M22 28 L22 174 Q22 200 40 200 Q58 200 58 174 L58 28 Z"/>
+            </clipPath>
+          </defs>
+          <rect x="26" y="14" width="28" height="14" rx="2" fill="#3B3A37"/>
+          <rect x="20" y="22" width="40" height="9" rx="1" fill="#0F4F4A"/>
+          <path d="M22 28 L22 174 Q22 200 40 200 Q58 200 58 174 L58 28 Z"
+                fill="rgba(15,79,74,0.04)" stroke="#0F4F4A" stroke-width="1.1"/>
+          <g clip-path="url(#clip-v2)">
+            <rect class="vial-liquid" x="20" y="142" width="40" height="58" fill="#1B7872"/>
+            <rect class="vial-liquid" x="20" y="142" width="40" height="2" fill="#4F948A" opacity="0.7"/>
+          </g>
+          <g stroke="#0F4F4A" stroke-width="0.6" opacity="0.45">
+            <line x1="22" y1="60"  x2="30" y2="60"/>
+            <line x1="22" y1="92"  x2="30" y2="92"/>
+            <line x1="22" y1="124" x2="30" y2="124"/>
+            <line x1="22" y1="156" x2="30" y2="156"/>
+            <line x1="22" y1="188" x2="30" y2="188"/>
+          </g>
+        </svg>
+        <div class="vial-cap">
+          <div class="vial-pct"><span class="it">31</span>%</div>
+          <div class="vial-label">Life Sciences</div>
+          <div class="vial-brands">SCIEX · Beckman<br>Leica · IDT</div>
+        </div>
+      </div>
+
+      <!-- Vial 3: Diagnostics 41% -->
+      <div class="vial" data-pct="41">
+        <svg class="vial-svg" viewBox="0 0 80 220" aria-hidden="true">
+          <defs>
+            <clipPath id="clip-v3">
+              <path d="M22 28 L22 174 Q22 200 40 200 Q58 200 58 174 L58 28 Z"/>
+            </clipPath>
+          </defs>
+          <rect x="26" y="14" width="28" height="14" rx="2" fill="#3B3A37"/>
+          <rect x="20" y="22" width="40" height="9" rx="1" fill="#0F4F4A"/>
+          <path d="M22 28 L22 174 Q22 200 40 200 Q58 200 58 174 L58 28 Z"
+                fill="rgba(15,79,74,0.04)" stroke="#0F4F4A" stroke-width="1.1"/>
+          <g clip-path="url(#clip-v3)">
+            <rect class="vial-liquid" x="20" y="124" width="40" height="76" fill="#0F4F4A"/>
+            <rect class="vial-liquid" x="20" y="124" width="40" height="2" fill="#4F948A" opacity="0.85"/>
+          </g>
+          <g stroke="#0F4F4A" stroke-width="0.6" opacity="0.45">
+            <line x1="22" y1="60"  x2="30" y2="60"/>
+            <line x1="22" y1="92"  x2="30" y2="92"/>
+            <line x1="22" y1="124" x2="30" y2="124"/>
+            <line x1="22" y1="156" x2="30" y2="156"/>
+            <line x1="22" y1="188" x2="30" y2="188"/>
+          </g>
+        </svg>
+        <div class="vial-cap">
+          <div class="vial-pct"><span class="it">41</span>%</div>
+          <div class="vial-label">Diagnostics</div>
+          <div class="vial-brands">Cepheid · Beckman<br>Coulter Diagnostics</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SCALE ========== -->
+  <section class="scale">
+    <div class="eyebrow-mono reveal">A hundred forty billion</div>
+    <div class="display-num reveal d1" id="rev-num">
+      <span class="it">$</span>24.57<span style="font-size:0.5em;color:var(--ink-3)">B</span>
+    </div>
+    <div class="display-cap reveal d2">
+      revenue across the year — and Q1 '26 already came in at <span style="color:var(--teal-500)">$5.95B</span>, EPS of $2.06, with bioprocessing on the way back.
+    </div>
+
+    <div class="scale-grid">
+      <div class="scale-cell reveal">
+        <span class="k">Q1 '26 revenue</span>
+        <span class="v"><span class="it">$</span>5.95B</span>
+        <div class="sub">EPS $2.06 · bioprocessing recovery</div>
+      </div>
+      <div class="scale-cell reveal d1">
+        <span class="k">Operating cash flow</span>
+        <span class="v"><span class="it">$</span>6.42B</span>
+        <div class="sub">FY '25 · before deployment</div>
+      </div>
+      <div class="scale-cell reveal d2">
+        <span class="k">Free cash flow</span>
+        <span class="v"><span class="it">$</span>5.26B</span>
+        <div class="sub">After $1.16B capex</div>
+      </div>
+      <div class="scale-cell reveal d3">
+        <span class="k">Operating segments</span>
+        <span class="v">3 / 15+</span>
+        <div class="sub">Operating companies under DBS</div>
+      </div>
+    </div>
+
+    <!-- Margins as twin gauges -->
+    <div class="margins">
+      <div class="eyebrow-mono">The margin profile</div>
+      <div class="gauge" data-pct="59.1">
+        <div class="gauge-row">
+          <span>Gross margin</span>
+          <span class="v">59.1<span style="font-style:italic;color:var(--ink-3);font-size:14px;letter-spacing:0;">%</span></span>
+        </div>
+        <div class="gauge-bar"><div class="fill"></div></div>
+      </div>
+      <div class="gauge" data-pct="19.1">
+        <div class="gauge-row">
+          <span>Operating margin</span>
+          <span class="v">19.1<span style="font-style:italic;color:var(--ink-3);font-size:14px;letter-spacing:0;">%</span></span>
+        </div>
+        <div class="gauge-bar"><div class="fill"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RESET BEAT ========== -->
+  <div class="reset-beat">
+    <p>
+      A dollar walks into <span class="accent">the building.</span> Most of it never walks out — it goes back into the bench, the sales force, the next molecule, the next intangible.
+    </p>
+    <div class="source">§ Where the money goes</div>
+  </div>
+
+  <!-- ========== CENTS GRID ========== -->
+  <section class="cents">
+    <div class="eyebrow-mono reveal">A hundred cents in</div>
+    <h2 class="display reveal d1">
+      Where every <span class="em">dollar</span> goes.
+    </h2>
+    <p class="body-copy reveal d2">
+      Each square is one cent of revenue. Color-coded by where the money lands; the dark squares are <em>what survives</em> — the operating margin that funds the next fifteen years of acquisitions.
+    </p>
+
+    <div class="grid100" id="centsGrid"></div>
+
+    <div class="cents-legend reveal">
+      <div class="legend-row">
+        <span class="legend-swatch" style="background:#4A90D9"></span>
+        <span class="legend-label">Cost of revenue</span>
+        <span class="legend-pct">41¢</span>
+      </div>
+      <div class="legend-row">
+        <span class="legend-swatch" style="background:#E8734A"></span>
+        <span class="legend-label">SG&amp;A</span>
+        <span class="legend-pct">18¢</span>
+      </div>
+      <div class="legend-row">
+        <span class="legend-swatch" style="background:#9B59B6"></span>
+        <span class="legend-label">Amortization of intangibles</span>
+        <span class="legend-pct">8¢</span>
+      </div>
+      <div class="legend-row">
+        <span class="legend-swatch" style="background:#6DBF67"></span>
+        <span class="legend-label">R&amp;D</span>
+        <span class="legend-pct">7¢</span>
+      </div>
+      <div class="legend-row">
+        <span class="legend-swatch" style="background:#14322F"></span>
+        <span class="legend-label">Operating margin · what survives</span>
+        <span class="legend-pct" style="color:var(--teal-500)">19¢</span>
+      </div>
+      <div class="legend-row">
+        <span class="legend-swatch" style="background:var(--paper-3)"></span>
+        <span class="legend-label">Other costs (taxes, interest, &c.)</span>
+        <span class="legend-pct">7¢</span>
+      </div>
+    </div>
+
+    <div class="cents-callout reveal d1">
+      <div class="big">
+        <span class="it">19</span>¢ <span style="font-style:italic;color:var(--ink-2);font-size:0.55em">survive.</span>
+      </div>
+      <div class="cap">
+        Eight of those cents are non-cash amortization — the long tail of past M&amp;A. The cash version is healthier still.
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTPRINT ========== -->
+  <section class="footprint">
+    <div class="eyebrow-mono reveal">Footprint · six continents</div>
+    <h2 class="display reveal d1">
+      The <span class="em">bench</span> is everywhere.
+    </h2>
+    <p class="body-copy reveal d2">
+      Direct sales force across <em>~50 countries</em>. North America still leads, but more than half of revenue books abroad — and China alone is the size of "rest of world" plus a quarter.
+    </p>
+
+    <!-- Hand-drawn hemisphere with population dots -->
+    <div class="geo-globe reveal d3">
+      <svg viewBox="0 0 320 320" aria-hidden="true">
+        <defs>
+          <radialGradient id="globeGrad" cx="35%" cy="32%" r="75%">
+            <stop offset="0%" stop-color="#E6F0EE"/>
+            <stop offset="60%" stop-color="#C6DDD8"/>
+            <stop offset="100%" stop-color="#0F4F4A"/>
+          </radialGradient>
+        </defs>
+        <circle cx="160" cy="160" r="148" fill="url(#globeGrad)" stroke="#0F4F4A" stroke-width="0.8" opacity="0.95"/>
+
+        <!-- Latitude lines -->
+        <g fill="none" stroke="#0F4F4A" stroke-width="0.5" opacity="0.25">
+          <ellipse cx="160" cy="160" rx="148" ry="40"/>
+          <ellipse cx="160" cy="160" rx="148" ry="80"/>
+          <ellipse cx="160" cy="160" rx="148" ry="120"/>
+        </g>
+        <!-- Longitude lines -->
+        <g fill="none" stroke="#0F4F4A" stroke-width="0.5" opacity="0.25">
+          <ellipse cx="160" cy="160" rx="40" ry="148"/>
+          <ellipse cx="160" cy="160" rx="80" ry="148"/>
+          <ellipse cx="160" cy="160" rx="120" ry="148"/>
+        </g>
+
+        <!-- Region nodes — sized by % -->
+        <!-- North America 41% -->
+        <g class="geo-node" data-region="na">
+          <circle cx="105" cy="125" r="22" fill="#0F4F4A" opacity="0.92"/>
+          <circle cx="105" cy="125" r="22" fill="none" stroke="#FBFAF7" stroke-width="1.5"/>
+          <text x="105" y="129" text-anchor="middle" font-family="Geist Mono" font-size="11" fill="#FBFAF7" font-weight="500">41</text>
+        </g>
+        <!-- Europe 27% -->
+        <g class="geo-node">
+          <circle cx="180" cy="115" r="17" fill="#1B7872" opacity="0.92"/>
+          <circle cx="180" cy="115" r="17" fill="none" stroke="#FBFAF7" stroke-width="1.5"/>
+          <text x="180" y="119" text-anchor="middle" font-family="Geist Mono" font-size="10" fill="#FBFAF7" font-weight="500">27</text>
+        </g>
+        <!-- China 11% -->
+        <g class="geo-node">
+          <circle cx="240" cy="148" r="11" fill="#4F948A" opacity="0.95"/>
+          <circle cx="240" cy="148" r="11" fill="none" stroke="#FBFAF7" stroke-width="1.5"/>
+          <text x="240" y="151" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#FBFAF7" font-weight="500">11</text>
+        </g>
+        <!-- APAC ex-China 13% -->
+        <g class="geo-node">
+          <circle cx="245" cy="195" r="13" fill="#4F948A" opacity="0.85"/>
+          <circle cx="245" cy="195" r="13" fill="none" stroke="#FBFAF7" stroke-width="1.5"/>
+          <text x="245" y="198" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#FBFAF7" font-weight="500">13</text>
+        </g>
+        <!-- Rest of world 8% -->
+        <g class="geo-node">
+          <circle cx="155" cy="225" r="9" fill="#8FBDB4" opacity="0.95"/>
+          <circle cx="155" cy="225" r="9" fill="none" stroke="#FBFAF7" stroke-width="1.5"/>
+          <text x="155" y="228" text-anchor="middle" font-family="Geist Mono" font-size="8" fill="#FBFAF7" font-weight="500">8</text>
+        </g>
+
+        <!-- Connection arcs -->
+        <g fill="none" stroke="#0F4F4A" stroke-width="0.6" opacity="0.35" stroke-dasharray="2 3">
+          <path d="M105 125 Q 142 70 180 115"/>
+          <path d="M180 115 Q 215 110 240 148"/>
+          <path d="M240 148 Q 250 175 245 195"/>
+          <path d="M245 195 Q 200 230 155 225"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="geo-list" id="geoList">
+      <div class="geo-row reveal" data-pct="41">
+        <span class="geo-pct">41%</span>
+        <span><span class="geo-label">North America</span><div class="geo-bar"><span class="fill"></span></div></span>
+        <span class="geo-num">41</span>
+      </div>
+      <div class="geo-row reveal d1" data-pct="27">
+        <span class="geo-pct">27%</span>
+        <span><span class="geo-label">Europe</span><div class="geo-bar"><span class="fill"></span></div></span>
+        <span class="geo-num">27</span>
+      </div>
+      <div class="geo-row reveal d2" data-pct="13">
+        <span class="geo-pct">13%</span>
+        <span><span class="geo-label">Asia-Pacific (ex-China)</span><div class="geo-bar"><span class="fill"></span></div></span>
+        <span class="geo-num">13</span>
+      </div>
+      <div class="geo-row reveal d3" data-pct="11">
+        <span class="geo-pct">11%</span>
+        <span><span class="geo-label">China</span><div class="geo-bar"><span class="fill"></span></div></span>
+        <span class="geo-num">11</span>
+      </div>
+      <div class="geo-row reveal d4" data-pct="8">
+        <span class="geo-pct">8%</span>
+        <span><span class="geo-label">Rest of world</span><div class="geo-bar"><span class="fill"></span></div></span>
+        <span class="geo-num">8</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RESET BEAT — leading into the bet ========== -->
+  <div class="reset-beat" style="background:#0E0D0B;">
+    <p style="color:rgba(244,242,237,0.84)">
+      And then there is the <span class="signal" style="color:#FF7A57">war chest</span> — built deliberately, in late 2025, for a 2026 their CFO has called <span class="accent" style="color:#7DC4BC">"more constructive"</span>.
+    </p>
+    <div class="source" style="color:rgba(244,242,237,0.4)">§ The bet · capital deployment</div>
+  </div>
+
+  <!-- ========== THE BET (DARK) ========== -->
+  <section class="bet">
+    <div class="eyebrow-mono reveal">The bet · 2026</div>
+    <h2 class="reveal d1">
+      <span class="signal">$5.26B</span><br>
+      walks back out the door.
+    </h2>
+    <p class="lede reveal d2">
+      Free cash flow funds the playbook: <em>dividends to keep the door open</em>, <em>buybacks to thin the float</em>, and a balance sheet quietly leaning forward — net debt-to-EBITDA below 2.0×, with new long-term debt issued late '25 to <em>fund the next bolt-on.</em>
+    </p>
+
+    <div class="waterfall">
+      <div class="source reveal d3">
+        <div class="k">FY '25 free cash flow</div>
+        <div class="v"><span class="it">$</span>5.26<span style="font-size:0.5em;color:rgba(255,255,255,0.4)">B</span></div>
+      </div>
+      <div class="stem reveal d3"></div>
+      <div class="splits">
+        <div class="split reveal d3" data-pct="17">
+          <div class="pct-bar"><div class="fill"></div></div>
+          <div class="v"><span class="it">$</span>878M</div>
+          <div class="k">Dividends</div>
+          <div class="sub">Returned to holders</div>
+        </div>
+        <div class="split reveal d4" data-pct="59">
+          <div class="pct-bar"><div class="fill"></div></div>
+          <div class="v"><span class="it">$</span>3.1B</div>
+          <div class="k">Buybacks</div>
+          <div class="sub">Float thinning, FY '25</div>
+        </div>
+        <div class="split reveal d4" data-pct="22">
+          <div class="pct-bar"><div class="fill"></div></div>
+          <div class="v"><span class="it">$</span>1.16B</div>
+          <div class="k">Capex</div>
+          <div class="sub">Reinvested in plant</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bet-bottom reveal">
+      <div class="auth">
+        And a fresh authorization for up to <span class="signal">35M shares</span> — no expiration.
+      </div>
+      <div class="auth-cap">$4.6B cash · $18.42B debt · $52.53B equity · 0.35× D/E</div>
+    </div>
+  </section>
+
+  <!-- ========== COMPETITION ========== -->
+  <section class="competition">
+    <div class="eyebrow-mono reveal">The arena</div>
+    <h2 class="display reveal d1">
+      Three rivals.<br>One <span class="em">customer</span>.
+    </h2>
+    <p class="body-copy lede reveal d2">
+      The same pharma and biotech labs spend with all of them. Sized below by market cap — Thermo Fisher casts the longest shadow; Illumina is the smallest, the youngest threat, and the only one shrinking.
+    </p>
+
+    <!-- Bubble arena: market cap as area -->
+    <div class="market-cap-arena reveal d3">
+      <svg viewBox="0 0 360 360" preserveAspectRatio="xMidYMid meet">
+        <!-- TMO 172.91B - radius scaled sqrt(cap)*k -->
+        <!-- Use sqrt scaling: k chosen so TMO=120 -->
+        <!-- sqrt(172.91)=13.15 -> k=9.13 -> DHR sqrt(137.41)=11.72 -> 107 -->
+        <!-- A: sqrt(34.44)=5.87 -> 53.6; ILMN sqrt(20.57)=4.54 -> 41.4 -->
+
+        <!-- TMO -->
+        <g>
+          <circle cx="170" cy="155" r="120" fill="none" stroke="#0F4F4A" stroke-width="0.8" stroke-dasharray="2 4" opacity="0.55"/>
+          <circle cx="170" cy="155" r="120" fill="#0F4F4A" opacity="0.06"/>
+          <text x="170" y="48" text-anchor="middle" font-family="Geist Mono" font-size="10" fill="#6B6A65" letter-spacing="0.08em">TMO</text>
+          <text x="170" y="68" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="20" fill="#0F4F4A">$172.9B</text>
+        </g>
+
+        <!-- DHR (the company) — solid teal -->
+        <g>
+          <circle cx="170" cy="190" r="107" fill="#1B7872" opacity="0.92"/>
+          <circle cx="170" cy="190" r="107" fill="none" stroke="#0F4F4A" stroke-width="1.2"/>
+          <text x="170" y="180" text-anchor="middle" font-family="Geist Mono" font-size="11" fill="#FBFAF7" letter-spacing="0.12em" opacity="0.85">DHR</text>
+          <text x="170" y="206" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="32" fill="#FBFAF7" letter-spacing="-0.01em">$137.4B</text>
+        </g>
+
+        <!-- A (Agilent) -->
+        <g>
+          <circle cx="76" cy="266" r="54" fill="#FBFAF7" stroke="#0F4F4A" stroke-width="1.2"/>
+          <text x="76" y="262" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#6B6A65" letter-spacing="0.1em">A</text>
+          <text x="76" y="282" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="16" fill="#0F4F4A">$34.4B</text>
+        </g>
+
+        <!-- ILMN -->
+        <g>
+          <circle cx="285" cy="295" r="42" fill="#FBFAF7" stroke="#D6411F" stroke-width="1.2" stroke-dasharray="3 3"/>
+          <text x="285" y="294" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#6B6A65" letter-spacing="0.1em">ILMN</text>
+          <text x="285" y="312" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="14" fill="#D6411F">$20.6B</text>
+        </g>
+
+        <!-- Connector lines: each rival shares a customer with DHR -->
+        <g stroke="#0F4F4A" stroke-width="0.5" stroke-dasharray="1 4" opacity="0.4" fill="none">
+          <line x1="170" y1="190" x2="170" y2="155"/>
+          <line x1="170" y1="190" x2="76" y2="266"/>
+          <line x1="170" y1="190" x2="285" y2="295"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="competitors-list">
+      <div class="competitor" data-cid="tmo">
+        <div class="competitor-head">
+          <div>
+            <div class="competitor-name">Thermo Fisher <span class="it">Scientific</span></div>
+          </div>
+          <span class="competitor-ticker">TMO</span>
+        </div>
+        <div class="competitor-stats">
+          <span>CAP <strong>$172.91B</strong></span>
+          <span>REV <strong>$44.56B</strong></span>
+          <span>YoY <strong class="yoy-pos">+3.91%</strong></span>
+        </div>
+        <div class="competitor-toggle"><span class="arrow">›</span> Why it matters</div>
+        <div class="competitor-desc">
+          The most direct rival across life-sciences instruments, bioprocessing consumables, and lab reagents — fighting Danaher for pharma and biotech research dollars at every bench. Trades at a P/E of 25.82.
+        </div>
+      </div>
+
+      <div class="competitor" data-cid="a">
+        <div class="competitor-head">
+          <div>
+            <div class="competitor-name">Agilent <span class="it">Technologies</span></div>
+          </div>
+          <span class="competitor-ticker">A</span>
+        </div>
+        <div class="competitor-stats">
+          <span>CAP <strong>$34.44B</strong></span>
+          <span>REV <strong>$6.95B</strong></span>
+          <span>YoY <strong class="yoy-pos">+8.14%</strong></span>
+        </div>
+        <div class="competitor-toggle"><span class="arrow">›</span> Why it matters</div>
+        <div class="competitor-desc">
+          Goes head-to-head with the Life Sciences segment in mass spec, liquid chromatography, flow cytometry, and genomics — chasing the same SCIEX, Beckman Coulter, and IDT customers. P/E 26.70.
+        </div>
+      </div>
+
+      <div class="competitor" data-cid="ilmn">
+        <div class="competitor-head">
+          <div>
+            <div class="competitor-name">Illumina</div>
+          </div>
+          <span class="competitor-ticker">ILMN</span>
+        </div>
+        <div class="competitor-stats">
+          <span>CAP <strong>$20.57B</strong></span>
+          <span>REV <strong>$4.34B</strong></span>
+          <span>YoY <strong class="yoy-neg">−0.66%</strong></span>
+        </div>
+        <div class="competitor-toggle"><span class="arrow">›</span> Why it matters</div>
+        <div class="competitor-desc">
+          Sequencing platforms keep displacing DHR's IDT and Aldevron sample-prep and nucleic-acid products in academic and biopharma workflows. The smallest of the three, the only one shrinking — and arguably the most strategically pointed.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TAKEAWAY ========== -->
+  <section class="takeaway">
+    <div class="takeaway-inner">
+      <div class="eyebrow-mono reveal">The takeaway</div>
+      <h2 class="reveal d1">
+        Fifteen brands.<br>
+        <span class="em">One bet</span> —<br>
+        <span class="small">in front of every one of them.</span>
+      </h2>
+      <p class="body-copy reveal d2" style="margin-top:32px;max-width:34ch">
+        The opening figure was sixty thousand people. The closing one is simpler: <em>nineteen cents on the dollar, six billion in cash from operations, and a freshly authorized 35 million shares</em> — pointed at whatever bolt-on bioprocessing or life-sciences asset comes next.
+      </p>
+      <p class="body-copy reveal d3" style="margin-top:18px;max-width:34ch">
+        The Danaher Business System has done this <em>fifteen times before</em>. The market is paying $137 billion to watch it try again.
+      </p>
+
+      <div class="signoff reveal d4">
+        <span>DHR · FY '25 · § end</span>
+        <span class="right">— recap, <em>cont'd</em></span>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page -->
+</div><!-- /page-bg -->
+
+<script>
+(function(){
+  'use strict';
+
+  // ----- Persistent chrome: progress hairline -----
+  const fill = document.getElementById('progressFill');
+  const page = document.getElementById('page');
+
+  function onScroll() {
+    const h = page.scrollHeight - window.innerHeight;
+    const p = h > 0 ? Math.max(0, Math.min(1, window.scrollY / h)) : 0;
+    fill.style.width = (p * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ----- Reveal-on-scroll -----
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ----- Vials: trigger liquid fill once visible -----
+  const vialIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        vialIo.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.vial').forEach(v => vialIo.observe(v));
+
+  // ----- Gauges: animate width to data-pct -----
+  const gaugeIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const pct = parseFloat(e.target.dataset.pct);
+        const f = e.target.querySelector('.fill');
+        f.style.transition = 'width 1100ms cubic-bezier(0.22,1,0.36,1)';
+        // small delay so the transition is observed
+        requestAnimationFrame(() => {
+          f.style.width = pct + '%';
+        });
+        gaugeIo.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.gauge').forEach(g => gaugeIo.observe(g));
+
+  // ----- Geo bars -----
+  const geoIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const pct = parseFloat(e.target.dataset.pct);
+        const f = e.target.querySelector('.geo-bar .fill');
+        if (f) {
+          f.style.transition = 'width 900ms cubic-bezier(0.22,1,0.36,1)';
+          requestAnimationFrame(() => { f.style.width = pct + '%'; });
+        }
+        geoIo.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.geo-row').forEach(r => geoIo.observe(r));
+
+  // ----- Splits in the dark "bet" section -----
+  const splitIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const pct = parseFloat(e.target.dataset.pct);
+        const f = e.target.querySelector('.pct-bar .fill');
+        if (f) {
+          f.style.transition = 'inset 1000ms cubic-bezier(0.22,1,0.36,1)';
+          requestAnimationFrame(() => {
+            f.style.inset = `0 ${100 - pct}% 0 0`;
+          });
+        }
+        splitIo.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.split').forEach(s => splitIo.observe(s));
+
+  // ----- Cents grid: build 100 squares colored by cost breakdown -----
+  // Order of fill: cost-of-rev (41, blue), SG&A (18, orange), amort (8, purple), R&D (7, green), other (7, paper-3), surplus (19, deep teal)
+  const grid = document.getElementById('centsGrid');
+  const segments = [
+    { n: 41, color: '#4A90D9', cls: 'lit' },
+    { n: 18, color: '#E8734A', cls: 'lit' },
+    { n: 8,  color: '#9B59B6', cls: 'lit' },
+    { n: 7,  color: '#6DBF67', cls: 'lit' },
+    { n: 7,  color: null,      cls: '' },          // other → unlit paper-3
+    { n: 19, color: '#14322F', cls: 'surplus' },   // operating margin / what survives
+  ];
+  let idx = 0;
+  segments.forEach(seg => {
+    for (let i = 0; i < seg.n; i++) {
+      const c = document.createElement('div');
+      c.className = 'cent ' + seg.cls;
+      c.style.transitionDelay = (idx * 7) + 'ms';
+      if (seg.color && seg.cls === 'lit') {
+        c.style.setProperty('--lit-color', seg.color);
+      }
+      // Initially unlit; we'll add a class on visibility to trigger the color
+      grid.appendChild(c);
+      idx++;
+    }
+  });
+
+  // Lazy-color cents: replace with paper-3 first, then add color via .lit-go
+  const cents = grid.querySelectorAll('.cent');
+  // Strip lit/surplus until visible
+  cents.forEach(c => {
+    if (c.classList.contains('lit')) {
+      c._reapply = 'lit';
+      c.classList.remove('lit');
+    } else if (c.classList.contains('surplus')) {
+      c._reapply = 'surplus';
+      c.classList.remove('surplus');
+    }
+  });
+
+  const centIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        // Re-apply class with stagger via CSS transition delay
+        cents.forEach(c => {
+          if (c._reapply) c.classList.add(c._reapply);
+        });
+        centIo.disconnect();
+      }
+    });
+  }, { threshold: 0.2 });
+  centIo.observe(grid);
+
+  // ----- Competitors: tap to expand -----
+  document.querySelectorAll('.competitor').forEach(comp => {
+    comp.addEventListener('click', () => {
+      comp.classList.toggle('open');
+    });
+  });
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AES · Recap FY '25</title>
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  /* ============================================================
+     AES Recap — palette override
+     The page reframes the design system around utility/energy:
+     deep ink + warm paper neutrals; iris becomes the "current"
+     signal; coral is reserved for the debt/weight moment.
+     ============================================================ */
+  :root {
+    --aes-paper:    #F5F2EC;   /* warmer, ledger-like */
+    --aes-paper-2:  #EBE7DE;
+    --aes-ink:      #0E1116;
+    --aes-ink-2:    #2A2E36;
+    --aes-ink-3:    #5A5E66;
+    --aes-line:     #DDD8CD;
+    --aes-line-2:   #C7C1B3;
+
+    --current:      #2C5BFF;   /* deep electric blue — the "current" */
+    --current-soft: #DDE4FF;
+    --current-deep: #1A3CC4;
+    --current-glow: rgba(44, 91, 255, 0.20);
+
+    --renew:        #2BB673;   /* renewables green */
+    --gas:          #F4C430;   /* mustard, fossil */
+    --warn:         var(--coral-500);
+
+    --weight:       #E05C5C;   /* matches biggest_costs cost-of-revenue */
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; }
+  html { background: #1a1a1a; }  /* letterbox color around mobile column */
+  body {
+    background: var(--aes-paper);
+    color: var(--aes-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* Mobile column — page IS the design, not in a frame */
+  .device {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--aes-paper);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 80px rgba(0,0,0,0.25);
+  }
+
+  /* ---------- Persistent chrome ---------- */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(245, 242, 236, 0.78);
+    backdrop-filter: blur(20px) saturate(1.2);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    border-bottom: 1px solid var(--aes-line);
+  }
+  .chrome-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px 10px;
+  }
+  .chrome-tick {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--aes-ink);
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--aes-ink-3);
+    flex: 1;
+  }
+  .chrome-recap {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--aes-ink-2);
+    padding: 4px 8px;
+    border: 1px solid var(--aes-line-2);
+    border-radius: 999px;
+  }
+  .chrome-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--current);
+    box-shadow: 0 0 10px var(--current-glow);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.55; transform: scale(0.85); }
+  }
+  .chrome-progress {
+    height: 1.5px;
+    background: var(--aes-line);
+    position: relative;
+    overflow: hidden;
+  }
+  .chrome-progress-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: linear-gradient(90deg, var(--current) 0%, var(--current-deep) 100%);
+    width: 0%;
+    transition: width 80ms linear;
+  }
+
+  /* ---------- Section base ---------- */
+  section {
+    position: relative;
+    padding: 80px 24px;
+  }
+  .eyebrow-mono {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--aes-ink-3);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow-mono::before {
+    content: "";
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--current);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    color: var(--aes-ink);
+  }
+  .italic { font-style: italic; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    padding: 110px 24px 80px;
+    background:
+      radial-gradient(ellipse at 50% 110%, rgba(44,91,255,0.10), transparent 60%),
+      var(--aes-paper);
+    overflow: hidden;
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .hero-stage {
+    position: relative;
+    height: 220px;
+    margin: 32px -24px;
+  }
+  .hero-stage svg { width: 100%; height: 100%; display: block; }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    font-weight: 400;
+    margin: 0 0 24px;
+  }
+  .hero h1 .num {
+    display: block;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+  .hero h1 em { color: var(--current); font-style: italic; }
+  .hero-sub {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--aes-ink-2);
+    max-width: 320px;
+  }
+  .hero-sub em { font-family: var(--font-display); font-style: italic; color: var(--current); font-size: 18px; }
+
+  .hero-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--aes-line);
+  }
+  .hero-meta-item .meta-k {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--aes-ink-3);
+    margin-bottom: 6px;
+  }
+  .hero-meta-item .meta-v {
+    font-family: var(--font-display);
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  /* ---------- Reset beats ---------- */
+  .reset-beat {
+    padding: 56px 32px;
+    background: var(--aes-paper-2);
+    text-align: left;
+  }
+  .reset-beat p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 24px;
+    line-height: 1.25;
+    color: var(--aes-ink);
+    letter-spacing: -0.01em;
+  }
+  .reset-beat em {
+    color: var(--current);
+    font-style: italic;
+  }
+  .reset-beat .src {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--aes-ink-3);
+    margin-top: 16px;
+  }
+
+  /* ---------- Big number display ---------- */
+  .display-big {
+    font-family: var(--font-display);
+    font-size: 96px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+  .display-mid {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+
+  /* ---------- The business: power-flow ---------- */
+  .biz-flow {
+    margin: 40px -24px 0;
+    padding: 0 24px;
+  }
+  .biz-segments {
+    display: grid;
+    gap: 14px;
+    margin-top: 36px;
+  }
+  .seg-row {
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    gap: 14px;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--aes-line);
+  }
+  .seg-row:last-child { border-bottom: none; }
+  .seg-mark {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-top: 8px;
+  }
+  .seg-name {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--aes-ink);
+    margin-bottom: 4px;
+  }
+  .seg-desc {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--aes-ink-3);
+  }
+  .seg-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--aes-ink-2);
+    text-transform: uppercase;
+    align-self: start;
+    margin-top: 6px;
+  }
+
+  /* ---------- Scale section ---------- */
+  .scale-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 32px;
+  }
+  .scale-cell {
+    padding: 24px 0;
+    border-top: 1px solid var(--aes-line);
+  }
+  .scale-cell:nth-child(odd) { padding-right: 16px; border-right: 1px solid var(--aes-line); }
+  .scale-cell:nth-child(even) { padding-left: 16px; }
+  .scale-cell.full {
+    grid-column: 1 / -1;
+    border-right: none;
+    padding-right: 0;
+  }
+  .scale-num {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-feature-settings: "tnum" 1;
+    margin-bottom: 6px;
+  }
+  .scale-num .unit {
+    font-size: 22px;
+    color: var(--aes-ink-3);
+    font-style: italic;
+  }
+  .scale-lab {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--aes-ink-3);
+  }
+
+  /* ---------- Cost section: dollar grid ---------- */
+  .cost-stage { margin: 36px -24px; }
+  .cost-stage svg { width: 100%; height: auto; display: block; }
+
+  .cost-legend {
+    display: grid;
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .cost-row {
+    display: grid;
+    grid-template-columns: 16px 1fr auto;
+    gap: 12px;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--aes-line);
+  }
+  .cost-row:last-child { border: none; }
+  .cost-sw {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    margin-top: 6px;
+  }
+  .cost-lab {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--aes-ink);
+  }
+  .cost-pct {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--aes-ink-2);
+    font-feature-settings: "tnum" 1;
+  }
+  .cost-tail {
+    margin-top: 32px;
+    padding: 24px;
+    background: var(--aes-paper-2);
+    border-radius: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    border-left: 2px solid var(--current);
+  }
+  .cost-tail .v {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .cost-tail .l {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--aes-ink-2);
+    line-height: 1.4;
+  }
+  .cost-tail .l em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--current);
+  }
+
+  /* ---------- Footprint ---------- */
+  .geo-stack {
+    margin-top: 32px;
+    display: grid;
+    gap: 0;
+  }
+  .geo-row {
+    display: grid;
+    grid-template-columns: 38px 1fr 50px;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--aes-line);
+  }
+  .geo-pct {
+    font-family: var(--font-display);
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    font-feature-settings: "tnum" 1;
+  }
+  .geo-bar {
+    height: 2px;
+    background: var(--aes-line);
+    position: relative;
+    overflow: hidden;
+  }
+  .geo-bar-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--current);
+    width: 0%;
+    transition: width 1.4s var(--ease-out);
+  }
+  .geo-name {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    color: var(--aes-ink-2);
+    text-align: right;
+  }
+  .geo-summary {
+    margin-top: 32px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--aes-ink);
+  }
+  .geo-summary em { color: var(--current); }
+
+  /* ---------- The bet (dark weight section) ---------- */
+  .weight {
+    background: #0E1116;
+    color: #E8E5DD;
+    padding: 96px 24px 88px;
+    margin: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .weight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(224, 92, 92, 0.12), transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(44, 91, 255, 0.08), transparent 50%);
+    pointer-events: none;
+  }
+  .weight > * { position: relative; }
+  .weight .eyebrow-mono { color: rgba(232, 229, 221, 0.55); }
+  .weight .eyebrow-mono::before { background: var(--weight); }
+  .weight h2 {
+    font-family: var(--font-display);
+    font-size: 48px;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    margin: 0 0 24px;
+    color: #F4F1E9;
+  }
+  .weight h2 em { color: var(--weight); font-style: italic; }
+  .weight p {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: rgba(232, 229, 221, 0.72);
+    max-width: 340px;
+  }
+  .weight p em { color: var(--weight); font-family: var(--font-display); font-style: italic; font-size: 17px; }
+
+  .scale-stage {
+    margin: 40px -24px 0;
+  }
+  .scale-stage svg { width: 100%; height: auto; display: block; }
+
+  .weight-stack {
+    margin-top: 40px;
+    display: grid;
+    gap: 0;
+  }
+  .weight-line {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: 18px;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(232, 229, 221, 0.10);
+  }
+  .weight-line:last-child { border-bottom: none; }
+  .weight-line .v {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-feature-settings: "tnum" 1;
+    color: #F4F1E9;
+    min-width: 110px;
+  }
+  .weight-line .v.neg { color: var(--weight); }
+  .weight-line .v.neg::before { content: "−"; }
+  .weight-line .l {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.45;
+    color: rgba(232, 229, 221, 0.62);
+  }
+  .weight-line .l strong { color: #F4F1E9; font-weight: 500; display: block; margin-bottom: 2px; font-size: 13.5px; }
+
+  .weight-summary {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(232, 229, 221, 0.18);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: #F4F1E9;
+  }
+  .weight-summary em { color: var(--weight); }
+
+  /* ---------- Competitors ---------- */
+  .comp-stack {
+    margin-top: 32px;
+    display: grid;
+    gap: 0;
+  }
+  .comp-row {
+    padding: 22px 0;
+    border-bottom: 1px solid var(--aes-line);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    cursor: pointer;
+    transition: background var(--dur-base) var(--ease-out);
+  }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .comp-name {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--aes-ink);
+  }
+  .comp-tick {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--aes-ink-3);
+  }
+  .comp-bar-wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .comp-cap {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--aes-ink-3);
+  }
+  .comp-cap .v {
+    color: var(--aes-ink);
+    font-weight: 500;
+  }
+  .comp-bar {
+    height: 4px;
+    background: var(--aes-line);
+    position: relative;
+    overflow: hidden;
+  }
+  .comp-bar-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    height: 100%;
+    background: var(--aes-ink-2);
+    width: 0%;
+    transition: width 1.4s var(--ease-out);
+  }
+  .comp-bar-fill.aes { background: var(--current); }
+  .comp-detail {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--aes-ink-2);
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height var(--dur-slow) var(--ease-out), margin-top var(--dur-base) var(--ease-out);
+  }
+  .comp-row.open .comp-detail {
+    max-height: 200px;
+    margin-top: 6px;
+  }
+  .comp-toggle {
+    align-self: start;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--current);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .comp-row.aes-self {
+    background: linear-gradient(90deg, rgba(44,91,255,0.04), transparent);
+    padding-left: 12px;
+    margin-left: -12px;
+    padding-right: 12px;
+    margin-right: -12px;
+  }
+
+  /* ---------- Takeaway ---------- */
+  .takeaway {
+    background: var(--aes-paper);
+    padding: 96px 24px 64px;
+    overflow: hidden;
+    position: relative;
+  }
+  .takeaway-stage {
+    margin: 32px -24px;
+    height: 280px;
+  }
+  .takeaway-stage svg { width: 100%; height: 100%; display: block; }
+  .takeaway h2 {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    margin: 0 0 24px;
+  }
+  .takeaway h2 em { color: var(--current); font-style: italic; }
+  .takeaway-final {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--aes-line);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--aes-ink-2);
+  }
+  .takeaway-final em { color: var(--current); }
+
+  /* ---------- Footer ---------- */
+  footer {
+    padding: 48px 24px 64px;
+    background: var(--aes-ink);
+    color: rgba(232, 229, 221, 0.55);
+  }
+  footer .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 32px;
+  }
+  footer .tick {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: #F4F1E9;
+    letter-spacing: 0.04em;
+  }
+  footer .meta-line {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(232, 229, 221, 0.4);
+    line-height: 1.8;
+  }
+  footer .gen {
+    margin-top: 24px;
+    font-size: 11px;
+    line-height: 1.5;
+    color: rgba(232, 229, 221, 0.42);
+    font-family: var(--font-sans);
+  }
+
+  /* ---------- Reveal animation ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+  .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+  }
+  .reveal-stagger.in > * { opacity: 1; transform: none; }
+  .reveal-stagger.in > *:nth-child(1) { transition-delay: 0ms; }
+  .reveal-stagger.in > *:nth-child(2) { transition-delay: 70ms; }
+  .reveal-stagger.in > *:nth-child(3) { transition-delay: 140ms; }
+  .reveal-stagger.in > *:nth-child(4) { transition-delay: 210ms; }
+  .reveal-stagger.in > *:nth-child(5) { transition-delay: 280ms; }
+  .reveal-stagger.in > *:nth-child(6) { transition-delay: 350ms; }
+
+  /* SVG flowing dashes */
+  @keyframes flow {
+    to { stroke-dashoffset: -80; }
+  }
+  .flow-line { animation: flow 6s linear infinite; }
+  .flow-line.slow { animation-duration: 12s; }
+
+  /* hero MW counter */
+  .mw-counter {
+    font-family: var(--font-display);
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+</style>
+</head>
+<body>
+
+<div class="device" id="device">
+
+  <!-- ============ PERSISTENT CHROME ============ -->
+  <div class="chrome">
+    <div class="chrome-row">
+      <div class="chrome-dot"></div>
+      <div class="chrome-tick">AES</div>
+      <div class="chrome-name">The AES Corporation</div>
+      <div class="chrome-recap">Recap · FY '25</div>
+    </div>
+    <div class="chrome-progress">
+      <div class="chrome-progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" data-section="hero">
+    <div>
+      <div class="eyebrow-mono">The thesis</div>
+      <h1 class="reveal">
+        <span class="num"><span id="mwCounter">34,740</span></span>
+        <span style="display:block;">megawatts,</span>
+        <span style="display:block;"><em>crossing</em></span>
+        <span style="display:block;">into clean.</span>
+      </h1>
+    </div>
+
+    <!-- Hero stage: a transmission line carrying current -->
+    <div class="hero-stage">
+      <svg viewBox="0 0 420 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- ground line -->
+        <line x1="0" y1="180" x2="420" y2="180" stroke="var(--aes-line-2)" stroke-width="0.5"/>
+
+        <!-- Transmission towers -->
+        <g stroke="var(--aes-ink)" stroke-width="0.8" fill="none" opacity="0.9">
+          <!-- Tower 1 (left) -->
+          <g transform="translate(60,180)">
+            <line x1="0" y1="0" x2="0" y2="-110"/>
+            <line x1="-14" y1="0" x2="0" y2="-30"/>
+            <line x1="14" y1="0" x2="0" y2="-30"/>
+            <line x1="-22" y1="-50" x2="22" y2="-50"/>
+            <line x1="-18" y1="-75" x2="18" y2="-75"/>
+            <line x1="-22" y1="-50" x2="-18" y2="-75"/>
+            <line x1="22" y1="-50" x2="18" y2="-75"/>
+            <line x1="-18" y1="-75" x2="0" y2="-95"/>
+            <line x1="18" y1="-75" x2="0" y2="-95"/>
+          </g>
+          <!-- Tower 2 (mid) -->
+          <g transform="translate(210,180)">
+            <line x1="0" y1="0" x2="0" y2="-130"/>
+            <line x1="-18" y1="0" x2="0" y2="-40"/>
+            <line x1="18" y1="0" x2="0" y2="-40"/>
+            <line x1="-26" y1="-60" x2="26" y2="-60"/>
+            <line x1="-22" y1="-90" x2="22" y2="-90"/>
+            <line x1="-26" y1="-60" x2="-22" y2="-90"/>
+            <line x1="26" y1="-60" x2="22" y2="-90"/>
+            <line x1="-22" y1="-90" x2="0" y2="-115"/>
+            <line x1="22" y1="-90" x2="0" y2="-115"/>
+          </g>
+          <!-- Tower 3 (right) -->
+          <g transform="translate(360,180)">
+            <line x1="0" y1="0" x2="0" y2="-110"/>
+            <line x1="-14" y1="0" x2="0" y2="-30"/>
+            <line x1="14" y1="0" x2="0" y2="-30"/>
+            <line x1="-22" y1="-50" x2="22" y2="-50"/>
+            <line x1="-18" y1="-75" x2="18" y2="-75"/>
+            <line x1="-22" y1="-50" x2="-18" y2="-75"/>
+            <line x1="22" y1="-50" x2="18" y2="-75"/>
+            <line x1="-18" y1="-75" x2="0" y2="-95"/>
+            <line x1="18" y1="-75" x2="0" y2="-95"/>
+          </g>
+        </g>
+
+        <!-- Sagging power lines (catenary curves) -->
+        <g fill="none" stroke="var(--aes-ink)" stroke-width="0.6" opacity="0.5">
+          <path d="M 60,130 Q 135,150 210,130"/>
+          <path d="M 60,140 Q 135,158 210,140"/>
+          <path d="M 60,150 Q 135,168 210,150"/>
+          <path d="M 210,130 Q 285,148 360,130"/>
+          <path d="M 210,140 Q 285,158 360,140"/>
+          <path d="M 210,150 Q 285,170 360,150"/>
+        </g>
+
+        <!-- Flowing current — the active line, in iris/current -->
+        <path d="M 60,140 Q 135,158 210,140 Q 285,158 360,140"
+              fill="none" stroke="var(--current)" stroke-width="1.5"
+              stroke-dasharray="3 6" class="flow-line" opacity="0.85"/>
+
+        <!-- Pulse nodes at towers -->
+        <circle cx="60" cy="140" r="3" fill="var(--current)">
+          <animate attributeName="r" values="3;5;3" dur="2.4s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;0.4;1" dur="2.4s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="210" cy="140" r="3" fill="var(--current)">
+          <animate attributeName="r" values="3;5;3" dur="2.4s" begin="0.6s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;0.4;1" dur="2.4s" begin="0.6s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="360" cy="140" r="3" fill="var(--current)">
+          <animate attributeName="r" values="3;5;3" dur="2.4s" begin="1.2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;0.4;1" dur="2.4s" begin="1.2s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+
+    <p class="hero-sub reveal">
+      A 45-year-old utility, <em>rebuilding itself</em> as a renewable developer — across fifteen countries, on borrowed weight.
+    </p>
+
+    <div class="hero-meta reveal-stagger">
+      <div class="hero-meta-item">
+        <div class="meta-k">Market cap</div>
+        <div class="meta-v">$10.32<span style="font-size:18px; color: var(--aes-ink-3);">B</span></div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="meta-k">Customers</div>
+        <div class="meta-v">2.7<span style="font-size:18px; color: var(--aes-ink-3);">M</span></div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="meta-k">Countries</div>
+        <div class="meta-v">15</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE BUSINESS ============ -->
+  <section data-section="business">
+    <div class="eyebrow-mono">The business · how it makes a dollar</div>
+    <h2 class="display reveal" style="font-size:42px; line-height:1; letter-spacing:-0.02em;">
+      Two pipes in.<br/>
+      <span class="italic" style="color:var(--current);">Four pipes out.</span>
+    </h2>
+    <p style="margin-top:20px; font-family:var(--font-sans); font-size:15px; line-height:1.55; color:var(--aes-ink-2); max-width:340px;" class="reveal">
+      Power generated under <em style="font-family:var(--font-display); color:var(--current);">long-term PPAs</em> — sold to utilities, industrials, hyperscale data centers — plus regulated distribution in Indiana, Ohio, and El Salvador. The grid does the rest.
+    </p>
+
+    <!-- Power-flow diagram: sources → AES → segments -->
+    <div class="biz-flow reveal">
+      <svg viewBox="0 0 372 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="width:100%; height:auto;">
+        <!-- Left side: revenue sources -->
+        <g font-family="var(--font-mono)" font-size="9" letter-spacing="0.1em" text-transform="uppercase" fill="var(--aes-ink-3)">
+          <text x="0" y="60">PPAS</text>
+          <text x="0" y="180">REGULATED</text>
+        </g>
+        <!-- Source nodes (left) -->
+        <circle cx="44" cy="56" r="4" fill="var(--current)"/>
+        <circle cx="44" cy="176" r="4" fill="var(--current)"/>
+
+        <!-- Lines flowing in to busbar -->
+        <path d="M 44,56 C 100,56 100,116 156,116" fill="none" stroke="var(--current)" stroke-width="1" stroke-dasharray="3 5" class="flow-line" opacity="0.7"/>
+        <path d="M 44,176 C 100,176 100,116 156,116" fill="none" stroke="var(--current)" stroke-width="1" stroke-dasharray="3 5" class="flow-line" opacity="0.7"/>
+
+        <!-- Central busbar (AES) -->
+        <rect x="156" y="100" width="60" height="32" rx="2" fill="var(--aes-ink)"/>
+        <text x="186" y="121" text-anchor="middle" fill="#F4F1E9" font-family="var(--font-mono)" font-size="10" letter-spacing="0.1em">AES</text>
+        <text x="186" y="92" text-anchor="middle" fill="var(--aes-ink-3)" font-family="var(--font-mono)" font-size="8" letter-spacing="0.14em">$12.23B</text>
+        <text x="186" y="148" text-anchor="middle" fill="var(--aes-ink-3)" font-family="var(--font-mono)" font-size="8" letter-spacing="0.14em">FY '25</text>
+
+        <!-- Output lines to 4 segments -->
+        <path d="M 216,108 C 270,108 270,28 322,28" fill="none" stroke="var(--current)" stroke-width="1" stroke-dasharray="3 5" class="flow-line slow" opacity="0.65"/>
+        <path d="M 216,116 C 270,116 270,84 322,84" fill="none" stroke="var(--current)" stroke-width="1" stroke-dasharray="3 5" class="flow-line slow" opacity="0.65"/>
+        <path d="M 216,124 C 270,124 270,148 322,148" fill="none" stroke="var(--current)" stroke-width="1" stroke-dasharray="3 5" class="flow-line slow" opacity="0.65"/>
+        <path d="M 216,132 C 270,132 270,204 322,204" fill="none" stroke="var(--current)" stroke-width="1" stroke-dasharray="3 5" class="flow-line slow" opacity="0.65"/>
+
+        <!-- Segment endpoints with marks -->
+        <g>
+          <circle cx="322" cy="28" r="3" fill="var(--renew)"/>
+          <text x="332" y="32" font-family="var(--font-mono)" font-size="9" fill="var(--aes-ink-2)" letter-spacing="0.06em">RENEWABLES</text>
+
+          <circle cx="322" cy="84" r="3" fill="var(--current)"/>
+          <text x="332" y="88" font-family="var(--font-mono)" font-size="9" fill="var(--aes-ink-2)" letter-spacing="0.06em">UTILITIES</text>
+
+          <circle cx="322" cy="148" r="3" fill="var(--gas)"/>
+          <text x="332" y="152" font-family="var(--font-mono)" font-size="9" fill="var(--aes-ink-2)" letter-spacing="0.06em">INFRA.</text>
+
+          <circle cx="322" cy="204" r="3" fill="var(--iris-400)"/>
+          <text x="332" y="208" font-family="var(--font-mono)" font-size="9" fill="var(--aes-ink-2)" letter-spacing="0.06em">NEW TECH</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="biz-segments reveal-stagger">
+      <div class="seg-row">
+        <div class="seg-mark" style="background: var(--renew);"></div>
+        <div>
+          <div class="seg-name">Renewables</div>
+          <div class="seg-desc">Solar, wind, storage, hydro. The growth engine, the capex sink.</div>
+        </div>
+        <div class="seg-tag">Bet</div>
+      </div>
+      <div class="seg-row">
+        <div class="seg-mark" style="background: var(--current);"></div>
+        <div>
+          <div class="seg-name">Utilities</div>
+          <div class="seg-desc">AES Indiana, AES Ohio, AES El Salvador — the regulated rate base.</div>
+        </div>
+        <div class="seg-tag">Base</div>
+      </div>
+      <div class="seg-row">
+        <div class="seg-mark" style="background: var(--gas);"></div>
+        <div>
+          <div class="seg-name">Energy Infrastructure</div>
+          <div class="seg-desc">Natural gas, LNG, coal, and the Chile businesses. The legacy revenue.</div>
+        </div>
+        <div class="seg-tag">Cash</div>
+      </div>
+      <div class="seg-row">
+        <div class="seg-mark" style="background: var(--iris-400);"></div>
+        <div>
+          <div class="seg-name">New Energy Technologies</div>
+          <div class="seg-desc">Stakes in Fluence, Uplight, Maximo. The optionality.</div>
+        </div>
+        <div class="seg-tag">Option</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 1 ============ -->
+  <div class="reset-beat reveal">
+    <p>The grid moves <em>twelve billion dollars</em> a year. Most of it never makes it past the meter.</p>
+    <div class="src">— FY '25 · Revenue $12.23B</div>
+  </div>
+
+  <!-- ============ THE SCALE ============ -->
+  <section data-section="scale">
+    <div class="eyebrow-mono">The scale · what AES is, by the meter</div>
+
+    <h2 class="display reveal" style="font-size:36px; line-height:1.05; letter-spacing:-0.015em;">
+      A <span class="italic" style="color:var(--current);">Fortune-500</span> utility, in numbers.
+    </h2>
+
+    <div class="scale-grid reveal-stagger">
+      <div class="scale-cell">
+        <div class="scale-num"><span id="mw2">34.7K</span><span class="unit"> MW</span></div>
+        <div class="scale-lab">Generation portfolio</div>
+      </div>
+      <div class="scale-cell">
+        <div class="scale-num">15<span class="unit"> ctry.</span></div>
+        <div class="scale-lab">Operating footprint</div>
+      </div>
+      <div class="scale-cell">
+        <div class="scale-num">$12.23<span class="unit">B</span></div>
+        <div class="scale-lab">FY '25 revenue</div>
+      </div>
+      <div class="scale-cell">
+        <div class="scale-num">$910<span class="unit">M</span></div>
+        <div class="scale-lab">Net income</div>
+      </div>
+      <div class="scale-cell">
+        <div class="scale-num">9,100</div>
+        <div class="scale-lab">Employees</div>
+      </div>
+      <div class="scale-cell">
+        <div class="scale-num">2.7<span class="unit">M</span></div>
+        <div class="scale-lab">End customers</div>
+      </div>
+      <div class="scale-cell full">
+        <div style="display:flex; align-items:baseline; gap:18px; flex-wrap:wrap;">
+          <div class="scale-num" style="font-size:36px;">18.1<span class="unit">%</span></div>
+          <div style="font-family:var(--font-sans); font-size:13px; color:var(--aes-ink-2); line-height:1.5; max-width:240px;">
+            Gross margin. <span style="font-family:var(--font-display); font-style:italic; color:var(--current);">Capital-intensive, fuel-cost-heavy</span> — the cost of keeping the lights on.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COSTS — WHERE THE DOLLAR GOES ============ -->
+  <section data-section="costs">
+    <div class="eyebrow-mono">A hundred cents in · how a dollar breaks</div>
+
+    <h2 class="display reveal" style="font-size:42px; line-height:1; letter-spacing:-0.02em;">
+      Of every dollar<br/>
+      coming in,<br/>
+      <em class="italic" style="color:var(--weight);">eighty-two</em><br/>
+      burn first.
+    </h2>
+
+    <p style="margin-top:24px; font-family:var(--font-sans); font-size:14px; line-height:1.55; color:var(--aes-ink-2); max-width:340px;" class="reveal">
+      Fuel. Maintenance. The price of moving electrons. Then depreciation, then interest, then everything else. By the time the line settles, <em style="font-family:var(--font-display); font-style:italic; color:var(--current);">seven cents</em> survive as net income.
+    </p>
+
+    <!-- Dollar grid: 100 squares -->
+    <div class="cost-stage">
+      <svg viewBox="0 0 372 280" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="dollarFade" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="var(--aes-paper-2)" stop-opacity="1"/>
+            <stop offset="100%" stop-color="var(--aes-paper-2)" stop-opacity="0.6"/>
+          </linearGradient>
+        </defs>
+        <g id="dollarGrid"></g>
+        <!-- Net-income label arrow -->
+        <line x1="0" y1="252" x2="372" y2="252" stroke="var(--aes-line-2)" stroke-dasharray="2 4" stroke-width="0.5"/>
+        <text x="6" y="271" font-family="var(--font-mono)" font-size="9" letter-spacing="0.14em" fill="var(--current)">7¢ NET INCOME →</text>
+        <text x="366" y="271" font-family="var(--font-mono)" font-size="9" letter-spacing="0.14em" fill="var(--aes-ink-3)" text-anchor="end">$910M</text>
+      </svg>
+    </div>
+
+    <!-- Legend uses supplied hex colors -->
+    <div class="cost-legend reveal-stagger">
+      <div class="cost-row">
+        <div class="cost-sw" style="background:#E05C5C;"></div>
+        <div class="cost-lab">Cost of revenue</div>
+        <div class="cost-pct">82%</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-sw" style="background:#5B8FD4;"></div>
+        <div class="cost-lab">Depreciation &amp; amortization</div>
+        <div class="cost-pct">5%</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-sw" style="background:#F5A623;"></div>
+        <div class="cost-lab">Interest expense</div>
+        <div class="cost-pct">4%</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-sw" style="background:#7DC67E;"></div>
+        <div class="cost-lab">SG&amp;A</div>
+        <div class="cost-pct">2%</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-sw" style="background:#A97DC6;"></div>
+        <div class="cost-lab">Operations &amp; maintenance</div>
+        <div class="cost-pct">2%</div>
+      </div>
+    </div>
+
+    <div class="cost-tail reveal">
+      <div class="v">$4.31<span style="font-size:22px; color:var(--aes-ink-3);">B</span></div>
+      <div class="l">Operating cash flow generated. The number that lets the <em>buildout</em> keep going.</div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTPRINT ============ -->
+  <section data-section="geo">
+    <div class="eyebrow-mono">The footprint · 15 countries, 6 regions</div>
+
+    <h2 class="display reveal" style="font-size:42px; line-height:1; letter-spacing:-0.02em;">
+      Half at home.<br/>
+      <span class="italic" style="color:var(--current);">Half abroad.</span>
+    </h2>
+
+    <p style="margin-top:18px; font-family:var(--font-sans); font-size:14px; line-height:1.55; color:var(--aes-ink-2); max-width:340px;" class="reveal">
+      AES is one of the more globally distributed names in U.S. utilities — anchored stateside, but with deep <em style="font-family:var(--font-display); font-style:italic; color:var(--current);">Latin American</em> roots that go back to the company's founding bets.
+    </p>
+
+    <div class="geo-stack reveal-stagger" id="geoStack">
+      <div class="geo-row" data-pct="48">
+        <div class="geo-pct">48<span style="font-size:14px; color:var(--aes-ink-3); font-family:var(--font-sans); font-style:normal;">%</span></div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="100"></div></div>
+        <div class="geo-name">United States</div>
+      </div>
+      <div class="geo-row" data-pct="22">
+        <div class="geo-pct">22<span style="font-size:14px; color:var(--aes-ink-3); font-family:var(--font-sans); font-style:normal;">%</span></div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="46"></div></div>
+        <div class="geo-name">South America</div>
+      </div>
+      <div class="geo-row" data-pct="12">
+        <div class="geo-pct">12<span style="font-size:14px; color:var(--aes-ink-3); font-family:var(--font-sans); font-style:normal;">%</span></div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="25"></div></div>
+        <div class="geo-name">Chile</div>
+      </div>
+      <div class="geo-row" data-pct="10">
+        <div class="geo-pct">10<span style="font-size:14px; color:var(--aes-ink-3); font-family:var(--font-sans); font-style:normal;">%</span></div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="21"></div></div>
+        <div class="geo-name">Cent. Am. &amp; Carib.</div>
+      </div>
+      <div class="geo-row" data-pct="5">
+        <div class="geo-pct">5<span style="font-size:14px; color:var(--aes-ink-3); font-family:var(--font-sans); font-style:normal;">%</span></div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="10"></div></div>
+        <div class="geo-name">Asia–Pacific</div>
+      </div>
+      <div class="geo-row" data-pct="3">
+        <div class="geo-pct">3<span style="font-size:14px; color:var(--aes-ink-3); font-family:var(--font-sans); font-style:normal;">%</span></div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="6"></div></div>
+        <div class="geo-name">Europe &amp; Mid. East</div>
+      </div>
+    </div>
+
+    <div class="geo-summary reveal">
+      Power generated in <em>fifteen countries</em>, sold to roughly 2.7 million end customers — and a growing list of hyperscale data centers.
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 2 ============ -->
+  <div class="reset-beat reveal">
+    <p>To build the future, AES <em>borrowed against it.</em></p>
+    <div class="src">— Total debt $30.3B · Mid '25</div>
+  </div>
+
+  <!-- ============ THE BET — DARK WEIGHT SECTION ============ -->
+  <section class="weight" data-section="bet">
+    <div class="eyebrow-mono">The bet · what AES is borrowing for</div>
+
+    <h2 class="reveal">
+      Thirty billion of <em>debt.</em><br/>
+      Six billion in <em>capex.</em><br/>
+      One bet, in front.
+    </h2>
+
+    <p class="reveal" style="margin-top:18px;">
+      AES carries a balance sheet typical of large infrastructure utilities — <em>2.6× leverage</em>, $30.3B of total debt against $4.06B of equity. The gap between cash generated and cash invested is where the bet lives.
+    </p>
+
+    <!-- Scale visual: a tilted balance, weight on the debt side -->
+    <div class="scale-stage reveal">
+      <svg viewBox="0 0 372 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- Fulcrum -->
+        <line x1="186" y1="100" x2="186" y2="200" stroke="rgba(232, 229, 221, 0.3)" stroke-width="1"/>
+        <polygon points="186,100 178,200 194,200" fill="rgba(232, 229, 221, 0.18)"/>
+
+        <!-- Tilted beam (rotated, debt side heavier) -->
+        <g transform="rotate(8, 186, 100)">
+          <line x1="40" y1="100" x2="332" y2="100" stroke="rgba(232, 229, 221, 0.5)" stroke-width="1"/>
+
+          <!-- Left pan: equity -->
+          <line x1="80" y1="100" x2="80" y2="60" stroke="rgba(232, 229, 221, 0.3)" stroke-width="0.5"/>
+          <line x1="120" y1="100" x2="120" y2="60" stroke="rgba(232, 229, 221, 0.3)" stroke-width="0.5"/>
+          <ellipse cx="100" cy="60" rx="40" ry="6" fill="none" stroke="rgba(232, 229, 221, 0.5)" stroke-width="1"/>
+          <rect x="78" y="36" width="44" height="20" fill="rgba(44, 91, 255, 0.4)"/>
+          <text x="100" y="32" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="rgba(232, 229, 221, 0.6)" letter-spacing="0.1em">EQUITY</text>
+          <text x="100" y="50" text-anchor="middle" font-family="var(--font-display)" font-size="14" fill="#F4F1E9">$4.06B</text>
+
+          <!-- Right pan: debt -->
+          <line x1="252" y1="100" x2="252" y2="20" stroke="rgba(232, 229, 221, 0.3)" stroke-width="0.5"/>
+          <line x1="292" y1="100" x2="292" y2="20" stroke="rgba(232, 229, 221, 0.3)" stroke-width="0.5"/>
+          <ellipse cx="272" cy="20" rx="40" ry="6" fill="none" stroke="rgba(232, 229, 221, 0.5)" stroke-width="1"/>
+
+          <!-- Stack of debt blocks -->
+          <g>
+            <rect x="244" y="-8" width="56" height="14" fill="var(--weight)" opacity="0.85"/>
+            <rect x="244" y="-26" width="56" height="14" fill="var(--weight)" opacity="0.7"/>
+            <rect x="244" y="-44" width="56" height="14" fill="var(--weight)" opacity="0.55"/>
+            <rect x="244" y="-62" width="56" height="14" fill="var(--weight)" opacity="0.4"/>
+          </g>
+          <text x="272" y="-72" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="rgba(232, 229, 221, 0.6)" letter-spacing="0.1em">DEBT</text>
+          <text x="272" y="-80" text-anchor="middle" font-family="var(--font-display)" font-size="18" fill="var(--weight)" font-style="italic">$30.3B</text>
+        </g>
+
+        <!-- Caption below -->
+        <text x="186" y="217" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="rgba(232, 229, 221, 0.4)" letter-spacing="0.18em">DEBT/EQUITY · 2.6×</text>
+      </svg>
+    </div>
+
+    <div class="weight-stack reveal-stagger">
+      <div class="weight-line">
+        <div class="v">$5.93<span style="font-size:18px; color: rgba(232, 229, 221, 0.55);">B</span></div>
+        <div class="l">
+          <strong>FY '25 capital expenditures</strong>
+          Aggressive renewable buildout — the meter is running on the energy transition.
+        </div>
+      </div>
+      <div class="weight-line">
+        <div class="v">$4.31<span style="font-size:18px; color: rgba(232, 229, 221, 0.55);">B</span></div>
+        <div class="l">
+          <strong>Operating cash flow</strong>
+          What the assets in the ground generated last year.
+        </div>
+      </div>
+      <div class="weight-line">
+        <div class="v neg">$1.62<span style="font-size:18px; color: rgba(232, 229, 221, 0.55);">B</span></div>
+        <div class="l">
+          <strong>Free cash flow</strong>
+          The shortfall, plugged by asset sales (target: $400-500M / yr) and minority sell-downs.
+        </div>
+      </div>
+      <div class="weight-line">
+        <div class="v">$501<span style="font-size:18px; color: rgba(232, 229, 221, 0.55);">M</span></div>
+        <div class="l">
+          <strong>Dividends paid</strong>
+          A 4.86% yield, 37.4% payout — preserved through the buildout.
+        </div>
+      </div>
+    </div>
+
+    <div class="weight-summary reveal">
+      No transformative M&amp;A. No buybacks. <em>One bet in front:</em> organic renewables, financed by selling pieces of the past.
+    </div>
+  </section>
+
+  <!-- ============ COMPETITION ============ -->
+  <section data-section="comp">
+    <div class="eyebrow-mono">The field · who AES is racing</div>
+
+    <h2 class="display reveal" style="font-size:42px; line-height:1; letter-spacing:-0.02em;">
+      Three rivals,<br/>
+      <em class="italic" style="color:var(--current);">two segments,</em><br/>
+      one race.
+    </h2>
+
+    <p style="margin-top:18px; font-family:var(--font-sans); font-size:14px; line-height:1.55; color:var(--aes-ink-2); max-width:340px;" class="reveal">
+      AES sits between the pure-play renewables developers it competes with for hyperscaler offtake — and the mid-cap fossil infrastructure rivals it competes with for legacy revenue.
+    </p>
+
+    <div class="comp-stack reveal-stagger" id="compStack">
+      <!-- AES self-row -->
+      <div class="comp-row aes-self">
+        <div class="comp-head">
+          <div class="comp-name">The AES Corporation</div>
+          <div class="comp-tick">AES</div>
+        </div>
+        <div class="comp-bar-wrap">
+          <div class="comp-cap">
+            <span>Market cap</span>
+            <span class="v">$10.32B</span>
+          </div>
+          <div class="comp-bar"><div class="comp-bar-fill aes" data-w="72"></div></div>
+        </div>
+      </div>
+
+      <!-- Brookfield: $14.33B (largest) -->
+      <div class="comp-row" data-tog="0">
+        <div class="comp-head">
+          <div class="comp-name">Brookfield Renewable Partners</div>
+          <div class="comp-tick">BEP</div>
+        </div>
+        <div class="comp-bar-wrap">
+          <div class="comp-cap">
+            <span>Market cap · YoY +9.04%</span>
+            <span class="v">$14.33B</span>
+          </div>
+          <div class="comp-bar"><div class="comp-bar-fill" data-w="100"></div></div>
+        </div>
+        <div class="comp-detail">
+          Direct rival for Renewables segment — same hyperscaler clean-energy contracts, globally. <em style="font-family:var(--font-display); font-style:italic; color:var(--current);">Larger and faster-growing.</em> Q-rev $1.60B.
+        </div>
+        <div class="comp-toggle">Tap to read +</div>
+      </div>
+
+      <!-- Clearway -->
+      <div class="comp-row" data-tog="1">
+        <div class="comp-head">
+          <div class="comp-name">Clearway Energy</div>
+          <div class="comp-tick">CWEN</div>
+        </div>
+        <div class="comp-bar-wrap">
+          <div class="comp-cap">
+            <span>Market cap · YoY +4.23%</span>
+            <span class="v">$8.03B</span>
+          </div>
+          <div class="comp-bar"><div class="comp-bar-fill" data-w="56"></div></div>
+        </div>
+        <div class="comp-detail">
+          Pure-play renewables — exclusively contracted generation in the U.S. Annual revenue $1.43B, P/E 47.51. <em style="font-family:var(--font-display); font-style:italic; color:var(--current);">Where AES is aggressively expanding.</em>
+        </div>
+        <div class="comp-toggle">Tap to read +</div>
+      </div>
+
+      <!-- UGI -->
+      <div class="comp-row" data-tog="2">
+        <div class="comp-head">
+          <div class="comp-name">UGI Corporation</div>
+          <div class="comp-tick">UGI</div>
+        </div>
+        <div class="comp-bar-wrap">
+          <div class="comp-cap">
+            <span>Market cap · YoY +0.22%</span>
+            <span class="v">$7.89B</span>
+          </div>
+          <div class="comp-bar"><div class="comp-bar-fill" data-w="55"></div></div>
+        </div>
+        <div class="comp-detail">
+          Natural-gas distribution and LNG, U.S. and Europe — competes with AES Energy Infrastructure. Annual revenue $7.29B, P/E 11.64. <em style="font-family:var(--font-display); font-style:italic; color:var(--gas);">Old fuel, slow growth.</em>
+        </div>
+        <div class="comp-toggle">Tap to read +</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TAKEAWAY (CLOSE — INVERTS HERO) ============ -->
+  <section class="takeaway" data-section="close">
+    <div class="eyebrow-mono">The takeaway · close</div>
+
+    <h2 class="reveal">
+      34,740 <span class="italic">megawatts</span> in.<br/>
+      <em>Seven cents</em> out.
+    </h2>
+
+    <!-- Closing stage: dollar reduces from full bar to a 7% sliver -->
+    <div class="takeaway-stage">
+      <svg viewBox="0 0 372 280" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="dropFade" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="var(--current)" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="var(--current)" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Ribbon: full revenue at top, narrowing to net-income sliver at bottom -->
+        <text x="0" y="20" font-family="var(--font-mono)" font-size="10" letter-spacing="0.14em" fill="var(--aes-ink-3)">REVENUE</text>
+        <text x="372" y="20" font-family="var(--font-mono)" font-size="10" letter-spacing="0.14em" fill="var(--aes-ink-3)" text-anchor="end">$12.23B</text>
+
+        <!-- Wide ribbon at top -->
+        <path d="M 0,30 L 372,30 L 360,260 L 12,260 Z" fill="var(--current)" opacity="0.08"/>
+        <!-- Inner narrowing ribbon = COGS taken out -->
+        <path d="M 14,32 L 358,32 L 308,260 L 64,260 Z" fill="var(--current)" opacity="0.10"/>
+        <!-- Final sliver = net income -->
+        <path d="M 168,250 L 204,250 L 200,272 L 172,272 Z" fill="var(--current)"/>
+
+        <!-- Mid label: cost of revenue -->
+        <line x1="0" y1="100" x2="372" y2="100" stroke="var(--aes-line-2)" stroke-dasharray="2 4" stroke-width="0.5"/>
+        <text x="0" y="115" font-family="var(--font-mono)" font-size="9" letter-spacing="0.14em" fill="var(--aes-ink-3)">− COGS</text>
+        <text x="372" y="115" font-family="var(--font-mono)" font-size="9" letter-spacing="0.14em" fill="var(--aes-ink-3)" text-anchor="end">$10.02B</text>
+
+        <line x1="0" y1="180" x2="372" y2="180" stroke="var(--aes-line-2)" stroke-dasharray="2 4" stroke-width="0.5"/>
+        <text x="0" y="195" font-family="var(--font-mono)" font-size="9" letter-spacing="0.14em" fill="var(--aes-ink-3)">− D&amp;A, INTEREST, ETC.</text>
+
+        <line x1="0" y1="245" x2="372" y2="245" stroke="var(--current)" stroke-width="0.8"/>
+        <text x="0" y="282" font-family="var(--font-mono)" font-size="10" letter-spacing="0.14em" fill="var(--current)" font-weight="500">= NET INCOME</text>
+        <text x="372" y="282" font-family="var(--font-mono)" font-size="10" letter-spacing="0.14em" fill="var(--current)" font-weight="500" text-anchor="end">$910M</text>
+      </svg>
+    </div>
+
+    <p style="margin-top:32px; font-family:var(--font-sans); font-size:15px; line-height:1.55; color:var(--aes-ink-2); max-width:340px;" class="reveal">
+      What started as <em style="font-family:var(--font-display); font-style:italic; color:var(--current);">Applied Energy Services</em> in 1981 is now a 34,740-megawatt machine, generating in fifteen countries — pouring nearly all of itself back into the next generation of plants, and paying out the rest in coupons and dividends.
+    </p>
+
+    <div class="takeaway-final reveal">
+      The grid keeps moving. <em>The bet keeps building.</em>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="row">
+      <div class="tick">AES</div>
+      <div class="meta-line" style="text-align:right;">
+        Recap · FY '25<br/>
+        END OF DOCUMENT
+      </div>
+    </div>
+    <div class="meta-line">
+      Founded 1981 · Arlington, VA<br/>
+      4 segments · 15 countries · 9,100 employees<br/>
+      ~34,740 MW · ~2.7M customers
+    </div>
+    <p class="gen">All figures sourced from FY '25 financials and the most recently reported quarter (Q3 '25). Geographic distribution and cost breakdown as supplied. Competitor figures as supplied; comparison bars sized to relative market cap.</p>
+  </footer>
+
+</div>
+
+<script>
+  // ============================================================
+  // 1) Build the 100-cent dollar grid for the costs section.
+  //    82 cells of cost-of-revenue, 5 D&A, 4 interest, 2 SG&A,
+  //    2 O&M, plus 5 cells = "everything else / net income (~7¢)".
+  //    Total = 100 cents. Net income highlighted at the bottom.
+  // ============================================================
+  (function buildDollarGrid() {
+    const g = document.getElementById('dollarGrid');
+    if (!g) return;
+    const COLS = 10, ROWS = 10;
+    const W = 372, H = 240;          // grid uses top portion
+    const cellW = (W - 12) / COLS;   // small padding
+    const cellH = 22;
+    const offX = 6, offY = 8;
+
+    // Sequence of color counts (top → bottom). 100 total.
+    // Cost of Revenue 82, D&A 5, Interest 4, SG&A 2, O&M 2, Net income 5
+    const colors = []
+      .concat(Array(82).fill('#E05C5C'))
+      .concat(Array(5).fill('#5B8FD4'))
+      .concat(Array(4).fill('#F5A623'))
+      .concat(Array(2).fill('#7DC67E'))
+      .concat(Array(2).fill('#A97DC6'))
+      .concat(Array(5).fill('#2C5BFF')); // net-income/remainder
+
+    let html = '';
+    for (let i = 0; i < 100; i++) {
+      const r = Math.floor(i / COLS);
+      const c = i % COLS;
+      const x = offX + c * cellW;
+      const y = offY + r * cellH;
+      const cw = cellW - 2;
+      const ch = cellH - 2;
+      const fill = colors[i] || '#E05C5C';
+      const isNet = i >= 95;
+      html += `<rect data-i="${i}" x="${x}" y="${y}" width="${cw}" height="${ch}" fill="${fill}" opacity="0" rx="0.5">
+        <animate attributeName="opacity" from="0" to="${isNet ? 1 : 0.78}" dur="0.5s" begin="${(i * 8) + 200}ms" fill="freeze"/>
+      </rect>`;
+    }
+    g.innerHTML = html;
+
+    // Pause animations until in view; we'll trigger via IO.
+    const stage = document.querySelector('.cost-stage svg');
+    if (stage) {
+      stage.style.visibility = 'hidden';
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            stage.style.visibility = 'visible';
+            // Restart animations by cloning innerHTML
+            g.innerHTML = g.innerHTML;
+            io.disconnect();
+          }
+        });
+      }, { threshold: 0.2 });
+      io.observe(stage);
+    }
+  })();
+
+  // ============================================================
+  // 2) Reveal-on-scroll using IntersectionObserver
+  // ============================================================
+  (function reveals() {
+    const els = document.querySelectorAll('.reveal, .reveal-stagger');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          // For geo-stack: fill bars
+          if (e.target.id === 'geoStack' || e.target.classList.contains('reveal-stagger')) {
+            e.target.querySelectorAll('[data-w]').forEach(b => {
+              b.style.width = b.getAttribute('data-w') + '%';
+            });
+          }
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    els.forEach(el => io.observe(el));
+  })();
+
+  // ============================================================
+  // 3) Scroll progress hairline + MW counter scrub
+  // ============================================================
+  (function scrollChrome() {
+    const fill = document.getElementById('progressFill');
+    const mw = document.getElementById('mwCounter');
+    const finalMW = 34740;
+    let raf = 0;
+
+    function tick() {
+      raf = 0;
+      const doc = document.documentElement;
+      const scrollY = window.scrollY || doc.scrollTop;
+      const max = (doc.scrollHeight - window.innerHeight) || 1;
+      const p = Math.max(0, Math.min(1, scrollY / max));
+      fill.style.width = (p * 100).toFixed(2) + '%';
+
+      // MW counter scrubs through the first 30% of scroll
+      if (mw) {
+        const localP = Math.max(0, Math.min(1, scrollY / Math.max(1, window.innerHeight * 0.6)));
+        const eased = 1 - Math.pow(1 - localP, 2.4);
+        const v = Math.round(finalMW * eased);
+        mw.textContent = v.toLocaleString('en-US');
+      }
+    }
+    function onScroll() {
+      if (!raf) raf = requestAnimationFrame(tick);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    tick();
+  })();
+
+  // ============================================================
+  // 4) Competitor tap-to-expand
+  // ============================================================
+  (function competitors() {
+    document.querySelectorAll('.comp-row[data-tog]').forEach(row => {
+      row.addEventListener('click', () => {
+        row.classList.toggle('open');
+        const tog = row.querySelector('.comp-toggle');
+        if (tog) tog.textContent = row.classList.contains('open') ? 'Tap to close −' : 'Tap to read +';
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

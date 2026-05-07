@@ -1,0 +1,1237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>IQV · Recap FY '25</title>
+<link rel="stylesheet" href="/projects/cb231650-8bc9-48e7-b3b8-075767d61fa8/colors_and_type.css" />
+<style>
+  /* ============================================================
+     IQVIA recap — clinical-editorial mobile artifact
+     Palette: paper (manila), deep ink, scrubs-teal as institutional
+     signal; coral reserved for "the bet" (capex / buybacks).
+     ============================================================ */
+
+  :root{
+    --paper:      #F5F1E8;     /* manila chart paper */
+    --paper-2:    #EDE7D8;     /* raised */
+    --paper-3:    #E2DAC6;     /* deeper */
+    --ink:        #14171A;     /* ledger ink */
+    --ink-2:      #2E3338;
+    --ink-3:      #5C6168;
+    --ink-4:      #8E9299;
+    --line:       #D4CCB8;
+    --line-strong:#B7AC91;
+
+    --teal:       #0E5E5C;     /* scrubs / clinical institutional */
+    --teal-soft:  #1B7B79;
+    --teal-50:    #E4EFEE;
+
+    --signal:     #F25A37;     /* coral — "the bet" only */
+    --signal-soft:#FFDFD3;
+
+    --night:      #0A0F12;     /* tonal interlude (debt) */
+    --night-2:    #131A1F;
+    --night-line: #1F2932;
+
+    --font-display:'Instrument Serif', 'Times New Roman', serif;
+    --font-sans:   'Geist', system-ui, sans-serif;
+    --font-mono:   'Geist Mono', ui-monospace, monospace;
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; padding:0; }
+  html{ background:#0A0F12; }
+  body{
+    font-family:var(--font-sans);
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overscroll-behavior-y:none;
+  }
+
+  /* mobile artifact frame — page IS the design, no phone bezel */
+  .page{
+    max-width:430px;
+    margin:0 auto;
+    background:var(--paper);
+    position:relative;
+    overflow:hidden;
+  }
+
+  /* subtle paper grain */
+  .page::before{
+    content:""; position:absolute; inset:0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(20,23,26,0.025) 1px, transparent 1px),
+      radial-gradient(circle at 75% 60%, rgba(20,23,26,0.025) 1px, transparent 1px);
+    background-size: 7px 7px, 11px 11px;
+    pointer-events:none; z-index:0;
+  }
+
+  /* =========== persistent chrome =========== */
+  .chrome{
+    position:sticky; top:0; left:0; right:0; z-index:50;
+    background:rgba(245,241,232,0.78);
+    backdrop-filter:blur(18px) saturate(1.1);
+    -webkit-backdrop-filter:blur(18px) saturate(1.1);
+    border-bottom:1px solid rgba(212,204,184,0.6);
+  }
+  .chrome-row{
+    display:flex; align-items:center; gap:10px;
+    padding:14px 18px 10px;
+  }
+  .chrome-tick{
+    font-family:var(--font-mono); font-weight:500;
+    font-size:13px; letter-spacing:0.04em;
+    padding:3px 7px; border:1px solid var(--line-strong);
+    border-radius:4px; color:var(--ink);
+    background:var(--paper-2);
+  }
+  .chrome-name{
+    font-family:var(--font-sans); font-size:14px;
+    font-weight:500; color:var(--ink);
+    letter-spacing:-0.005em;
+  }
+  .chrome-name em{ font-family:var(--font-display); font-style:italic; font-weight:400; color:var(--ink-3); margin-left:4px; font-size:15px;}
+  .chrome-label{
+    margin-left:auto;
+    font-family:var(--font-mono); font-size:10px;
+    letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--teal);
+  }
+  .chrome-progress{
+    height:1.5px; background:transparent;
+    position:relative;
+  }
+  .chrome-progress::before{
+    content:""; position:absolute; left:0; top:0; bottom:0;
+    width:var(--prog,0%); background:var(--teal);
+    transition:width 80ms linear;
+  }
+
+  /* =========== type primitives =========== */
+  .eyebrow{
+    font-family:var(--font-mono); font-size:10.5px;
+    letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--teal); font-weight:500;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .eyebrow .dot{ width:5px; height:5px; border-radius:50%; background:var(--teal); display:inline-block; }
+  .eyebrow .num{ color:var(--ink-3); font-weight:400; }
+
+  .display{
+    font-family:var(--font-display);
+    font-weight:400;
+    line-height:0.95;
+    letter-spacing:-0.02em;
+    color:var(--ink);
+  }
+  .italic{ font-family:var(--font-display); font-style:italic; font-weight:400; }
+  .mono{ font-family:var(--font-mono); }
+
+  .body{ font-family:var(--font-sans); font-size:15px; line-height:1.55; color:var(--ink-2); margin:0; }
+  .body em{ font-family:var(--font-display); font-style:italic; color:var(--ink); font-weight:400; font-size:1.06em; }
+  .body em.t{ color:var(--teal); }
+  .body em.s{ color:var(--signal); }
+
+  /* =========== sections =========== */
+  section{ position:relative; z-index:1; padding:54px 22px; }
+  section + section{ padding-top:0; }
+  .reset-beat{
+    padding:46px 28px;
+    background:var(--paper-2);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    text-align:left;
+  }
+  .reset-beat p{
+    font-family:var(--font-display); font-style:italic;
+    font-size:23px; line-height:1.25; color:var(--ink);
+    letter-spacing:-0.005em;
+    margin:0; max-width:34ch;
+    text-wrap:pretty;
+  }
+  .reset-beat p .hit{ color:var(--teal); }
+  .reset-beat p .hit.s{ color:var(--signal); }
+
+  /* =========== HERO =========== */
+  .hero{
+    padding:34px 22px 60px;
+    position:relative; overflow:hidden;
+  }
+  .hero-meta{
+    display:flex; gap:14px; align-items:baseline;
+    font-family:var(--font-mono); font-size:11px;
+    letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--ink-3);
+    margin-bottom:24px;
+  }
+  .hero-meta .pill{
+    border:1px solid var(--line-strong);
+    padding:3px 8px; border-radius:999px;
+    color:var(--ink-2);
+  }
+  .hero h1{
+    font-family:var(--font-display); font-weight:400;
+    font-size:64px; line-height:0.92;
+    letter-spacing:-0.025em; margin:0;
+    color:var(--ink);
+  }
+  .hero h1 .em{ font-style:italic; color:var(--teal); }
+  .hero h1 .small{ display:block; font-size:38px; color:var(--ink-3); margin-top:6px;}
+  .hero-sub{
+    margin-top:22px; max-width:30ch;
+    color:var(--ink-2); font-size:15.5px; line-height:1.5;
+  }
+  .hero-sub em{ font-family:var(--font-display); font-style:italic; color:var(--teal); font-size:1.08em;}
+
+  /* records visual: dot-grid that "fills in" with scroll */
+  .records{
+    margin-top:34px;
+    position:relative;
+    padding:18px 0 6px;
+  }
+  .records-cap{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    font-family:var(--font-mono); font-size:10px;
+    letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--ink-3); margin-bottom:10px;
+  }
+  .records-cap .n{
+    font-family:var(--font-display); font-style:italic;
+    font-size:22px; color:var(--ink); letter-spacing:0;
+    text-transform:none;
+  }
+  #recordsDots{ width:100%; height:130px; display:block; }
+  .records-foot{
+    margin-top:10px; font-family:var(--font-mono);
+    font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--teal); display:flex; justify-content:space-between;
+  }
+
+  /* =========== THE BUSINESS — three columns of a chart =========== */
+  .biz{ padding-top:40px; }
+  .biz h2{
+    font-family:var(--font-display); font-size:38px;
+    line-height:1; letter-spacing:-0.02em; margin-top:14px;
+  }
+  .biz h2 em{ font-style:italic; color:var(--teal); }
+  .biz .body{ margin-top:14px; max-width:34ch; }
+
+  .segments{ margin-top:30px; }
+  .seg{
+    display:grid; grid-template-columns: 56px 1fr; gap:16px;
+    padding:18px 0; border-top:1px solid var(--line);
+    align-items:start;
+  }
+  .seg:last-child{ border-bottom:1px solid var(--line); }
+  .seg-bar{
+    height:64px; width:100%;
+    background:var(--paper-3); border-radius:2px;
+    position:relative; overflow:hidden;
+    align-self:end;
+  }
+  .seg-bar-fill{
+    position:absolute; left:0; right:0; bottom:0;
+    background:var(--teal);
+    transform:scaleY(0); transform-origin:bottom;
+    transition:transform 1s var(--ease-out, cubic-bezier(0.22,1,0.36,1));
+  }
+  .seg.in .seg-bar-fill{ transform:scaleY(var(--h,1)); }
+  .seg-meta .mono{
+    font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--ink-3);
+  }
+  .seg-meta h4{
+    font-family:var(--font-sans); font-size:18px; font-weight:500;
+    margin:3px 0 4px; letter-spacing:-0.005em; color:var(--ink);
+  }
+  .seg-meta .pct{
+    font-family:var(--font-display); font-style:italic;
+    font-size:30px; color:var(--ink); letter-spacing:-0.01em;
+    line-height:1; margin-right:10px;
+  }
+  .seg-meta .rev{
+    font-family:var(--font-mono); font-size:12px; color:var(--ink-2);
+    letter-spacing:0.02em;
+  }
+  .seg-meta p{ font-size:13.5px; color:var(--ink-2); line-height:1.5; margin-top:8px; }
+
+  /* =========== SCALE =========== */
+  .scale{ padding-top:48px; }
+  .scale h2{ font-family:var(--font-display); font-size:36px; line-height:1; letter-spacing:-0.02em; }
+  .scale h2 em{ font-style:italic; color:var(--teal); }
+  .stat-row{ margin-top:32px; display:flex; flex-direction:column; gap:0; }
+  .stat{
+    display:grid; grid-template-columns: 1fr auto; gap:12px;
+    padding:18px 0; border-top:1px solid var(--line);
+    align-items:baseline;
+  }
+  .stat:last-child{ border-bottom:1px solid var(--line); }
+  .stat .lbl{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3);}
+  .stat .lbl em{ font-family:var(--font-display); font-style:italic; text-transform:none; color:var(--ink-2); letter-spacing:0; font-size:13px;}
+  .stat .val{
+    font-family:var(--font-display); font-style:italic;
+    font-size:42px; line-height:0.9; letter-spacing:-0.02em;
+    color:var(--ink); white-space:nowrap;
+  }
+  .stat .val .u{
+    font-family:var(--font-mono); font-style:normal;
+    font-size:13px; color:var(--ink-3); margin-left:3px;
+    letter-spacing:0.04em; vertical-align:0.15em;
+  }
+
+  /* =========== BACKLOG — ledger stack =========== */
+  .backlog{ padding-top:60px; }
+  .backlog h2{
+    font-family:var(--font-display); font-size:34px; line-height:1.02;
+    letter-spacing:-0.02em;
+  }
+  .backlog h2 em{ font-style:italic; color:var(--teal); }
+  .ledger{
+    margin-top:26px; position:relative;
+    border:1px solid var(--line);
+    background:#FBF7EB;
+    border-radius:3px;
+    padding:16px 14px 14px;
+  }
+  .ledger::before{
+    content:""; position:absolute; left:0; top:0; bottom:0;
+    width:42px; border-right:1px solid var(--coral-100, #FFDFD3);
+    background:repeating-linear-gradient(0deg,
+      transparent 0 23px,
+      rgba(212,204,184,0.45) 23px 24px);
+    pointer-events:none;
+  }
+  .ledger-head{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--ink-3); padding-left:48px; padding-bottom:10px;
+    display:flex; justify-content:space-between;
+    border-bottom:1px solid var(--line);
+  }
+  .ledger-rows{ padding-left:48px; padding-top:6px; }
+  .ledger-row{
+    display:grid; grid-template-columns: 1fr auto; gap:8px;
+    align-items:baseline;
+    padding:6px 0; border-bottom:1px dotted var(--line);
+    font-family:var(--font-mono); font-size:12.5px;
+    color:var(--ink-2);
+  }
+  .ledger-row .y{ color:var(--ink-3); font-size:11px; letter-spacing:0.06em; }
+  .ledger-row .v{ font-family:var(--font-display); font-style:italic; font-size:18px; color:var(--ink); letter-spacing:-0.005em;}
+  .ledger-total{
+    margin-top:14px; padding-top:14px; border-top:2px solid var(--ink);
+    padding-left:48px;
+    display:flex; justify-content:space-between; align-items:baseline;
+  }
+  .ledger-total .l{ font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink); }
+  .ledger-total .t{ font-family:var(--font-display); font-style:italic; font-size:34px; color:var(--teal); letter-spacing:-0.015em; }
+  .backlog-foot{
+    margin-top:18px; font-size:13.5px; color:var(--ink-2); line-height:1.55;
+    max-width:36ch;
+  }
+  .backlog-foot em{ font-family:var(--font-display); font-style:italic; color:var(--teal); font-size:1.06em;}
+
+  /* =========== COSTS — dollar dissection =========== */
+  .costs{ padding-top:60px; }
+  .costs h2{
+    font-family:var(--font-display); font-size:34px; line-height:1.02; letter-spacing:-0.02em;
+  }
+  .costs h2 em{ font-style:italic; color:var(--ink-3); }
+  .costs .body{ margin-top:12px; max-width:36ch;}
+  .dollar{
+    margin:34px 0 8px;
+    position:relative;
+  }
+  .dollar-label{
+    font-family:var(--font-mono); font-size:10px;
+    letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--ink-3); margin-bottom:8px;
+    display:flex; justify-content:space-between;
+  }
+  .dollar-bar{
+    position:relative; height:54px; width:100%;
+    border-radius:2px; overflow:hidden;
+    display:flex;
+    border:1px solid var(--line);
+    background:var(--paper-3);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+  .dollar-seg{
+    height:100%;
+    transform:scaleX(0); transform-origin:left;
+    transition:transform 0.9s cubic-bezier(0.22,1,0.36,1);
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .dollar-seg .ptag{
+    font-family:var(--font-mono); font-size:11px; color:#fff;
+    font-weight:500; letter-spacing:0.04em;
+    mix-blend-mode:normal;
+    text-shadow:0 1px 1px rgba(0,0,0,0.15);
+  }
+  .dollar.in .dollar-seg{ transform:scaleX(1); }
+
+  .cost-legend{ margin-top:22px; display:flex; flex-direction:column; gap:0; }
+  .cost-row{
+    display:grid; grid-template-columns:18px 1fr auto; gap:14px;
+    padding:13px 0; border-top:1px solid var(--line);
+    align-items:center;
+  }
+  .cost-row:last-child{ border-bottom:1px solid var(--line); }
+  .cost-sw{ width:14px; height:14px; border-radius:3px; }
+  .cost-row .lab{ font-size:13.5px; color:var(--ink); line-height:1.3; }
+  .cost-row .lab small{ display:block; font-family:var(--font-mono); font-size:10px; color:var(--ink-3); letter-spacing:0.06em; margin-top:2px;}
+  .cost-row .pc{ font-family:var(--font-display); font-style:italic; font-size:24px; color:var(--ink); letter-spacing:-0.01em; }
+  .cost-row .pc .u{ font-family:var(--font-mono); font-style:normal; font-size:11px; color:var(--ink-3); margin-left:1px;}
+
+  .surplus{
+    margin-top:24px;
+    padding:18px 16px;
+    background:var(--teal-50);
+    border-left:3px solid var(--teal);
+    border-radius:0 4px 4px 0;
+  }
+  .surplus .lbl{ font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--teal); }
+  .surplus .v{
+    display:block; font-family:var(--font-display); font-style:italic;
+    font-size:36px; color:var(--ink); letter-spacing:-0.01em; margin-top:4px;
+  }
+  .surplus p{ font-size:13px; color:var(--ink-2); line-height:1.5; margin-top:6px;}
+  .surplus p em{ font-family:var(--font-display); font-style:italic; color:var(--teal); font-size:1.08em;}
+
+  /* =========== FOOTPRINT — globe rings =========== */
+  .footprint{ padding-top:60px; }
+  .footprint h2{ font-family:var(--font-display); font-size:34px; letter-spacing:-0.02em; line-height:1.02; }
+  .footprint h2 em{ font-style:italic; color:var(--teal); }
+  .footprint .body{ margin-top:12px; max-width:34ch; }
+  .globe-wrap{
+    margin-top:28px; position:relative;
+    height:300px;
+    display:flex; justify-content:center; align-items:center;
+  }
+  #globeSvg{ width:100%; max-width:340px; height:auto; }
+  .geo-rows{ margin-top:24px; }
+  .geo-row{
+    display:grid; grid-template-columns: auto 1fr auto; gap:14px;
+    padding:14px 0; border-top:1px solid var(--line);
+    align-items:center;
+  }
+  .geo-row:last-child{ border-bottom:1px solid var(--line); }
+  .geo-row .marker{
+    font-family:var(--font-mono); font-size:10px;
+    width:22px; height:22px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--paper-2); border:1px solid var(--line-strong);
+    color:var(--ink-2); letter-spacing:0;
+  }
+  .geo-row .reg{ font-size:14.5px; color:var(--ink); }
+  .geo-row .reg small{ display:block; font-family:var(--font-mono); font-size:10px; letter-spacing:0.08em; color:var(--ink-3); margin-top:2px;}
+  .geo-row .pc{
+    font-family:var(--font-display); font-style:italic; font-size:28px; color:var(--ink); letter-spacing:-0.01em;
+  }
+  .geo-row .pc .u{ font-family:var(--font-mono); font-style:normal; font-size:11px; color:var(--ink-3);}
+
+  /* =========== TONAL INTERLUDE — DARK / debt =========== */
+  .weight{
+    background:var(--night);
+    color:#E6E9ED;
+    padding:64px 22px 70px;
+    position:relative;
+    overflow:hidden;
+  }
+  .weight::before{
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse at 80% 20%, rgba(242,90,55,0.06), transparent 60%),
+      repeating-linear-gradient(0deg, transparent 0 47px, rgba(255,255,255,0.025) 47px 48px);
+    pointer-events:none;
+  }
+  .weight .eyebrow{ color:var(--signal); }
+  .weight .eyebrow .dot{ background:var(--signal); }
+  .weight h2{
+    font-family:var(--font-display); color:#F4F2ED;
+    font-size:42px; line-height:0.98; letter-spacing:-0.02em;
+    margin-top:14px;
+  }
+  .weight h2 em{ font-style:italic; color:var(--signal); }
+  .weight .body{ color:#B8BEC4; margin-top:14px; max-width:34ch; font-size:15px;}
+  .weight .body em{ color:#fff; }
+  .weight .body em.s{ color:var(--signal); }
+
+  .scale-vis{
+    margin-top:38px; position:relative;
+    height:230px;
+    display:flex; justify-content:center; align-items:flex-end;
+  }
+  #scaleSvg{ width:100%; max-width:340px; height:auto; }
+
+  .leverage-row{ margin-top:30px; display:grid; grid-template-columns:1fr 1fr; gap:0; border-top:1px solid var(--night-line);}
+  .lev{
+    padding:18px 14px;
+    border-right:1px solid var(--night-line);
+    border-bottom:1px solid var(--night-line);
+  }
+  .lev:nth-child(2n){ border-right:none; }
+  .lev .l{ font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:#8E9299;}
+  .lev .v{ font-family:var(--font-display); font-style:italic; font-size:30px; color:#F4F2ED; margin-top:6px; line-height:1; letter-spacing:-0.015em;}
+  .lev .v.signal{ color:var(--signal);}
+  .lev .v .u{ font-family:var(--font-mono); font-style:normal; font-size:11px; color:#8E9299; margin-left:2px;}
+
+  /* =========== THE BET — buybacks =========== */
+  .bet{ padding-top:60px; }
+  .bet h2{ font-family:var(--font-display); font-size:36px; line-height:1; letter-spacing:-0.02em; }
+  .bet h2 em{ font-style:italic; color:var(--signal); }
+  .bet .body{ margin-top:12px; max-width:34ch;}
+  .buyback-vis{
+    margin-top:30px;
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:22px 18px 20px;
+    background:#FBF7EB;
+    position:relative;
+  }
+  .buyback-vis .head{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--ink-3); padding-bottom:14px; border-bottom:1px solid var(--line);
+  }
+  .buyback-bar{
+    position:relative; margin-top:18px; height:38px;
+    background:var(--paper-3); border-radius:2px; overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .buyback-bar .used{
+    position:absolute; left:0; top:0; bottom:0;
+    background:var(--signal);
+    width:var(--w,0%);
+    transition:width 1s cubic-bezier(0.22,1,0.36,1);
+  }
+  .buyback-bar .tick{
+    position:absolute; top:0; bottom:0; width:1px; background:rgba(20,23,26,0.15);
+  }
+  .buyback-cap{
+    margin-top:10px; display:flex; justify-content:space-between;
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.06em; color:var(--ink-3);
+  }
+  .buyback-cap b{ font-family:var(--font-display); font-style:italic; font-size:18px; color:var(--ink); font-weight:400; letter-spacing:-0.005em;}
+  .buyback-cap b.s{ color:var(--signal); }
+  .buyback-foot{ margin-top:18px; font-size:13.5px; line-height:1.5; color:var(--ink-2);}
+  .buyback-foot em{ font-family:var(--font-display); font-style:italic; color:var(--signal); font-size:1.06em;}
+
+  /* =========== COMPETITION =========== */
+  .compete{ padding-top:60px; }
+  .compete h2{ font-family:var(--font-display); font-size:34px; line-height:1.02; letter-spacing:-0.02em; }
+  .compete h2 em{ font-style:italic; color:var(--teal); }
+  .compete .body{ margin-top:12px; max-width:34ch;}
+
+  .comp-list{ margin-top:30px; display:flex; flex-direction:column; gap:0;}
+  .comp{
+    padding:22px 0;
+    border-top:1px solid var(--line);
+    cursor:pointer;
+    transition:background 0.2s ease;
+  }
+  .comp:last-child{ border-bottom:1px solid var(--line); }
+  .comp-head{ display:flex; align-items:baseline; gap:10px; }
+  .comp-tk{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em;
+    padding:2px 6px; border:1px solid var(--line-strong); border-radius:3px;
+    color:var(--ink-2); background:var(--paper-2);
+  }
+  .comp-name{ font-family:var(--font-sans); font-size:16px; font-weight:500; color:var(--ink); letter-spacing:-0.005em;}
+  .comp-name em{ font-family:var(--font-display); font-style:italic; font-weight:400;}
+  .comp-meas{
+    margin-top:14px;
+    display:grid; grid-template-columns: 56px 1fr 70px; gap:10px;
+    align-items:center;
+    font-family:var(--font-mono); font-size:10px;
+    letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-3);
+  }
+  .comp-bar{
+    position:relative; height:8px; background:var(--paper-3); border-radius:2px; overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .comp-bar .iqv,
+  .comp-bar .rival{
+    position:absolute; left:0; top:0; bottom:0;
+    transition:width 1s cubic-bezier(0.22,1,0.36,1);
+    transform-origin:left;
+  }
+  .comp-bar .rival{ background:var(--ink-3); }
+  .comp-meas .v{ font-family:var(--font-display); font-style:italic; font-size:18px; color:var(--ink); letter-spacing:-0.005em; text-align:right; text-transform:none;}
+  .comp-vs{
+    margin-top:8px; font-size:13px; line-height:1.5; color:var(--ink-2);
+    max-height:0; overflow:hidden;
+    transition:max-height 0.45s cubic-bezier(0.22,1,0.36,1), margin-top 0.3s;
+  }
+  .comp.open .comp-vs{ max-height:200px; margin-top:14px;}
+  .comp-vs em{ font-family:var(--font-display); font-style:italic; color:var(--teal); font-size:1.05em;}
+  .comp-tap{
+    margin-top:8px;
+    font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--ink-3);
+  }
+  .comp.open .comp-tap{ color:var(--teal); }
+
+  .compete-footer{
+    margin-top:38px;
+    border-top:2px solid var(--ink);
+    padding-top:18px;
+    display:grid; grid-template-columns:1fr auto; align-items:baseline; gap:10px;
+  }
+  .compete-footer .l{ font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3);}
+  .compete-footer .l b{ display:block; font-family:var(--font-sans); color:var(--ink); font-size:14px; font-weight:500; letter-spacing:0; text-transform:none; margin-top:3px;}
+  .compete-footer .v{ font-family:var(--font-display); font-style:italic; font-size:30px; color:var(--teal); letter-spacing:-0.015em;}
+
+  /* =========== CLOSE =========== */
+  .close{
+    padding:80px 22px 100px;
+    position:relative;
+    background:linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
+    border-top:1px solid var(--line);
+  }
+  .close .eyebrow{ color:var(--signal); }
+  .close .eyebrow .dot{ background:var(--signal);}
+  .close h2{
+    font-family:var(--font-display); font-weight:400;
+    font-size:56px; line-height:0.95; letter-spacing:-0.025em;
+    margin-top:18px; color:var(--ink);
+  }
+  .close h2 em{ font-style:italic; color:var(--teal); }
+  .close-line{
+    margin-top:30px; padding-top:22px;
+    border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--ink-3);
+  }
+  .close-line b{ font-family:var(--font-display); font-style:italic; font-weight:400; font-size:24px; color:var(--ink); letter-spacing:-0.01em; text-transform:none;}
+  .close-foot{
+    margin-top:38px; padding-top:20px;
+    border-top:1px solid var(--line);
+    font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--ink-4); display:flex; justify-content:space-between;
+  }
+
+  /* reveal-on-scroll */
+  .reveal{ opacity:0; transform:translateY(14px); transition:opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1); }
+  .reveal.in{ opacity:1; transform:none; }
+
+  /* segment columns animation */
+  @keyframes drawIn { from{ stroke-dashoffset:var(--len);} to{ stroke-dashoffset:0;} }
+
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ============================== CHROME ============================== -->
+  <div class="chrome">
+    <div class="chrome-row">
+      <span class="chrome-tick">IQV</span>
+      <span class="chrome-name">IQVIA <em>Holdings</em></span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="chrome-progress" id="prog"></div>
+  </div>
+
+  <!-- ============================== HERO ============================== -->
+  <section class="hero">
+    <div class="hero-meta">
+      <span class="pill">NYSE</span>
+      <span>Healthcare data &amp; CRO</span>
+      <span style="margin-left:auto; color:var(--ink-2);">$29.95B mcap</span>
+    </div>
+
+    <h1>
+      <span class="em">1.2 billion</span><br/>
+      health records.<br/>
+      <span class="small">One company that <span class="em">reads</span> them.</span>
+    </h1>
+
+    <p class="hero-sub">
+      IQVIA runs the world's clinical trials and owns the world's largest <em>proprietary</em> healthcare dataset. Every approved drug passes through here twice: <em>once in the trial</em>, once in the data.
+    </p>
+
+    <!-- records dot grid -->
+    <div class="records reveal" id="records">
+      <div class="records-cap">
+        <span>Records · proprietary</span>
+        <span class="n">≈ 1.2B</span>
+      </div>
+      <svg id="recordsDots" viewBox="0 0 340 130" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <div class="records-foot">
+        <span>1 dot ≈ 5M records</span>
+        <span style="color:var(--ink-3);">240 plotted</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== RESET BEAT 1 ============================== -->
+  <div class="reset-beat">
+    <p>Three doors, <span class="hit">one floor.</span> The trials are run, the data is sold, and the salesforce gets rented out — <span class="italic">all under one roof.</span></p>
+  </div>
+
+  <!-- ============================== BUSINESS ============================== -->
+  <section class="biz">
+    <span class="eyebrow"><span class="dot"></span>The business · §02</span>
+    <h2>How <em>$16.31B</em><br/>walks in the door.</h2>
+    <p class="body">Three segments. Each priced differently, each booking differently — but one client list, and <em class="t">one dataset</em> behind all of them.</p>
+
+    <div class="segments" id="segments">
+      <div class="seg" style="--h:1;">
+        <div class="seg-bar"><div class="seg-bar-fill" style="background:var(--teal);"></div></div>
+        <div class="seg-meta">
+          <div class="mono">R&amp;DS · Clinical trials</div>
+          <h4>Research &amp; Development Solutions</h4>
+          <div><span class="pct">54.5%</span><span class="rev">$8.90B</span></div>
+          <p>Outsourced clinical trial management, patient recruitment, drug development. The phase-1-through-3 engine.</p>
+        </div>
+      </div>
+
+      <div class="seg" style="--h:0.745;">
+        <div class="seg-bar"><div class="seg-bar-fill" style="background:var(--teal-soft);"></div></div>
+        <div class="seg-meta">
+          <div class="mono">TAS · Data &amp; analytics</div>
+          <h4>Technology &amp; Analytics Solutions</h4>
+          <div><span class="pct">40.6%</span><span class="rev">$6.63B</span></div>
+          <p>Healthcare data, AI-powered analytics, technology platforms. The 1.2B-record moat, packaged.</p>
+        </div>
+      </div>
+
+      <div class="seg" style="--h:0.088;">
+        <div class="seg-bar"><div class="seg-bar-fill" style="background:#9CB7B0;"></div></div>
+        <div class="seg-meta">
+          <div class="mono">CSMS · Field force</div>
+          <h4>Contract Sales &amp; Medical Solutions</h4>
+          <div><span class="pct">4.8%</span><span class="rev">$788M</span></div>
+          <p>Rented salesforces and patient engagement. Smaller, but it keeps IQVIA inside the commercial side of pharma.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== SCALE ============================== -->
+  <section class="scale">
+    <span class="eyebrow"><span class="dot"></span>The scale · §03</span>
+    <h2>A <em>quiet</em> giant<br/>at planetary scale.</h2>
+
+    <div class="stat-row">
+      <div class="stat reveal">
+        <div class="lbl">Employees<br/><em>across 100+ countries</em></div>
+        <div class="val" data-count="93000" data-suffix="">~93,000</div>
+      </div>
+      <div class="stat reveal">
+        <div class="lbl">FY'25 revenue<br/><em>full year</em></div>
+        <div class="val">$16.31<span class="u">B</span></div>
+      </div>
+      <div class="stat reveal">
+        <div class="lbl">Q4'25 revenue<br/><em>most recent</em></div>
+        <div class="val">$4.36<span class="u">B</span></div>
+      </div>
+      <div class="stat reveal">
+        <div class="lbl">Q4'25 EPS<br/><em>diluted</em></div>
+        <div class="val">$3.42</div>
+      </div>
+      <div class="stat reveal">
+        <div class="lbl">Operating margin<br/><em>full year</em></div>
+        <div class="val">13.4<span class="u">%</span></div>
+      </div>
+      <div class="stat reveal">
+        <div class="lbl">Operating cash flow<br/><em>FY'25</em></div>
+        <div class="val">$2.65<span class="u">B</span></div>
+      </div>
+      <div class="stat reveal">
+        <div class="lbl">Free cash flow<br/><em>FY'25</em></div>
+        <div class="val">$2.05<span class="u">B</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== BACKLOG (ledger) ============================== -->
+  <section class="backlog">
+    <span class="eyebrow"><span class="dot"></span>The book · §04</span>
+    <h2>Already <em>signed.</em><br/>Not yet recognized.</h2>
+    <p class="body" style="margin-top:14px;">The R&amp;DS contracted backlog at year-end — <em class="t">two full years of revenue</em> already booked, waiting to be earned.</p>
+
+    <div class="ledger reveal">
+      <div class="ledger-head">
+        <span>Contracted backlog · year-end</span>
+        <span>USD</span>
+      </div>
+      <div class="ledger-rows">
+        <div class="ledger-row"><span><span class="y">FY'25 ·</span> R&amp;DS revenue earned</span><span class="v">$8.90B</span></div>
+        <div class="ledger-row"><span><span class="y">YE'25 ·</span> contracted, unearned</span><span class="v">$32.7B</span></div>
+        <div class="ledger-row"><span><span class="y">FY'25 ·</span> operating cash flow</span><span class="v">$2.65B</span></div>
+        <div class="ledger-row"><span><span class="y">FY'25 ·</span> free cash flow</span><span class="v">$2.05B</span></div>
+      </div>
+      <div class="ledger-total">
+        <span class="l">Backlog · multiple of segment revenue</span>
+        <span class="t">3.7×</span>
+      </div>
+    </div>
+
+    <p class="backlog-foot">
+      The backlog is the moat made visible: <em>contracts already signed</em>, work already costed, revenue already approximate. The next two fiscal years are <em>mostly written</em>.
+    </p>
+  </section>
+
+  <!-- ============================== RESET BEAT 2 ============================== -->
+  <div class="reset-beat">
+    <p>Big revenue, <span class="hit">thin margin.</span> A services business at trial-house scale spends most of every dollar before it lands — <span class="italic">the rest is the business.</span></p>
+  </div>
+
+  <!-- ============================== COSTS ============================== -->
+  <section class="costs">
+    <span class="eyebrow"><span class="dot"></span>The dollar · §05</span>
+    <h2>One dollar of revenue,<br/><em>dissected.</em></h2>
+    <p class="body">Cost of services dominates. Everything else fights for the margin. The supplied palette — IQVIA's own — sits across the bar in proportion.</p>
+
+    <div class="dollar reveal" id="dollar">
+      <div class="dollar-label">
+        <span>$1.00 of revenue</span>
+        <span>→ what's left</span>
+      </div>
+      <div class="dollar-bar">
+        <div class="dollar-seg" style="background:#4F86C6; --w:57%; width:57%;"><span class="ptag">57¢</span></div>
+        <div class="dollar-seg" style="background:#E8834E; --w:10%; width:10%;"></div>
+        <div class="dollar-seg" style="background:#6DBF82; --w:8%; width:8%;"></div>
+        <div class="dollar-seg" style="background:#E8C84E; --w:4%; width:4%;"></div>
+        <div class="dollar-seg" style="background:#B57BCC; --w:2%; width:2%;"></div>
+        <div class="dollar-seg" style="background:var(--paper-3); --w:19%; width:19%; border-left:1px dashed var(--line-strong);"></div>
+      </div>
+    </div>
+
+    <div class="cost-legend">
+      <div class="cost-row">
+        <span class="cost-sw" style="background:#4F86C6;"></span>
+        <span class="lab">Cost of revenue (services)<small>Trial labor, sites, monitors, data ops</small></span>
+        <span class="pc">57<span class="u">¢</span></span>
+      </div>
+      <div class="cost-row">
+        <span class="cost-sw" style="background:#E8834E;"></span>
+        <span class="lab">Selling, general &amp; administrative<small>Corporate, sales, support</small></span>
+        <span class="pc">10<span class="u">¢</span></span>
+      </div>
+      <div class="cost-row">
+        <span class="cost-sw" style="background:#6DBF82;"></span>
+        <span class="lab">Depreciation &amp; amortization<small>Mostly amortized acquired intangibles</small></span>
+        <span class="pc">8<span class="u">¢</span></span>
+      </div>
+      <div class="cost-row">
+        <span class="cost-sw" style="background:#E8C84E;"></span>
+        <span class="lab">Interest expense<small>The cost of $13.88B in debt</small></span>
+        <span class="pc">4<span class="u">¢</span></span>
+      </div>
+      <div class="cost-row">
+        <span class="cost-sw" style="background:#B57BCC;"></span>
+        <span class="lab">Research &amp; development<small>Internal tech &amp; data investment</small></span>
+        <span class="pc">2<span class="u">¢</span></span>
+      </div>
+    </div>
+
+    <div class="surplus">
+      <span class="lbl">What survives · operating margin</span>
+      <span class="v">13.4¢</span>
+      <p>Of every dollar that walks in, <em>roughly thirteen cents</em> stay as operating profit — before tax, before debt service, before the buyback.</p>
+    </div>
+  </section>
+
+  <!-- ============================== FOOTPRINT ============================== -->
+  <section class="footprint">
+    <span class="eyebrow"><span class="dot"></span>The footprint · §06</span>
+    <h2>One hundred countries.<br/><em>Three concentric arcs.</em></h2>
+    <p class="body">Trial sites and data feeds spread across the Americas, Europe &amp; Africa, and Asia-Pacific — weighted toward the home market, but materially global.</p>
+
+    <div class="globe-wrap reveal" id="globeWrap">
+      <svg id="globeSvg" viewBox="0 0 340 300" aria-hidden="true">
+        <!-- meridian guides -->
+        <defs>
+          <radialGradient id="globeGlow" cx="50%" cy="48%" r="50%">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.6"/>
+            <stop offset="60%" stop-color="#FFFFFF" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- outer ring: Americas 49% -->
+        <circle cx="170" cy="150" r="128" fill="none" stroke="var(--line)" stroke-width="1"/>
+        <circle cx="170" cy="150" r="128" fill="none" stroke="var(--teal)" stroke-width="2.5"
+                stroke-dasharray="804" stroke-dashoffset="410"
+                transform="rotate(-90 170 150)"/>
+
+        <!-- middle ring: Europe 31% -->
+        <circle cx="170" cy="150" r="92" fill="none" stroke="var(--line)" stroke-width="1"/>
+        <circle cx="170" cy="150" r="92" fill="none" stroke="var(--teal-soft)" stroke-width="2.5"
+                stroke-dasharray="578" stroke-dashoffset="399"
+                transform="rotate(-90 170 150)"/>
+
+        <!-- inner ring: APAC 20% -->
+        <circle cx="170" cy="150" r="58" fill="none" stroke="var(--line)" stroke-width="1"/>
+        <circle cx="170" cy="150" r="58" fill="none" stroke="#9CB7B0" stroke-width="2.5"
+                stroke-dasharray="365" stroke-dashoffset="292"
+                transform="rotate(-90 170 150)"/>
+
+        <!-- core dot -->
+        <circle cx="170" cy="150" r="4" fill="var(--ink)"/>
+        <text x="170" y="156" text-anchor="middle"
+              font-family="Geist Mono, monospace" font-size="9" fill="var(--ink)" letter-spacing="2">100+</text>
+        <text x="170" y="170" text-anchor="middle"
+              font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="var(--ink-3)">countries</text>
+
+        <!-- ring labels -->
+        <text x="170" y="14" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8.5" letter-spacing="1.5" fill="var(--teal)">AMERICAS · 49%</text>
+        <text x="170" y="50" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8.5" letter-spacing="1.5" fill="var(--teal-soft)">EMEA · 31%</text>
+        <text x="170" y="86" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8.5" letter-spacing="1.5" fill="#5C7C76">APAC · 20%</text>
+      </svg>
+    </div>
+
+    <div class="geo-rows">
+      <div class="geo-row">
+        <span class="marker">A</span>
+        <span class="reg">Americas<small>HQ · Durham, NC</small></span>
+        <span class="pc">49<span class="u">%</span></span>
+      </div>
+      <div class="geo-row">
+        <span class="marker">E</span>
+        <span class="reg">Europe &amp; Africa<small>Phase-1 trial dense</small></span>
+        <span class="pc">31<span class="u">%</span></span>
+      </div>
+      <div class="geo-row">
+        <span class="marker">P</span>
+        <span class="reg">Asia-Pacific<small>Fastest-growing trial market</small></span>
+        <span class="pc">20<span class="u">%</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== RESET BEAT 3 ============================== -->
+  <div class="reset-beat">
+    <p>Growth bought, <span class="hit s">growth borrowed.</span> IQVIA was assembled — Quintiles plus IMS Health — and the bill <span class="italic">still sits on the books.</span></p>
+  </div>
+
+  <!-- ============================== TONAL — DARK / WEIGHT ============================== -->
+  <section class="weight">
+    <span class="eyebrow"><span class="dot"></span>The weight · §07</span>
+    <h2>$13.88B in debt<br/>against <em>$1.98B</em><br/>in cash.</h2>
+    <p class="body">A leveraged, cash-generative balance sheet. <em class="s">Net leverage ≈ 3.3×</em> adjusted EBITDA — large, but service-cash-flow keeps it serviceable.</p>
+
+    <div class="scale-vis" id="scaleVis">
+      <svg id="scaleSvg" viewBox="0 0 340 230" aria-hidden="true">
+        <!-- pivot -->
+        <line x1="170" y1="40" x2="170" y2="200" stroke="#3B4148" stroke-width="1.5"/>
+        <polygon points="170,200 158,222 182,222" fill="#3B4148"/>
+        <!-- horizontal beam, tilted toward debt (right) -->
+        <g transform="translate(170 70) rotate(8)">
+          <line x1="-130" y1="0" x2="130" y2="0" stroke="#E6E9ED" stroke-width="2"/>
+          <!-- left pan: cash -->
+          <line x1="-100" y1="0" x2="-100" y2="36" stroke="#3B4148" stroke-width="1"/>
+          <ellipse cx="-100" cy="40" rx="36" ry="6" fill="#1B252C"/>
+          <rect x="-130" y="40" width="60" height="22" rx="2" fill="#1B252C" stroke="#2A3640" stroke-width="1"/>
+          <text x="-100" y="56" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#E6E9ED">$1.98B</text>
+          <text x="-100" y="76" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.4" fill="#8E9299">CASH</text>
+
+          <!-- right pan: debt -->
+          <line x1="100" y1="0" x2="100" y2="56" stroke="#3B4148" stroke-width="1"/>
+          <ellipse cx="100" cy="60" rx="62" ry="8" fill="#2A1612"/>
+          <rect x="40" y="60" width="120" height="44" rx="2" fill="#2A1612" stroke="#5A2418" stroke-width="1"/>
+          <rect x="40" y="60" width="120" height="44" rx="2" fill="url(#stripe)" opacity="0.35"/>
+          <text x="100" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="22" fill="#F25A37">$13.88B</text>
+          <text x="100" y="118" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.4" fill="#F25A37" opacity="0.85">DEBT</text>
+        </g>
+        <defs>
+          <pattern id="stripe" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#F25A37" stroke-width="1" opacity="0.3"/>
+          </pattern>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="leverage-row">
+      <div class="lev"><div class="l">Total debt</div><div class="v signal">$13.88<span class="u">B</span></div></div>
+      <div class="lev"><div class="l">Total equity</div><div class="v">$6.50<span class="u">B</span></div></div>
+      <div class="lev"><div class="l">Cash &amp; equiv.</div><div class="v">$1.98<span class="u">B</span></div></div>
+      <div class="lev"><div class="l">Goodwill</div><div class="v">$14.2<span class="u">B</span></div></div>
+      <div class="lev"><div class="l">Net leverage</div><div class="v">~3.3<span class="u">×</span></div></div>
+      <div class="lev"><div class="l">Capex FY'25</div><div class="v">$603<span class="u">M</span></div></div>
+    </div>
+  </section>
+
+  <!-- ============================== THE BET — buybacks ============================== -->
+  <section class="bet">
+    <span class="eyebrow" style="color:var(--signal);"><span class="dot" style="background:var(--signal);"></span>The bet · §08 · buybacks</span>
+    <h2>The dividend is <em>zero.</em><br/>The buyback is <em>billions.</em></h2>
+    <p class="body">No regular cash dividend. Capital returns flow through repurchases — and another <em class="s">$1.77B</em> remains authorized at year-end.</p>
+
+    <div class="buyback-vis reveal" id="buyback">
+      <div class="head">
+        <span>FY'25 buyback authorization</span>
+        <span>$3.01B total</span>
+      </div>
+
+      <div class="buyback-bar">
+        <!-- used: 1.244 / 3.013 = 41.3% -->
+        <div class="used" style="--w:41.3%; width:41.3%;"></div>
+        <!-- ticks at 25/50/75 -->
+        <div class="tick" style="left:25%;"></div>
+        <div class="tick" style="left:50%;"></div>
+        <div class="tick" style="left:75%;"></div>
+      </div>
+      <div class="buyback-cap">
+        <span>Repurchased<br/><b class="s">$1.244B</b></span>
+        <span style="text-align:right;">Remaining<br/><b>$1.769B</b></span>
+      </div>
+
+      <p class="buyback-foot">
+        Bolt-on M&amp;A continues — data assets, geographic reach — but the <em>biggest active capital lever</em> is the buyback. Shareholders get returned in shrinkage, not yield.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================== COMPETITION ============================== -->
+  <section class="compete">
+    <span class="eyebrow"><span class="dot"></span>The rivals · §09</span>
+    <h2>Three companies pull at <em>three different segments.</em></h2>
+    <p class="body">No single rival hits all of IQVIA. Each takes a slice. Tap any to expand.</p>
+
+    <div class="comp-list" id="comps">
+
+      <div class="comp" data-target="TAS">
+        <div class="comp-head">
+          <span class="comp-tk">VEEV</span>
+          <span class="comp-name">Veeva Systems <em>· direct</em></span>
+        </div>
+        <div class="comp-meas">
+          <span>Mcap</span>
+          <span class="comp-bar">
+            <span class="iqv" style="background:var(--teal); width:100%;"></span>
+            <span class="rival" style="background:var(--ink-3); width:91.6%; mix-blend-mode:multiply;"></span>
+          </span>
+          <span class="v">$27.43B</span>
+        </div>
+        <div class="comp-meas" style="margin-top:6px;">
+          <span>Growth</span>
+          <span class="comp-bar">
+            <span class="iqv" style="background:var(--teal); width:30%;"></span>
+            <span class="rival" style="background:var(--signal); width:100%; mix-blend-mode:multiply;"></span>
+          </span>
+          <span class="v">+16.3<span class="u" style="font-family:Geist Mono;font-style:normal;font-size:11px;color:var(--ink-3);">%</span></span>
+        </div>
+        <div class="comp-vs">Cloud-based CRM and clinical-trial software for life sciences — <em>actively displacing</em> IQVIA's commercial data and TAS platforms at major pharma clients. Smaller cap, much faster growth.</div>
+        <div class="comp-tap">▾ Tap to expand · displaces TAS</div>
+      </div>
+
+      <div class="comp" data-target="DATA">
+        <div class="comp-head">
+          <span class="comp-tk">GEHC</span>
+          <span class="comp-name">GE HealthCare <em>· adjacent</em></span>
+        </div>
+        <div class="comp-meas">
+          <span>Mcap</span>
+          <span class="comp-bar">
+            <span class="iqv" style="background:var(--teal); width:88%;"></span>
+            <span class="rival" style="background:var(--ink-3); width:100%; mix-blend-mode:multiply;"></span>
+          </span>
+          <span class="v">$34.07B</span>
+        </div>
+        <div class="comp-meas" style="margin-top:6px;">
+          <span>Revenue</span>
+          <span class="comp-bar">
+            <span class="iqv" style="background:var(--teal); width:48%;"></span>
+            <span class="rival" style="background:var(--ink-3); width:100%; mix-blend-mode:multiply;"></span>
+          </span>
+          <span class="v">$20.63B</span>
+        </div>
+        <div class="comp-vs">Healthcare data analytics and AI-driven clinical decision support — <em>large-scale imaging plus patient data</em>, with hospital and life-science clients. Larger by revenue, slower growth (+4.85% YoY).</div>
+        <div class="comp-tap">▾ Tap to expand · adjacent in data analytics</div>
+      </div>
+
+      <div class="comp" data-target="LAB">
+        <div class="comp-head">
+          <span class="comp-tk">MTD</span>
+          <span class="comp-name">Mettler-Toledo <em>· lab tools</em></span>
+        </div>
+        <div class="comp-meas">
+          <span>Mcap</span>
+          <span class="comp-bar">
+            <span class="iqv" style="background:var(--teal); width:100%;"></span>
+            <span class="rival" style="background:var(--ink-3); width:91%; mix-blend-mode:multiply;"></span>
+          </span>
+          <span class="v">$27.25B</span>
+        </div>
+        <div class="comp-meas" style="margin-top:6px;">
+          <span>Revenue</span>
+          <span class="comp-bar">
+            <span class="iqv" style="background:var(--teal); width:100%;"></span>
+            <span class="rival" style="background:var(--ink-3); width:24.7%; mix-blend-mode:multiply;"></span>
+          </span>
+          <span class="v">$4.03B</span>
+        </div>
+        <div class="comp-vs">Precision lab instruments used through pharma development and clinical trial workflows — <em>overlaps with IQVIA's bioanalytical lab services.</em> Comparable mcap, much smaller revenue, premium multiple.</div>
+        <div class="comp-tap">▾ Tap to expand · overlaps R&amp;DS labs</div>
+      </div>
+
+    </div>
+
+    <div class="compete-footer">
+      <div class="l">IQVIA — for reference<br/><b>Mcap · revenue · growth</b></div>
+      <div class="v">$29.95B</div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr auto; gap:8px; margin-top:8px; font-family:var(--font-mono); font-size:11px; color:var(--ink-3); letter-spacing:0.04em;">
+      <span>$16.31B revenue</span>
+      <span>+ healthcare-data growth</span>
+    </div>
+  </section>
+
+  <!-- ============================== CLOSE — inverts hero ============================== -->
+  <section class="close">
+    <span class="eyebrow"><span class="dot"></span>The takeaway · §10</span>
+    <h2>1.2 billion records<br/>read the future.<br/><em>$32.7B is</em><br/><em>already booked.</em></h2>
+
+    <div class="close-line">
+      <span>FY'25 revenue</span>
+      <b>$16.31B</b>
+    </div>
+    <div class="close-line">
+      <span>R&amp;DS contracted backlog</span>
+      <b>$32.7B</b>
+    </div>
+    <div class="close-line">
+      <span>What leaves per dollar</span>
+      <b>13.4¢</b>
+    </div>
+    <div class="close-line">
+      <span>Returned to shareholders</span>
+      <b>$1.244B</b>
+    </div>
+
+    <div class="close-foot">
+      <span>End · IQV recap</span>
+      <span>FY'25 · NYSE</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ===================== records dot grid ===================== */
+(function(){
+  const svg = document.getElementById('recordsDots');
+  const W = 340, H = 130;
+  const cols = 30, rows = 8;
+  const padX = 6, padY = 6;
+  const dx = (W - padX*2) / (cols-1);
+  const dy = (H - padY*2) / (rows-1);
+  let html = '';
+  // 240 dots, but a small handful are "lit" coral teal
+  const litSet = new Set();
+  // make some clusters
+  for (let r=0;r<rows;r++){
+    for (let c=0;c<cols;c++){
+      const i = r*cols + c;
+      const x = padX + c*dx;
+      const y = padY + r*dy;
+      // base dots: ink-3 muted. About 1 in 9 lit.
+      const lit = ((c*7 + r*3) % 11) < 2 || ((c+r)%17===0);
+      if (lit) litSet.add(i);
+      const fill = lit ? 'var(--teal)' : '#B7AC91';
+      const op = lit ? 1 : 0.55;
+      const rad = lit ? 1.7 : 1.3;
+      html += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rad}" fill="${fill}" opacity="${op}" data-i="${i}"/>`;
+    }
+  }
+  svg.innerHTML = html;
+})();
+
+/* ===================== scroll progress ===================== */
+const progEl = document.getElementById('prog');
+function onScroll(){
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const p = Math.max(0, Math.min(1, window.scrollY / h));
+  progEl.style.setProperty('--prog', (p*100).toFixed(2)+'%');
+}
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+
+/* ===================== reveal on scroll ===================== */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+    }
+  });
+}, {threshold:0.18});
+document.querySelectorAll('.reveal, .seg, .stat').forEach(el=>io.observe(el));
+
+/* segments fill bars */
+const segIO = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting) e.target.classList.add('in');
+  });
+}, {threshold:0.4});
+document.querySelectorAll('.seg').forEach(el=>segIO.observe(el));
+
+/* dollar bar */
+const dollar = document.getElementById('dollar');
+new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+}, {threshold:0.4}).observe(dollar);
+
+/* records progressive lighting on scroll within hero */
+const recordsSvg = document.getElementById('recordsDots');
+window.addEventListener('scroll', ()=>{
+  const rect = recordsSvg.getBoundingClientRect();
+  const vh = window.innerHeight;
+  // 0 when records fully below viewport, 1 when scrolled past top
+  let p = (vh - rect.top) / (vh + rect.height);
+  p = Math.max(0, Math.min(1, p));
+  // count of lit dots based on p
+  const dots = recordsSvg.querySelectorAll('circle');
+  const total = dots.length;
+  const litCount = Math.floor(p * total);
+  dots.forEach((d, i)=>{
+    if (i < litCount && i % 3 === 0){
+      d.setAttribute('fill', 'var(--teal)');
+      d.setAttribute('opacity', '1');
+      d.setAttribute('r','1.8');
+    }
+  });
+}, {passive:true});
+
+/* ===================== competitor expand ===================== */
+document.querySelectorAll('.comp').forEach(el=>{
+  el.addEventListener('click', ()=>{
+    el.classList.toggle('open');
+  });
+});
+
+/* ===================== count-up for the 93,000 ===================== */
+const countEl = document.querySelector('.stat .val[data-count]');
+if (countEl){
+  const target = +countEl.dataset.count;
+  let started = false;
+  new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if (e.isIntersecting && !started){
+        started = true;
+        const dur = 1400;
+        const t0 = performance.now();
+        function tick(now){
+          const t = Math.min(1, (now - t0)/dur);
+          const eased = 1 - Math.pow(1-t, 3);
+          const v = Math.floor(target * eased);
+          countEl.firstChild.nodeValue = '~' + v.toLocaleString();
+          if (t < 1) requestAnimationFrame(tick);
+          else countEl.firstChild.nodeValue = '~93,000';
+        }
+        requestAnimationFrame(tick);
+      }
+    });
+  },{threshold:0.5}).observe(countEl);
+}
+</script>
+</body>
+</html>

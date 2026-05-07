@@ -1,0 +1,1327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FITB · Recap FY '25</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+/* ============================================================
+   FITB recap — mobile, ledger-editorial
+   ============================================================ */
+:root{
+  --paper-warm: #F6F1E6;       /* aged ledger paper */
+  --paper-warm-2: #EFE8D7;
+  --rule: #D8CFB8;             /* ledger rule line */
+  --rule-strong: #B8AC8E;
+  --ink-deep: #1B1A18;
+  --ink-mid: #4B4942;
+  --ink-soft: #7A776E;
+  --signal: #C7421C;           /* deep editorial vermillion — earned moments */
+  --signal-soft: #E8B7A6;
+  --stamp: #8B2A14;
+  --teal-deep: #1F4A4A;        /* the bank green-teal whisper */
+  --gold: #B6904A;
+  --night: #14130F;            /* one earned dark interlude */
+  --night-2: #1F1D18;
+  --night-fg: #EDE6D2;
+
+  /* override design-system signal colors for this page */
+  --bg: var(--paper-warm);
+  --fg: var(--ink-deep);
+  --accent: var(--signal);
+
+  /* cost colors — preserved per spec */
+  --c-comp: #4A90D9;
+  --c-tech: #E67E22;
+  --c-occ:  #27AE60;
+  --c-card: #8E44AD;
+  --c-other:#E74C3C;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background: var(--paper-warm);
+  color: var(--ink-deep);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x:hidden;
+}
+/* ledger paper grain */
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(180,160,110,0.06) 0, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(80,60,30,0.05) 0, transparent 40%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0 0.05  0 0 0 0.18 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");
+  pointer-events:none; z-index:1; mix-blend-mode:multiply; opacity:.55;
+}
+
+/* ---------- frame ---------- */
+.page{
+  position:relative;
+  width:100%;
+  max-width:440px;
+  min-height:100vh;
+  margin:0 auto;
+  background: var(--paper-warm);
+  z-index:2;
+  box-shadow: 0 0 80px rgba(40,30,10,0.1);
+}
+
+/* ---------- sticky chrome ---------- */
+.chrome{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  background: rgba(246,241,230,0.78);
+  border-bottom: 1px solid rgba(184,172,142,0.35);
+}
+.chrome-row{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 14px 22px 10px;
+}
+.chrome-left{ display:flex; align-items:baseline; gap:10px;}
+.ticker{
+  font-family: var(--font-mono);
+  font-size:13px; font-weight:500;
+  letter-spacing:0.06em;
+  color: var(--ink-deep);
+}
+.ticker .dot{ color: var(--signal); }
+.bank-name{
+  font-family: var(--font-display);
+  font-size: 17px; font-style: italic;
+  color: var(--ink-mid);
+  letter-spacing: -0.005em;
+}
+.chrome-label{
+  font-family: var(--font-mono);
+  font-size:10px; letter-spacing:0.18em;
+  color: var(--ink-soft); text-transform:uppercase;
+}
+.progress{
+  height:1.5px; width:100%;
+  background: rgba(184,172,142,0.25);
+  position:relative;
+}
+.progress-fill{
+  position:absolute; left:0; top:0; bottom:0;
+  width:0%;
+  background: var(--signal);
+  transition: width 80ms linear;
+}
+
+/* ---------- section primitives ---------- */
+section{ position:relative; padding: 80px 24px; }
+.eyebrow{
+  font-family: var(--font-mono);
+  font-size: 10.5px; letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0 0 22px;
+  display:flex; align-items:center; gap:10px;
+}
+.eyebrow .pip{
+  display:inline-block; width:6px; height:6px; border-radius:999px;
+  background: var(--signal);
+}
+.eyebrow .num{
+  color: var(--ink-mid);
+  font-weight:500;
+}
+.lede{
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-mid);
+  text-wrap: pretty;
+  max-width: 32ch;
+}
+.lede em{
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--signal);
+  font-size: 1.1em;
+  letter-spacing: -0.005em;
+}
+.disp{
+  font-family: var(--font-display);
+  font-weight:400;
+  letter-spacing:-0.02em;
+  line-height:0.96;
+  color: var(--ink-deep);
+}
+.disp em{ font-style: italic; }
+.signal{ color: var(--signal); }
+.mono{ font-family: var(--font-mono); }
+
+/* ---------- reset beats ---------- */
+.beat{
+  padding: 56px 28px;
+  background: var(--paper-warm-2);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  position:relative;
+}
+.beat p{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.18;
+  color: var(--ink-mid);
+  letter-spacing:-0.005em;
+  text-wrap: balance;
+  margin:0;
+}
+.beat p .hit{ color: var(--signal); font-style: italic; }
+.beat .marker{
+  font-family: var(--font-mono);
+  font-size:9.5px; letter-spacing:0.22em;
+  color: var(--ink-soft); text-transform:uppercase;
+  margin-bottom: 14px;
+  display:block;
+}
+
+/* ---------- HERO ---------- */
+.hero{
+  padding: 36px 24px 60px;
+  position:relative;
+  min-height: 88vh;
+  display:flex; flex-direction:column; justify-content:space-between;
+  overflow:hidden;
+}
+.hero-stamp{
+  position:absolute;
+  right: 22px; top: 30px;
+  width: 96px; height: 96px;
+  opacity: 0.62;
+  pointer-events:none;
+  transform: rotate(-12deg);
+}
+.hero-eyebrow{
+  font-family: var(--font-mono);
+  font-size: 10.5px; letter-spacing: 0.22em;
+  color: var(--ink-soft); text-transform:uppercase;
+  display:flex; align-items:center; gap:10px;
+  margin-top: 10px;
+}
+.hero-eyebrow .rule{ flex:0 0 28px; height:1px; background: var(--rule-strong);}
+.hero-headline{
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 0.94;
+  letter-spacing: -0.025em;
+  margin-top: 24px;
+  color: var(--ink-deep);
+  text-wrap: balance;
+}
+.hero-headline em{ font-style: italic; color: var(--signal); }
+.hero-headline .frac{
+  display:inline-block;
+  font-style:italic;
+  color: var(--signal);
+}
+.hero-sub{
+  margin-top: 20px;
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  color: var(--ink-mid);
+  line-height: 1.55;
+  max-width: 32ch;
+  text-wrap: pretty;
+}
+.hero-sub em{
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--ink-deep);
+  font-size: 1.08em;
+}
+.hero-figures{
+  margin-top: 36px;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--rule);
+}
+.fig{
+  padding: 14px 0 10px;
+  border-bottom: 1px solid var(--rule);
+}
+.fig:nth-child(odd){ border-right: 1px solid var(--rule); padding-right: 14px;}
+.fig:nth-child(even){ padding-left: 14px;}
+.fig .k{
+  font-family: var(--font-mono);
+  font-size: 9.5px; letter-spacing: 0.18em;
+  color: var(--ink-soft); text-transform:uppercase;
+  margin-bottom: 4px;
+}
+.fig .v{
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing:-0.015em;
+  color: var(--ink-deep);
+}
+.fig .v.it{ font-style: italic; color: var(--signal);}
+.scroll-cue{
+  margin-top: 30px;
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 0.22em;
+  color: var(--ink-soft); text-transform:uppercase;
+  display:flex; align-items:center; gap:10px;
+  opacity: .7;
+  animation: cuepulse 2.4s var(--ease-out) infinite;
+}
+.scroll-cue::after{
+  content:""; width:1px; height:28px;
+  background: linear-gradient(var(--ink-soft), transparent);
+  display:inline-block;
+}
+@keyframes cuepulse{
+  0%,100%{ opacity:.4 } 50%{ opacity:.85 }
+}
+
+/* fraction motif behind hero */
+.fraction-motif{
+  position:absolute; left: -20px; bottom: 90px;
+  width: 260px; height: 220px;
+  opacity: 0.10;
+  pointer-events:none;
+}
+
+/* ---------- BUSINESS — balance scale ---------- */
+.balance-wrap{
+  margin: 24px -24px 0; padding: 0 24px 0;
+  position:relative;
+}
+.balance-svg{ width:100%; height:auto; display:block; }
+.balance-legend{
+  display:grid; grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+.bl-item .bl-k{
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing:0.16em; color: var(--ink-soft); text-transform:uppercase;
+  margin-bottom: 6px;
+}
+.bl-item .bl-v{
+  font-family: var(--font-display);
+  font-size: 28px; letter-spacing:-0.01em;
+  color: var(--ink-deep);
+}
+.bl-item .bl-v em{ font-style: italic; color: var(--signal); }
+.bl-item .bl-d{
+  font-size: 12px; color: var(--ink-soft); margin-top: 4px;
+  font-family: var(--font-sans);
+}
+.bl-spread{
+  margin-top: 24px;
+  padding: 18px 18px;
+  border: 1px solid var(--rule);
+  background: rgba(255,255,255,0.4);
+  border-radius: 4px;
+}
+.bl-spread .lbl{
+  font-family: var(--font-mono); font-size: 10px; letter-spacing:0.18em;
+  color: var(--ink-soft); text-transform:uppercase;
+}
+.bl-spread .v{
+  font-family: var(--font-display); font-size: 36px; line-height:1;
+  margin-top: 6px; letter-spacing:-0.015em;
+}
+.bl-spread .v em{ font-style: italic; color: var(--signal); }
+.bl-spread .d{
+  margin-top: 6px; font-size: 12.5px; color: var(--ink-mid);
+}
+
+/* ---------- SCALE — count-ups ---------- */
+.scale-grid{
+  margin-top: 28px;
+  display:flex; flex-direction:column;
+}
+.scale-row{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--rule);
+  gap: 16px;
+}
+.scale-row:first-child{ border-top: 1px solid var(--rule); }
+.scale-row .lbl{
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink-mid);
+  text-wrap: pretty;
+}
+.scale-row .lbl em{
+  font-family: var(--font-display); font-style: italic; color: var(--ink-deep);
+  font-size: 1.08em;
+}
+.scale-row .num{
+  font-family: var(--font-display);
+  font-size: 38px;
+  letter-spacing:-0.018em;
+  color: var(--ink-deep);
+  font-variant-numeric: tabular-nums;
+  white-space:nowrap;
+  line-height:1;
+}
+.scale-row .num .unit{
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--ink-soft); letter-spacing: 0.1em;
+  margin-left: 4px;
+  vertical-align: 6px;
+}
+.scale-row.signal .num{ color: var(--signal); font-style:italic; }
+
+/* ---------- FOOTPRINT ---------- */
+.map-wrap{
+  margin: 30px -24px 0; padding: 0 24px;
+}
+.map-svg{ width:100%; height:auto; display:block; }
+.map-legend{
+  margin-top: 18px;
+  display:grid; gap: 12px;
+}
+.map-legend .row{
+  display:grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items:center;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.map-legend .row:last-child{ border-bottom:none;}
+.map-legend .swatch{ width:14px; height:14px; border-radius:2px;}
+.map-legend .name{ font-family: var(--font-sans); font-size:13.5px; color: var(--ink-deep);}
+.map-legend .pct{
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--ink-deep); font-variant-numeric: tabular-nums;
+}
+
+/* ---------- COST — stubs ---------- */
+.stubs{
+  margin: 28px -8px 0;
+  display: flex; flex-direction: column;
+  gap: 0;
+}
+.stub{
+  position:relative;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-bottom: none;
+  padding: 16px 18px 16px 18px;
+  display:grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items:center;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+  transition: transform 600ms var(--ease-out), opacity 600ms var(--ease-out);
+}
+.stub:last-child{ border-bottom: 1px solid var(--rule);}
+.stub::before{
+  /* perforated edge */
+  content:"";
+  position:absolute; left:0; right:0; bottom:-1px;
+  height:2px;
+  background-image: radial-gradient(circle, var(--rule) 1px, transparent 1.2px);
+  background-size: 8px 2px;
+  background-repeat: repeat-x;
+  opacity:.6;
+}
+.stub .swatch{
+  width: 12px; height: 44px; border-radius:1px;
+}
+.stub .body{ display:flex; flex-direction:column; min-width:0;}
+.stub .body .lbl{
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.18em;
+  color: var(--ink-soft); text-transform:uppercase;
+  margin-bottom: 4px;
+}
+.stub .body .name{
+  font-family: var(--font-sans); font-size: 14px; color: var(--ink-deep);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+.stub .pct{
+  font-family: var(--font-display);
+  font-size: 32px; line-height:1;
+  letter-spacing:-0.018em;
+  color: var(--ink-deep);
+  font-variant-numeric: tabular-nums;
+}
+.stub .pct .p{
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--ink-soft);
+  vertical-align: 8px; margin-left: 1px;
+}
+.stub-bar{
+  height: 4px;
+  background: var(--rule);
+  border-radius: 99px;
+  overflow:hidden;
+  margin-top: 12px;
+  grid-column: 1 / -1;
+}
+.stub-bar > span{
+  display:block; height:100%;
+  width: 0;
+  transition: width 900ms var(--ease-out);
+}
+.stub-total{
+  margin-top: 10px;
+  padding: 14px 18px;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.14em; color: var(--ink-soft);
+  text-transform: uppercase;
+  display:flex; justify-content:space-between;
+}
+.stub-total .v{ color: var(--ink-deep); font-size: 13px;}
+
+/* ---------- THE BET — dark interlude ---------- */
+.bet{
+  background: var(--night);
+  color: var(--night-fg);
+  padding: 96px 24px 96px;
+  position:relative;
+  overflow:hidden;
+}
+.bet::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95  0 0 0 0 0.9  0 0 0 0 0.78  0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity:.4; pointer-events:none;
+}
+.bet .eyebrow{ color: rgba(237,230,210,0.55); }
+.bet .eyebrow .pip{ background: var(--signal); }
+.bet .lede{ color: rgba(237,230,210,0.78); }
+.bet .lede em{ color: #FF8B6A; }
+.bet .disp{ color: var(--night-fg); }
+.bet .disp em{ color: #FF8B6A; }
+.bet-headline{
+  font-family: var(--font-display);
+  font-size: 56px; line-height: 0.96;
+  letter-spacing: -0.025em;
+  margin-top: 8px;
+  text-wrap: balance;
+}
+.bet-headline em{ font-style: italic; color: #FF8B6A; }
+.bet-merge{
+  margin-top: 36px;
+  width: 100%; height: auto;
+  display:block;
+}
+.bet-stats{
+  margin-top: 36px;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid rgba(237,230,210,0.18);
+}
+.bet-stat{
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(237,230,210,0.18);
+}
+.bet-stat:nth-child(odd){ border-right: 1px solid rgba(237,230,210,0.18); padding-right: 18px;}
+.bet-stat:nth-child(even){ padding-left: 18px;}
+.bet-stat .k{
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.18em;
+  text-transform:uppercase; color: rgba(237,230,210,0.5);
+  margin-bottom: 6px;
+}
+.bet-stat .v{
+  font-family: var(--font-display); font-size: 30px; line-height:1;
+  letter-spacing: -0.015em; color: var(--night-fg);
+}
+.bet-stat .v.signal{ color: #FF8B6A; font-style:italic; }
+.bet-stat .d{
+  font-size: 11.5px; color: rgba(237,230,210,0.5); margin-top: 6px;
+  font-family: var(--font-sans);
+}
+
+/* ---------- COMPETITORS ---------- */
+.comp-list{
+  margin-top: 24px;
+  display:flex; flex-direction:column;
+}
+.comp{
+  padding: 22px 0 22px;
+  border-bottom: 1px solid var(--rule);
+  display:flex; flex-direction:column; gap: 10px;
+}
+.comp:first-child{ border-top: 1px solid var(--rule);}
+.comp-top{ display:flex; align-items:baseline; justify-content:space-between; gap: 16px;}
+.comp .name{
+  font-family: var(--font-display); font-size: 24px;
+  letter-spacing:-0.012em; color: var(--ink-deep);
+}
+.comp .ticker{
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.12em; color: var(--ink-soft);
+  text-transform:uppercase;
+}
+.comp .threat{
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing:0.18em;
+  color: var(--signal); text-transform:uppercase;
+}
+.comp-bars{
+  display:grid; grid-template-columns: 80px 1fr auto; align-items:center;
+  gap: 12px;
+}
+.comp-bars .pre{
+  font-family: var(--font-mono); font-size: 10px; letter-spacing:0.12em;
+  color: var(--ink-soft); text-transform:uppercase;
+}
+.comp-bars .bar{
+  height: 6px; background: var(--rule); border-radius: 99px; overflow:hidden;
+}
+.comp-bars .bar > span{
+  display:block; height:100%; width:0;
+  background: var(--ink-deep);
+  transition: width 1100ms var(--ease-out);
+}
+.comp.fitb .comp-bars .bar > span{ background: var(--signal); }
+.comp-bars .v{
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--ink-deep); font-variant-numeric: tabular-nums;
+}
+.comp .blurb{
+  font-family: var(--font-sans); font-size: 13px; color: var(--ink-mid);
+  line-height: 1.5;
+}
+.comp .blurb em{
+  font-family: var(--font-display); font-style: italic; color: var(--signal);
+  font-size: 1.05em;
+}
+
+/* ---------- TAKEAWAY ---------- */
+.takeaway{
+  padding: 100px 24px 90px;
+  position:relative;
+}
+.dollar-grid{
+  margin: 30px auto 0;
+  display:grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  max-width: 320px;
+}
+.cent{
+  aspect-ratio: 1/1;
+  border-radius: 99px;
+  background: var(--rule);
+  transition: background 700ms var(--ease-out), transform 700ms var(--ease-out);
+}
+.cent.lit{ background: var(--signal); }
+.cent.dim{ background: var(--paper-warm-2); border: 1px solid var(--rule); }
+.takeaway-cap{
+  margin-top: 26px;
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--rule);
+}
+.takeaway-cap .k{
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing:0.18em; color: var(--ink-soft); text-transform:uppercase;
+}
+.takeaway-cap .v{
+  font-family: var(--font-display); font-size: 22px; color: var(--ink-deep);
+}
+.takeaway-cap .v em{ font-style: italic; color: var(--signal);}
+.close-disp{
+  font-family: var(--font-display);
+  font-size: 56px; line-height: 0.96;
+  letter-spacing:-0.025em;
+  margin-top: 26px;
+  text-wrap: balance;
+}
+.close-disp em{ font-style: italic; color: var(--signal);}
+
+/* ---------- footer note ---------- */
+.colophon{
+  padding: 30px 24px 60px;
+  text-align:center;
+  font-family: var(--font-mono);
+  font-size: 9.5px; letter-spacing:0.22em;
+  color: var(--ink-soft); text-transform:uppercase;
+}
+.colophon .rule{
+  height:1px; background: var(--rule);
+  width: 60px; margin: 0 auto 18px;
+}
+
+/* ---------- reveal on scroll ---------- */
+.r{ opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
+.r.in{ opacity: 1; transform: none; }
+
+/* ---------- responsive cap ---------- */
+@media (min-width: 480px){
+  .page{ border-left: 1px solid var(--rule); border-right: 1px solid var(--rule); }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ============== STICKY CHROME ============== -->
+  <header class="chrome">
+    <div class="chrome-row">
+      <div class="chrome-left">
+        <span class="ticker">FITB<span class="dot">.</span></span>
+        <span class="bank-name">Fifth&nbsp;Third</span>
+      </div>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+  </header>
+
+  <!-- ============== HERO ============== -->
+  <section class="hero">
+
+    <!-- decorative fraction motif -->
+    <svg class="fraction-motif" viewBox="0 0 260 220" aria-hidden="true">
+      <g fill="none" stroke="#1B1A18" stroke-width="1">
+        <text x="0" y="86" font-family="Instrument Serif" font-style="italic" font-size="120" fill="#1B1A18" stroke="none">5</text>
+        <line x1="0" y1="106" x2="260" y2="106" stroke="#1B1A18" stroke-width="2"/>
+        <text x="180" y="200" font-family="Instrument Serif" font-style="italic" font-size="120" fill="#1B1A18" stroke="none">3</text>
+      </g>
+    </svg>
+
+    <!-- corner stamp -->
+    <svg class="hero-stamp" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#8B2A14" stroke-width="2"/>
+      <circle cx="50" cy="50" r="38" fill="none" stroke="#8B2A14" stroke-width="0.8"/>
+      <text x="50" y="42" text-anchor="middle" font-family="Geist Mono" font-size="7" letter-spacing="2" fill="#8B2A14">CINCINNATI</text>
+      <text x="50" y="58" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="20" fill="#8B2A14">1858</text>
+      <text x="50" y="72" text-anchor="middle" font-family="Geist Mono" font-size="6" letter-spacing="2" fill="#8B2A14">EST.</text>
+    </svg>
+
+    <div>
+      <div class="hero-eyebrow"><span class="rule"></span> Issue 01 · Fifth Third Bancorp</div>
+      <h1 class="hero-headline">
+        <em>Five thirds</em><br>
+        of a bank.<br>
+        <span style="color:var(--ink-mid)">A hundred and</span><br>
+        <em>sixty-eight</em> years in.
+      </h1>
+      <p class="hero-sub">
+        A peculiar name, an old institution. Fifth Third Bank still does what banks have always done — <em>take deposits, make loans, keep the spread</em> — only now from <em>1,087 branches</em> across twelve states.
+      </p>
+    </div>
+
+    <div>
+      <div class="hero-figures">
+        <div class="fig">
+          <div class="k">Market cap</div>
+          <div class="v"><span class="cu" data-target="45.59" data-decimals="2" data-prefix="$" data-suffix="B">$45.59B</span></div>
+        </div>
+        <div class="fig">
+          <div class="k">Fortune 500</div>
+          <div class="v it">№ 321</div>
+        </div>
+        <div class="fig">
+          <div class="k">Branches</div>
+          <div class="v"><span class="cu" data-target="1087">1,087</span></div>
+        </div>
+        <div class="fig">
+          <div class="k">Employees</div>
+          <div class="v"><span class="cu" data-target="18476">18,476</span></div>
+        </div>
+      </div>
+
+      <div class="scroll-cue">Scroll the recap</div>
+    </div>
+  </section>
+
+  <!-- ============== RESET BEAT 1 ============== -->
+  <section class="beat">
+    <span class="marker">— Interlude —</span>
+    <p>It's named for two banks that <span class="hit">merged in 1908</span>. Everything since has been a variation on that move.</p>
+  </section>
+
+  <!-- ============== THE BUSINESS — spread balance ============== -->
+  <section class="business">
+    <div class="eyebrow r"><span class="pip"></span> <span class="num">02</span> The business · how money flows</div>
+
+    <h2 class="disp r" style="font-size:40px;">
+      Money in,<br>
+      money out, the<br>
+      <em class="signal">spread</em> in between.
+    </h2>
+
+    <p class="lede r" style="margin-top:20px;">
+      Two-thirds of revenue is <em>net interest income</em> — the thin difference between what a deposit costs and what a loan yields. The rest is fees from payments, capital markets, and wealth.
+    </p>
+
+    <!-- Spread balance — bespoke SVG -->
+    <div class="balance-wrap r">
+      <svg class="balance-svg" viewBox="0 0 380 260" aria-hidden="true">
+        <defs>
+          <pattern id="ledger" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M0 39.5h40" stroke="#D8CFB8" stroke-width="0.6"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="380" height="260" fill="url(#ledger)" opacity="0.6"/>
+
+        <!-- columns -->
+        <g font-family="Geist Mono" font-size="9" fill="#7A776E" letter-spacing="1.5">
+          <text x="22" y="22">DEPOSITS</text>
+          <text x="284" y="22" text-anchor="end" style="text-anchor:start">LOANS</text>
+        </g>
+
+        <!-- LEFT column -->
+        <g>
+          <rect x="20" y="32" width="120" height="200" fill="#FFFFFF" stroke="#D8CFB8"/>
+          <g font-family="Geist Mono" font-size="11" fill="#1B1A18" font-variant-numeric="tabular-nums">
+            <text x="30" y="56">— DDA</text><text x="130" y="56" text-anchor="end">2.31%</text>
+            <text x="30" y="80">— Sav.</text><text x="130" y="80" text-anchor="end">2.94%</text>
+            <text x="30" y="104">— CDs</text><text x="130" y="104" text-anchor="end">4.18%</text>
+            <text x="30" y="128">— FHLB</text><text x="130" y="128" text-anchor="end">5.02%</text>
+          </g>
+          <line x1="20" y1="156" x2="140" y2="156" stroke="#1B1A18" stroke-width="0.8"/>
+          <text x="30" y="180" font-family="Geist Mono" font-size="9" fill="#7A776E" letter-spacing="1">COST OF FUNDS</text>
+          <text x="130" y="200" text-anchor="end" font-family="Instrument Serif" font-size="22" fill="#1B1A18" font-style="italic">3.4%</text>
+        </g>
+
+        <!-- center spread -->
+        <g class="spread-grow">
+          <line x1="146" y1="120" x2="234" y2="120" stroke="#C7421C" stroke-width="2" stroke-dasharray="0 0"/>
+          <circle cx="190" cy="120" r="22" fill="#C7421C"/>
+          <text x="190" y="118" text-anchor="middle" font-family="Instrument Serif" font-style="italic" fill="#FBFAF7" font-size="14">spread</text>
+          <text x="190" y="132" text-anchor="middle" font-family="Geist Mono" fill="#FBFAF7" font-size="9" letter-spacing="1">~3.0%</text>
+        </g>
+
+        <!-- RIGHT column -->
+        <g>
+          <rect x="240" y="32" width="120" height="200" fill="#FFFFFF" stroke="#D8CFB8"/>
+          <g font-family="Geist Mono" font-size="11" fill="#1B1A18" font-variant-numeric="tabular-nums">
+            <text x="250" y="56">— C&amp;I</text><text x="350" y="56" text-anchor="end">6.81%</text>
+            <text x="250" y="80">— CRE</text><text x="350" y="80" text-anchor="end">7.04%</text>
+            <text x="250" y="104">— Mort.</text><text x="350" y="104" text-anchor="end">6.42%</text>
+            <text x="250" y="128">— Auto</text><text x="350" y="128" text-anchor="end">7.55%</text>
+          </g>
+          <line x1="240" y1="156" x2="360" y2="156" stroke="#1B1A18" stroke-width="0.8"/>
+          <text x="250" y="180" font-family="Geist Mono" font-size="9" fill="#7A776E" letter-spacing="1">YIELD ON LOANS</text>
+          <text x="350" y="200" text-anchor="end" font-family="Instrument Serif" font-size="22" fill="#1B1A18" font-style="italic">6.4%</text>
+        </g>
+
+        <!-- bottom rule -->
+        <line x1="20" y1="248" x2="360" y2="248" stroke="#B8AC8E" stroke-width="0.6"/>
+      </svg>
+    </div>
+
+    <div class="bl-spread r">
+      <div class="lbl">Of every revenue dollar</div>
+      <div class="v">~<em>65¢</em> from net interest, 35¢ from fees</div>
+      <div class="d">Q1'26 revenue was $2.83B; EPS came in at $0.84.</div>
+    </div>
+  </section>
+
+  <!-- ============== RESET BEAT 2 ============== -->
+  <section class="beat">
+    <span class="marker">— Interlude —</span>
+    <p>What does <span class="hit">$45 billion</span> of bank look like? Not vault doors. <span class="hit">Doormats.</span></p>
+  </section>
+
+  <!-- ============== SCALE ============== -->
+  <section class="scale">
+    <div class="eyebrow r"><span class="pip"></span> <span class="num">03</span> The scale · counted out</div>
+
+    <h2 class="disp r" style="font-size: 38px;">
+      A regional, but<br>
+      <em>not a small one.</em>
+    </h2>
+
+    <div class="scale-grid r">
+      <div class="scale-row">
+        <div class="lbl">Branches across <em>12 states</em></div>
+        <div class="num"><span class="cu" data-target="1087">0</span></div>
+      </div>
+      <div class="scale-row">
+        <div class="lbl">ATMs in service</div>
+        <div class="num"><span class="cu" data-target="2400">0</span></div>
+      </div>
+      <div class="scale-row">
+        <div class="lbl">People on the ledger</div>
+        <div class="num"><span class="cu" data-target="18476">0</span></div>
+      </div>
+      <div class="scale-row signal">
+        <div class="lbl">Wealth & asset mgmt <em>AUM</em></div>
+        <div class="num"><span class="cu" data-target="80" data-prefix="$">0</span><span class="unit">B</span></div>
+      </div>
+      <div class="scale-row">
+        <div class="lbl">Quarterly revenue, Q1'26</div>
+        <div class="num"><span class="cu" data-target="2.83" data-decimals="2" data-prefix="$">0</span><span class="unit">B</span></div>
+      </div>
+      <div class="scale-row">
+        <div class="lbl">Operating cash, FY '25</div>
+        <div class="num"><span class="cu" data-target="4.51" data-decimals="2" data-prefix="$">0</span><span class="unit">B</span></div>
+      </div>
+    </div>
+
+    <p class="lede r" style="margin-top:32px;">
+      <em>Big enough</em> to syndicate loans. <em>Small enough</em> to fit Cincinnati and Detroit on the same letterhead.
+    </p>
+  </section>
+
+  <!-- ============== FOOTPRINT ============== -->
+  <section class="footprint">
+    <div class="eyebrow r"><span class="pip"></span> <span class="num">04</span> The footprint · twelve states</div>
+
+    <h2 class="disp r" style="font-size: 36px;">
+      <em>Heartland</em>-shaped,<br>
+      south to the Gulf.
+    </h2>
+
+    <div class="map-wrap r">
+      <svg class="map-svg" viewBox="0 0 380 270" aria-hidden="true">
+        <!-- abstract midwest blob -->
+        <g>
+          <!-- Midwest -->
+          <path d="M70,60 Q90,40 140,42 Q200,38 240,52 Q260,70 250,100 Q260,120 240,140 Q200,150 160,148 Q110,150 90,130 Q60,110 70,60Z"
+                fill="#C7421C" opacity="0.85" stroke="#1B1A18" stroke-width="0.8" />
+          <text x="160" y="98" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="1.5" fill="#FBFAF7">MIDWEST</text>
+          <text x="160" y="118" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="28" fill="#FBFAF7">60%</text>
+
+          <!-- Southeast -->
+          <path d="M170,150 Q210,148 250,158 Q290,168 295,200 Q280,225 240,228 Q200,230 175,215 Q160,195 170,150Z"
+                fill="#1F4A4A" opacity="0.85" stroke="#1B1A18" stroke-width="0.8"/>
+          <text x="232" y="190" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="1.5" fill="#FBFAF7">SOUTHEAST</text>
+          <text x="232" y="210" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#FBFAF7">30%</text>
+
+          <!-- Other -->
+          <path d="M40,180 Q60,170 80,180 Q90,200 70,215 Q50,220 38,205 Q30,192 40,180Z"
+                fill="#B6904A" opacity="0.78" stroke="#1B1A18" stroke-width="0.8"/>
+          <text x="58" y="200" text-anchor="middle" font-family="Geist Mono" font-size="7" letter-spacing="1.2" fill="#FBFAF7">OTHER</text>
+          <text x="58" y="212" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="14" fill="#FBFAF7">10%</text>
+
+          <!-- pin: Cincinnati HQ -->
+          <g transform="translate(180,100)">
+            <circle r="3.5" fill="#1B1A18"/>
+            <circle r="9" fill="none" stroke="#1B1A18" stroke-width="0.6"/>
+            <line x1="0" y1="-9" x2="0" y2="-22" stroke="#1B1A18" stroke-width="0.7"/>
+            <text x="6" y="-26" font-family="Geist Mono" font-size="8" letter-spacing="1" fill="#1B1A18">CINCINNATI · HQ</text>
+          </g>
+
+          <!-- compass + scale -->
+          <g transform="translate(326,38)" font-family="Geist Mono" font-size="8" fill="#7A776E">
+            <line x1="0" y1="-12" x2="0" y2="12" stroke="#7A776E"/>
+            <line x1="-12" y1="0" x2="12" y2="0" stroke="#7A776E"/>
+            <text x="0" y="-15" text-anchor="middle">N</text>
+          </g>
+          <g transform="translate(20,250)" font-family="Geist Mono" font-size="8" fill="#7A776E" letter-spacing="1">
+            <line x1="0" y1="0" x2="60" y2="0" stroke="#7A776E"/>
+            <line x1="0" y1="-3" x2="0" y2="3" stroke="#7A776E"/>
+            <line x1="60" y1="-3" x2="60" y2="3" stroke="#7A776E"/>
+            <text x="30" y="14" text-anchor="middle">DEPOSIT WEIGHT</text>
+          </g>
+        </g>
+      </svg>
+
+      <div class="map-legend">
+        <div class="row">
+          <div class="swatch" style="background:#C7421C"></div>
+          <div class="name">Midwest U.S.</div>
+          <div class="pct">60%</div>
+        </div>
+        <div class="row">
+          <div class="swatch" style="background:#1F4A4A"></div>
+          <div class="name">Southeast U.S.</div>
+          <div class="pct">30%</div>
+        </div>
+        <div class="row">
+          <div class="swatch" style="background:#B6904A"></div>
+          <div class="name">Other U.S. & International</div>
+          <div class="pct">10%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== RESET BEAT 3 ============== -->
+  <section class="beat">
+    <span class="marker">— Interlude —</span>
+    <p>Every dollar of revenue has a route to the floor. <span class="hit">Most of it pays people.</span></p>
+  </section>
+
+  <!-- ============== THE BILL — cost stubs ============== -->
+  <section class="bill">
+    <div class="eyebrow r"><span class="pip"></span> <span class="num">05</span> The bill · where the money goes</div>
+
+    <h2 class="disp r" style="font-size: 38px;">
+      Five stubs, torn<br>
+      from the <em>same</em><br>
+      <em>checkbook.</em>
+    </h2>
+
+    <p class="lede r" style="margin-top:18px;">
+      Banking is, before anything else, a <em>payroll business</em>. The rest goes to the buildings, the wires, the cards, and what's left.
+    </p>
+
+    <div class="stubs r" id="stubs">
+      <div class="stub">
+        <div class="swatch" style="background:#4A90D9"></div>
+        <div class="body">
+          <div class="lbl">Stub 01 · Pay</div>
+          <div class="name">Compensation & benefits</div>
+        </div>
+        <div class="pct"><span class="cu" data-target="35">0</span><span class="p">%</span></div>
+        <div class="stub-bar"><span style="background:#4A90D9" data-w="35"></span></div>
+      </div>
+      <div class="stub">
+        <div class="swatch" style="background:#E67E22"></div>
+        <div class="body">
+          <div class="lbl">Stub 02 · Wires</div>
+          <div class="name">Technology & communications</div>
+        </div>
+        <div class="pct"><span class="cu" data-target="10">0</span><span class="p">%</span></div>
+        <div class="stub-bar"><span style="background:#E67E22" data-w="10"></span></div>
+      </div>
+      <div class="stub">
+        <div class="swatch" style="background:#27AE60"></div>
+        <div class="body">
+          <div class="lbl">Stub 03 · Roof</div>
+          <div class="name">Occupancy & equipment</div>
+        </div>
+        <div class="pct"><span class="cu" data-target="7">0</span><span class="p">%</span></div>
+        <div class="stub-bar"><span style="background:#27AE60" data-w="7"></span></div>
+      </div>
+      <div class="stub">
+        <div class="swatch" style="background:#8E44AD"></div>
+        <div class="body">
+          <div class="lbl">Stub 04 · Plastic</div>
+          <div class="name">Card & processing expense</div>
+        </div>
+        <div class="pct"><span class="cu" data-target="5">0</span><span class="p">%</span></div>
+        <div class="stub-bar"><span style="background:#8E44AD" data-w="5"></span></div>
+      </div>
+      <div class="stub">
+        <div class="swatch" style="background:#E74C3C"></div>
+        <div class="body">
+          <div class="lbl">Stub 05 · Other</div>
+          <div class="name">Other noninterest expense</div>
+        </div>
+        <div class="pct"><span class="cu" data-target="10">0</span><span class="p">%</span></div>
+        <div class="stub-bar"><span style="background:#E74C3C" data-w="10"></span></div>
+      </div>
+    </div>
+
+    <div class="stub-total r">
+      <span>Largest cost line</span>
+      <span class="v">Compensation · 35%</span>
+    </div>
+  </section>
+
+  <!-- ============== THE BET — dark interlude ============== -->
+  <section class="bet">
+    <div class="eyebrow r"><span class="pip"></span> <span class="num">06</span> The bet · Comerica</div>
+
+    <h2 class="bet-headline r">
+      In February,<br>
+      the bank bought<br>
+      <em>another bank.</em>
+    </h2>
+
+    <!-- Comerica merge SVG -->
+    <svg class="bet-merge r" viewBox="0 0 380 220" aria-hidden="true">
+      <defs>
+        <pattern id="dark-rule" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M0 39.5h40" stroke="rgba(237,230,210,0.12)" stroke-width="0.6"/>
+        </pattern>
+      </defs>
+      <rect x="0" y="0" width="380" height="220" fill="url(#dark-rule)" opacity="0.6"/>
+
+      <!-- left page (FITB) -->
+      <g class="merge-left">
+        <rect x="20" y="30" width="160" height="160" fill="#1F1D18" stroke="#FF8B6A" stroke-width="0.8"/>
+        <text x="34" y="52" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#FF8B6A">FITB · CINCINNATI</text>
+        <line x1="34" y1="62" x2="166" y2="62" stroke="rgba(237,230,210,0.18)"/>
+        <g font-family="Geist Mono" font-size="10" fill="#EDE6D2" font-variant-numeric="tabular-nums" opacity="0.85">
+          <text x="34" y="84">Branches</text><text x="166" y="84" text-anchor="end">1,087</text>
+          <text x="34" y="106">Mkt cap</text><text x="166" y="106" text-anchor="end">$45.6B</text>
+          <text x="34" y="128">AUM</text><text x="166" y="128" text-anchor="end">$80B</text>
+          <text x="34" y="150">Founded</text><text x="166" y="150" text-anchor="end">1858</text>
+        </g>
+        <text x="34" y="178" font-family="Instrument Serif" font-style="italic" font-size="14" fill="#EDE6D2">Acquirer</text>
+      </g>
+
+      <!-- right page (Comerica) -->
+      <g class="merge-right">
+        <rect x="200" y="30" width="160" height="160" fill="#1F1D18" stroke="rgba(237,230,210,0.4)" stroke-width="0.8"/>
+        <text x="214" y="52" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="rgba(237,230,210,0.6)">CMA · DALLAS</text>
+        <line x1="214" y1="62" x2="346" y2="62" stroke="rgba(237,230,210,0.18)"/>
+        <g font-family="Geist Mono" font-size="10" fill="#EDE6D2" font-variant-numeric="tabular-nums" opacity="0.85">
+          <text x="214" y="84">Deal value</text><text x="346" y="84" text-anchor="end">$10.9B</text>
+          <text x="214" y="106">Goodwill</text><text x="346" y="106" text-anchor="end">+$6.2B</text>
+          <text x="214" y="128">RWA added</text><text x="346" y="128" text-anchor="end">+$73B</text>
+          <text x="214" y="150">Closed</text><text x="346" y="150" text-anchor="end">Feb '26</text>
+        </g>
+        <text x="214" y="178" font-family="Instrument Serif" font-style="italic" font-size="14" fill="#EDE6D2">Target</text>
+      </g>
+
+      <!-- binding seam -->
+      <g class="merge-seam">
+        <line x1="190" y1="30" x2="190" y2="190" stroke="#FF8B6A" stroke-width="1" stroke-dasharray="2 3"/>
+        <circle cx="190" cy="110" r="14" fill="#FF8B6A"/>
+        <text x="190" y="114" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="14" fill="#14130F">+</text>
+      </g>
+    </svg>
+
+    <div class="bet-stats r">
+      <div class="bet-stat">
+        <div class="k">Purchase</div>
+        <div class="v signal">$10.9B</div>
+        <div class="d">All-stock, closed Feb '26</div>
+      </div>
+      <div class="bet-stat">
+        <div class="k">Goodwill added</div>
+        <div class="v">$6.2B</div>
+        <div class="d">Premium over book</div>
+      </div>
+      <div class="bet-stat">
+        <div class="k">Risk-weighted assets</div>
+        <div class="v">+$73B</div>
+        <div class="d">Onto FITB's balance sheet</div>
+      </div>
+      <div class="bet-stat">
+        <div class="k">Buyback</div>
+        <div class="v signal">Paused</div>
+        <div class="d">Until CET1 recovers</div>
+      </div>
+    </div>
+
+    <p class="lede r" style="margin-top:36px;">
+      The premise is simple: <em>scale through M&A,</em> not through fintech. The cost is patience — share repurchases, frozen until capital ratios climb back. <em>$525M</em> of buybacks ran in FY'25; that pipe is closed for now.
+    </p>
+  </section>
+
+  <!-- ============== RESET BEAT 4 ============== -->
+  <section class="beat">
+    <span class="marker">— Interlude —</span>
+    <p>You can grow by buying a bank. <span class="hit">You can also be eaten by something that isn't one.</span></p>
+  </section>
+
+  <!-- ============== COMPETITORS ============== -->
+  <section class="comp-section">
+    <div class="eyebrow r"><span class="pip"></span> <span class="num">07</span> The competition · three threats</div>
+
+    <h2 class="disp r" style="font-size: 38px;">
+      None of them<br>
+      look like a <em>bank</em>.
+    </h2>
+
+    <p class="lede r" style="margin-top:16px;">
+      A <em>mortgage app</em>, a <em>wealth platform</em>, a <em>payments rail</em>. Three different doors out of the lobby.
+    </p>
+
+    <div class="comp-list r">
+      <!-- FITB benchmark -->
+      <div class="comp fitb">
+        <div class="comp-top">
+          <div>
+            <div class="name">Fifth Third</div>
+            <div class="ticker">FITB · benchmark</div>
+          </div>
+          <div class="threat">— You are here —</div>
+        </div>
+        <div class="comp-bars">
+          <div class="pre">Mkt cap</div>
+          <div class="bar"><span data-w="100"></span></div>
+          <div class="v">$45.6B</div>
+        </div>
+        <p class="blurb">Diversified regional bank. Net interest, fees, wealth, payments — <em>all the doors</em>, but old ones.</p>
+      </div>
+
+      <!-- Rocket -->
+      <div class="comp">
+        <div class="comp-top">
+          <div>
+            <div class="name">Rocket Companies</div>
+            <div class="ticker">RKT</div>
+          </div>
+          <div class="threat">— Origination —</div>
+        </div>
+        <div class="comp-bars">
+          <div class="pre">Mkt cap</div>
+          <div class="bar"><span data-w="103"></span></div>
+          <div class="v">$46.9B</div>
+        </div>
+        <div class="comp-bars">
+          <div class="pre">Rev. growth</div>
+          <div class="bar"><span data-w="100"></span></div>
+          <div class="v">+30.5% YoY</div>
+        </div>
+        <p class="blurb">A digital-first <em>mortgage platform</em> that displaces the branch. Quarterly revenue $2.82B — almost identical to FITB's.</p>
+      </div>
+
+      <!-- Ameriprise -->
+      <div class="comp">
+        <div class="comp-top">
+          <div>
+            <div class="name">Ameriprise Financial</div>
+            <div class="ticker">AMP</div>
+          </div>
+          <div class="threat">— Wealth —</div>
+        </div>
+        <div class="comp-bars">
+          <div class="pre">Mkt cap</div>
+          <div class="bar"><span data-w="93"></span></div>
+          <div class="v">$42.5B</div>
+        </div>
+        <div class="comp-bars">
+          <div class="pre">Annual rev.</div>
+          <div class="bar"><span data-w="44"></span></div>
+          <div class="v">$13.2B</div>
+        </div>
+        <p class="blurb">Goes after the <em>same affluent client</em> Fifth Third's $80B AUM business is courting. Trades at 11.93× TTM earnings.</p>
+      </div>
+
+      <!-- PayPal -->
+      <div class="comp">
+        <div class="comp-top">
+          <div>
+            <div class="name">PayPal Holdings</div>
+            <div class="ticker">PYPL</div>
+          </div>
+          <div class="threat">— Payments —</div>
+        </div>
+        <div class="comp-bars">
+          <div class="pre">Mkt cap</div>
+          <div class="bar"><span data-w="103"></span></div>
+          <div class="v">$46.8B</div>
+        </div>
+        <div class="comp-bars">
+          <div class="pre">Annual rev.</div>
+          <div class="bar"><span data-w="83"></span></div>
+          <div class="v">$33.2B</div>
+        </div>
+        <p class="blurb">Bypasses bank rails entirely — and aims at FITB's <em>Newline embedded payments</em> platform. Trades at 8.94× TTM.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== TAKEAWAY ============== -->
+  <section class="takeaway">
+    <div class="eyebrow r"><span class="pip"></span> <span class="num">08</span> The takeaway · what survives</div>
+
+    <h1 class="close-disp r">
+      A hundred cents in.<br>
+      <em>Forty-six cents</em> back<br>
+      to shareholders.
+    </h1>
+
+    <p class="lede r" style="margin-top:22px;">
+      The opening said <em>five thirds, one company.</em> The closing says it differently: of every dollar earned, <em>46¢</em> walks out the door as dividend. The rest stays — to integrate Comerica, to rebuild capital, to wait for the buyback to come back.
+    </p>
+
+    <!-- 100-cent grid: 46 lit (signal), 54 dim -->
+    <div class="dollar-grid r" id="dollarGrid"></div>
+
+    <div class="takeaway-cap r">
+      <span class="k">Payout ratio · FY '25</span>
+      <span class="v"><em>46.10%</em></span>
+    </div>
+
+    <div class="takeaway-cap r">
+      <span class="k">Dividends paid</span>
+      <span class="v">$1.16B</span>
+    </div>
+    <div class="takeaway-cap r">
+      <span class="k">Free cash flow</span>
+      <span class="v">$3.93B</span>
+    </div>
+
+    <p class="lede r" style="margin-top:32px;">
+      <em>Five thirds.</em> One company. <em>One sixty-eight</em> years in. Spread still earned, dividend still paid, and one bet — the bank inside the bank — <em>just clicked shut.</em>
+    </p>
+  </section>
+
+  <!-- ============== COLOPHON ============== -->
+  <footer class="colophon">
+    <div class="rule"></div>
+    Recap · FITB · FY '25 + Q1 '26<br>
+    Cincinnati, Ohio · est. 1858
+  </footer>
+
+</div>
+
+<script>
+// ---------- scroll progress ----------
+const fill = document.getElementById('progressFill');
+function onScroll(){
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+  fill.style.width = pct + '%';
+}
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+
+// ---------- reveal-on-scroll ----------
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting){
+      e.target.classList.add('in');
+      // count-ups inside
+      e.target.querySelectorAll('.cu').forEach(startCount);
+      // bar fills
+      e.target.querySelectorAll('[data-w]').forEach(el => {
+        const w = parseFloat(el.dataset.w);
+        // normalize: max around 103 => 100% of bar; cap at 100%
+        const pct = Math.min(100, w);
+        requestAnimationFrame(() => { el.style.width = pct + '%'; });
+      });
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.r').forEach(el => io.observe(el));
+
+// also reveal hero figures + scale grid + stubs early
+document.querySelectorAll('.hero-figures, .scale-grid, .stubs').forEach(el => {
+  el.querySelectorAll('.cu').forEach(startCount);
+});
+
+// ---------- count-up ----------
+function startCount(el){
+  if (el.dataset.done) return;
+  el.dataset.done = '1';
+  const target = parseFloat(el.dataset.target);
+  const decimals = parseInt(el.dataset.decimals || '0', 10);
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '';
+  const dur = 1100;
+  const start = performance.now();
+  const fmt = (v) => {
+    const n = decimals ? v.toFixed(decimals) : Math.round(v).toLocaleString('en-US');
+    return prefix + n + suffix;
+  };
+  function tick(t){
+    const k = Math.min(1, (t - start) / dur);
+    const eased = 1 - Math.pow(1 - k, 3);
+    el.textContent = fmt(target * eased);
+    if (k < 1) requestAnimationFrame(tick);
+    else el.textContent = fmt(target);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ---------- 100-cent grid ----------
+(function(){
+  const grid = document.getElementById('dollarGrid');
+  const lit = 46; // payout ratio
+  for (let i = 0; i < 100; i++){
+    const c = document.createElement('div');
+    c.className = 'cent ' + (i < lit ? 'lit' : 'dim');
+    c.style.transitionDelay = (i * 8) + 'ms';
+    grid.appendChild(c);
+  }
+})();
+</script>
+</body>
+</html>

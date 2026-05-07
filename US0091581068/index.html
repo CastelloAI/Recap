@@ -1,0 +1,1678 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>APD · Recap FY '25</title>
+<link rel="stylesheet" href="system.css">
+<style>
+/* ============================================================
+   APD Recap — atmospheric / cryogenic register
+   Borrows Zair's type stack + spacing + motion primitives;
+   shifts the palette toward steel + glacier + ink for an
+   industrial-gases company. Coral is reserved for the
+   single "bet" beat (NEOM / hydrogen).
+   ============================================================ */
+:root{
+  /* Atmospheric palette derived from APD's industry */
+  --apd-ink:        #0B1620;   /* deep cryo ink */
+  --apd-ink-2:      #1A2A38;
+  --apd-paper:      #F4F6F8;   /* cool paper */
+  --apd-paper-2:    #E9EEF2;
+  --apd-paper-3:    #DDE5EC;
+  --apd-mist:       #C8D4DE;
+  --apd-fog:        #93A4B4;
+  --apd-steel:      #4F6B82;
+  --apd-glacier:    #4A90D9;   /* matches the supplied COR hex */
+  --apd-helium:     #FFD66B;   /* warm gas signal */
+  --apd-h2:         #FF7A57;   /* the BET — coral, used once */
+  --apd-night:      #07101A;   /* near-black for weight section */
+
+  /* Override semantic page surfaces */
+  --bg: var(--apd-paper);
+  --fg: var(--apd-ink);
+  --fg-muted: #2C3E50;
+  --fg-subtle: var(--apd-steel);
+
+  --chrome-h: 52px;
+}
+
+html,body{margin:0;padding:0;background:var(--apd-paper);color:var(--apd-ink);}
+body{
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+*{box-sizing:border-box;}
+
+/* ---------- mobile shell: the page IS the design (no bezel) ---------- */
+.shell{
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  position: relative;
+  background: var(--apd-paper);
+  overflow: hidden;
+}
+
+/* ============================================================
+   PERSISTENT CHROME
+   ============================================================ */
+.chrome{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--chrome-h);
+  display:flex;
+  align-items:center;
+  padding: 0 18px;
+  gap: 10px;
+  background: rgba(244,246,248,0.72);
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  border-bottom: 1px solid rgba(11,22,32,0.06);
+}
+.chrome .ticker{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  color: var(--apd-ink);
+  background: var(--apd-ink);
+  color: #fff;
+  padding: 4px 7px;
+  border-radius: 4px;
+}
+.chrome .name{
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--apd-ink);
+  letter-spacing: -0.01em;
+}
+.chrome .recap{
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--apd-steel);
+}
+.progress{
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1.5px;
+  background: transparent;
+}
+.progress > i{
+  display:block;
+  height: 100%;
+  width: 0%;
+  background: var(--apd-glacier);
+  transition: width 60ms linear;
+}
+
+/* ============================================================
+   GLOBAL SECTION RHYTHM
+   ============================================================ */
+section{
+  position: relative;
+  padding: 80px 24px;
+}
+.eyebrow{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--apd-steel);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.eyebrow .dot{
+  width: 5px; height: 5px; border-radius:999px;
+  background: var(--apd-glacier);
+  display:inline-block;
+}
+.eyebrow .num{
+  color: var(--apd-fog);
+  letter-spacing: 0.04em;
+}
+
+/* Editorial display */
+.display{
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  color: var(--apd-ink);
+}
+.display .it{ font-style: italic; }
+.display .sig{ color: var(--apd-glacier); font-style: italic; }
+.display .h2sig{ color: var(--apd-h2); font-style: italic; }
+
+p.body{
+  font-family: var(--font-sans);
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--fg-muted);
+  margin: 0;
+  text-wrap: pretty;
+}
+p.body em{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.06em;
+  color: var(--apd-ink);
+}
+p.body em.sig{ color: var(--apd-glacier); }
+
+/* ---------- Reset beats ---------- */
+.reset-beat{
+  padding: 56px 28px;
+  background: var(--apd-paper-2);
+  border-top: 1px solid rgba(11,22,32,0.06);
+  border-bottom: 1px solid rgba(11,22,32,0.06);
+}
+.reset-beat .quote{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--apd-ink);
+  text-wrap: pretty;
+}
+.reset-beat .quote .sig{ color: var(--apd-glacier); }
+.reset-beat .quote .h2sig{ color: var(--apd-h2); }
+.reset-beat .pre{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--apd-fog);
+  margin-bottom: 18px;
+}
+
+/* ============================================================
+   HERO — the air, sold
+   ============================================================ */
+.hero{
+  padding: 0;
+  min-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg,
+              #EAF2F8 0%,
+              #DCE6EF 35%,
+              #C8D4DE 70%,
+              #B5C3D0 100%);
+}
+.hero .sky{
+  position: absolute; inset: 0; pointer-events:none;
+}
+.hero .sky svg{ width:100%; height:100%; display:block;}
+.hero .copy{
+  position: relative;
+  padding: 32px 24px 64px;
+  z-index: 3;
+}
+.hero .copy .pre{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--apd-steel);
+  margin-bottom: 18px;
+  display:flex;
+  gap: 8px;
+  align-items:center;
+}
+.hero h1{
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 62px;
+  line-height: 0.94;
+  letter-spacing: -0.03em;
+  color: var(--apd-ink);
+  margin: 0 0 18px;
+}
+.hero h1 .it{ font-style: italic; color: var(--apd-glacier); }
+.hero .lede{
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--apd-ink-2);
+  max-width: 32ch;
+  margin: 0;
+}
+.hero .lede em{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.06em;
+  color: var(--apd-glacier);
+}
+.hero .scroll-cue{
+  position: absolute;
+  bottom: 18px;
+  left: 24px;
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--apd-steel);
+  opacity: 0.8;
+}
+.hero .scroll-cue .line{
+  display:block;
+  width: 28px; height: 1px;
+  background: var(--apd-steel);
+  position: relative;
+  overflow: hidden;
+}
+.hero .scroll-cue .line::after{
+  content:"";
+  position:absolute;
+  top:0; left: -50%;
+  width: 50%; height:100%;
+  background: var(--apd-glacier);
+  animation: cue 2.2s var(--ease-out) infinite;
+}
+@keyframes cue{
+  0%{ transform: translateX(0); }
+  100%{ transform: translateX(200%); }
+}
+
+/* ============================================================
+   ATMOSPHERE BREAKDOWN — what air actually IS
+   ============================================================ */
+.atm{
+  background: var(--apd-paper);
+}
+.atm .col{
+  display:flex;
+  align-items: stretch;
+  gap: 14px;
+  margin-top: 28px;
+}
+.atm .col .bar-wrap{
+  flex: 0 0 auto;
+  width: 86px;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  background: var(--apd-paper-3);
+  display:flex; flex-direction: column;
+  height: 460px;
+}
+.atm .col .seg{
+  position: relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color: rgba(255,255,255,0.95);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  flex: 0 0 var(--seg);
+  transition: filter 0.4s var(--ease-out);
+}
+.atm .legend{
+  flex: 1;
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+.atm .legend .row{
+  position: relative;
+  padding-left: 14px;
+}
+.atm .legend .row .swatch{
+  position:absolute; left: 0; top: 6px;
+  width: 6px; height: 6px; border-radius: 999px;
+}
+.atm .legend .row .gas{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--apd-ink);
+  letter-spacing: -0.01em;
+}
+.atm .legend .row .pct{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--apd-steel);
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+  display:block;
+}
+.atm .legend .row .note{
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--apd-fog);
+  margin-top: 1px;
+  letter-spacing: 0.01em;
+}
+
+/* ============================================================
+   SCALE — count-up tiles, but as editorial stack
+   ============================================================ */
+.scale .stack{
+  margin-top: 28px;
+  display:flex;
+  flex-direction: column;
+}
+.scale .row{
+  padding: 26px 0;
+  border-top: 1px solid rgba(11,22,32,0.08);
+  display:flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.scale .row:last-child{ border-bottom: 1px solid rgba(11,22,32,0.08); }
+.scale .row .num{
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 56px;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--apd-ink);
+}
+.scale .row .num .it{ font-style: italic; color: var(--apd-glacier); }
+.scale .row .num .small{ font-size: 24px; color: var(--apd-steel); margin-left: 2px; font-style: italic;}
+.scale .row .label{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--apd-steel);
+  text-align: right;
+  max-width: 13ch;
+  line-height: 1.3;
+}
+
+/* ---------- Quarterly bar (revenue cadence) ---------- */
+.cadence{
+  margin-top: 36px;
+  padding: 22px 18px;
+  background: var(--apd-paper-2);
+  border-radius: 12px;
+  border: 1px solid rgba(11,22,32,0.06);
+}
+.cadence .head{
+  display:flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 18px;
+}
+.cadence .head .l{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--apd-ink);
+  letter-spacing: -0.01em;
+}
+.cadence .head .r{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--apd-steel);
+}
+.cadence svg{ width:100%; display:block;}
+
+/* ============================================================
+   COSTS — "a hundred cents in"
+   ============================================================ */
+.costs{
+  background: var(--apd-paper-2);
+}
+.costs .meta-line{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--apd-steel);
+  margin-top: 18px;
+  margin-bottom: 22px;
+}
+.costs .grid{
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 3px;
+  margin-top: 10px;
+}
+.costs .cell{
+  aspect-ratio: 1/1;
+  border-radius: 3px;
+  background: var(--apd-paper-3);
+  position: relative;
+  transition: background 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+}
+.costs .cell.lit{
+  /* color set inline */
+}
+.costs .legend{
+  margin-top: 26px;
+  display:flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.costs .legend .li{
+  display:flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(11,22,32,0.05);
+}
+.costs .legend .li:last-child{ border-bottom: none;}
+.costs .legend .li .lhs{
+  display: flex; align-items: center; gap: 12px;
+}
+.costs .legend .li .sw{
+  width: 18px; height: 18px; border-radius: 4px;
+}
+.costs .legend .li .lbl{
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--apd-ink);
+  letter-spacing: -0.005em;
+}
+.costs .legend .li .pct{
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--apd-steel);
+  letter-spacing: 0.04em;
+}
+.costs .survives{
+  margin-top: 30px;
+  padding: 20px 18px;
+  border: 1px dashed rgba(11,22,32,0.18);
+  border-radius: 10px;
+  background: var(--apd-paper);
+}
+.costs .survives .lbl{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--apd-steel);
+  margin-bottom: 8px;
+}
+.costs .survives .v{
+  font-family: var(--font-display);
+  font-size: 36px;
+  letter-spacing: -0.02em;
+  color: var(--apd-ink);
+}
+.costs .survives .v .it{ font-style: italic; color: var(--apd-glacier);}
+.costs .survives .v .pct{ font-style: italic; color: var(--apd-glacier); font-size: 28px;}
+
+/* ============================================================
+   FOOTPRINT — geographic
+   ============================================================ */
+.foot{
+  background: var(--apd-paper);
+}
+.foot .map-wrap{
+  margin-top: 30px;
+  position: relative;
+  background: var(--apd-paper-2);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(11,22,32,0.05);
+}
+.foot .map-wrap svg{ width: 100%; height: auto; display:block;}
+.foot .geo-list{
+  margin-top: 22px;
+  display:flex;
+  flex-direction: column;
+}
+.foot .geo-list .row{
+  padding: 14px 0;
+  border-top: 1px solid rgba(11,22,32,0.08);
+  display:flex;
+  align-items: center;
+  gap: 14px;
+}
+.foot .geo-list .row:last-child{ border-bottom: 1px solid rgba(11,22,32,0.08); }
+.foot .geo-list .pct{
+  font-family: var(--font-display);
+  font-size: 30px;
+  letter-spacing: -0.01em;
+  color: var(--apd-ink);
+  min-width: 70px;
+}
+.foot .geo-list .pct .it{ font-style: italic; color: var(--apd-glacier);}
+.foot .geo-list .name{
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  color: var(--apd-ink);
+  letter-spacing: -0.005em;
+  flex: 1;
+}
+.foot .geo-list .bar{
+  flex: 0 0 90px;
+  height: 4px;
+  background: var(--apd-paper-3);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.foot .geo-list .bar i{
+  display:block; height:100%;
+  background: var(--apd-glacier);
+  width: 0;
+  transition: width 0.7s var(--ease-out);
+}
+.foot .countries{
+  margin-top: 18px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--apd-steel);
+}
+
+/* ============================================================
+   THE BET — NEOM, hydrogen — the ONE earned tonal interlude
+   ============================================================ */
+.bet{
+  background: var(--apd-night);
+  color: #F4F2ED;
+  padding: 96px 24px 110px;
+  position: relative;
+  overflow: hidden;
+}
+.bet::before{
+  content:"";
+  position:absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 80% 8%, rgba(255,122,87,0.18), transparent 55%),
+    radial-gradient(ellipse at 10% 90%, rgba(74,144,217,0.10), transparent 60%);
+  pointer-events: none;
+}
+.bet .eyebrow{ color: var(--apd-h2); }
+.bet .eyebrow .dot{ background: var(--apd-h2); }
+.bet h2{
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 54px;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  color: #F4F2ED;
+  margin: 0 0 16px;
+}
+.bet h2 .it{ font-style: italic; color: var(--apd-h2); }
+.bet p.body{ color: rgba(244,242,237,0.74); }
+.bet p.body em{ color: #F4F2ED; }
+.bet p.body em.sig{ color: var(--apd-h2);}
+
+.bet .figures{
+  margin-top: 36px;
+  display:flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.bet .fig{
+  border-top: 1px solid rgba(244,242,237,0.12);
+  padding-top: 18px;
+}
+.bet .fig .v{
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 0.9;
+  letter-spacing: -0.025em;
+  color: #F4F2ED;
+}
+.bet .fig .v .it{ font-style: italic; color: var(--apd-h2); }
+.bet .fig .v .neg{ color: var(--apd-h2); }
+.bet .fig .lbl{
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(244,242,237,0.55);
+}
+.bet .fig .lbl .em{ color: var(--apd-h2); }
+
+.bet .pipe{
+  position: relative;
+  margin: 40px -24px 10px;
+  padding: 0 24px;
+}
+.bet .pipe svg{ width: 100%; display:block; }
+
+/* ============================================================
+   COMPETITION — Linde towers, others rank
+   ============================================================ */
+.comp{
+  background: var(--apd-paper);
+  padding-top: 90px;
+}
+.comp .field{
+  margin-top: 30px;
+  position: relative;
+  padding: 0 4px;
+}
+.comp .field svg{ width:100%; display:block;}
+.comp .roster{
+  margin-top: 30px;
+  display:flex;
+  flex-direction: column;
+}
+.comp .item{
+  padding: 22px 0;
+  border-top: 1px solid rgba(11,22,32,0.08);
+  cursor: pointer;
+}
+.comp .item:last-child{ border-bottom: 1px solid rgba(11,22,32,0.08); }
+.comp .item .head{
+  display:flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+}
+.comp .item .nm{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+  color: var(--apd-ink);
+}
+.comp .item .tk{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--apd-steel);
+}
+.comp .item .meta{
+  display:flex;
+  gap: 18px;
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--apd-steel);
+}
+.comp .item .meta b{
+  color: var(--apd-ink);
+  font-weight: 500;
+}
+.comp .item .desc{
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s var(--ease-out), margin 0.4s var(--ease-out);
+}
+.comp .item.open .desc{
+  max-height: 320px;
+  margin-top: 14px;
+}
+.comp .item .desc p{
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--fg-muted);
+  margin: 0;
+}
+.comp .item .toggle{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--apd-glacier);
+  margin-top: 12px;
+  display: inline-block;
+}
+.comp .item.open .toggle{ color: var(--apd-steel); }
+.comp .vs-line{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--apd-fog);
+  margin-top: 22px;
+}
+
+/* ============================================================
+   THE TAKEAWAY — what survives
+   ============================================================ */
+.close{
+  background: var(--apd-paper);
+  padding: 100px 24px 120px;
+  position: relative;
+}
+.close::before{
+  content:"";
+  position:absolute;
+  top:0; left: 50%;
+  transform: translateX(-50%);
+  width: 32px; height: 1px;
+  background: var(--apd-glacier);
+}
+.close h2{
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 56px;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--apd-ink);
+  margin: 0 0 30px;
+}
+.close h2 .it{ font-style: italic; color: var(--apd-glacier);}
+.close .ledger{
+  margin-top: 24px;
+  border-top: 1px solid rgba(11,22,32,0.1);
+  border-bottom: 1px solid rgba(11,22,32,0.1);
+  padding: 14px 0;
+}
+.close .ledger .row{
+  display:flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 14px 0;
+  border-bottom: 1px dashed rgba(11,22,32,0.08);
+}
+.close .ledger .row:last-child{ border-bottom: none; }
+.close .ledger .l{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--apd-steel);
+}
+.close .ledger .v{
+  font-family: var(--font-display);
+  font-size: 26px;
+  color: var(--apd-ink);
+  letter-spacing: -0.01em;
+}
+.close .ledger .v .it{ font-style: italic; color: var(--apd-glacier); }
+.close .signoff{
+  margin-top: 36px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.3;
+  color: var(--apd-steel);
+  letter-spacing: -0.005em;
+}
+.close .signoff .sig{ color: var(--apd-glacier); }
+.close .stamp{
+  margin-top: 56px;
+  display:flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--apd-fog);
+  border-top: 1px solid rgba(11,22,32,0.08);
+  padding-top: 18px;
+}
+
+/* ---------- Reveal animations ---------- */
+.reveal{
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+.reveal.in{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* small screens (most users) */
+@media (max-width: 380px){
+  .hero h1{ font-size: 54px; }
+  .scale .row .num{ font-size: 46px; }
+  .bet h2{ font-size: 44px; }
+  .close h2{ font-size: 46px; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell" id="shell">
+
+  <!-- ================ PERSISTENT CHROME ================ -->
+  <div class="chrome">
+    <span class="ticker">APD</span>
+    <span class="name">Air Products</span>
+    <span class="recap">Recap · FY '25</span>
+    <div class="progress"><i id="prog"></i></div>
+  </div>
+
+  <!-- ================ HERO ================ -->
+  <section class="hero" data-screen-label="01 Hero · The Air, Sold">
+    <div class="sky">
+      <!-- atmospheric column: sky → ground, with column lines suggesting cryogenic distillation -->
+      <svg viewBox="0 0 440 800" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="vapor" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.65"/>
+            <stop offset="60%" stop-color="#FFFFFF" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="ground" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#B5C3D0" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#7E94A6" stop-opacity="0.45"/>
+          </linearGradient>
+          <radialGradient id="sun" cx="0.78" cy="0.18" r="0.42">
+            <stop offset="0%" stop-color="#FFE9C8" stop-opacity="0.95"/>
+            <stop offset="60%" stop-color="#FFE9C8" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- sun bloom -->
+        <rect width="440" height="800" fill="url(#sun)"/>
+
+        <!-- horizon vapor layers -->
+        <ellipse cx="120" cy="540" rx="320" ry="42" fill="url(#vapor)"/>
+        <ellipse cx="320" cy="600" rx="280" ry="34" fill="url(#vapor)" opacity="0.7"/>
+        <ellipse cx="180" cy="660" rx="340" ry="32" fill="url(#vapor)" opacity="0.5"/>
+
+        <!-- distillation columns silhouette: tall cylinders against the sky -->
+        <g opacity="0.85" id="columns">
+          <!-- columns drawn ground-up with a parallax group for scroll -->
+          <g transform="translate(0,520)">
+            <!-- back row -->
+            <rect x="40"  y="-150" width="14" height="250" fill="#7E94A6" opacity="0.55"/>
+            <rect x="38"  y="-160" width="18" height="14"  fill="#7E94A6" opacity="0.55"/>
+            <rect x="80"  y="-110" width="10" height="200" fill="#90A4B6" opacity="0.5"/>
+            <rect x="98"  y="-180" width="16" height="280" fill="#6E8597" opacity="0.55"/>
+            <rect x="96"  y="-186" width="20" height="10"  fill="#6E8597" opacity="0.55"/>
+            <rect x="135" y="-90"  width="8"  height="180" fill="#90A4B6" opacity="0.5"/>
+
+            <!-- mid -->
+            <rect x="170" y="-220" width="22" height="320" fill="#506880" opacity="0.7"/>
+            <rect x="167" y="-230" width="28" height="12"  fill="#506880" opacity="0.7"/>
+            <rect x="200" y="-180" width="14" height="280" fill="#5A7188" opacity="0.65"/>
+            <rect x="220" y="-260" width="26" height="360" fill="#3F576F" opacity="0.78"/>
+            <rect x="217" y="-272" width="32" height="14"  fill="#3F576F" opacity="0.78"/>
+            <rect x="252" y="-160" width="12" height="260" fill="#5A7188" opacity="0.65"/>
+
+            <!-- front row -->
+            <rect x="280" y="-300" width="30" height="400" fill="#2A3F55" opacity="0.85"/>
+            <rect x="277" y="-314" width="36" height="16"  fill="#2A3F55" opacity="0.85"/>
+            <rect x="318" y="-200" width="14" height="300" fill="#39516A" opacity="0.78"/>
+            <rect x="340" y="-280" width="24" height="380" fill="#2A3F55" opacity="0.85"/>
+            <rect x="338" y="-292" width="28" height="14"  fill="#2A3F55" opacity="0.85"/>
+
+            <!-- piping connections at bottom -->
+            <line x1="0" y1="100" x2="440" y2="100" stroke="#1A2A38" stroke-width="3"/>
+            <line x1="0" y1="106" x2="440" y2="106" stroke="#0B1620" stroke-width="2" opacity="0.6"/>
+          </g>
+        </g>
+
+        <!-- ground gradient -->
+        <rect x="0" y="610" width="440" height="200" fill="url(#ground)"/>
+
+        <!-- vapor plumes rising from columns (animated) -->
+        <g id="plumes" opacity="0.6">
+          <ellipse cx="295" cy="200" rx="28" ry="40" fill="#FFFFFF" opacity="0.7"/>
+          <ellipse cx="232" cy="240" rx="22" ry="32" fill="#FFFFFF" opacity="0.55"/>
+          <ellipse cx="350" cy="230" rx="20" ry="28" fill="#FFFFFF" opacity="0.5"/>
+          <ellipse cx="184" cy="280" rx="16" ry="24" fill="#FFFFFF" opacity="0.4"/>
+        </g>
+
+        <!-- airborne particles -->
+        <g id="particles">
+          <circle cx="60" cy="120" r="1.4" fill="#4A90D9" opacity="0.6"/>
+          <circle cx="140" cy="180" r="1" fill="#4A90D9" opacity="0.5"/>
+          <circle cx="380" cy="100" r="1.6" fill="#4A90D9" opacity="0.6"/>
+          <circle cx="280" cy="60" r="1.2" fill="#4A90D9" opacity="0.5"/>
+          <circle cx="100" cy="60" r="1" fill="#4A90D9" opacity="0.4"/>
+          <circle cx="400" cy="240" r="1.2" fill="#4A90D9" opacity="0.5"/>
+          <circle cx="220" cy="140" r="1" fill="#4A90D9" opacity="0.4"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="copy">
+      <div class="pre">
+        <span style="display:inline-block;width:6px;height:6px;border-radius:999px;background:var(--apd-glacier);"></span>
+        NYSE · APD · Allentown, PA
+      </div>
+      <h1>The air,<br><span class="it">sold.</span></h1>
+      <p class="lede">Air Products separates the atmosphere into oxygen, nitrogen, argon, hydrogen, helium — and ships it to <em>refineries, hospitals, fabs and steel mills</em> in roughly fifty countries.</p>
+    </div>
+
+    <div class="scroll-cue">
+      <span>Scroll</span>
+      <span class="line"></span>
+    </div>
+  </section>
+
+  <!-- ================ RESET BEAT 1 ================ -->
+  <div class="reset-beat">
+    <div class="pre">— I —</div>
+    <p class="quote">You can't see it, you can't taste it, and yet <span class="sig">somebody has to make it.</span> At industrial scale. Continuously. For sixty-five years.</p>
+  </div>
+
+  <!-- ================ ATMOSPHERE — the gases sold ================ -->
+  <section class="atm" data-screen-label="02 The Business · Five Gases">
+    <div class="eyebrow"><span class="dot"></span> The business <span class="num">· 02</span></div>
+    <h2 class="display" style="font-size:42px;">Five gases.<br><span class="it sig">A planet of customers.</span></h2>
+    <p class="body" style="margin-top:18px;">On-site pipelines into a refinery. Bulk liquid trucked to a hospital. Cylinders to a welder. <em>Equipment</em> for the customer who wants the column itself.</p>
+
+    <div class="col">
+      <div class="bar-wrap" aria-label="Composition of dry air">
+        <div class="seg" style="--seg: 78%; background: linear-gradient(180deg, #6BA0CC, #4A7BA3);">N₂</div>
+        <div class="seg" style="--seg: 21%; background: linear-gradient(180deg, #87B5DA, #5E8AAE);">O₂</div>
+        <div class="seg" style="--seg: 1%; background: linear-gradient(180deg, #FFD66B, #E8B845); color:#0B1620; font-size:8px;">·</div>
+      </div>
+      <div class="legend">
+        <div class="row">
+          <span class="swatch" style="background:#4A7BA3;"></span>
+          <span class="gas">Nitrogen</span>
+          <span class="pct">78% of dry air</span>
+          <span class="note">Inert blankets, food, electronics</span>
+        </div>
+        <div class="row">
+          <span class="swatch" style="background:#5E8AAE;"></span>
+          <span class="gas">Oxygen</span>
+          <span class="pct">21% of dry air</span>
+          <span class="note">Steel, refining, hospitals</span>
+        </div>
+        <div class="row">
+          <span class="swatch" style="background:#7B71F5;"></span>
+          <span class="gas">Argon</span>
+          <span class="pct">~1%</span>
+          <span class="note">Welding, semiconductors</span>
+        </div>
+        <div class="row">
+          <span class="swatch" style="background:#FF7A57;"></span>
+          <span class="gas">Hydrogen</span>
+          <span class="pct">made, not mined</span>
+          <span class="note">Refining, future fuel</span>
+        </div>
+        <div class="row">
+          <span class="swatch" style="background:#FFD66B;"></span>
+          <span class="gas">Helium</span>
+          <span class="pct">scarce</span>
+          <span class="note">MRI, lithography, lift</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top:34px; font-size:15px;">APD is the <em class="sig">world's largest supplier</em> of hydrogen and helium — the two gases on this list that don't come straight out of the air.</p>
+  </section>
+
+  <!-- ================ SCALE ================ -->
+  <section class="scale" data-screen-label="03 Scale">
+    <div class="eyebrow"><span class="dot"></span> The scale <span class="num">· 03</span></div>
+    <h2 class="display" style="font-size:42px;">Twelve billion dollars<br><span class="it sig">of breath.</span></h2>
+    <p class="body" style="margin-top:18px;">FY2025 revenue, end-to-end. Most of it locked into <em>take-or-pay</em> contracts that outlast presidents.</p>
+
+    <div class="stack">
+      <div class="row">
+        <div class="num" data-num="12.04" data-suffix="B" data-prefix="$">$<span class="cv">0.00</span><span class="small">B</span></div>
+        <div class="label">FY2025 revenue</div>
+      </div>
+      <div class="row">
+        <div class="num" data-num="3.10" data-suffix="B" data-prefix="$">$<span class="cv">0.00</span><span class="small">B</span></div>
+        <div class="label">Q1 FY2026 revenue</div>
+      </div>
+      <div class="row">
+        <div class="num" data-num="64.97" data-suffix="B" data-prefix="$">$<span class="cv">0.00</span><span class="small">B</span></div>
+        <div class="label">Market cap</div>
+      </div>
+      <div class="row">
+        <div class="num" data-num="21" data-suffix="K">~<span class="cv">0</span><span class="small">K employees</span></div>
+        <div class="label">Across ~50 countries</div>
+      </div>
+      <div class="row">
+        <div class="num" data-num="3.16" data-prefix="$">$<span class="cv">0.00</span></div>
+        <div class="label">Q1 FY2026 EPS</div>
+      </div>
+    </div>
+
+    <div class="cadence">
+      <div class="head">
+        <div class="l">Quarterly cadence</div>
+        <div class="r">Americas · $1.3B Q4</div>
+      </div>
+      <svg viewBox="0 0 380 160" aria-hidden="true">
+        <!-- baseline -->
+        <line x1="0" y1="140" x2="380" y2="140" stroke="#0B1620" stroke-width="1" opacity="0.18"/>
+        <!-- bars: stylised quarter-on-quarter for FY25 + Q1 FY26 -->
+        <g id="cadenceBars">
+          <rect class="qb" x="20"  y="140" width="38" height="0" rx="2" fill="#4A90D9" opacity="0.55" data-h="62"/>
+          <rect class="qb" x="78"  y="140" width="38" height="0" rx="2" fill="#4A90D9" opacity="0.7"  data-h="74"/>
+          <rect class="qb" x="136" y="140" width="38" height="0" rx="2" fill="#4A90D9" opacity="0.85" data-h="86"/>
+          <rect class="qb" x="194" y="140" width="38" height="0" rx="2" fill="#4A90D9"                data-h="100"/>
+          <rect class="qb" x="252" y="140" width="38" height="0" rx="2" fill="#FF7A57"                data-h="108"/>
+        </g>
+        <!-- quarter labels -->
+        <g font-family="Geist Mono, monospace" font-size="9" fill="#4F6B82" letter-spacing="1">
+          <text x="39"  y="155" text-anchor="middle">Q1·25</text>
+          <text x="97"  y="155" text-anchor="middle">Q2·25</text>
+          <text x="155" y="155" text-anchor="middle">Q3·25</text>
+          <text x="213" y="155" text-anchor="middle">Q4·25</text>
+          <text x="271" y="155" text-anchor="middle" fill="#FF7A57">Q1·26</text>
+        </g>
+        <!-- callout for Q1 FY26 -->
+        <g font-family="Instrument Serif, serif" fill="#0B1620">
+          <text x="335" y="36" font-size="13" font-style="italic" text-anchor="end">$3.10B</text>
+          <text x="335" y="50" font-size="9" font-family="Geist Mono, monospace" fill="#4F6B82" letter-spacing="1.5" text-anchor="end">Q1 FY26</text>
+        </g>
+        <line x1="271" y1="34" x2="305" y2="34" stroke="#FF7A57" stroke-width="1"/>
+        <circle cx="271" cy="34" r="2.5" fill="#FF7A57"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ================ RESET BEAT 2 ================ -->
+  <div class="reset-beat">
+    <div class="pre">— II —</div>
+    <p class="quote">Twelve billion goes in the front door. <span class="sig">Watch where it actually ends up.</span></p>
+  </div>
+
+  <!-- ================ COSTS — a hundred cents in ================ -->
+  <section class="costs" data-screen-label="04 Costs · A Hundred Cents">
+    <div class="eyebrow"><span class="dot"></span> A hundred cents in <span class="num">· 04</span></div>
+    <h2 class="display" style="font-size:42px;">Where the dollar<br><span class="it sig">goes.</span></h2>
+    <div class="meta-line">100 cells · each = 1¢ · FY2025</div>
+
+    <div class="grid" id="costGrid" aria-label="Cost composition: 100-cell grid"></div>
+
+    <div class="legend">
+      <div class="li">
+        <div class="lhs"><span class="sw" style="background:#4A90D9;"></span><span class="lbl">Cost of revenue</span></div>
+        <div class="pct">69¢</div>
+      </div>
+      <div class="li">
+        <div class="lhs"><span class="sw" style="background:#E67E22;"></span><span class="lbl">Depreciation & amortization</span></div>
+        <div class="pct">8¢</div>
+      </div>
+      <div class="li">
+        <div class="lhs"><span class="sw" style="background:#E74C3C;"></span><span class="lbl">Business & asset action charges</span></div>
+        <div class="pct">7¢</div>
+      </div>
+      <div class="li">
+        <div class="lhs"><span class="sw" style="background:#2ECC71;"></span><span class="lbl">Selling, general & admin.</span></div>
+        <div class="pct">5¢</div>
+      </div>
+      <div class="li">
+        <div class="lhs"><span class="sw" style="background:#9B59B6;"></span><span class="lbl">Research & development</span></div>
+        <div class="pct">1¢</div>
+      </div>
+      <div class="li">
+        <div class="lhs"><span class="sw" style="background:#DDE5EC;border:1px dashed rgba(11,22,32,0.25);"></span><span class="lbl">Everything else</span></div>
+        <div class="pct">10¢</div>
+      </div>
+    </div>
+
+    <div class="survives">
+      <div class="lbl">FY25 GAAP operating margin</div>
+      <div class="v"><span class="it">−7.3<span class="pct">%</span></span> · weighed down by ~$3.7B of one-time charges</div>
+    </div>
+
+    <p class="body" style="margin-top:22px;">Strip out the asset actions and Q1 FY26 EPS came in at <em class="sig">$3.16</em> — pricing and productivity leaning back into the business.</p>
+  </section>
+
+  <!-- ================ FOOTPRINT ================ -->
+  <section class="foot" data-screen-label="05 Footprint">
+    <div class="eyebrow"><span class="dot"></span> Footprint <span class="num">· 05</span></div>
+    <h2 class="display" style="font-size:42px;">Fifty countries.<br><span class="it sig">Four segments.</span></h2>
+    <p class="body" style="margin-top:18px;">Reported as Americas, Asia, Europe, and Middle East & India. <em>Where the contracts are</em> is where the columns are.</p>
+
+    <div class="map-wrap">
+      <!-- abstract globe with 4 concentration arcs -->
+      <svg viewBox="0 0 380 220" aria-hidden="true">
+        <defs>
+          <radialGradient id="globe" cx="0.5" cy="0.45" r="0.55">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="100%" stop-color="#DDE5EC"/>
+          </radialGradient>
+        </defs>
+        <!-- subtle dot grid -->
+        <g fill="#C8D4DE" opacity="0.55">
+          <!-- generated dots -->
+          <g id="dotGrid"></g>
+        </g>
+        <!-- Globe disc -->
+        <circle cx="190" cy="110" r="86" fill="url(#globe)" stroke="#C8D4DE"/>
+        <!-- meridians -->
+        <ellipse cx="190" cy="110" rx="86" ry="34" fill="none" stroke="#C8D4DE" stroke-width="0.8"/>
+        <ellipse cx="190" cy="110" rx="34" ry="86" fill="none" stroke="#C8D4DE" stroke-width="0.8"/>
+        <line x1="104" y1="110" x2="276" y2="110" stroke="#C8D4DE" stroke-width="0.8"/>
+
+        <!-- region "weight" rings — radii proportional to share -->
+        <!-- Americas 43% -->
+        <g class="region" data-r="americas">
+          <circle cx="135" cy="120" r="0" fill="#4A90D9" opacity="0.32" data-r-final="34"/>
+          <circle cx="135" cy="120" r="3" fill="#0B1620"/>
+          <text x="135" y="160" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.5" fill="#0B1620">AMERICAS</text>
+          <text x="135" y="173" text-anchor="middle" font-family="Instrument Serif, serif" font-size="14" font-style="italic" fill="#4A90D9">43%</text>
+        </g>
+        <!-- Asia 29 -->
+        <g class="region" data-r="asia">
+          <circle cx="240" cy="100" r="0" fill="#4A90D9" opacity="0.32" data-r-final="26"/>
+          <circle cx="240" cy="100" r="3" fill="#0B1620"/>
+          <text x="240" y="60" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.5" fill="#0B1620">ASIA</text>
+          <text x="240" y="73" text-anchor="middle" font-family="Instrument Serif, serif" font-size="14" font-style="italic" fill="#4A90D9">29%</text>
+        </g>
+        <!-- Europe 20 -->
+        <g class="region" data-r="europe">
+          <circle cx="200" cy="80" r="0" fill="#4A90D9" opacity="0.32" data-r-final="22"/>
+          <circle cx="200" cy="80" r="3" fill="#0B1620"/>
+          <text x="155" y="32" text-anchor="start" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.5" fill="#0B1620">EUROPE</text>
+          <text x="155" y="45" text-anchor="start" font-family="Instrument Serif, serif" font-size="14" font-style="italic" fill="#4A90D9">20%</text>
+        </g>
+        <!-- M.E. & India 8 -->
+        <g class="region" data-r="mei">
+          <circle cx="225" cy="130" r="0" fill="#FF7A57" opacity="0.45" data-r-final="14"/>
+          <circle cx="225" cy="130" r="3" fill="#FF7A57"/>
+          <text x="305" y="145" text-anchor="end" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.5" fill="#0B1620">M.E. &amp; INDIA</text>
+          <text x="305" y="158" text-anchor="end" font-family="Instrument Serif, serif" font-size="14" font-style="italic" fill="#FF7A57">8%</text>
+        </g>
+
+        <!-- M.E. callout — NEOM is here -->
+        <line x1="225" y1="130" x2="270" y2="195" stroke="#FF7A57" stroke-width="1" stroke-dasharray="2 2"/>
+        <text x="270" y="208" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.5" fill="#FF7A57">NEOM, KSA</text>
+      </svg>
+    </div>
+
+    <div class="geo-list">
+      <div class="row"><div class="pct"><span class="it">43%</span></div><div class="name">Americas</div><div class="bar"><i data-w="100"></i></div></div>
+      <div class="row"><div class="pct"><span class="it">29%</span></div><div class="name">Asia</div><div class="bar"><i data-w="67"></i></div></div>
+      <div class="row"><div class="pct"><span class="it">20%</span></div><div class="name">Europe</div><div class="bar"><i data-w="46"></i></div></div>
+      <div class="row"><div class="pct"><span class="it">8%</span></div><div class="name">Middle East &amp; India</div><div class="bar"><i data-w="18"></i></div></div>
+    </div>
+
+    <div class="countries">≈ 50 countries · ≈ 21,000 employees</div>
+  </section>
+
+  <!-- ================ RESET BEAT 3 — into the bet ================ -->
+  <div class="reset-beat" style="background: var(--apd-paper-3);">
+    <div class="pre">— III —</div>
+    <p class="quote">There is a single project on this balance sheet that has bent everything around it. <span class="h2sig">It is in the desert.</span></p>
+  </div>
+
+  <!-- ================ THE BET — NEOM ================ -->
+  <section class="bet" data-screen-label="06 The Bet · NEOM">
+    <div class="eyebrow"><span class="dot"></span> The bet · NEOM <span class="num" style="color:rgba(244,242,237,0.4)">· 06</span></div>
+    <h2>Seven billion in,<br><span class="it">three and a half out.</span></h2>
+    <p class="body" style="max-width:32ch;">FY2025 capex hit <em class="sig">$7.02B</em> — heavy investment in clean-hydrogen megaprojects, with <em>NEOM Green Hydrogen</em> consolidated on the balance sheet during construction. Free cash flow finished the year at roughly <em class="sig">−$3.52B</em>.</p>
+
+    <div class="figures">
+      <div class="fig">
+        <div class="v">$<span class="it">7.02</span>B</div>
+        <div class="lbl">FY25 capital expenditure</div>
+      </div>
+      <div class="fig">
+        <div class="v"><span class="neg">−</span><span class="it">$3.52</span>B</div>
+        <div class="lbl">Free cash flow · <span class="em">deeply negative, by design</span></div>
+      </div>
+      <div class="fig">
+        <div class="v">~<span class="it">$1</span>B</div>
+        <div class="lbl">CapEx pull-back guided · FY26</div>
+      </div>
+    </div>
+
+    <!-- pipeline scene: stylised hydrogen pipe disappearing into desert horizon -->
+    <div class="pipe">
+      <svg viewBox="0 0 392 200" aria-hidden="true">
+        <defs>
+          <linearGradient id="dune" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#1A2A38" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#FF7A57" stop-opacity="0.18"/>
+          </linearGradient>
+          <linearGradient id="pipeBody" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#3A4F66"/>
+            <stop offset="50%" stop-color="#5A718B"/>
+            <stop offset="100%" stop-color="#2A3F55"/>
+          </linearGradient>
+        </defs>
+        <!-- horizon / dunes -->
+        <path d="M0,150 Q98,128 196,140 T392,138 L392,200 L0,200 Z" fill="url(#dune)"/>
+        <path d="M0,158 Q120,144 220,156 T392,150 L392,200 L0,200 Z" fill="#FF7A57" opacity="0.08"/>
+
+        <!-- pipe -->
+        <path d="M-10,120 Q120,90 196,100 T420,82" stroke="url(#pipeBody)" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <!-- joint rings -->
+        <g fill="#0B1620">
+          <circle cx="60" cy="108" r="3"/>
+          <circle cx="130" cy="98" r="3"/>
+          <circle cx="220" cy="100" r="3"/>
+          <circle cx="320" cy="92" r="3"/>
+        </g>
+        <!-- escaping H2 vapor -->
+        <g id="h2puffs" fill="#FF7A57" opacity="0.55">
+          <ellipse cx="60" cy="92" rx="6" ry="9"/>
+          <ellipse cx="130" cy="80" rx="5" ry="8" opacity="0.45"/>
+          <ellipse cx="220" cy="84" rx="6" ry="10" opacity="0.6"/>
+          <ellipse cx="320" cy="74" rx="5" ry="8" opacity="0.5"/>
+        </g>
+        <!-- distant towers -->
+        <g fill="#2A3F55" opacity="0.7">
+          <rect x="280" y="100" width="4" height="40"/>
+          <rect x="290" y="92" width="6" height="48"/>
+          <rect x="302" y="106" width="4" height="34"/>
+          <rect x="316" y="86" width="8" height="54"/>
+          <rect x="330" y="100" width="4" height="40"/>
+        </g>
+        <!-- sun -->
+        <circle cx="350" cy="56" r="14" fill="#FF7A57" opacity="0.35"/>
+        <circle cx="350" cy="56" r="7" fill="#FFD66B" opacity="0.7"/>
+
+        <!-- caption -->
+        <text x="14" y="22" font-family="Geist Mono, monospace" font-size="9" letter-spacing="2" fill="#FF7A57">NEOM · GREEN H₂ · KSA</text>
+        <text x="14" y="40" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#F4F2ED">consolidated on balance sheet · in construction</text>
+      </svg>
+    </div>
+
+    <p class="body" style="margin-top:32px; max-width:34ch;">The capex chart bends one way <em class="sig">and one way only</em>: into the desert.</p>
+  </section>
+
+  <!-- ================ RESET BEAT 4 — into competition ================ -->
+  <div class="reset-beat">
+    <div class="pre">— IV —</div>
+    <p class="quote">In a market this big, you are <span class="sig">never alone in the column</span>. There is one rival you measure against — and two who keep you honest.</p>
+  </div>
+
+  <!-- ================ COMPETITION ================ -->
+  <section class="comp" data-screen-label="07 Competition">
+    <div class="eyebrow"><span class="dot"></span> The competition <span class="num">· 07</span></div>
+    <h2 class="display" style="font-size:42px;">Linde<br><span class="it sig">towers.</span></h2>
+    <p class="body" style="margin-top:18px;">By market cap, the field is uneven. APD's most direct rival is more than three times its size; the others trade in adjacent chemistries.</p>
+
+    <div class="field">
+      <!-- bar tower visualization, sized to market caps -->
+      <svg viewBox="0 0 380 280" aria-hidden="true">
+        <!-- ground -->
+        <line x1="20" y1="240" x2="360" y2="240" stroke="#0B1620" stroke-width="1" opacity="0.3"/>
+
+        <!-- towers -->
+        <!-- Linde 228.10B -->
+        <g class="tower" data-h="200">
+          <rect x="40" y="240" width="58" height="0" fill="#0B1620" data-h="200"/>
+          <rect x="40" y="40" width="58" height="6" fill="#0B1620" class="tcap" style="opacity:0;"/>
+        </g>
+        <text x="69" y="32" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.5" fill="#0B1620">LIN · $228B</text>
+
+        <!-- Ecolab 77.61B -->
+        <g class="tower" data-h="68">
+          <rect x="118" y="240" width="58" height="0" fill="#4F6B82" data-h="68"/>
+        </g>
+        <text x="147" y="164" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.5" fill="#0B1620">ECL · $77.6B</text>
+
+        <!-- APD 64.97B -->
+        <g class="tower" data-h="57">
+          <rect x="196" y="240" width="58" height="0" fill="#4A90D9" data-h="57"/>
+          <rect x="196" y="240" width="58" height="6" fill="#FF7A57" class="tcap" style="opacity:0;"/>
+        </g>
+        <text x="225" y="175" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.5" fill="#4A90D9">APD · $64.9B</text>
+
+        <!-- Nutrien 49.15B -->
+        <g class="tower" data-h="43">
+          <rect x="274" y="240" width="58" height="0" fill="#4F6B82" data-h="43"/>
+        </g>
+        <text x="303" y="190" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.5" fill="#0B1620">NTR · $49.2B</text>
+
+        <!-- ground labels -->
+        <g font-family="Instrument Serif, serif" font-size="13" font-style="italic" fill="#0B1620">
+          <text x="69" y="258" text-anchor="middle">Linde</text>
+          <text x="147" y="258" text-anchor="middle">Ecolab</text>
+          <text x="225" y="258" text-anchor="middle" fill="#4A90D9">Air Products</text>
+          <text x="303" y="258" text-anchor="middle">Nutrien</text>
+        </g>
+        <g font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.5" fill="#93A4B6">
+          <text x="225" y="272" text-anchor="middle">— YOU ARE HERE —</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="vs-line">— Tap a name to expand —</div>
+
+    <div class="roster">
+      <div class="item" data-comp="lin">
+        <div class="head">
+          <div class="nm">Linde PLC</div>
+          <div class="tk">LIN · $228B</div>
+        </div>
+        <div class="meta">
+          <span><b>$33.99B</b> rev</span>
+          <span><b>33.07</b> P/E</span>
+          <span><b>+2.97%</b> YoY</span>
+        </div>
+        <div class="desc"><p>Linde is APD's most direct global competitor — an almost identical portfolio of atmospheric and process gases (oxygen, nitrogen, argon, hydrogen, helium) sold through the same on-site, merchant, and packaged delivery models. The primary benchmark for APD's pricing, contract wins, and hydrogen strategy.</p></div>
+        <span class="toggle">Expand ↓</span>
+      </div>
+
+      <div class="item" data-comp="ecl">
+        <div class="head">
+          <div class="nm">Ecolab</div>
+          <div class="tk">ECL · $77.6B</div>
+        </div>
+        <div class="meta">
+          <span><b>$16.08B</b> rev</span>
+          <span><b>37.39</b> P/E</span>
+          <span><b>+2.16%</b> YoY</span>
+        </div>
+        <div class="desc"><p>Specialty chemicals and hygiene rather than gases — but they vie for the same industrial operating budgets and long-term service contracts at refining, food-processing, and manufacturing sites.</p></div>
+        <span class="toggle">Expand ↓</span>
+      </div>
+
+      <div class="item" data-comp="ntr">
+        <div class="head">
+          <div class="nm">Nutrien</div>
+          <div class="tk">NTR · $49.2B</div>
+        </div>
+        <div class="meta">
+          <span><b>$5.74B</b> q. rev</span>
+          <span><b>15.83</b> P/E</span>
+          <span><b>+3.52%</b> YoY</span>
+        </div>
+        <div class="desc"><p>Ammonia and nitrogen production overlap directly with APD's hydrogen and syngas supply to fertilizer and chemical manufacturers — adjacent chemistry, same customers.</p></div>
+        <span class="toggle">Expand ↓</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================ RESET BEAT 5 — into the close ================ -->
+  <div class="reset-beat">
+    <div class="pre">— V —</div>
+    <p class="quote">Strip the megaproject, strip the noise. <span class="sig">What's left?</span> A ledger almost as old as the moon landing.</p>
+  </div>
+
+  <!-- ================ TAKEAWAY ================ -->
+  <section class="close" data-screen-label="08 Takeaway · What Survives">
+    <div class="eyebrow"><span class="dot"></span> The takeaway <span class="num">· 08</span></div>
+    <h2>What survives,<br><span class="it">when the dust clears.</span></h2>
+    <p class="body" style="margin-top:18px;">Open: twelve billion of breath in. <em class="sig">Close: a near-debt-free balance sheet, a Dividend Aristocrat record, and a discipline pivot already on the calendar.</em></p>
+
+    <div class="ledger">
+      <div class="row">
+        <div class="l">Total debt</div>
+        <div class="v">$<span class="it">34.7</span>M</div>
+      </div>
+      <div class="row">
+        <div class="l">Total equity</div>
+        <div class="v">$<span class="it">15.02</span>B</div>
+      </div>
+      <div class="row">
+        <div class="l">Cash &amp; equivalents</div>
+        <div class="v">$<span class="it">1.86</span>B</div>
+      </div>
+      <div class="row">
+        <div class="l">Dividends paid · FY25</div>
+        <div class="v">$<span class="it">1.58</span>B</div>
+      </div>
+      <div class="row">
+        <div class="l">TTM payout ratio</div>
+        <div class="v"><span class="it">85.55%</span></div>
+      </div>
+      <div class="row">
+        <div class="l">FY26 capex pull-back</div>
+        <div class="v"><span class="it">≈ $1B</span></div>
+      </div>
+    </div>
+
+    <p class="signoff">$34.7M of debt against $15B of equity — <span class="sig">the ledger is patient.</span><br>The bet is loud. The base is quiet.</p>
+
+    <div class="stamp">
+      <span>NYSE · APD</span>
+      <span>FY '25 · Q1 '26</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   Scroll choreography — progress bar, count-ups, chart draws
+   ============================================================ */
+(function(){
+  const prog = document.getElementById('prog');
+  const shell = document.getElementById('shell');
+
+  function onScroll(){
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const p = Math.max(0, Math.min(1, window.scrollY / h));
+    prog.style.width = (p * 100) + '%';
+
+    // hero parallax: shift columns + plumes slightly with scroll
+    const hero = document.querySelector('.hero');
+    if (hero){
+      const rect = hero.getBoundingClientRect();
+      const t = Math.max(-1, Math.min(1, -rect.top / window.innerHeight));
+      const cols = document.getElementById('columns');
+      const plumes = document.getElementById('plumes');
+      if (cols) cols.setAttribute('transform', `translate(0, ${t * 28})`);
+      if (plumes) plumes.setAttribute('transform', `translate(0, ${-t * 56})`);
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ----- IntersectionObserver: reveals + triggers ----- */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){
+        e.target.classList.add('in');
+        if (e.target.dataset.trigger){
+          triggers[e.target.dataset.trigger]?.(e.target);
+        }
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18 });
+
+  /* ----- count-up numbers ----- */
+  function countUp(el){
+    const target = parseFloat(el.dataset.num || '0');
+    const cv = el.querySelector('.cv');
+    const dec = (target % 1 !== 0) ? 2 : 0;
+    const dur = 1200;
+    const start = performance.now();
+    function tick(now){
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const v = target * eased;
+      cv.textContent = v.toFixed(dec);
+      if (t < 1) requestAnimationFrame(tick);
+      else cv.textContent = target.toFixed(dec);
+    }
+    requestAnimationFrame(tick);
+  }
+  document.querySelectorAll('.scale .num').forEach(el => {
+    el.dataset.trigger = 'count';
+    io.observe(el);
+  });
+
+  /* ----- cadence bars ----- */
+  function drawCadence(){
+    const bars = document.querySelectorAll('#cadenceBars .qb');
+    bars.forEach((b, i) => {
+      const h = parseFloat(b.dataset.h);
+      setTimeout(() => {
+        b.setAttribute('y', 140 - h);
+        b.setAttribute('height', h);
+        b.style.transition = 'all 0.8s cubic-bezier(.22,1,.36,1)';
+      }, 80 * i);
+    });
+  }
+  const cadenceEl = document.querySelector('.cadence');
+  if (cadenceEl){
+    cadenceEl.dataset.trigger = 'cadence';
+    io.observe(cadenceEl);
+  }
+  // Pre-set the bars to height 0 with a transform-friendly init
+  document.querySelectorAll('#cadenceBars .qb').forEach(b => {
+    b.setAttribute('height', 0);
+    b.setAttribute('y', 140);
+  });
+
+  /* ----- 100-cell cost grid ----- */
+  const costColors = [
+    {pct: 69, color: '#4A90D9'},
+    {pct: 8,  color: '#E67E22'},
+    {pct: 7,  color: '#E74C3C'},
+    {pct: 5,  color: '#2ECC71'},
+    {pct: 1,  color: '#9B59B6'},
+    /* remaining 10 cells are intentionally left as the "everything else" tone */
+  ];
+  const grid = document.getElementById('costGrid');
+  const cells = [];
+  for (let i = 0; i < 100; i++){
+    const d = document.createElement('div');
+    d.className = 'cell';
+    grid.appendChild(d);
+    cells.push(d);
+  }
+  function paintCosts(){
+    let idx = 0;
+    costColors.forEach((c, ci) => {
+      for (let i = 0; i < c.pct; i++){
+        const cell = cells[idx];
+        if (cell){
+          setTimeout(() => {
+            cell.style.background = c.color;
+            cell.classList.add('lit');
+          }, idx * 14);
+        }
+        idx++;
+      }
+    });
+  }
+  grid.dataset.trigger = 'costs';
+  io.observe(grid);
+
+  /* ----- region rings on the globe ----- */
+  function drawRegions(){
+    document.querySelectorAll('.region').forEach((g, i) => {
+      const ring = g.querySelector('circle[data-r-final]');
+      if (ring){
+        const target = parseFloat(ring.dataset.rFinal);
+        let start = 0;
+        const t0 = performance.now();
+        const dur = 900;
+        function step(now){
+          const t = Math.min(1, (now - t0 - i*120) / dur);
+          if (t < 0){ requestAnimationFrame(step); return; }
+          const eased = 1 - Math.pow(1 - t, 3);
+          ring.setAttribute('r', (target * eased).toFixed(2));
+          if (t < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+    });
+  }
+  const map = document.querySelector('.foot .map-wrap');
+  if (map){
+    map.dataset.trigger = 'regions';
+    io.observe(map);
+  }
+
+  /* ----- geo bars ----- */
+  function drawGeoBars(){
+    document.querySelectorAll('.geo-list .bar i').forEach(b => {
+      const w = parseFloat(b.dataset.w);
+      setTimeout(() => { b.style.width = w + '%'; }, 60);
+    });
+  }
+  const geoList = document.querySelector('.foot .geo-list');
+  if (geoList){
+    geoList.dataset.trigger = 'geo';
+    io.observe(geoList);
+  }
+
+  /* ----- competition towers ----- */
+  function drawTowers(){
+    document.querySelectorAll('.comp .tower').forEach((g, i) => {
+      const rect = g.querySelector('rect[data-h]');
+      const cap = g.querySelector('.tcap');
+      const h = parseFloat(rect.dataset.h);
+      const startY = 240;
+      const t0 = performance.now() + i * 110;
+      const dur = 850;
+      function step(now){
+        if (now < t0){ requestAnimationFrame(step); return; }
+        const t = Math.min(1, (now - t0) / dur);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const ch = h * eased;
+        rect.setAttribute('y', startY - ch);
+        rect.setAttribute('height', ch);
+        if (cap){
+          cap.setAttribute('y', startY - ch);
+          cap.style.opacity = eased;
+        }
+        if (t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+  const compField = document.querySelector('.comp .field');
+  if (compField){
+    compField.dataset.trigger = 'towers';
+    io.observe(compField);
+  }
+
+  /* ----- dot grid for footprint background ----- */
+  (function buildDotGrid(){
+    const dotGrid = document.getElementById('dotGrid');
+    if (!dotGrid) return;
+    const W = 380, H = 220, step = 14;
+    let svg = '';
+    for (let y = 8; y < H; y += step){
+      for (let x = 8; x < W; x += step){
+        // skip the disc area roughly
+        const dx = x - 190, dy = y - 110;
+        if (dx*dx + dy*dy < 90*90) continue;
+        svg += `<circle cx="${x}" cy="${y}" r="1"/>`;
+      }
+    }
+    dotGrid.innerHTML = svg;
+  })();
+
+  const triggers = {
+    count: countUp,
+    cadence: drawCadence,
+    costs: paintCosts,
+    regions: drawRegions,
+    geo: drawGeoBars,
+    towers: drawTowers,
+  };
+
+  /* ----- competitor expand on tap ----- */
+  document.querySelectorAll('.comp .item').forEach(it => {
+    it.addEventListener('click', () => {
+      const open = it.classList.contains('open');
+      it.classList.toggle('open');
+      const t = it.querySelector('.toggle');
+      if (t) t.textContent = open ? 'Expand ↓' : 'Collapse ↑';
+    });
+  });
+
+  /* ----- generic reveal observation for sections + reset beats ----- */
+  document.querySelectorAll('section, .reset-beat').forEach(el => {
+    el.classList.add('reveal');
+    io.observe(el);
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>KKR · Recap FY '25</title>
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  /* ===== PAGE PRIMITIVES ===== */
+  :root {
+    /* KKR brand: institutional money-green + ledger ink */
+    --kkr-ink:      #0B1A14;     /* deepest, near-black with green undertone */
+    --kkr-ink-2:    #14241D;
+    --kkr-cream:    #F5F1E6;     /* parchment, ledger paper */
+    --kkr-cream-2:  #EDE7D6;
+    --kkr-cream-3:  #DFD7C0;
+    --kkr-line:     #C9BFA3;
+    --kkr-line-2:   rgba(11,26,20,0.12);
+    --kkr-green:    #0E6B3D;     /* signal — money green */
+    --kkr-green-2:  #1A8B53;
+    --kkr-green-soft: #C8DCCB;
+    --kkr-gold:     #B8893A;     /* secondary signal */
+    --kkr-rust:     #8C3E1F;     /* used for debt/weight */
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--kkr-cream);
+    color: var(--kkr-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    max-width: 440px;
+    margin: 0 auto;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* subtle paper grain */
+  body::before {
+    content: ""; position: fixed; inset: 0;
+    background-image:
+      radial-gradient(rgba(11,26,20,0.04) 1px, transparent 1px),
+      radial-gradient(rgba(11,26,20,0.03) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  main { position: relative; z-index: 1; }
+
+  /* ===== PERSISTENT CHROME ===== */
+  .chrome {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(245, 241, 230, 0.78);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    border-bottom: 1px solid var(--kkr-line-2);
+  }
+  .chrome-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 10px;
+  }
+  .chrome-left { display: flex; align-items: baseline; gap: 10px; }
+  .chrome-tic {
+    font-family: var(--font-mono);
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--kkr-ink);
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 12px; color: var(--kkr-ink-2); opacity: 0.7;
+  }
+  .chrome-label {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.18em;
+    color: var(--kkr-green);
+    text-transform: uppercase;
+  }
+  .progress-track {
+    height: 1.5px; width: 100%;
+    background: var(--kkr-line-2);
+    position: relative;
+  }
+  .progress-fill {
+    position: absolute; top: 0; left: 0; height: 100%;
+    background: var(--kkr-green);
+    width: 0%;
+    transition: width 60ms linear;
+  }
+
+  /* ===== TYPE ===== */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+  }
+  .italic { font-style: italic; }
+  .mono { font-family: var(--font-mono); }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--kkr-green);
+    font-weight: 500;
+  }
+  .eyebrow .dim { color: var(--kkr-ink-2); opacity: 0.55; }
+  p.body {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--kkr-ink-2);
+    margin: 0;
+    text-wrap: pretty;
+  }
+  p.body em { font-family: var(--font-display); font-style: italic; color: var(--kkr-ink); font-size: 17px; }
+  p.body em.green { color: var(--kkr-green); }
+
+  /* ===== SECTIONS ===== */
+  section { padding: 64px 24px; position: relative; }
+  section.tight { padding: 36px 24px; }
+  section.dark {
+    background: var(--kkr-ink);
+    color: var(--kkr-cream);
+  }
+  section.dark p.body { color: rgba(245,241,230,0.8); }
+  section.dark p.body em { color: var(--kkr-cream); }
+  section.dark .eyebrow { color: var(--kkr-green-2); }
+  section.dark .eyebrow .dim { color: rgba(245,241,230,0.45); }
+
+  /* ===== HERO ===== */
+  .hero {
+    padding: 28px 24px 48px;
+    min-height: 96vh;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-eyebrow {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 8px;
+  }
+  .hero-eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--kkr-green);
+    box-shadow: 0 0 0 4px rgba(14,107,61,0.15);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(14,107,61,0.15); }
+    50% { box-shadow: 0 0 0 8px rgba(14,107,61,0); }
+  }
+  .hero h1.thesis {
+    font-family: var(--font-display);
+    font-size: 78px;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    margin: 28px 0 0;
+    color: var(--kkr-ink);
+  }
+  .hero h1.thesis .acc {
+    color: var(--kkr-green);
+    font-style: italic;
+  }
+  .hero-sub {
+    margin-top: 22px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--kkr-ink-2);
+    max-width: 36ch;
+  }
+  .hero-sub em {
+    font-family: var(--font-display); font-style: italic; font-size: 17px; color: var(--kkr-ink);
+  }
+  .meter-wrap { margin-top: 36px; }
+  .meter-label {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 10.5px; letter-spacing: 0.14em;
+    color: var(--kkr-ink-2); text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .meter {
+    height: 38px;
+    background: var(--kkr-cream-2);
+    border: 1px solid var(--kkr-line);
+    position: relative;
+    overflow: hidden;
+  }
+  .meter-fill {
+    position: absolute; top: 0; left: 0; height: 100%;
+    background: var(--kkr-green);
+    width: 0%;
+  }
+  .meter-fill::after {
+    content: ""; position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.06) 0,
+      rgba(255,255,255,0.06) 1px,
+      transparent 1px,
+      transparent 12px
+    );
+  }
+  .meter-num {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    right: 10px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--kkr-ink);
+    background: rgba(245,241,230,0.85);
+    padding: 2px 6px;
+    z-index: 2;
+  }
+  .meter-num.on-fill { color: var(--kkr-cream); background: transparent; right: auto; left: 10px; }
+
+  .hero-foot {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--kkr-line-2);
+    border-bottom: 1px solid var(--kkr-line-2);
+  }
+  .hero-foot > div {
+    padding: 14px 8px 14px 0;
+    border-right: 1px solid var(--kkr-line-2);
+  }
+  .hero-foot > div:last-child { border-right: none; }
+  .hero-foot .label {
+    font-family: var(--font-mono);
+    font-size: 9.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--kkr-ink-2); opacity: 0.7;
+  }
+  .hero-foot .val {
+    font-family: var(--font-display);
+    font-size: 30px;
+    margin-top: 6px;
+    color: var(--kkr-ink);
+    line-height: 1;
+  }
+  .hero-foot .val .pos { color: var(--kkr-green); font-style: italic; font-size: 22px; }
+
+  .scroll-hint {
+    position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+    font-family: var(--font-mono); font-size: 9.5px;
+    letter-spacing: 0.2em; color: var(--kkr-ink-2); opacity: 0.5;
+    text-transform: uppercase;
+    animation: bob 2.6s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%,100% { transform: translate(-50%, 0); opacity: 0.5; }
+    50% { transform: translate(-50%, 4px); opacity: 0.8; }
+  }
+
+  /* ===== RESET BEATS ===== */
+  .reset {
+    padding: 56px 28px;
+    background: var(--kkr-ink);
+    color: var(--kkr-cream);
+    position: relative;
+  }
+  .reset.cream { background: var(--kkr-cream-2); color: var(--kkr-ink); border-top: 1px solid var(--kkr-line-2); border-bottom: 1px solid var(--kkr-line-2); }
+  .reset .quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+  }
+  .reset .quote .acc { color: var(--kkr-green-2); }
+  .reset.cream .quote .acc { color: var(--kkr-green); }
+  .reset .pre {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0.55;
+  }
+
+  /* ===== ENGINES (3 turbines) ===== */
+  .engines { padding: 60px 24px 70px; }
+  .engines h2.section-title {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin: 16px 0 8px;
+  }
+  .engines h2.section-title .acc { color: var(--kkr-green); font-style: italic; }
+  .engines .lede {
+    font-size: 14.5px; line-height: 1.55; color: var(--kkr-ink-2);
+    margin: 14px 0 32px;
+    max-width: 38ch;
+  }
+  .engine {
+    padding: 22px 0 26px;
+    border-top: 1px solid var(--kkr-line-2);
+    position: relative;
+  }
+  .engine:last-child { border-bottom: 1px solid var(--kkr-line-2); }
+  .engine-head {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+  }
+  .engine-no {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+    color: var(--kkr-ink-2); opacity: 0.55;
+  }
+  .engine-name {
+    font-family: var(--font-display); font-size: 30px; line-height: 1; margin: 6px 0 10px;
+  }
+  .engine-name em { color: var(--kkr-green); font-style: italic; }
+  .engine-num {
+    font-family: var(--font-mono); font-size: 13px; color: var(--kkr-ink);
+    text-align: right; line-height: 1.2;
+  }
+  .engine-num .small { font-size: 10px; opacity: 0.55; display: block; letter-spacing: 0.12em; }
+  .engine-body { font-size: 13.5px; line-height: 1.5; color: var(--kkr-ink-2); margin-top: 8px; }
+  .engine-body em { font-family: var(--font-display); font-style: italic; font-size: 15px; color: var(--kkr-ink); }
+  .engine-svg { margin-top: 14px; width: 100%; }
+
+  /* ===== SCALE COUNTERS ===== */
+  .scale-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 8px;
+  }
+  .scale-cell {
+    padding: 22px 16px 20px 0;
+    border-top: 1px solid rgba(245,241,230,0.18);
+    border-right: 1px solid rgba(245,241,230,0.18);
+  }
+  .scale-cell:nth-child(2n) { border-right: none; padding-left: 16px; padding-right: 0; }
+  .scale-cell:nth-child(-n+2) { border-top: none; }
+  .scale-num {
+    font-family: var(--font-display);
+    font-size: 56px; line-height: 1;
+    color: var(--kkr-cream);
+  }
+  .scale-num .unit { font-size: 26px; color: var(--kkr-green-2); font-style: italic; margin-left: 2px; }
+  .scale-label {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.14em;
+    color: rgba(245,241,230,0.65);
+    text-transform: uppercase;
+    margin-top: 8px; line-height: 1.4;
+  }
+
+  /* ===== COST VAULT ===== */
+  .vault { background: var(--kkr-cream-2); }
+  .vault-stack { margin-top: 28px; }
+  .tranche {
+    position: relative;
+    margin-bottom: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 220ms var(--ease-out);
+  }
+  .tranche:active { transform: scale(0.995); }
+  .tranche-bar {
+    height: 100%;
+    width: 100%;
+    background: var(--c, var(--kkr-green));
+    position: relative;
+  }
+  .tranche-inner {
+    position: relative; z-index: 2;
+    padding: 14px 14px;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+    color: #fff;
+    mix-blend-mode: normal;
+  }
+  .tranche-inner .lab {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.25;
+    font-weight: 500;
+  }
+  .tranche-inner .pct {
+    font-family: var(--font-mono);
+    font-size: 16px; font-weight: 500;
+    white-space: nowrap;
+  }
+  .tranche.expanded .tranche-extra { max-height: 80px; opacity: 1; padding: 0 14px 14px; }
+  .tranche-extra {
+    max-height: 0; opacity: 0;
+    overflow: hidden;
+    transition: max-height 320ms var(--ease-out), opacity 220ms var(--ease-out), padding 220ms var(--ease-out);
+    color: rgba(255,255,255,0.85);
+    font-family: var(--font-mono);
+    font-size: 10.5px; letter-spacing: 0.06em;
+    line-height: 1.4;
+  }
+  .tranche-rest {
+    background: var(--kkr-cream-3);
+    color: var(--kkr-ink-2);
+  }
+
+  .vault-coda {
+    margin-top: 22px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1px solid var(--kkr-line-2);
+    padding-top: 14px;
+  }
+  .vault-coda .lab { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--kkr-ink-2); opacity: 0.7; }
+  .vault-coda .val { font-family: var(--font-display); font-size: 22px; color: var(--kkr-ink); }
+  .vault-coda .val em { color: var(--kkr-green); font-style: italic; }
+
+  /* ===== GEOGRAPHY ===== */
+  .geo h2.section-title {
+    font-family: var(--font-display); font-size: 44px; line-height: 1; letter-spacing: -0.02em;
+    margin: 14px 0 0;
+  }
+  .geo h2.section-title em { font-style: italic; color: var(--kkr-green); }
+  .geo-svg { width: 100%; height: auto; margin-top: 24px; display: block; }
+  .geo-rows { margin-top: 18px; }
+  .geo-row {
+    display: grid; grid-template-columns: auto 1fr auto;
+    align-items: center; gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--kkr-line-2);
+  }
+  .geo-row:first-child { border-top: 1px solid var(--kkr-line-2); }
+  .geo-row .name { font-family: var(--font-sans); font-size: 13px; font-weight: 500; }
+  .geo-row .meter-mini {
+    height: 4px; background: var(--kkr-cream-3); position: relative; overflow: hidden;
+  }
+  .geo-row .meter-mini > span {
+    position: absolute; left: 0; top: 0; height: 100%; background: var(--kkr-green);
+    width: 0;
+  }
+  .geo-row .pct { font-family: var(--font-mono); font-size: 12px; color: var(--kkr-ink); min-width: 36px; text-align: right; }
+
+  /* ===== THE BET (scale: debt vs equity) ===== */
+  .bet { background: var(--kkr-ink); color: var(--kkr-cream); }
+  .bet h2.section-title {
+    font-family: var(--font-display); font-size: 44px; line-height: 1; letter-spacing: -0.02em;
+    color: var(--kkr-cream); margin: 14px 0 0;
+  }
+  .bet h2.section-title em { font-style: italic; color: var(--kkr-green-2); }
+  .bet p.body { color: rgba(245,241,230,0.78); }
+  .bet p.body em { color: var(--kkr-cream); font-family: var(--font-display); font-style: italic; font-size: 17px; }
+  .scale-svg { width: 100%; margin-top: 28px; display: block; }
+
+  .pillars { margin-top: 26px; display: grid; gap: 0; }
+  .pillar {
+    padding: 16px 0;
+    border-top: 1px solid rgba(245,241,230,0.16);
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  }
+  .pillar:last-child { border-bottom: 1px solid rgba(245,241,230,0.16); }
+  .pillar .left { font-family: var(--font-sans); font-size: 13px; line-height: 1.35; color: rgba(245,241,230,0.85); max-width: 22ch; }
+  .pillar .left em { font-family: var(--font-display); font-style: italic; color: var(--kkr-cream); font-size: 15px; }
+  .pillar .right { font-family: var(--font-display); font-size: 32px; color: var(--kkr-cream); white-space: nowrap; }
+  .pillar .right .unit { font-size: 18px; color: var(--kkr-green-2); font-style: italic; }
+
+  /* ===== COMPETITORS ===== */
+  .comp h2.section-title {
+    font-family: var(--font-display); font-size: 44px; line-height: 1; letter-spacing: -0.02em;
+    margin: 14px 0 6px;
+  }
+  .comp h2.section-title em { font-style: italic; color: var(--kkr-green); }
+  .comp-row {
+    display: grid; grid-template-columns: 1fr;
+    padding: 22px 0;
+    border-top: 1px solid var(--kkr-line-2);
+    position: relative;
+  }
+  .comp-row:last-child { border-bottom: 1px solid var(--kkr-line-2); }
+  .comp-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  }
+  .comp-name { font-family: var(--font-display); font-size: 26px; line-height: 1; }
+  .comp-tic { font-family: var(--font-mono); font-size: 11px; color: var(--kkr-ink-2); opacity: 0.6; letter-spacing: 0.08em; }
+  .comp-mc {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.06em;
+    color: var(--kkr-ink-2); margin-top: 8px;
+  }
+  .comp-mc strong { color: var(--kkr-ink); font-weight: 500; }
+  .comp-bar-wrap { margin-top: 12px; height: 18px; position: relative; }
+  .comp-bar-bg { position: absolute; left: 0; right: 0; top: 6px; height: 6px; background: var(--kkr-cream-3); }
+  .comp-bar { position: absolute; left: 0; top: 6px; height: 6px; background: var(--kkr-ink); width: 0; }
+  .comp-bar.kkr { background: var(--kkr-green); }
+  .comp-bar-tick { position: absolute; top: 0; width: 1px; height: 18px; background: var(--kkr-line); }
+  .comp-blurb { margin-top: 14px; font-size: 13px; line-height: 1.5; color: var(--kkr-ink-2); }
+  .comp-blurb em { font-family: var(--font-display); font-style: italic; color: var(--kkr-ink); font-size: 14.5px; }
+
+  /* ===== CLOSE ===== */
+  .close { padding: 80px 24px 90px; text-align: left; }
+  .close .pre { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--kkr-ink-2); opacity: 0.6; margin-bottom: 22px; }
+  .close h2 {
+    font-family: var(--font-display);
+    font-size: 70px; line-height: 0.92; letter-spacing: -0.025em;
+    margin: 0;
+  }
+  .close h2 em { font-style: italic; color: var(--kkr-green); }
+  .close .body-coda {
+    margin-top: 26px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px; line-height: 1.3;
+    color: var(--kkr-ink-2);
+    max-width: 30ch;
+  }
+  .close .body-coda .acc { color: var(--kkr-green); font-style: italic; }
+
+  .footer-strip {
+    padding: 28px 24px 40px;
+    border-top: 1px solid var(--kkr-line-2);
+    background: var(--kkr-cream);
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--kkr-ink-2); opacity: 0.55;
+  }
+
+  /* ===== UTILITY ===== */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* SVG line drawing prep */
+  .draw {
+    stroke-dasharray: var(--len, 1000);
+    stroke-dashoffset: var(--len, 1000);
+    transition: stroke-dashoffset 1200ms var(--ease-out);
+  }
+  .draw.go { stroke-dashoffset: 0; }
+
+  /* engine svgs */
+  .turbine .blade { transform-origin: center; transform-box: fill-box; animation: spin var(--spd, 8s) linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* prevent text selection on tap interactions */
+  .tranche, .comp-row { -webkit-user-select: none; user-select: none; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     PERSISTENT CHROME
+     ============================================================ -->
+<header class="chrome">
+  <div class="chrome-row">
+    <div class="chrome-left">
+      <span class="chrome-tic">$KKR</span>
+      <span class="chrome-name">KKR &amp; Co.</span>
+    </div>
+    <span class="chrome-label">Recap · FY '25</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+</header>
+
+<main>
+
+<!-- ============================================================
+     1. THESIS / HERO
+     ============================================================ -->
+<section class="hero">
+  <div>
+    <div class="hero-eyebrow eyebrow">
+      <span class="dot"></span>
+      <span>The thesis <span class="dim">· 01</span></span>
+    </div>
+
+    <h1 class="thesis">
+      Seven&#8209;hundred<br/>
+      &amp; <span class="acc">forty&#8209;four</span><br/>
+      billion dollars,<br/>
+      under one roof.
+    </h1>
+
+    <p class="hero-sub">
+      KKR turned <em>fifty</em> on a single idea — borrow heavily, buy carefully, sell patiently. Half a century later, the playbook scaled into <em>$744B</em> of capital across private equity, credit, real assets, and an insurer's float.
+    </p>
+  </div>
+
+  <div>
+    <div class="meter-wrap">
+      <div class="meter-label">
+        <span>Assets under management</span>
+        <span>FY 2025</span>
+      </div>
+      <div class="meter">
+        <div class="meter-fill" id="aumFill"></div>
+        <span class="meter-num on-fill" id="aumNum">$744B</span>
+      </div>
+    </div>
+
+    <div class="hero-foot">
+      <div>
+        <div class="label">Mkt cap</div>
+        <div class="val">$92<span style="font-size:18px">.4B</span></div>
+      </div>
+      <div>
+        <div class="label">FY rev.</div>
+        <div class="val">$4<span style="font-size:18px">.06B</span></div>
+      </div>
+      <div>
+        <div class="label">Net inc.</div>
+        <div class="val"><span class="pos">$2.37B</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">↓ &nbsp; scroll &nbsp; ↓</div>
+</section>
+
+<!-- ============================================================
+     RESET BEAT 1
+     ============================================================ -->
+<section class="reset">
+  <div class="pre">Interlude · I</div>
+  <p class="quote">
+    They wrote the playbook on the leveraged buyout. Now they run the <span class="acc">insurance company</span> that finances it.
+  </p>
+</section>
+
+<!-- ============================================================
+     2. THE BUSINESS — THREE ENGINES
+     ============================================================ -->
+<section class="engines">
+  <div class="eyebrow">The business <span class="dim">· 02</span></div>
+  <h2 class="section-title">Three engines.<br/><span class="acc">One flywheel.</span></h2>
+  <p class="lede">
+    KKR pulls fees from money it manages, earnings from an insurer it owns, and dividends from companies it holds. Each engine feeds the next.
+  </p>
+
+  <!-- Engine 1: Asset Management -->
+  <div class="engine reveal">
+    <div class="engine-head">
+      <div>
+        <div class="engine-no">Engine I</div>
+        <div class="engine-name"><em>Asset</em> management</div>
+      </div>
+      <div class="engine-num">
+        $4.1B<span class="small">mgmt fees · '25</span>
+      </div>
+    </div>
+    <div class="engine-body">
+      Private equity, private credit, real assets, infrastructure. <em>770+ deals</em>, $790B of transactions in the firm's history. Capital markets adds another <em>$930M</em> in transaction fees.
+    </div>
+    <svg class="engine-svg turbine" viewBox="0 0 360 90" aria-hidden="true">
+      <!-- horizontal flow lines -->
+      <g stroke="#0E6B3D" stroke-width="0.7" opacity="0.35">
+        <line x1="0" y1="20" x2="360" y2="20" />
+        <line x1="0" y1="35" x2="360" y2="35" />
+        <line x1="0" y1="50" x2="360" y2="50" />
+        <line x1="0" y1="65" x2="360" y2="65" />
+        <line x1="0" y1="80" x2="360" y2="80" />
+      </g>
+      <!-- impeller -->
+      <g class="blade" style="--spd:9s; transform-origin: 60px 45px">
+        <circle cx="60" cy="45" r="28" fill="none" stroke="#0E6B3D" stroke-width="1"/>
+        <path d="M60 17 L66 45 L60 73 L54 45 Z" fill="#0E6B3D"/>
+        <path d="M32 45 L60 39 L88 45 L60 51 Z" fill="#0E6B3D" opacity="0.7"/>
+      </g>
+      <circle cx="60" cy="45" r="3" fill="#0B1A14"/>
+      <!-- output flow gets fatter -->
+      <g>
+        <path d="M90 45 Q 200 45, 360 45" stroke="#0E6B3D" stroke-width="1" fill="none" opacity="0.55"/>
+        <path d="M90 45 Q 200 35, 360 25" stroke="#0E6B3D" stroke-width="0.6" fill="none" opacity="0.4"/>
+        <path d="M90 45 Q 200 55, 360 65" stroke="#0E6B3D" stroke-width="0.6" fill="none" opacity="0.4"/>
+      </g>
+      <!-- output ticks -->
+      <g font-family="Geist Mono, monospace" font-size="8" fill="#0B1A14" opacity="0.7">
+        <text x="290" y="22">FEES</text>
+        <text x="280" y="49">CARRIED INT.</text>
+        <text x="270" y="78">TXN FEES</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Engine 2: Insurance -->
+  <div class="engine reveal">
+    <div class="engine-head">
+      <div>
+        <div class="engine-no">Engine II</div>
+        <div class="engine-name"><em>Insurance</em> · Global Atlantic</div>
+      </div>
+      <div class="engine-num">
+        $219B<span class="small">aum on float</span>
+      </div>
+    </div>
+    <div class="engine-body">
+      Retirement, life, reinsurance — premiums paid in <em>now</em>, claims paid out <em>later</em>. KKR invests the gap. The float becomes the fuel for the asset manager next door.
+    </div>
+    <svg class="engine-svg" viewBox="0 0 360 88" aria-hidden="true">
+      <!-- reservoir -->
+      <rect x="40" y="20" width="120" height="50" fill="none" stroke="#0E6B3D" stroke-width="1"/>
+      <rect x="40" y="44" width="120" height="26" fill="#0E6B3D" opacity="0.18"/>
+      <!-- water level wavy -->
+      <path d="M40 44 Q 70 38, 100 44 T 160 44 L160 70 L40 70 Z" fill="#0E6B3D" opacity="0.55"/>
+      <text x="40" y="13" font-family="Geist Mono, monospace" font-size="8" fill="#0B1A14" opacity="0.7">PREMIUMS IN</text>
+      <!-- pipe -->
+      <path d="M160 50 L 220 50 L 220 30 L 300 30" stroke="#0E6B3D" stroke-width="1.5" fill="none"/>
+      <path d="M160 50 L 220 50 L 220 70 L 300 70" stroke="#0E6B3D" stroke-width="1.5" fill="none"/>
+      <!-- output: invested -->
+      <g>
+        <rect x="300" y="22" width="40" height="14" fill="#0E6B3D" opacity="0.85"/>
+        <text x="305" y="32" font-family="Geist Mono, monospace" font-size="8" fill="#F5F1E6">INVEST</text>
+      </g>
+      <g>
+        <rect x="300" y="62" width="40" height="14" fill="#0B1A14" opacity="0.7"/>
+        <text x="307" y="72" font-family="Geist Mono, monospace" font-size="8" fill="#F5F1E6">CLAIMS</text>
+      </g>
+      <!-- droplet ticks -->
+      <g fill="#0E6B3D">
+        <circle cx="55" cy="14" r="1.5"/><circle cx="80" cy="11" r="1.5"/><circle cx="105" cy="14" r="1.5"/><circle cx="130" cy="11" r="1.5"/><circle cx="150" cy="14" r="1.5"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Engine 3: Strategic Holdings -->
+  <div class="engine reveal">
+    <div class="engine-head">
+      <div>
+        <div class="engine-no">Engine III</div>
+        <div class="engine-name"><em>Strategic</em> holdings</div>
+      </div>
+      <div class="engine-num">
+        19<span class="small">operating cos.</span>
+      </div>
+    </div>
+    <div class="engine-body">
+      Long-dated stakes in 19 portfolio companies. The firm doesn't sell — it <em>collects dividends</em>. Together with FRE and Insurance, this engine is part of the <em>~85%</em> of segment earnings KKR now calls "durable."
+    </div>
+    <svg class="engine-svg" viewBox="0 0 360 86" aria-hidden="true">
+      <!-- 19 small holding tiles -->
+      <g>
+        <!-- two rows of varying heights -->
+        <g fill="#0E6B3D" opacity="0.18">
+          <rect x="0" y="22" width="14" height="50"/>
+          <rect x="18" y="32" width="14" height="40"/>
+          <rect x="36" y="14" width="14" height="58"/>
+          <rect x="54" y="40" width="14" height="32"/>
+          <rect x="72" y="20" width="14" height="52"/>
+          <rect x="90" y="30" width="14" height="42"/>
+          <rect x="108" y="10" width="14" height="62"/>
+          <rect x="126" y="38" width="14" height="34"/>
+          <rect x="144" y="22" width="14" height="50"/>
+          <rect x="162" y="32" width="14" height="40"/>
+          <rect x="180" y="18" width="14" height="54"/>
+          <rect x="198" y="36" width="14" height="36"/>
+          <rect x="216" y="26" width="14" height="46"/>
+          <rect x="234" y="14" width="14" height="58"/>
+          <rect x="252" y="34" width="14" height="38"/>
+          <rect x="270" y="20" width="14" height="52"/>
+          <rect x="288" y="38" width="14" height="34"/>
+          <rect x="306" y="24" width="14" height="48"/>
+          <rect x="324" y="32" width="14" height="40"/>
+        </g>
+        <!-- dividend arrows up -->
+        <g stroke="#0E6B3D" stroke-width="0.8" fill="none">
+          <line x1="7" y1="20" x2="7" y2="6"/><polyline points="4,10 7,6 10,10" />
+          <line x1="43" y1="12" x2="43" y2="2"/><polyline points="40,6 43,2 46,6" />
+          <line x1="79" y1="18" x2="79" y2="6"/><polyline points="76,10 79,6 82,10" />
+          <line x1="115" y1="8" x2="115" y2="0"/>
+          <line x1="151" y1="20" x2="151" y2="6"/>
+          <line x1="187" y1="16" x2="187" y2="4"/><polyline points="184,8 187,4 190,8" />
+          <line x1="241" y1="12" x2="241" y2="2"/><polyline points="238,6 241,2 244,6" />
+          <line x1="277" y1="18" x2="277" y2="6"/><polyline points="274,10 277,6 280,10" />
+          <line x1="313" y1="22" x2="313" y2="10"/>
+        </g>
+      </g>
+      <!-- collector pipe -->
+      <line x1="0" y1="80" x2="350" y2="80" stroke="#0B1A14" stroke-width="1.5"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ============================================================
+     3. THE SCALE
+     ============================================================ -->
+<section class="dark" style="padding: 64px 24px 72px;">
+  <div class="eyebrow"><span style="color:var(--kkr-green-2)">The scale</span> <span class="dim">· 03</span></div>
+  <h2 class="display" style="font-size:48px;line-height:1;margin:14px 0 0;color:var(--kkr-cream)">
+    Half a <em class="italic" style="color:var(--kkr-green-2)">century.</em><br/>
+    Six <em class="italic" style="color:var(--kkr-green-2)">continents.</em><br/>
+    One ledger.
+  </h2>
+  <p class="body" style="margin-top:22px;max-width:36ch;">
+    Founded in 1976 by <em>Kohlberg, Kravis &amp; Roberts</em>. By 2025: a global firm whose footprint reads like a small nation's GDP.
+  </p>
+
+  <div class="scale-grid">
+    <div class="scale-cell">
+      <div class="scale-num" data-count="770" data-suffix="+"><span class="num-target">770+</span></div>
+      <div class="scale-label">PE deals<br/>since founding</div>
+    </div>
+    <div class="scale-cell">
+      <div class="scale-num"><span class="num-target">$790</span><span class="unit">B</span></div>
+      <div class="scale-label">Lifetime<br/>transaction value</div>
+    </div>
+    <div class="scale-cell">
+      <div class="scale-num" data-count="11000"><span class="num-target">11,000</span></div>
+      <div class="scale-label">Employees<br/>worldwide</div>
+    </div>
+    <div class="scale-cell">
+      <div class="scale-num" data-count="50"><span class="num-target">50</span><span class="unit">yrs</span></div>
+      <div class="scale-label">Of compounding<br/>since 1976</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     RESET BEAT 2
+     ============================================================ -->
+<section class="reset cream">
+  <div class="pre">Interlude · II</div>
+  <p class="quote">
+    Run an insurer big enough, and the <span class="acc">premiums</span> become a private capital base — quietly, permanently.
+  </p>
+</section>
+
+<!-- ============================================================
+     4. WHERE THE DOLLAR GOES (vault)
+     ============================================================ -->
+<section class="vault">
+  <div class="eyebrow">Where the dollar goes <span class="dim">· 04</span></div>
+  <h2 class="display" style="font-size:44px;line-height:1;margin:14px 0 0">
+    A hundred cents,<br/><em class="italic" style="color:var(--kkr-green)">stacked.</em>
+  </h2>
+  <p class="body" style="margin-top:18px;max-width:38ch;">
+    Most of every revenue dollar at KKR is <em>not</em> a salary or rent — it is a <em>policyholder claim</em> from Global Atlantic, paid out as promised. The asset manager rides on top.
+  </p>
+
+  <div class="vault-stack" id="vaultStack">
+    <!-- Tranches: pcts taken from data; heights scale with pct -->
+    <div class="tranche" style="--c:#4A90D9" data-pct="55" data-h="180">
+      <div class="tranche-bar">
+        <div class="tranche-inner">
+          <div class="lab">Insurance policy benefits<br/>&amp; claims</div>
+          <div class="pct">55¢</div>
+        </div>
+        <div class="tranche-extra">Cost of revenue · paid out as policyholder benefits across retirement, life &amp; reinsurance products at Global Atlantic.</div>
+      </div>
+    </div>
+    <div class="tranche" style="--c:#E8734A" data-pct="12" data-h="56">
+      <div class="tranche-bar">
+        <div class="tranche-inner">
+          <div class="lab">Compensation &amp; benefits</div>
+          <div class="pct">12¢</div>
+        </div>
+        <div class="tranche-extra">~11,000 employees across six continents. Carry, base, and benefits.</div>
+      </div>
+    </div>
+    <div class="tranche" style="--c:#6DBF67" data-pct="5" data-h="36">
+      <div class="tranche-bar">
+        <div class="tranche-inner">
+          <div class="lab">General &amp; administrative</div>
+          <div class="pct">5¢</div>
+        </div>
+        <div class="tranche-extra">Office footprint, technology, professional services.</div>
+      </div>
+    </div>
+    <div class="tranche" style="--c:#9B59B6" data-pct="3" data-h="28">
+      <div class="tranche-bar">
+        <div class="tranche-inner">
+          <div class="lab">Depreciation &amp; amortization</div>
+          <div class="pct">3¢</div>
+        </div>
+        <div class="tranche-extra">Goodwill &amp; intangibles ~$5.6B mid-2025 (Global Atlantic among others).</div>
+      </div>
+    </div>
+    <div class="tranche" style="--c:#F4C542" data-pct="3" data-h="28">
+      <div class="tranche-bar">
+        <div class="tranche-inner">
+          <div class="lab">Interest expense</div>
+          <div class="pct">3¢</div>
+        </div>
+        <div class="tranche-extra">Service on $52.94B of total debt.</div>
+      </div>
+    </div>
+    <div class="tranche tranche-rest" data-pct="22" data-h="76">
+      <div class="tranche-bar" style="background:transparent">
+        <div class="tranche-inner" style="color:var(--kkr-ink)">
+          <div class="lab" style="color:var(--kkr-ink-2)">Everything else &amp; what's left over</div>
+          <div class="pct" style="color:var(--kkr-ink)">22¢</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vault-coda">
+    <div class="lab">FY '25 net income</div>
+    <div class="val"><em>$2.37B</em></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     5. FOOTPRINT
+     ============================================================ -->
+<section class="geo">
+  <div class="eyebrow">Footprint <span class="dim">· 05</span></div>
+  <h2 class="section-title">Capital, <em>across<br/>the meridians.</em></h2>
+  <p class="body" style="margin-top:18px;max-width:38ch;">
+    Six continents. <em>$744B</em> distributed by where the money lives, not where it was raised. The Americas anchor; Europe and Asia-Pacific compound.
+  </p>
+
+  <!-- Hand-drawn world meridian arc -->
+  <svg class="geo-svg" viewBox="0 0 360 220" aria-hidden="true">
+    <!-- Latitude/longitude grid -->
+    <g stroke="#C9BFA3" stroke-width="0.4" fill="none" opacity="0.55">
+      <ellipse cx="180" cy="110" rx="160" ry="90"/>
+      <ellipse cx="180" cy="110" rx="120" ry="68"/>
+      <ellipse cx="180" cy="110" rx="80" ry="46"/>
+      <ellipse cx="180" cy="110" rx="40" ry="22"/>
+      <line x1="20" y1="110" x2="340" y2="110"/>
+      <line x1="180" y1="20" x2="180" y2="200"/>
+      <!-- meridians -->
+      <path d="M180 20 Q 100 110 180 200"/>
+      <path d="M180 20 Q 260 110 180 200"/>
+      <path d="M180 20 Q 60 110 180 200"/>
+      <path d="M180 20 Q 300 110 180 200"/>
+    </g>
+    <!-- Region nodes; sizes scale with pct -->
+    <!-- Americas 55% -->
+    <g>
+      <circle cx="115" cy="125" r="34" fill="#0E6B3D" opacity="0.85"/>
+      <circle cx="115" cy="125" r="44" fill="none" stroke="#0E6B3D" stroke-width="0.6" opacity="0.4"/>
+      <text x="115" y="129" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="22" fill="#F5F1E6">55</text>
+      <text x="115" y="178" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#0B1A14" letter-spacing="1.2">AMERICAS</text>
+    </g>
+    <!-- Europe 25% -->
+    <g>
+      <circle cx="205" cy="92" r="22" fill="#0E6B3D" opacity="0.7"/>
+      <text x="205" y="96" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="16" fill="#F5F1E6">25</text>
+      <text x="205" y="58" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#0B1A14" letter-spacing="1.2">EUROPE</text>
+    </g>
+    <!-- APAC 18% -->
+    <g>
+      <circle cx="270" cy="135" r="18" fill="#0E6B3D" opacity="0.55"/>
+      <text x="270" y="139" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#F5F1E6">18</text>
+      <text x="270" y="172" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#0B1A14" letter-spacing="1.2">ASIA·PAC.</text>
+    </g>
+    <!-- ME & Other 2% -->
+    <g>
+      <circle cx="225" cy="145" r="6" fill="#0E6B3D" opacity="0.4"/>
+      <text x="225" y="148" text-anchor="middle" font-family="Geist Mono, monospace" font-size="7" fill="#F5F1E6">2</text>
+    </g>
+    <!-- flow arcs from americas to other -->
+    <g stroke="#0E6B3D" stroke-width="0.7" fill="none" opacity="0.5">
+      <path d="M115 125 Q 160 70 205 92" class="draw" style="--len: 200"/>
+      <path d="M115 125 Q 190 80 270 135" class="draw" style="--len: 280"/>
+      <path d="M205 92 Q 250 100 270 135" class="draw" style="--len: 100"/>
+    </g>
+  </svg>
+
+  <div class="geo-rows">
+    <div class="geo-row"><span class="name">Americas</span><span class="meter-mini"><span data-w="55"></span></span><span class="pct">55%</span></div>
+    <div class="geo-row"><span class="name">Europe</span><span class="meter-mini"><span data-w="25"></span></span><span class="pct">25%</span></div>
+    <div class="geo-row"><span class="name">Asia-Pacific</span><span class="meter-mini"><span data-w="18"></span></span><span class="pct">18%</span></div>
+    <div class="geo-row"><span class="name">Middle East &amp; other</span><span class="meter-mini"><span data-w="2"></span></span><span class="pct">2%</span></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     RESET BEAT 3
+     ============================================================ -->
+<section class="reset">
+  <div class="pre">Interlude · III</div>
+  <p class="quote">
+    The firm puts <span class="acc">$30 billion</span> of its own money next to its clients' — <em>skin in the game</em>, written in nine zeros.
+  </p>
+</section>
+
+<!-- ============================================================
+     6. THE BET — debt vs equity scale
+     ============================================================ -->
+<section class="bet">
+  <div class="eyebrow"><span style="color:var(--kkr-green-2)">The bet</span> <span class="dim">· 06</span></div>
+  <h2 class="section-title">Leverage,<br/><em>as a tool.</em></h2>
+  <p class="body" style="margin-top:18px;max-width:38ch;">
+    KKR carries <em>$52.94B</em> in debt against <em>$30.90B</em> in equity. For an asset manager, this would be alarming. For an asset manager that owns an insurer, it is the cost of doing business — and the engine of return.
+  </p>
+
+  <!-- Scale balance -->
+  <svg class="scale-svg" viewBox="0 0 360 230" aria-hidden="true">
+    <!-- pivot -->
+    <line x1="180" y1="150" x2="180" y2="210" stroke="#F5F1E6" stroke-width="2"/>
+    <polygon points="160,210 200,210 195,220 165,220" fill="#F5F1E6"/>
+    <!-- beam: tilts because debt > equity -->
+    <g id="scaleBeam" style="transform-origin: 180px 150px; transform: rotate(-9deg); transition: transform 1200ms var(--ease-out);">
+      <line x1="40" y1="150" x2="320" y2="150" stroke="#F5F1E6" stroke-width="2"/>
+      <!-- left pan: debt -->
+      <line x1="80" y1="150" x2="80" y2="170" stroke="#F5F1E6" stroke-width="1"/>
+      <line x1="40" y1="170" x2="120" y2="170" stroke="#F5F1E6" stroke-width="1.5"/>
+      <!-- weights stacked on left -->
+      <g>
+        <rect x="50" y="120" width="60" height="14" fill="#1A8B53" opacity="0.95"/>
+        <rect x="50" y="106" width="60" height="14" fill="#1A8B53" opacity="0.85"/>
+        <rect x="50" y="92"  width="60" height="14" fill="#1A8B53" opacity="0.75"/>
+        <rect x="50" y="78"  width="60" height="14" fill="#1A8B53" opacity="0.65"/>
+        <rect x="50" y="64"  width="60" height="14" fill="#1A8B53" opacity="0.55"/>
+      </g>
+      <text x="80" y="58" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#F5F1E6" letter-spacing="1.4">DEBT</text>
+      <text x="80" y="183" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#F5F1E6">$52.94B</text>
+
+      <!-- right pan: equity -->
+      <line x1="280" y1="150" x2="280" y2="170" stroke="#F5F1E6" stroke-width="1"/>
+      <line x1="240" y1="170" x2="320" y2="170" stroke="#F5F1E6" stroke-width="1.5"/>
+      <g>
+        <rect x="250" y="134" width="60" height="14" fill="#F5F1E6" opacity="0.95"/>
+        <rect x="250" y="120" width="60" height="14" fill="#F5F1E6" opacity="0.75"/>
+        <rect x="250" y="106" width="60" height="14" fill="#F5F1E6" opacity="0.55"/>
+      </g>
+      <text x="280" y="98" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#F5F1E6" letter-spacing="1.4">EQUITY</text>
+      <text x="280" y="183" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#F5F1E6">$30.90B</text>
+    </g>
+  </svg>
+
+  <div class="pillars">
+    <div class="pillar">
+      <div class="left"><em>Cash</em> & equivalents at year-end</div>
+      <div class="right">$16.89<span class="unit">B</span></div>
+    </div>
+    <div class="pillar">
+      <div class="left"><em>Co-invested</em> alongside fund LPs</div>
+      <div class="right">~$30<span class="unit">B</span></div>
+    </div>
+    <div class="pillar">
+      <div class="left"><em>Dividends</em> paid in FY '25</div>
+      <div class="right">$650<span class="unit">M</span></div>
+    </div>
+    <div class="pillar">
+      <div class="left">Annualized <em>per&#8209;share</em> dividend, raised this year</div>
+      <div class="right">$0.74</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     7. THE COMPETITION
+     ============================================================ -->
+<section class="comp">
+  <div class="eyebrow">The competition <span class="dim">· 07</span></div>
+  <h2 class="section-title">Three <em>rivals</em>,<br/>three frontiers.</h2>
+  <p class="body" style="margin-top:16px;max-width:38ch;">
+    KKR's market cap <em>$92.4B</em>. Tap each rival to expand — the bars below scale to market cap.
+  </p>
+
+  <!-- competitor rows -->
+  <!-- Mkt caps: KKR 92.36, BX 158.56, BAM 80.79, MCO 84.19. Scale to max=158.56 -->
+  <div class="comp-row" data-comp="kkr">
+    <div class="comp-head">
+      <span class="comp-name"><em style="font-style:italic;color:var(--kkr-green)">KKR</em></span>
+      <span class="comp-tic">$KKR · YOU ARE HERE</span>
+    </div>
+    <div class="comp-mc"><strong>$92.4B</strong> · mkt cap &nbsp; <span style="opacity:0.6">$4.06B rev</span></div>
+    <div class="comp-bar-wrap">
+      <div class="comp-bar-bg"></div>
+      <div class="comp-bar kkr" data-w="58.3"></div>
+    </div>
+  </div>
+
+  <div class="comp-row" data-comp="bx">
+    <div class="comp-head">
+      <span class="comp-name">Blackstone</span>
+      <span class="comp-tic">$BX</span>
+    </div>
+    <div class="comp-mc"><strong>$158.6B</strong> · mkt cap &nbsp; <span style="opacity:0.6">$9.05B rev · +9.2% YoY</span></div>
+    <div class="comp-bar-wrap">
+      <div class="comp-bar-bg"></div>
+      <div class="comp-bar" data-w="100"></div>
+    </div>
+    <div class="comp-blurb">
+      The most direct rival. Same fundraising channels, same asset classes — <em>private equity, credit, real estate, infrastructure</em>. Bigger by market cap, bigger by revenue. The benchmark.
+    </div>
+  </div>
+
+  <div class="comp-row" data-comp="bam">
+    <div class="comp-head">
+      <span class="comp-name">Brookfield AM</span>
+      <span class="comp-tic">$BAM</span>
+    </div>
+    <div class="comp-mc"><strong>$80.8B</strong> · mkt cap &nbsp; <span style="opacity:0.6">$3.94B rev · <em style="font-style:italic;color:var(--kkr-green);font-family:'Instrument Serif',serif">+884% YoY</em></span></div>
+    <div class="comp-bar-wrap">
+      <div class="comp-bar-bg"></div>
+      <div class="comp-bar" data-w="50.9"></div>
+    </div>
+    <div class="comp-blurb">
+      Smaller today. Growing <em>vertically</em>. Aggressively expanding fee-bearing capital in infrastructure, real assets, and private credit — the same channels KKR raises in.
+    </div>
+  </div>
+
+  <div class="comp-row" data-comp="mco">
+    <div class="comp-head">
+      <span class="comp-name">Moody's</span>
+      <span class="comp-tic">$MCO</span>
+    </div>
+    <div class="comp-mc"><strong>$84.2B</strong> · mkt cap &nbsp; <span style="opacity:0.6">$7.72B rev · +8.9% YoY</span></div>
+    <div class="comp-bar-wrap">
+      <div class="comp-bar-bg"></div>
+      <div class="comp-bar" data-w="53.1"></div>
+    </div>
+    <div class="comp-blurb">
+      Not a rival on the deal sheet — a rival on the <em>scoreboard</em>. As KKR's private credit platform scales, Moody's owns the data, ratings, and analytics infrastructure institutional allocators rely on to evaluate it.
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     RESET BEAT 4 — into the close
+     ============================================================ -->
+<section class="reset cream">
+  <div class="pre">Interlude · IV</div>
+  <p class="quote">
+    Half the business now hums on autopilot — fees, float, dividends. The <span class="acc">other half</span> still has to win the next deal.
+  </p>
+</section>
+
+<!-- ============================================================
+     8. THE TAKEAWAY (closing inversion)
+     ============================================================ -->
+<section class="close">
+  <div class="pre">The takeaway · 08</div>
+  <h2>
+    Seven&#8209;hundred<br/>
+    forty&#8209;four<br/>
+    billion <em>in.</em><br/>
+    <span style="opacity:0.85">Eighty&#8209;five percent <em>durable.</em></span>
+  </h2>
+  <p class="body-coda">
+    The thesis opened with capital under management. It closes here — with <span class="acc">85%</span> of segment earnings now categorized as fee-related, insurance-operating, or strategic-holdings income. The <em>recurring</em> majority. The <em>durable</em> majority.
+  </p>
+</section>
+
+<div class="footer-strip">
+  <span>$KKR · NYSE</span>
+  <span>Recap · FY '25</span>
+</div>
+
+</main>
+
+<script>
+  // ===== PROGRESS BAR =====
+  const progress = document.getElementById('progress');
+  const onScroll = () => {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const p = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    progress.style.width = p + '%';
+  };
+  document.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ===== HERO METER ANIMATION on first paint =====
+  requestAnimationFrame(() => {
+    const fill = document.getElementById('aumFill');
+    const num = document.getElementById('aumNum');
+    fill.style.transition = 'width 1800ms cubic-bezier(0.22, 1, 0.36, 1)';
+    requestAnimationFrame(() => { fill.style.width = '78%'; });
+
+    // count-up
+    const target = 744;
+    const start = performance.now();
+    const dur = 1800;
+    function tick(t){
+      const k = Math.min(1, (t - start) / dur);
+      const eased = 1 - Math.pow(1 - k, 3);
+      const v = Math.round(eased * target);
+      num.textContent = '$' + v + 'B';
+      if (k < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+
+  // ===== INTERSECTION OBSERVER for reveals + scroll-driven viz =====
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        if (e.target.dataset.onceFired) return;
+        e.target.dataset.onceFired = '1';
+
+        // scale grid count-ups
+        if (e.target.classList.contains('scale-num')) {
+          const target = e.target.dataset.count;
+          if (target) animateCount(e.target.querySelector('.num-target'), parseInt(target,10), e.target.dataset.suffix || '');
+        }
+
+        // tranches grow
+        if (e.target.classList.contains('tranche')) {
+          const h = parseInt(e.target.dataset.h, 10) || 40;
+          e.target.style.transition = 'height 900ms cubic-bezier(0.22, 1, 0.36, 1)';
+          e.target.style.height = h + 'px';
+        }
+
+        // geo mini meters
+        if (e.target.classList.contains('geo-row')) {
+          const span = e.target.querySelector('.meter-mini > span');
+          if (span && span.dataset.w) {
+            span.style.transition = 'width 1100ms cubic-bezier(0.22, 1, 0.36, 1)';
+            span.style.width = span.dataset.w + '%';
+          }
+        }
+
+        // competitor bars
+        if (e.target.classList.contains('comp-row')) {
+          const bar = e.target.querySelector('.comp-bar');
+          if (bar && bar.dataset.w) {
+            bar.style.transition = 'width 1200ms cubic-bezier(0.22, 1, 0.36, 1)';
+            bar.style.width = bar.dataset.w + '%';
+          }
+        }
+
+        // SVG draw-on
+        e.target.querySelectorAll && e.target.querySelectorAll('.draw').forEach(el => {
+          el.classList.add('go');
+        });
+
+        // scale beam tilt
+        if (e.target.id === 'scaleSection') {
+          // handled below
+        }
+      }
+    });
+  }, { threshold: 0.18 });
+
+  function animateCount(el, target, suffix){
+    const start = performance.now();
+    const dur = 1400;
+    const isCurrency = (target === 790);
+    const prefix = isCurrency ? '$' : '';
+    const fmt = (n) => {
+      if (target >= 1000) return n.toLocaleString('en-US');
+      return String(n);
+    };
+    function tick(t){
+      const k = Math.min(1, (t - start) / dur);
+      const eased = 1 - Math.pow(1 - k, 3);
+      const v = Math.round(eased * target);
+      el.textContent = prefix + fmt(v) + suffix;
+      if (k < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  document.querySelectorAll('.reveal, .scale-num, .tranche, .geo-row, .comp-row').forEach(el => io.observe(el));
+
+  // ===== TRANCHE init heights to 0 then animate via IO =====
+  document.querySelectorAll('.tranche').forEach(t => {
+    t.style.height = '0px';
+    t.style.overflow = 'hidden';
+  });
+
+  // ===== TRANCHE tap to expand (additive, not gating) =====
+  document.querySelectorAll('.tranche').forEach(t => {
+    if (t.classList.contains('tranche-rest')) return;
+    t.addEventListener('click', () => {
+      const wasOpen = t.classList.contains('expanded');
+      // close others
+      document.querySelectorAll('.tranche.expanded').forEach(o => {
+        o.classList.remove('expanded');
+        const baseH = parseInt(o.dataset.h, 10) || 40;
+        o.style.height = baseH + 'px';
+      });
+      if (!wasOpen) {
+        t.classList.add('expanded');
+        const baseH = parseInt(t.dataset.h, 10) || 40;
+        t.style.height = (baseH + 80) + 'px';
+      }
+    });
+  });
+
+  // ===== SCALE BEAM tilt on scroll into view =====
+  const beam = document.getElementById('scaleBeam');
+  const beamObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        // tilted to the left (debt side heavier)
+        beam.style.transform = 'rotate(-9deg)';
+      }
+    });
+  }, { threshold: 0.35 });
+  if (beam) {
+    beam.style.transform = 'rotate(0deg)';
+    beamObserver.observe(beam.closest('section'));
+  }
+
+  // ===== COMPETITOR row tap to highlight =====
+  document.querySelectorAll('.comp-row').forEach(r => {
+    r.addEventListener('click', () => {
+      r.style.background = r.style.background === 'rgba(14,107,61,0.06)' ? '' : 'rgba(14,107,61,0.06)';
+    });
+  });
+</script>
+</body>
+</html>

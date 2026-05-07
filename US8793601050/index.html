@@ -1,0 +1,1463 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>TDY · Recap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     Teledyne Stock Recap — mobile-first scroll narrative
+     Aesthetic: instrument-grade. Steel + ink, coral as live signal.
+     ============================================================ */
+  :root {
+    /* From Zair Naqvi DS — paper/ink */
+    --paper:        #FBFAF7;
+    --paper-2:      #F4F2ED;
+    --paper-3:      #ECEAE3;
+    --ink:          #141414;
+    --ink-2:        #3B3A37;
+    --ink-3:        #6B6A65;
+    --ink-4:        #A4A29C;
+    --line:         #E4E1D9;
+    --line-strong:  #CFCBC0;
+
+    /* Teledyne instrument palette — cooler than DS default, anchored by graphite */
+    --graphite-1:   #0E1216;
+    --graphite-2:   #161B21;
+    --graphite-3:   #20262E;
+    --graphite-4:   #2C333D;
+    --steel:        #4F86C6;        /* matches biggest_costs blue */
+    --steel-soft:   #B8CFE8;
+    --steel-50:     #EEF3FA;
+
+    /* Signal — the "live reading". Use sparingly. */
+    --signal:       #FF6B3D;
+    --signal-soft:  #FFD9CB;
+
+    /* Cost colors — exact from JSON */
+    --c-cost:    #4F86C6;
+    --c-rd:      #E8A838;
+    --c-sga:     #5DBB8A;
+    --c-amort:   #D95F5F;
+
+    --font-display: 'Instrument Serif', 'Times New Roman', serif;
+    --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* mobile-frame: the page IS the mobile artifact, not wrapped in a phone */
+  .page {
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* === Persistent chrome ============================================== */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(251,250,247,0.78);
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    border-bottom: 1px solid rgba(228,225,217,0.6);
+  }
+  .chrome-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px 12px;
+  }
+  .chrome .ticker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    padding: 4px 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    background: var(--paper);
+  }
+  .chrome .name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .chrome .label {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .chrome .label .dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--signal); margin-right: 6px; vertical-align: middle; animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+  .progress {
+    height: 1.5px;
+    background: transparent;
+    position: relative;
+  }
+  .progress > i {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--signal);
+    width: var(--p, 0%);
+    transition: width 0.05s linear;
+  }
+
+  /* === Eyebrow / labels ============================================== */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ink-3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 14px;
+    height: 1px;
+    background: var(--ink-4);
+  }
+  .eyebrow .accent { color: var(--signal); }
+
+  /* === Section base ================================================== */
+  section {
+    padding: 56px 24px;
+    position: relative;
+  }
+  section.tight { padding: 40px 24px; }
+
+  /* === Display type =================================================== */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+  }
+  .display em { font-style: italic; color: var(--signal); }
+  .display .muted-em { font-style: italic; color: var(--ink-3); }
+
+  .h-thesis {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.94;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .h-thesis em { font-style: italic; }
+
+  .h-section {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.0;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .h-section em { font-style: italic; }
+
+  .body-text {
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+  .body-text em.sig { font-style: italic; color: var(--signal); font-family: var(--font-display); font-size: 1.05em; }
+  .body-text em.serif { font-style: italic; font-family: var(--font-display); font-size: 1.05em; color: var(--ink); }
+
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+  }
+
+  /* ==================================================================
+     1. HERO — Oscilloscope thesis
+     ================================================================== */
+  .hero {
+    padding: 24px 24px 64px;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero .ticker-line {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .hero .ticker-line .sym {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+  }
+  .hero .ticker-line .px {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+  }
+  .hero .ticker-line .delta { font-family: var(--font-mono); font-size: 12px; color: #2BB673; }
+
+  .hero h1 { margin: 8px 0 24px; }
+
+  .hero .scope {
+    width: 100%;
+    height: 220px;
+    display: block;
+    margin: 28px 0 24px;
+  }
+
+  .hero .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--line);
+    margin-top: 24px;
+  }
+  .hero .stats > div {
+    padding: 14px 14px 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero .stats > div:nth-child(odd) {
+    padding-right: 14px;
+    border-right: 1px solid var(--line);
+  }
+  .hero .stats > div:nth-child(even) { padding-left: 14px; }
+  .hero .stats .k {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .hero .stats .v {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .hero .stats .v small {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    margin-left: 4px;
+  }
+
+  /* ==================================================================
+     RESET BEAT — italic interlude
+     ================================================================== */
+  .reset {
+    padding: 44px 28px;
+    background: var(--paper-2);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .reset.dark {
+    background: var(--graphite-1);
+    color: #EAEAE6;
+    border-color: var(--graphite-3);
+  }
+  .reset.dark p { color: #C9C7C2; }
+  .reset.dark p em.sig { color: var(--signal); }
+  .reset p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 24px;
+    line-height: 1.25;
+    color: var(--ink-2);
+    text-wrap: balance;
+    margin: 0;
+  }
+  .reset p em.sig { font-style: italic; color: var(--signal); }
+  .reset .src {
+    margin-top: 14px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .reset.dark .src { color: #8A8884; }
+
+  /* ==================================================================
+     2. THE BUSINESS — Four segments instrument panel
+     ================================================================== */
+  .segments {
+    background: var(--paper);
+    padding-top: 56px;
+  }
+  .segments .panel {
+    margin-top: 32px;
+    background: var(--graphite-1);
+    border-radius: 14px;
+    padding: 22px 18px 20px;
+    color: #EAEAE6;
+    box-shadow: 0 24px 48px -28px rgba(20,20,20,0.4);
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--graphite-3);
+    margin-bottom: 18px;
+  }
+  .panel-head .led { width: 7px; height: 7px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 8px var(--signal); animation: pulse 2.2s ease-in-out infinite; }
+  .panel-head .label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #8A8884; }
+  .panel-head .right { margin-left: auto; font-family: var(--font-mono); font-size: 10px; color: #8A8884; letter-spacing: 0.1em; }
+
+  .seg {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--graphite-3);
+  }
+  .seg:last-child { border-bottom: 0; }
+  .seg .num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: #6F6E6A;
+    letter-spacing: 0.08em;
+  }
+  .seg .name {
+    font-family: var(--font-display);
+    font-size: 19px;
+    color: #F2F0EC;
+    line-height: 1.1;
+    letter-spacing: -0.005em;
+  }
+  .seg .desc {
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    color: #8E8C87;
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+  .seg .pct {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--steel-soft);
+    text-align: right;
+  }
+  .seg .bar {
+    grid-column: 1 / -1;
+    height: 2px;
+    background: var(--graphite-3);
+    border-radius: 2px;
+    margin-top: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+  .seg .bar > i {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: var(--steel);
+    width: var(--w, 0%);
+    transition: width 1s var(--ease-out);
+  }
+  .seg.signal .bar > i { background: var(--signal); }
+  .seg.signal .pct { color: var(--signal); }
+
+  .panel-foot {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--graphite-3);
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: #8A8884;
+    letter-spacing: 0.06em;
+  }
+  .panel-foot .total { color: #F2F0EC; }
+
+  /* ==================================================================
+     3. SCALE — count-up + comparative
+     ================================================================== */
+  .scale-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+    margin-top: 32px;
+  }
+  .big-num {
+    font-family: var(--font-display);
+    font-size: 84px;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .big-num em { font-style: italic; color: var(--signal); }
+  .big-num .unit { font-size: 36px; color: var(--ink-3); margin-left: 4px; font-style: italic; }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+  }
+  .stat-row:last-child { border-bottom: 1px solid var(--line); }
+  .stat-row .lbl {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .stat-row .val {
+    font-family: var(--font-display);
+    font-size: 30px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .stat-row .val em { font-style: italic; color: var(--signal); }
+
+  .triplet {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    margin-top: 32px;
+  }
+  .triplet > div {
+    padding: 14px 8px;
+    border-right: 1px solid var(--line);
+    text-align: center;
+  }
+  .triplet > div:last-child { border-right: 0; }
+  .triplet .v {
+    font-family: var(--font-display);
+    font-size: 30px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .triplet .v em { font-style: italic; color: var(--signal); }
+  .triplet .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    margin-top: 8px;
+    line-height: 1.3;
+  }
+
+  /* ==================================================================
+     4. COSTS — Hundred cents grid + dial
+     ================================================================== */
+  .costs {
+    background: var(--paper-2);
+    padding: 64px 24px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .cents-wrap {
+    margin: 36px 0 28px;
+  }
+  .cents {
+    width: 100%;
+    aspect-ratio: 1;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 4px;
+  }
+  .cent {
+    border-radius: 3px;
+    background: var(--paper-3);
+    transition: background 0.5s var(--ease-out), transform 0.5s var(--ease-spring);
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  .cent.lit { transform: scale(1); opacity: 1; }
+  .cents-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 18px;
+    margin-top: 22px;
+  }
+  .leg {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-2);
+  }
+  .leg .sw { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .leg .pct { margin-left: auto; color: var(--ink); font-weight: 500; }
+  .leg .lbl { font-family: var(--font-sans); font-size: 12px; color: var(--ink-2); }
+
+  .survives {
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .survives .num {
+    font-family: var(--font-display);
+    font-size: 72px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .survives .num em { font-style: italic; color: var(--signal); }
+  .survives .cap {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 19px;
+    color: var(--ink-2);
+    margin-top: 10px;
+    line-height: 1.35;
+    text-wrap: balance;
+  }
+  .survives .cap em { color: var(--signal); }
+
+  /* ==================================================================
+     5. FOOTPRINT — 38 countries
+     ================================================================== */
+  .footprint {
+    padding: 64px 24px;
+    background: var(--paper);
+  }
+  .map-svg { width: 100%; height: auto; display: block; margin: 28px 0 0; }
+  .geo-list { margin-top: 28px; }
+  .geo-row {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+  }
+  .geo-row:last-child { border-bottom: 1px solid var(--line); }
+  .geo-row .reg { font-family: var(--font-sans); font-size: 13px; color: var(--ink); }
+  .geo-row .pct { font-family: var(--font-mono); font-size: 13px; color: var(--ink); text-align: right; }
+  .geo-row .bar { height: 3px; background: var(--paper-3); border-radius: 2px; overflow: hidden; position: relative; }
+  .geo-row .bar > i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--steel); width: var(--w, 0%); transition: width 1s var(--ease-out); }
+  .geo-row.us .bar > i { background: var(--signal); }
+
+  .countries {
+    margin-top: 32px;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .countries .n {
+    font-family: var(--font-display);
+    font-size: 96px;
+    line-height: 0.9;
+    color: var(--ink);
+    letter-spacing: -0.04em;
+  }
+  .countries .n em { font-style: italic; color: var(--signal); }
+  .countries .lbl { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); margin-top: 8px; }
+
+  /* ==================================================================
+     6. THE BET — Singleton acquisitions
+     ================================================================== */
+  .bet {
+    background: var(--graphite-1);
+    color: #E8E6E1;
+    padding: 72px 24px;
+    border-top: 1px solid var(--graphite-3);
+    border-bottom: 1px solid var(--graphite-3);
+  }
+  .bet .eyebrow { color: #8A8884; }
+  .bet .eyebrow::before { background: #4A4845; }
+  .bet .h-section { color: #F4F2ED; }
+  .bet .h-section em { color: var(--signal); }
+  .bet .body-text { color: #B5B2AC; }
+  .bet .body-text em.serif { color: #F4F2ED; }
+
+  .flow {
+    margin: 36px 0 16px;
+    padding: 22px 18px;
+    border: 1px solid var(--graphite-3);
+    border-radius: 12px;
+    background: var(--graphite-2);
+  }
+  .flow-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    padding: 12px 0;
+    align-items: baseline;
+    border-bottom: 1px dashed var(--graphite-4);
+  }
+  .flow-row:last-child { border-bottom: 0; }
+  .flow-row.head { padding-top: 0; }
+  .flow-row .k { font-family: var(--font-mono); font-size: 11px; color: #8A8884; letter-spacing: 0.06em; }
+  .flow-row .v { font-family: var(--font-display); font-size: 22px; color: #F4F2ED; line-height: 1; }
+  .flow-row .v em { font-style: italic; color: var(--signal); }
+  .flow-arrow {
+    text-align: center;
+    color: #4A4845;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    margin: 8px 0;
+    letter-spacing: 0.1em;
+  }
+  .flow-result {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--graphite-4);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .flow-result .v {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1;
+    color: var(--signal);
+  }
+  .flow-result .v em { font-style: italic; }
+  .flow-result .k {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: #8A8884;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .acquisitions { margin-top: 36px; }
+  .acq {
+    display: grid;
+    grid-template-columns: 38px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid var(--graphite-3);
+  }
+  .acq:last-child { border-bottom: 1px solid var(--graphite-3); }
+  .acq .y { font-family: var(--font-mono); font-size: 11px; color: #6F6D69; letter-spacing: 0.06em; }
+  .acq .name { font-family: var(--font-display); font-size: 20px; color: #F4F2ED; }
+  .acq .name em { font-style: italic; color: var(--signal); }
+  .acq .v { font-family: var(--font-mono); font-size: 13px; color: var(--steel-soft); }
+  .acq.feature .v { color: var(--signal); }
+
+  .no-div {
+    margin-top: 32px;
+    text-align: center;
+    padding: 24px 16px;
+    border: 1px dashed var(--graphite-3);
+    border-radius: 12px;
+  }
+  .no-div .n {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 38px;
+    line-height: 1;
+    color: #F4F2ED;
+  }
+  .no-div .n em { color: var(--signal); }
+  .no-div .cap {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #8A8884;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 12px;
+  }
+
+  /* ==================================================================
+     7. COMPETITORS — proportional geometry
+     ================================================================== */
+  .compete {
+    padding: 72px 24px;
+    background: var(--paper);
+  }
+  .comp-stack { margin-top: 36px; }
+  .comp {
+    margin-bottom: 24px;
+  }
+  .comp-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .comp-head .ticker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    padding: 2px 6px;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+  }
+  .comp-head .name {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .comp-head .mc {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink);
+  }
+  .comp-bar {
+    height: 28px;
+    background: var(--paper-3);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .comp-bar > i {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: var(--ink-3);
+    width: var(--w, 0%);
+    transition: width 1.2s var(--ease-out);
+  }
+  .comp.us .comp-bar > i { background: var(--signal); }
+  .comp.us .comp-head .name { color: var(--ink); font-weight: 600; }
+  .comp.us .comp-head .ticker { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .comp .meta-row {
+    display: flex;
+    gap: 14px;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .comp .meta-row .neg { color: #C44A38; }
+  .comp .meta-row span b { color: var(--ink-2); font-weight: 500; }
+
+  .comp-note {
+    margin-top: 20px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--ink-2);
+    text-wrap: balance;
+  }
+  .comp-note em { color: var(--signal); }
+
+  /* ==================================================================
+     8. CLOSE — Inverted thesis
+     ================================================================== */
+  .close {
+    padding: 88px 24px 64px;
+    background: var(--paper);
+    text-align: left;
+  }
+  .close .h-thesis { font-size: 52px; }
+  .close .closing-num {
+    font-family: var(--font-display);
+    font-size: 96px;
+    line-height: 0.9;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+    margin-top: 24px;
+  }
+  .close .closing-num em { font-style: italic; color: var(--signal); }
+  .close .closing-cap {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 21px;
+    color: var(--ink-2);
+    margin-top: 16px;
+    line-height: 1.35;
+    text-wrap: balance;
+  }
+  .close .closing-cap em { color: var(--signal); }
+
+  .colophon {
+    margin-top: 88px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ==================================================================
+     Reveal-on-scroll
+     ================================================================== */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+  .reveal.in { opacity: 1; transform: none; }
+  .reveal-stagger > * { opacity: 0; transform: translateY(10px); transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out); }
+  .reveal-stagger.in > * { opacity: 1; transform: none; }
+  .reveal-stagger.in > *:nth-child(1) { transition-delay: 0ms; }
+  .reveal-stagger.in > *:nth-child(2) { transition-delay: 70ms; }
+  .reveal-stagger.in > *:nth-child(3) { transition-delay: 140ms; }
+  .reveal-stagger.in > *:nth-child(4) { transition-delay: 210ms; }
+  .reveal-stagger.in > *:nth-child(5) { transition-delay: 280ms; }
+  .reveal-stagger.in > *:nth-child(6) { transition-delay: 350ms; }
+
+  /* === Tiny utility =================================================== */
+  .pad-bottom-sm { padding-bottom: 8px; }
+  .gutter { margin-top: 18px; }
+  .gutter-lg { margin-top: 32px; }
+
+  /* Outside the mobile frame, on wider viewports, give a quiet bg */
+  @media (min-width: 480px) {
+    body {
+      background:
+        radial-gradient(1200px 800px at 50% -100px, #F1EEE6 0%, #FBFAF7 60%);
+      min-height: 100vh;
+    }
+    .page {
+      box-shadow: 0 40px 100px -40px rgba(20,20,20,0.18), 0 8px 24px -12px rgba(20,20,20,0.08);
+      border-radius: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page" data-screen-label="01 TDY Recap">
+
+  <!-- ============ STICKY CHROME ============ -->
+  <div class="chrome">
+    <div class="chrome-inner">
+      <span class="ticker">TDY</span>
+      <span class="name">Teledyne Technologies</span>
+      <span class="label"><span class="dot"></span>Recap · FY '25</span>
+    </div>
+    <div class="progress"><i id="progressBar"></i></div>
+  </div>
+
+  <!-- ============ 1. HERO — OSCILLOSCOPE THESIS ============ -->
+  <section class="hero" data-screen-label="Hero · Thesis">
+    <div class="ticker-line">
+      <span class="sym">NYSE · TDY</span>
+      <span class="px">$30.64B mkt cap</span>
+      <span class="delta">▲ live</span>
+    </div>
+
+    <div class="eyebrow"><span>The thesis</span></div>
+
+    <h1 class="h-thesis reveal" style="margin-top:18px;">
+      It <em>senses</em><br/>what others<br/>can't <em>see.</em>
+    </h1>
+
+    <!-- Oscilloscope signal — the company IS this signal -->
+    <svg class="scope" viewBox="0 0 380 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="scopeFade" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#FF6B3D" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#FF6B3D" stop-opacity="0"/>
+        </linearGradient>
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E4E1D9" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="380" height="220" fill="url(#grid)"/>
+      <line x1="0" y1="110" x2="380" y2="110" stroke="#CFCBC0" stroke-width="0.5" stroke-dasharray="2 4"/>
+      <!-- Filled area beneath signal -->
+      <path id="scopeFill" d="" fill="url(#scopeFade)"/>
+      <!-- Signal trace -->
+      <path id="scopeTrace" d="" fill="none" stroke="#FF6B3D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Live readout dot -->
+      <circle id="scopeDot" cx="0" cy="110" r="3" fill="#FF6B3D">
+        <animate attributeName="r" values="3;5;3" dur="1.6s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Corner labels -->
+      <text x="8" y="16" font-family="Geist Mono, monospace" font-size="8" fill="#6B6A65" letter-spacing="1">CH1 · 1.0V/DIV</text>
+      <text x="372" y="16" font-family="Geist Mono, monospace" font-size="8" fill="#6B6A65" letter-spacing="1" text-anchor="end">38 COUNTRIES</text>
+      <text x="8" y="212" font-family="Geist Mono, monospace" font-size="8" fill="#6B6A65" letter-spacing="1">SENSE · ANALYZE · DISTRIBUTE</text>
+      <text x="372" y="212" font-family="Geist Mono, monospace" font-size="8" fill="#FF6B3D" letter-spacing="1" text-anchor="end">● ACTIVE</text>
+    </svg>
+
+    <p class="body-text reveal">
+      Teledyne builds the <em class="serif">instruments</em> that other companies' work
+      depends on. <em class="sig">Cameras that see infrared.</em> Sensors that map the seafloor.
+      Avionics for the aircraft you'll never fly. Founded by Henry Singleton in 1960 — a
+      conglomerate built one acquisition at a time, still compounding.
+    </p>
+
+    <div class="stats reveal" style="transition-delay:120ms;">
+      <div>
+        <div class="k">Revenue · FY25</div>
+        <div class="v">$6.12<small>B</small></div>
+      </div>
+      <div>
+        <div class="k">Market cap</div>
+        <div class="v">$30.64<small>B</small></div>
+      </div>
+      <div>
+        <div class="k">Employees</div>
+        <div class="v">15.8<small>K</small></div>
+      </div>
+      <div>
+        <div class="k">Operating margin</div>
+        <div class="v">18.8<small>%</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT ============ -->
+  <div class="reset">
+    <p>The product isn't the camera, the sonar, or the silicon. <em class="sig">The product is the reading itself</em> — accurate, on time, somewhere it could not have been measured before.</p>
+    <div class="src">— Reset · 01</div>
+  </div>
+
+  <!-- ============ 2. THE BUSINESS — INSTRUMENT PANEL ============ -->
+  <section class="segments" data-screen-label="The business">
+    <div class="eyebrow"><span>How it makes money · <span class="accent">$6.12B</span></span></div>
+    <h2 class="h-section reveal" style="margin-top:18px;">Four <em>signals</em>,<br/>one console.</h2>
+    <p class="body-text reveal" style="margin-top:18px;">
+      Revenue arrives in four streams — measured, not balanced. Digital Imaging is the
+      <em class="serif">load-bearing wall.</em> The other three are independent businesses
+      stitched into one chassis.
+    </p>
+
+    <div class="panel reveal-stagger" id="segPanel">
+      <div class="panel-head">
+        <span class="led"></span>
+        <span class="label">CH · FY25 Revenue Mix</span>
+        <span class="right">N=4</span>
+      </div>
+
+      <div class="seg signal" data-w="52">
+        <span class="num">01</span>
+        <div>
+          <div class="name">Digital Imaging</div>
+          <div class="desc">Sensors, cameras, infrared, X-ray for industrial, defense, medical</div>
+        </div>
+        <span class="pct">52%</span>
+        <div class="bar"><i></i></div>
+      </div>
+
+      <div class="seg" data-w="24">
+        <span class="num">02</span>
+        <div>
+          <div class="name">Instrumentation</div>
+          <div class="desc">Marine, environmental, electronic test &amp; measurement</div>
+        </div>
+        <span class="pct">24%</span>
+        <div class="bar"><i></i></div>
+      </div>
+
+      <div class="seg" data-w="17">
+        <span class="num">03</span>
+        <div>
+          <div class="name">Aerospace &amp; Defense</div>
+          <div class="desc">Avionics, harsh-env interconnects, satellite comms</div>
+        </div>
+        <span class="pct">17%</span>
+        <div class="bar"><i></i></div>
+      </div>
+
+      <div class="seg" data-w="7">
+        <span class="num">04</span>
+        <div>
+          <div class="name">Engineered Systems</div>
+          <div class="desc">Defense and space systems engineering</div>
+        </div>
+        <span class="pct">7%</span>
+        <div class="bar"><i></i></div>
+      </div>
+
+      <div class="panel-foot">
+        <span>Σ FY25</span>
+        <span class="total">$6.12B · 100%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. SCALE ============ -->
+  <section class="tight" style="padding-top:24px;" data-screen-label="The scale">
+    <div class="eyebrow"><span>The scale · <span class="accent">Q1 '26</span></span></div>
+
+    <div class="big-num reveal" style="margin-top:20px;">
+      <em>$1.56</em><span class="unit">B</span>
+    </div>
+    <p class="body-text reveal" style="margin-top:18px;">
+      Most recent quarter. <em class="serif">$5.80 EPS.</em>
+      Earnings momentum on a base that's already split roughly in thirds —
+      U.S. government, domestic commercial, international — so no single
+      customer can flinch the whole company.
+    </p>
+
+    <div class="stat-row reveal">
+      <span class="lbl">Gross margin</span>
+      <span class="val">42.8<em>%</em></span>
+    </div>
+    <div class="stat-row reveal">
+      <span class="lbl">Operating margin</span>
+      <span class="val">18.8<em>%</em></span>
+    </div>
+    <div class="stat-row reveal">
+      <span class="lbl">FCF · FY25</span>
+      <span class="val">$1.07<em>B</em></span>
+    </div>
+    <div class="stat-row reveal">
+      <span class="lbl">Capex · FY25</span>
+      <span class="val">$117<em>M</em></span>
+    </div>
+
+    <p class="body-text reveal" style="margin-top:24px;">
+      <em class="sig">Asset-light.</em> Capex is less than two percent of revenue — Teledyne owns
+      the engineering, not the foundry.
+    </p>
+  </section>
+
+  <!-- ============ RESET BEAT ============ -->
+  <div class="reset">
+    <p>Most of every dollar that arrives <em class="sig">leaves again</em> — to silicon, to wages, to amortization. The interesting question is what survives.</p>
+    <div class="src">— Reset · 02</div>
+  </div>
+
+  <!-- ============ 4. COSTS — 100 CENTS ============ -->
+  <section class="costs" data-screen-label="The cost breakdown">
+    <div class="eyebrow"><span>A hundred cents in · <span class="accent">where they go</span></span></div>
+    <h2 class="h-section reveal" style="margin-top:18px;">Every dollar,<br/><em>spent four ways.</em></h2>
+
+    <div class="cents-wrap reveal">
+      <div class="cents" id="cents"></div>
+    </div>
+
+    <div class="cents-legend">
+      <div class="leg"><span class="sw" style="background:#4F86C6"></span><span class="lbl">Cost of revenue</span><span class="pct">57¢</span></div>
+      <div class="leg"><span class="sw" style="background:#5DBB8A"></span><span class="lbl">SG&amp;A</span><span class="pct">10¢</span></div>
+      <div class="leg"><span class="sw" style="background:#E8A838"></span><span class="lbl">R&amp;D</span><span class="pct">7¢</span></div>
+      <div class="leg"><span class="sw" style="background:#D95F5F"></span><span class="lbl">Amortization</span><span class="pct">4¢</span></div>
+    </div>
+
+    <div class="survives reveal">
+      <div class="meta" style="margin-bottom:10px;">What survives</div>
+      <div class="num"><em>22¢</em> <span style="font-style:italic;color:var(--ink-3);font-size:0.4em;vertical-align:middle;">of every dollar</span></div>
+      <div class="cap">Roughly <em>twenty-two cents</em> of every dollar makes it
+        through to operating profit. Acquired-intangible amortization — the four-cent
+        wedge — is the receipt for Teledyne's <em>buying habit.</em></div>
+    </div>
+  </section>
+
+  <!-- ============ 5. FOOTPRINT ============ -->
+  <section class="footprint" data-screen-label="Footprint">
+    <div class="eyebrow"><span>The footprint · <span class="accent">38 countries</span></span></div>
+    <h2 class="h-section reveal" style="margin-top:18px;">Where the<br/>signal <em>lands.</em></h2>
+    <p class="body-text reveal" style="margin-top:16px;">
+      Half the revenue is American. Half travels — to <em class="serif">European labs,</em>
+      Asian factories, and ports on every coast that has one.
+    </p>
+
+    <!-- Hand-built world dot map (schematic, not literal) -->
+    <svg class="map-svg" viewBox="0 0 380 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <radialGradient id="usPulse">
+          <stop offset="0%" stop-color="#FF6B3D" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#FF6B3D" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <!-- Subtle grid -->
+      <g opacity="0.5">
+        <line x1="0" y1="100" x2="380" y2="100" stroke="#E4E1D9" stroke-width="0.5" stroke-dasharray="1 3"/>
+        <line x1="190" y1="0" x2="190" y2="200" stroke="#E4E1D9" stroke-width="0.5" stroke-dasharray="1 3"/>
+      </g>
+      <!-- World dots — schematic continents -->
+      <g id="dots-na"></g>
+      <g id="dots-eu"></g>
+      <g id="dots-as"></g>
+      <g id="dots-row"></g>
+      <!-- US pulse -->
+      <circle cx="80" cy="92" r="22" fill="url(#usPulse)">
+        <animate attributeName="r" values="22;30;22" dur="2.6s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="80" cy="92" r="3" fill="#FF6B3D"/>
+    </svg>
+
+    <div class="geo-list reveal">
+      <div class="geo-row us" data-w="52">
+        <span class="reg">United States</span>
+        <span class="bar"><i></i></span>
+        <span class="pct">52%</span>
+      </div>
+      <div class="geo-row" data-w="24">
+        <span class="reg">Europe</span>
+        <span class="bar"><i></i></span>
+        <span class="pct">24%</span>
+      </div>
+      <div class="geo-row" data-w="16">
+        <span class="reg">Asia</span>
+        <span class="bar"><i></i></span>
+        <span class="pct">16%</span>
+      </div>
+      <div class="geo-row" data-w="8">
+        <span class="reg">Rest of world</span>
+        <span class="bar"><i></i></span>
+        <span class="pct">8%</span>
+      </div>
+    </div>
+
+    <div class="countries reveal">
+      <div class="n"><em>38</em></div>
+      <div class="lbl">countries served</div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT — DARK INTERLUDE ============ -->
+  <div class="reset dark">
+    <p>Singleton's old playbook, still running. <em class="sig">Cash in,</em> companies out — bolted to the chassis, never the dividend.</p>
+    <div class="src">— Reset · 03</div>
+  </div>
+
+  <!-- ============ 6. THE BET — SINGLETON COMPOUNDER ============ -->
+  <section class="bet" data-screen-label="The bet">
+    <div class="eyebrow"><span>The bet · <span style="color:var(--signal)">capital allocation</span></span></div>
+    <h2 class="h-section reveal" style="margin-top:18px;">A serial<br/><em>compounder.</em></h2>
+    <p class="body-text reveal" style="margin-top:16px;">
+      Henry Singleton built Teledyne to <em class="serif">consume cash</em> by buying companies.
+      Two-thirds of a century later, the discipline is the same. FY25 generated $1.19B in
+      operating cash flow. Most of it went back out the door — into acquisitions and buybacks.
+    </p>
+
+    <!-- Cash flow waterfall -->
+    <div class="flow reveal">
+      <div class="flow-row head">
+        <span class="k">Operating cash · FY25</span>
+        <span class="v">$1.19B</span>
+      </div>
+      <div class="flow-row">
+        <span class="k">– Capex</span>
+        <span class="v">$117M</span>
+      </div>
+      <div class="flow-row">
+        <span class="k">= Free cash flow</span>
+        <span class="v"><em>$1.07B</em></span>
+      </div>
+      <div class="flow-arrow">↓ deployed</div>
+      <div class="flow-result">
+        <span class="v"><em>$354M</em></span>
+        <span class="k">repurchased in 2024 · $2B authorization</span>
+      </div>
+    </div>
+
+    <div class="acquisitions reveal">
+      <div class="meta" style="color:#8A8884;margin-bottom:10px;letter-spacing:0.12em;">FY25 ACQUISITIONS · 4 DEALS</div>
+      <div class="acq feature">
+        <span class="y">FY25</span>
+        <span class="name"><em>Qioptiq</em></span>
+        <span class="v">$710M</span>
+      </div>
+      <div class="acq">
+        <span class="y">FY25</span>
+        <span class="name">Bolt-on · 2</span>
+        <span class="v">undisclosed</span>
+      </div>
+      <div class="acq">
+        <span class="y">FY25</span>
+        <span class="name">Bolt-on · 3</span>
+        <span class="v">undisclosed</span>
+      </div>
+      <div class="acq">
+        <span class="y">FY25</span>
+        <span class="name">Bolt-on · 4</span>
+        <span class="v">undisclosed</span>
+      </div>
+    </div>
+
+    <div class="no-div">
+      <div class="n"><em>$0.00</em></div>
+      <div class="cap">No regular dividend · by design</div>
+    </div>
+
+    <p class="body-text reveal" style="margin-top:28px;">
+      The receipt sits on the balance sheet: <em class="serif">$8.69B</em> in goodwill,
+      <em class="serif">$2.10B</em> in acquired intangibles. That's what serial buying
+      looks like once it's compounded for a quarter-century.
+    </p>
+  </section>
+
+  <!-- ============ 7. COMPETITORS ============ -->
+  <section class="compete" data-screen-label="Competitors">
+    <div class="eyebrow"><span>The competition · <span class="accent">three rivals</span></span></div>
+    <h2 class="h-section reveal" style="margin-top:18px;">Two its <em>size.</em><br/>One twice <em>over.</em></h2>
+    <p class="body-text reveal" style="margin-top:16px;">
+      Teledyne sits in a peer pocket worth roughly $30B. ON Semi and STMicroelectronics
+      are within a hair on market cap. <em class="serif">L3Harris</em> is the heavyweight —
+      twice the size, head-to-head on defense electronics.
+    </p>
+
+    <div class="comp-stack">
+      <div class="comp us" data-w="47">
+        <div class="comp-head">
+          <span class="ticker">TDY</span>
+          <span class="name">Teledyne</span>
+          <span class="mc">$30.64B</span>
+        </div>
+        <div class="comp-bar"><i></i></div>
+        <div class="meta-row"><span><b>Rev</b> $6.12B</span><span><b>YoY</b> stable</span></div>
+      </div>
+
+      <div class="comp" data-w="50">
+        <div class="comp-head">
+          <span class="ticker">ON</span>
+          <span class="name">ON Semiconductor</span>
+          <span class="mc">$32.65B</span>
+        </div>
+        <div class="comp-bar"><i></i></div>
+        <div class="meta-row"><span><b>Rev</b> $6.00B</span><span class="neg"><b>YoY</b> –15.4%</span><span><b>P/E</b> 269.8</span></div>
+      </div>
+
+      <div class="comp" data-w="48">
+        <div class="comp-head">
+          <span class="ticker">STM</span>
+          <span class="name">STMicroelectronics</span>
+          <span class="mc">$31.20B</span>
+        </div>
+        <div class="comp-bar"><i></i></div>
+        <div class="meta-row"><span><b>Rev/Q</b> $3.19B</span><span class="neg"><b>YoY</b> –50.6%</span><span><b>P/E</b> 40.5</span></div>
+      </div>
+
+      <div class="comp" data-w="100">
+        <div class="comp-head">
+          <span class="ticker">LHX</span>
+          <span class="name">L3Harris</span>
+          <span class="mc">$65.44B</span>
+        </div>
+        <div class="comp-bar"><i></i></div>
+        <div class="meta-row"><span><b>Rev</b> $21.86B</span><span class="neg"><b>YoY</b> –24.0%</span><span><b>P/E</b> 40.8</span></div>
+      </div>
+    </div>
+
+    <p class="comp-note reveal">
+      Three rivals, all printing <em>negative growth.</em> Teledyne's earnings momentum
+      is, for the moment, alone in this room.
+    </p>
+  </section>
+
+  <!-- ============ RESET BEAT ============ -->
+  <div class="reset">
+    <p>The thesis was a <em class="sig">signal.</em> The company is a method for keeping that signal alive — for sixty-six years, and counting.</p>
+    <div class="src">— Reset · 04</div>
+  </div>
+
+  <!-- ============ 8. CLOSE — INVERTED THESIS ============ -->
+  <section class="close" data-screen-label="Close">
+    <div class="eyebrow"><span>The takeaway · <span class="accent">FY '25</span></span></div>
+
+    <h2 class="h-thesis reveal" style="margin-top:24px;">
+      What it <em>sees,</em><br/>it gets <em>paid</em><br/>to read.
+    </h2>
+
+    <div class="closing-num reveal"><em>22¢</em></div>
+    <div class="closing-cap">on the dollar — what survives the chassis. Then bought
+      back, or <em>spent on the next company.</em></div>
+
+    <div class="colophon">
+      <span>TDY · NYSE</span>
+      <span>Recap · FY '25</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  // ---------- Scroll progress ----------
+  const bar = document.getElementById('progressBar');
+  const onScroll = () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight)) * 100;
+    bar.style.width = Math.min(100, Math.max(0, pct)) + '%';
+  };
+  document.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ---------- Reveal on scroll ----------
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        // For seg bars and geo bars, drive width
+        if (e.target.id === 'segPanel') {
+          e.target.querySelectorAll('.seg').forEach(s => {
+            s.querySelector('.bar > i').style.setProperty('--w', s.dataset.w + '%');
+            s.querySelector('.bar > i').style.width = s.dataset.w + '%';
+          });
+        }
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => io.observe(el));
+
+  // Geo bars
+  const geoIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        document.querySelectorAll('.geo-row').forEach(r => {
+          r.querySelector('.bar > i').style.width = r.dataset.w + '%';
+        });
+        geoIo.disconnect();
+      }
+    });
+  }, { threshold: 0.2 });
+  const geoList = document.querySelector('.geo-list');
+  if (geoList) geoIo.observe(geoList);
+
+  // Comp bars
+  const compIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        document.querySelectorAll('.comp').forEach((c, i) => {
+          setTimeout(() => {
+            c.querySelector('.comp-bar > i').style.width = c.dataset.w + '%';
+          }, i * 140);
+        });
+        compIo.disconnect();
+      }
+    });
+  }, { threshold: 0.2 });
+  const compStack = document.querySelector('.comp-stack');
+  if (compStack) compIo.observe(compStack);
+
+  // ---------- Build 100-cents grid ----------
+  const cents = document.getElementById('cents');
+  if (cents) {
+    const buckets = [
+      { n: 57, color: '#4F86C6', label: 'Cost of revenue' },
+      { n: 10, color: '#5DBB8A', label: 'SG&A' },
+      { n: 7,  color: '#E8A838', label: 'R&D' },
+      { n: 4,  color: '#D95F5F', label: 'Amortization' },
+      { n: 22, color: '#141414', label: 'Operating profit' } // The "what survives"
+    ];
+    const arr = [];
+    buckets.forEach(b => { for (let i=0;i<b.n;i++) arr.push(b.color); });
+    arr.forEach((c, idx) => {
+      const d = document.createElement('div');
+      d.className = 'cent';
+      d.style.background = c;
+      cents.appendChild(d);
+    });
+    // Animate lit on scroll
+    const cIo = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const cells = cents.querySelectorAll('.cent');
+          cells.forEach((cell, i) => {
+            setTimeout(() => cell.classList.add('lit'), i * 12);
+          });
+          cIo.disconnect();
+        }
+      });
+    }, { threshold: 0.15 });
+    cIo.observe(cents);
+  }
+
+  // ---------- Oscilloscope trace, scroll-driven ----------
+  const trace = document.getElementById('scopeTrace');
+  const fill = document.getElementById('scopeFill');
+  const dot = document.getElementById('scopeDot');
+  if (trace) {
+    const W = 380, H = 220, MID = 110;
+    const N = 180;
+    let phase = 0;
+    function draw() {
+      // Smooth pseudo-random signal that breathes; phase advances slowly
+      let pts = [];
+      for (let i = 0; i <= N; i++) {
+        const t = i / N;
+        const x = t * W;
+        // Layered sines — instrument-y, not noisy
+        const y = MID
+          + Math.sin(t * 8.5 + phase) * 28
+          + Math.sin(t * 18 + phase * 1.7) * 10
+          + Math.sin(t * 31 + phase * 0.4) * 4;
+        pts.push([x, y]);
+      }
+      const d = pts.map((p,i) => (i===0 ? 'M' : 'L') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+      trace.setAttribute('d', d);
+      // Filled area below
+      fill.setAttribute('d', d + ' L' + W + ' ' + H + ' L0 ' + H + ' Z');
+      // Dot at right edge
+      const last = pts[pts.length - 1];
+      dot.setAttribute('cx', last[0]);
+      dot.setAttribute('cy', last[1]);
+    }
+    draw();
+    let raf;
+    function tick() {
+      phase += 0.018;
+      draw();
+      raf = requestAnimationFrame(tick);
+    }
+    tick();
+  }
+
+  // ---------- World dots map ----------
+  function buildDots(groupId, x0, y0, w, h, count, density, color, jitter) {
+    const g = document.getElementById(groupId);
+    if (!g) return;
+    // Use a deterministic pseudo-random for stable layout
+    let seed = groupId.length * 13;
+    const rnd = () => {
+      seed = (seed * 9301 + 49297) % 233280;
+      return seed / 233280;
+    };
+    const ns = 'http://www.w3.org/2000/svg';
+    for (let i = 0; i < count; i++) {
+      const cx = x0 + rnd() * w;
+      const cy = y0 + rnd() * h;
+      const c = document.createElementNS(ns, 'circle');
+      c.setAttribute('cx', cx);
+      c.setAttribute('cy', cy);
+      c.setAttribute('r', 1.2);
+      c.setAttribute('fill', color);
+      c.setAttribute('opacity', 0.35 + rnd() * 0.5);
+      g.appendChild(c);
+    }
+  }
+  // North America (largest, signal color)
+  buildDots('dots-na', 30, 60, 100, 80, 70, 0.9, '#FF6B3D');
+  // Europe
+  buildDots('dots-eu', 175, 50, 55, 50, 38, 0.7, '#4F86C6');
+  // Asia
+  buildDots('dots-as', 230, 55, 110, 80, 30, 0.55, '#4F86C6');
+  // Row (S America, Africa, Oceania)
+  buildDots('dots-row', 80, 140, 50, 50, 8, 0.4, '#6B6A65');  // S America
+  buildDots('dots-row', 190, 110, 40, 60, 7, 0.4, '#6B6A65'); // Africa
+  buildDots('dots-row', 310, 150, 50, 35, 5, 0.4, '#6B6A65'); // Oceania
+
+})();
+</script>
+
+</body>
+</html>

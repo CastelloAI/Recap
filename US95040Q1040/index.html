@@ -1,0 +1,1353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>WELL · Recap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Warm paper palette — ledger, architectural drawing */
+    --paper: #f3ede2;          /* base */
+    --paper-raised: #ebe2d2;   /* tonal lift */
+    --paper-deep: #e0d4bf;
+    --ink: #1d1a16;             /* near-black, warm */
+    --ink-soft: #3a342b;
+    --ink-mute: #6b6354;
+    --ink-faint: #9a9082;
+    --rule: rgba(29,26,22,0.12);
+    --rule-strong: rgba(29,26,22,0.28);
+    /* Signal: dusty terracotta — warmth, hearth, dwelling */
+    --signal: #b8552e;
+    --signal-soft: #d68a64;
+    --signal-deep: #8a3d1f;
+    /* Night palette for the dark interlude */
+    --night: #15110c;
+    --night-raised: #1f1a13;
+    --night-ink: #f0e6d2;
+    --night-mute: #8a7e68;
+    /* Cost colors — honor JSON */
+    --c1: #4F86C6; /* Cost of Revenue */
+    --c2: #E07B54; /* D&A */
+    --c3: #6DBF82; /* Interest */
+    --c4: #A97DC9; /* G&A */
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  html { background: #2a241c; }
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* Mobile-only artifact, ~390px wide */
+  .page {
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+    /* subtle paper grain */
+    background-image:
+      radial-gradient(rgba(29,26,22,0.025) 1px, transparent 1px),
+      radial-gradient(rgba(29,26,22,0.018) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+  }
+
+  /* ============ CHROME ============ */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    background: rgba(243,237,226,0.78);
+    border-bottom: 1px solid var(--rule);
+  }
+  .chrome-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 22px 11px;
+    gap: 12px;
+  }
+  .chrome-left {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
+  }
+  .ticker {
+    font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .ticker .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--signal);
+    margin-right: 7px;
+    transform: translateY(-1px);
+  }
+  .co-name {
+    font-family: "Fraunces", serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ink-soft);
+    font-style: italic;
+    letter-spacing: 0.005em;
+    white-space: nowrap;
+  }
+  .recap-label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+  }
+  .progress {
+    height: 1.5px;
+    background: var(--rule);
+    position: relative;
+  }
+  .progress-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    background: var(--signal);
+    transition: width 80ms linear;
+  }
+
+  /* ============ TYPOGRAPHY ============ */
+  .eyebrow {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 18px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.5;
+  }
+  .display {
+    font-family: "Fraunces", serif;
+    font-weight: 400;
+    font-variation-settings: "opsz" 144;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  .display em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--signal);
+  }
+  .body {
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+  .body em {
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.06em;
+    color: var(--signal-deep);
+  }
+  .caption {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: var(--ink-mute);
+    line-height: 1.5;
+  }
+
+  /* ============ SECTION SCAFFOLD ============ */
+  section { position: relative; padding: 0 22px; }
+  .pad-l { padding-top: 88px; padding-bottom: 88px; }
+  .pad-m { padding-top: 64px; padding-bottom: 64px; }
+  .pad-s { padding-top: 40px; padding-bottom: 40px; }
+
+  /* Reset beats — italic-serif on contrasting band */
+  .reset {
+    background: var(--paper-raised);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 38px 28px;
+    margin: 0;
+  }
+  .reset p {
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 21px;
+    line-height: 1.35;
+    color: var(--ink-soft);
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .reset p em {
+    font-style: italic;
+    color: var(--signal);
+    font-weight: 400;
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    padding-top: 38px;
+    padding-bottom: 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-eyebrow {
+    margin-bottom: 36px;
+  }
+  .hero h1 {
+    font-family: "Fraunces", serif;
+    font-variation-settings: "opsz" 144;
+    font-weight: 400;
+    font-size: clamp(46px, 14vw, 60px);
+    line-height: 0.94;
+    letter-spacing: -0.03em;
+    margin: 0 0 0 0;
+    color: var(--ink);
+  }
+  .hero h1 .em {
+    font-style: italic;
+    color: var(--signal);
+  }
+  .hero h1 .light {
+    color: var(--ink-mute);
+    font-weight: 300;
+  }
+  .hero-sub {
+    margin-top: 32px;
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    max-width: 320px;
+  }
+
+  /* The age curve drawing in the hero — a demographic wave */
+  .age-curve {
+    position: relative;
+    margin-top: 44px;
+    height: 220px;
+  }
+  .age-curve svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .age-curve .axis-label {
+    position: absolute;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+  .age-curve .axis-65 {
+    bottom: 4px;
+    left: 64%;
+  }
+  .age-curve .axis-now {
+    bottom: 4px;
+    left: 4px;
+  }
+  .age-curve .annotate {
+    position: absolute;
+    top: 8px;
+    right: 0;
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--signal-deep);
+    text-align: right;
+    line-height: 1.3;
+    max-width: 140px;
+  }
+
+  /* ============ BUSINESS — three buildings ============ */
+  .biz-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 36px;
+    height: 280px;
+    padding: 0 4px;
+  }
+  .biz-bldg {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
+    justify-content: flex-end;
+    position: relative;
+  }
+  .biz-tower {
+    background: var(--ink);
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    /* Floors drawn with repeating linear gradient */
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(243,237,226,0.0) 0px,
+      rgba(243,237,226,0.0) 14px,
+      rgba(243,237,226,0.18) 14px,
+      rgba(243,237,226,0.18) 15px
+    );
+  }
+  .biz-bldg.lit .biz-tower::after {
+    /* signal-color glow up the side for the SHO building */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--signal) 0%, rgba(184,85,46,0.3) 30%, rgba(184,85,46,0) 60%);
+    mix-blend-mode: screen;
+    opacity: 0.85;
+  }
+  .biz-pct {
+    font-family: "Fraunces", serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .biz-bldg.lit .biz-pct { color: var(--signal); font-style: italic; }
+  .biz-pct sup {
+    font-size: 14px;
+    font-weight: 400;
+    margin-left: 2px;
+    color: var(--ink-mute);
+  }
+  .biz-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    margin-top: 10px;
+    line-height: 1.4;
+  }
+  .biz-bldg.lit .biz-label { color: var(--signal-deep); }
+
+  /* ============ SCALE ============ */
+  .scale-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    margin-top: 28px;
+  }
+  .scale-row {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 28px;
+  }
+  .scale-row:last-child { border-bottom: 0; padding-bottom: 0;}
+  .scale-num {
+    font-family: "Fraunces", serif;
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+  }
+  .scale-num .unit {
+    font-size: 24px;
+    color: var(--ink-mute);
+    letter-spacing: -0.01em;
+    font-weight: 300;
+  }
+  .scale-num.signal { color: var(--signal); font-style: italic; }
+  .scale-cap {
+    margin-top: 8px;
+    color: var(--ink-mute);
+    font-size: 13px;
+    font-family: "Inter", sans-serif;
+    line-height: 1.45;
+  }
+  .scale-cap em {
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  /* The 2,500 communities dot grid */
+  .community-grid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(50, 1fr);
+    gap: 1.5px;
+    width: 100%;
+  }
+  .community-grid span {
+    aspect-ratio: 1;
+    background: var(--ink);
+    opacity: 0.78;
+    border-radius: 0.5px;
+  }
+  .community-grid span.us { background: var(--ink); }
+  .community-grid span.ca { background: var(--signal); opacity: 0.7;}
+  .community-grid span.uk { background: var(--signal-deep); opacity: 0.5;}
+
+  /* ============ COSTS — dollar with stacked bands ============ */
+  .cost-wrap {
+    margin-top: 28px;
+  }
+  .cost-bar {
+    width: 100%;
+    height: 460px;
+    border-radius: 2px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 0 rgba(29,26,22,0.05);
+    position: relative;
+  }
+  .cost-seg {
+    position: relative;
+    color: white;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+  .cost-seg .pct {
+    font-family: "Fraunces", serif;
+    font-size: 38px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .cost-seg .pct sup { font-size: 16px; opacity: 0.85; margin-left: 2px;}
+  .cost-seg .lab {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.92;
+    line-height: 1.5;
+  }
+  .cost-seg .dollar {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    opacity: 0.75;
+  }
+  .cost-residual {
+    margin-top: 22px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    border-top: 1px dashed var(--rule-strong);
+    padding-top: 18px;
+  }
+  .cost-residual .num {
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    font-size: 38px;
+    color: var(--signal);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .cost-residual .desc {
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  /* ============ GEOGRAPHY ============ */
+  .geo-wrap { margin-top: 28px; }
+  .geo-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .geo-row {
+    display: grid;
+    grid-template-columns: 70px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+  }
+  .geo-region {
+    font-family: "Fraunces", serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+  .geo-bar-wrap {
+    position: relative;
+    height: 28px;
+    background: var(--paper-deep);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .geo-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: var(--ink);
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.16,1,0.3,1);
+  }
+  .geo-row.us .geo-bar { background: var(--ink); }
+  .geo-row.ca .geo-bar { background: var(--signal); }
+  .geo-row.uk .geo-bar { background: var(--signal-deep); }
+  .geo-pct {
+    font-family: "Fraunces", serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    min-width: 48px;
+    text-align: right;
+  }
+  .geo-pct .pp { font-size: 14px; color: var(--ink-mute); }
+
+  /* ============ THE BET — DARK INTERLUDE ============ */
+  .dark {
+    background: var(--night);
+    color: var(--night-ink);
+    margin-top: 0;
+  }
+  .dark .eyebrow { color: var(--night-mute); }
+  .dark .display { color: var(--night-ink); }
+  .dark .body { color: rgba(240,230,210,0.78); }
+  .dark .body em { color: var(--signal-soft); }
+  .bet-flow {
+    margin-top: 36px;
+    position: relative;
+    height: 320px;
+  }
+  .bet-flow svg { width: 100%; height: 100%; overflow: visible; }
+  .bet-figure {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-top: 32px;
+  }
+  .bet-cell {
+    padding: 18px 16px;
+    background: var(--night-raised);
+  }
+  .bet-cell .label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    color: var(--night-mute);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .bet-cell .num {
+    font-family: "Fraunces", serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--night-ink);
+  }
+  .bet-cell.in .num { color: var(--signal-soft); font-style: italic;}
+  .bet-cell.out .num { color: var(--night-ink); }
+  .bet-cell .sub {
+    margin-top: 6px;
+    font-size: 12px;
+    color: rgba(240,230,210,0.55);
+    line-height: 1.35;
+  }
+  .bet-quote {
+    margin-top: 36px;
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.32;
+    color: rgba(240,230,210,0.92);
+    font-weight: 300;
+  }
+  .bet-quote em {
+    color: var(--signal-soft);
+    font-style: italic;
+  }
+  .leverage {
+    margin-top: 40px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    border-top: 1px solid rgba(240,230,210,0.14);
+    padding-top: 28px;
+  }
+  .leverage .big {
+    font-family: "Fraunces", serif;
+    font-size: 60px;
+    font-weight: 400;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--signal-soft);
+    font-style: italic;
+  }
+  .leverage .big sub {
+    font-size: 18px;
+    font-style: normal;
+    color: var(--night-mute);
+    margin-left: 2px;
+  }
+  .leverage .desc {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--night-mute);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  /* ============ COMPETITORS ============ */
+  .comp-wrap { margin-top: 32px; }
+  .comp-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--rule);
+    gap: 14px;
+  }
+  .comp-row:first-child { border-top: 1px solid var(--rule); }
+  .comp-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .comp-name {
+    font-family: "Fraunces", serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .comp-tk {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-mute);
+  }
+  .comp-cap-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 14px;
+  }
+  .comp-cap-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    min-width: 64px;
+  }
+  .comp-cap-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--paper-deep);
+    position: relative;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .comp-cap-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--ink);
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.16,1,0.3,1);
+  }
+  .comp-row.well .comp-cap-fill { background: var(--signal); }
+  .comp-cap-num {
+    font-family: "Fraunces", serif;
+    font-size: 16px;
+    color: var(--ink);
+    min-width: 60px;
+    text-align: right;
+    letter-spacing: -0.01em;
+  }
+  .comp-row.well .comp-cap-num { color: var(--signal); font-style: italic;}
+  .comp-desc {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink-mute);
+  }
+  .comp-desc em {
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  /* ============ CLOSE ============ */
+  .close {
+    padding-top: 88px;
+    padding-bottom: 110px;
+    position: relative;
+  }
+  .close h2 {
+    font-family: "Fraunces", serif;
+    font-weight: 400;
+    font-size: 50px;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin: 24px 0 0 0;
+  }
+  .close h2 em { font-style: italic; color: var(--signal);}
+  .close-foot {
+    margin-top: 64px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+
+  /* ============ SCROLL REVEAL ============ */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.9s cubic-bezier(0.2,0.7,0.2,1), transform 0.9s cubic-bezier(0.2,0.7,0.2,1);}
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* Floors animation for SHO building */
+  @keyframes floorRise {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <!-- ===== CHROME ===== -->
+  <div class="chrome">
+    <div class="chrome-inner">
+      <div class="chrome-left">
+        <span class="ticker"><span class="dot"></span>WELL</span>
+        <span class="co-name">Welltower</span>
+      </div>
+      <span class="recap-label">Recap · FY '25</span>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progress"></div></div>
+  </div>
+
+  <!-- ===== HERO / THESIS ===== -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="eyebrow hero-eyebrow">Thesis · America is aging</div>
+    <h1>
+      America is <span class="em">getting older.</span><br/>
+      <span class="light">Welltower owns where it lives.</span>
+    </h1>
+    <p class="hero-sub">A 1970-vintage healthcare REIT, now the landlord of more than two&nbsp;thousand five&nbsp;hundred senior&nbsp;living communities across three countries.</p>
+
+    <div class="age-curve">
+      <svg viewBox="0 0 380 200" preserveAspectRatio="none" id="ageCurve">
+        <defs>
+          <linearGradient id="curveFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#b8552e" stop-opacity="0.32"/>
+            <stop offset="100%" stop-color="#b8552e" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- horizontal hairline -->
+        <line x1="0" y1="178" x2="380" y2="178" stroke="rgba(29,26,22,0.18)" stroke-width="1"/>
+        <!-- 65+ marker -->
+        <line x1="244" y1="40" x2="244" y2="178" stroke="rgba(29,26,22,0.2)" stroke-width="1" stroke-dasharray="2 4"/>
+        <!-- The curve: a demographic bulge skewing older -->
+        <path id="curvePath" d="
+          M 0 165
+          C 30 158, 60 150, 90 140
+          C 120 128, 150 112, 180 96
+          C 210 82, 235 70, 260 62
+          C 285 56, 310 56, 335 62
+          C 355 67, 370 72, 380 76
+          L 380 178 L 0 178 Z"
+          fill="url(#curveFill)"
+          stroke="none"/>
+        <path id="curveLine" d="
+          M 0 165
+          C 30 158, 60 150, 90 140
+          C 120 128, 150 112, 180 96
+          C 210 82, 235 70, 260 62
+          C 285 56, 310 56, 335 62
+          C 355 67, 370 72, 380 76"
+          fill="none" stroke="#b8552e" stroke-width="2" stroke-linecap="round"
+          stroke-dasharray="800" stroke-dashoffset="800"/>
+        <!-- Dot at the peak -->
+        <circle id="curveDot" cx="335" cy="62" r="3.5" fill="#b8552e" opacity="0"/>
+      </svg>
+      <div class="axis-label axis-now">Today</div>
+      <div class="axis-label axis-65">65+</div>
+      <div class="annotate"><span style="font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em;color:var(--ink-mute);text-transform:uppercase;">U.S. cohort</span><br/>the demographic bulge</div>
+    </div>
+  </section>
+
+  <!-- ===== RESET BEAT ===== -->
+  <div class="reset">
+    <p>Real estate is usually about location. <em>Here it is about lifespan.</em> A bet not on the city or the suburb but on the <em>silver tail</em> of an entire generation.</p>
+  </div>
+
+  <!-- ===== THE BUSINESS — three buildings ===== -->
+  <section class="pad-l" data-screen-label="02 The Business">
+    <div class="eyebrow">The business · three buildings</div>
+    <h2 class="display" style="font-size:44px;margin:22px 0 14px 0;">
+      One <em>operating</em> tower carries the company.
+    </h2>
+    <p class="body">Welltower books revenue through three segments. The first is its own building — owned, managed by partners, with the cash flows flowing back to Welltower. The other two are <em>tenants paying rent.</em></p>
+
+    <div class="biz-row" id="bizRow">
+      <div class="biz-bldg lit">
+        <div class="biz-pct"><span class="b-num" data-target="78">0</span><sup>%</sup></div>
+        <div class="biz-tower" data-h="1.0"></div>
+        <div class="biz-label">Seniors<br/>Housing<br/>Operating</div>
+      </div>
+      <div class="biz-bldg">
+        <div class="biz-pct"><span class="b-num" data-target="15">0</span><sup>%</sup></div>
+        <div class="biz-tower" data-h="0.20"></div>
+        <div class="biz-label">Triple-net</div>
+      </div>
+      <div class="biz-bldg">
+        <div class="biz-pct"><span class="b-num" data-target="7">0</span><sup>%</sup></div>
+        <div class="biz-tower" data-h="0.10"></div>
+        <div class="biz-label">Outpatient<br/>Medical</div>
+      </div>
+    </div>
+    <p class="caption" style="margin-top:14px;">Share of FY'25 revenue · Tower height proportional to share</p>
+  </section>
+
+  <!-- ===== RESET BEAT ===== -->
+  <div class="reset">
+    <p>The numbers behind the buildings: <em>$8.45 billion</em> in revenue, more than two thousand five hundred communities, and a market that values it at <em>nearly a hundred and fifty.</em></p>
+  </div>
+
+  <!-- ===== SCALE ===== -->
+  <section class="pad-l" data-screen-label="03 Scale">
+    <div class="eyebrow">The scale · FY '25</div>
+
+    <div class="scale-stack">
+      <div class="scale-row">
+        <div class="scale-num signal"><span class="s-num" data-target="8.45" data-decimals="2">0</span><span class="unit">B revenue</span></div>
+        <div class="scale-cap"><em>+ Net income $961.84M.</em> Q4 alone delivered $3.18B — the year's tail beat its own head.</div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-num"><span class="s-num" data-target="149.67" data-decimals="2">0</span><span class="unit">B market cap</span></div>
+        <div class="scale-cap">One of the largest healthcare REITs in the world, run by <em>just 712 people.</em></div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-num"><span class="s-num" data-target="2500" data-decimals="0" data-format="comma" data-prefix="2,5">0</span><span class="unit">+ communities</span></div>
+        <div class="scale-cap">Senior and wellness housing across the U.S., Canada, and the U.K.</div>
+        <div class="community-grid" id="commGrid"></div>
+        <div class="caption" style="margin-top:10px;display:flex;gap:14px;">
+          <span><span style="display:inline-block;width:8px;height:8px;background:var(--ink);margin-right:5px;transform:translateY(1px);"></span>U.S. 80%</span>
+          <span><span style="display:inline-block;width:8px;height:8px;background:var(--signal);margin-right:5px;transform:translateY(1px);"></span>Canada 12%</span>
+          <span><span style="display:inline-block;width:8px;height:8px;background:var(--signal-deep);margin-right:5px;transform:translateY(1px);"></span>U.K. 8%</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== COSTS ===== -->
+  <section class="pad-l" style="background:var(--paper-raised);" data-screen-label="04 Where the money goes">
+    <div class="eyebrow">A hundred cents in</div>
+    <h2 class="display" style="font-size:44px;margin:22px 0 14px 0;">
+      Most of every dollar goes back into <em>the buildings.</em>
+    </h2>
+    <p class="body">For every dollar of revenue, more than three quarters is spent operating the properties themselves — the rent collected from aging Americans and their families is, in turn, the payroll, the linens, the lights, the food.</p>
+
+    <div class="cost-wrap">
+      <div class="cost-bar" id="costBar">
+        <div class="cost-seg" style="background:#4F86C6;flex-grow:77;">
+          <div>
+            <div class="pct">77<sup>%</sup></div>
+            <div class="dollar">$0.77</div>
+          </div>
+          <div class="lab">Cost of Revenue<br/>Property Operating</div>
+        </div>
+        <div class="cost-seg" style="background:#E07B54;flex-grow:10;">
+          <div class="pct" style="font-size:24px;">10<sup style="font-size:11px;">%</sup></div>
+          <div class="lab">Depreciation &amp; Amortization</div>
+        </div>
+        <div class="cost-seg" style="background:#6DBF82;flex-grow:5;">
+          <div class="lab" style="font-size:9px;">Interest · 5%</div>
+        </div>
+        <div class="cost-seg" style="background:#A97DC9;flex-grow:2;">
+          <div class="lab" style="font-size:8px;">G&amp;A · 2%</div>
+        </div>
+        <div class="cost-seg" style="background:var(--paper);color:var(--ink);flex-grow:6;">
+          <div>
+            <div class="pct" style="color:var(--signal);font-style:italic;font-size:24px;">≈6<sup style="font-size:11px;">%</sup></div>
+            <div class="dollar" style="color:var(--ink-mute);">$0.06</div>
+          </div>
+          <div class="lab" style="color:var(--ink-mute);">What's left after costs</div>
+        </div>
+      </div>
+
+      <div class="cost-residual">
+        <div class="num">≈ 6¢</div>
+        <div class="desc">make it to the bottom line. The rest <em>keeps the lights on</em> in two&nbsp;and a half thousand homes.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== GEOGRAPHY ===== -->
+  <section class="pad-l" data-screen-label="05 Footprint">
+    <div class="eyebrow">Footprint · three countries</div>
+    <h2 class="display" style="font-size:44px;margin:22px 0 14px 0;">
+      Mostly <em>American</em> by design.
+    </h2>
+    <p class="body">The portfolio follows the demographic gravity of its largest market. Canada and the U.K. provide the foreign hedge — and, with the 2025 acquisition of <em>Amica Senior Lifestyles</em>, considerable Canadian density.</p>
+
+    <div class="geo-wrap">
+      <div class="geo-stack" id="geoStack">
+        <div class="geo-row us">
+          <div class="geo-region">United States</div>
+          <div class="geo-bar-wrap"><div class="geo-bar" data-pct="80"></div></div>
+          <div class="geo-pct">80<span class="pp">%</span></div>
+        </div>
+        <div class="geo-row ca">
+          <div class="geo-region">Canada</div>
+          <div class="geo-bar-wrap"><div class="geo-bar" data-pct="12"></div></div>
+          <div class="geo-pct">12<span class="pp">%</span></div>
+        </div>
+        <div class="geo-row uk">
+          <div class="geo-region">United Kingdom</div>
+          <div class="geo-bar-wrap"><div class="geo-bar" data-pct="8"></div></div>
+          <div class="geo-pct">8<span class="pp">%</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESET BEAT — tone shift toward dark ===== -->
+  <div class="reset" style="background:#2a241c;border-color:rgba(240,230,210,0.1);">
+    <p style="color:#c9bda3;">In 2025, Welltower stopped trying to be everything in healthcare real estate.<br/><em style="color:#d68a64;">It bet the company on bedrooms.</em></p>
+  </div>
+
+  <!-- ===== THE BET — DARK INTERLUDE ===== -->
+  <section class="dark pad-l" data-screen-label="06 The Bet">
+    <div class="eyebrow">The bet · pure-play senior housing</div>
+    <h2 class="display" style="font-size:44px;margin:22px 0 14px 0;color:var(--night-ink);">
+      Out went <em>medical offices.</em><br/>In went <em>bedrooms.</em>
+    </h2>
+    <p class="body">A simultaneous, two-direction trade: divest the outpatient medical portfolio, reload the proceeds into senior housing — most visibly the <em>$4.6B Amica Senior Lifestyles</em> acquisition — for a combined ~$11B of net investment activity in a single year.</p>
+
+    <div class="bet-flow">
+      <svg viewBox="0 0 380 320" preserveAspectRatio="none" id="betFlow">
+        <defs>
+          <linearGradient id="flowOut" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#f0e6d2" stop-opacity="0.65"/>
+            <stop offset="100%" stop-color="#f0e6d2" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="flowIn" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#d68a64" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#d68a64" stop-opacity="0.85"/>
+          </linearGradient>
+        </defs>
+
+        <!-- left column label: out -->
+        <text x="14" y="18" fill="#8a7e68" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="2">DIVEST</text>
+        <text x="366" y="18" fill="#8a7e68" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="2" text-anchor="end">ACQUIRE</text>
+
+        <!-- Outflow: outpatient medical leaves -->
+        <path id="flowOutPath" d="M 50 80 C 130 80, 180 110, 250 150"
+              stroke="url(#flowOut)" stroke-width="22" fill="none" stroke-linecap="round"
+              stroke-dasharray="500" stroke-dashoffset="500"/>
+        <!-- Inflow: amica + others arrive -->
+        <path id="flowInPath" d="M 130 240 C 200 240, 260 200, 330 160"
+              stroke="url(#flowIn)" stroke-width="28" fill="none" stroke-linecap="round"
+              stroke-dasharray="500" stroke-dashoffset="500"/>
+
+        <!-- Source/dest dots -->
+        <circle cx="50" cy="80" r="6" fill="#f0e6d2" opacity="0.7"/>
+        <circle cx="330" cy="160" r="9" fill="#d68a64"/>
+        <circle cx="130" cy="240" r="6" fill="#d68a64" opacity="0.7"/>
+        <circle cx="250" cy="150" r="6" fill="#f0e6d2" opacity="0.4"/>
+
+        <!-- Labels -->
+        <text x="14" y="100" fill="rgba(240,230,210,0.85)" font-family="Fraunces, serif" font-size="14" font-style="italic">Outpatient Medical</text>
+        <text x="14" y="116" fill="rgba(240,230,210,0.5)" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="1.5">~$7.2B SOLD</text>
+
+        <text x="14" y="262" fill="#d68a64" font-family="Fraunces, serif" font-size="14" font-style="italic">Amica Senior Lifestyles</text>
+        <text x="14" y="278" fill="rgba(240,230,210,0.5)" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="1.5">$4.6B ACQUIRED</text>
+
+        <text x="366" y="180" fill="#d68a64" font-family="Fraunces, serif" font-size="13" font-style="italic" text-anchor="end">A pure-play.</text>
+      </svg>
+    </div>
+
+    <div class="bet-figure">
+      <div class="bet-cell out">
+        <div class="label">Capital deployed</div>
+        <div class="num">$11<sub style="font-size:14px;">B</sub></div>
+        <div class="sub">Net investment activity in FY'25</div>
+      </div>
+      <div class="bet-cell in">
+        <div class="label">Dividends paid</div>
+        <div class="num">$1.88<sub style="font-size:14px;">B</sub></div>
+        <div class="sub">Quarterly raise of <em style="color:var(--signal-soft);font-style:italic;">10.4%</em></div>
+      </div>
+      <div class="bet-cell">
+        <div class="label">Operating cash flow</div>
+        <div class="num">$2.88<sub style="font-size:14px;">B</sub></div>
+        <div class="sub">Free cash flow turned negative — by design</div>
+      </div>
+      <div class="bet-cell">
+        <div class="label">Capex</div>
+        <div class="num">$750.8<sub style="font-size:14px;">M</sub></div>
+        <div class="sub">A small line next to the M&amp;A page</div>
+      </div>
+    </div>
+
+    <p class="bet-quote">When free cash flow turns negative because <em>you keep buying buildings,</em> the question is no longer affordability. The question is conviction.</p>
+
+    <div class="leverage">
+      <div class="big">3.03<sub>×</sub></div>
+      <div class="desc">Net debt to<br/>adjusted EBITDA<br/>at year-end</div>
+    </div>
+  </section>
+
+  <!-- ===== RESET BEAT — exit dark ===== -->
+  <div class="reset">
+    <p>Conviction always has company. <em>Two REITs do exactly what Welltower does.</em> A third is the model it now wants to be.</p>
+  </div>
+
+  <!-- ===== COMPETITORS ===== -->
+  <section class="pad-l" data-screen-label="07 Competitors">
+    <div class="eyebrow">The competition</div>
+    <h2 class="display" style="font-size:44px;margin:22px 0 14px 0;">
+      Two <em>peers,</em> one <em>template.</em>
+    </h2>
+    <p class="body">Ventas and Healthpeak chase the same operators, the same buildings, the same capital. <em>Prologis</em> is the warehouse REIT Welltower studies — proof that a real-estate company can be valued like a technology platform.</p>
+
+    <div class="comp-wrap" id="compWrap">
+      <div class="comp-row well">
+        <div class="comp-head">
+          <span class="comp-name">Welltower</span>
+          <span class="comp-tk">NYSE · WELL</span>
+        </div>
+        <div class="comp-cap-row">
+          <span class="comp-cap-label">Mkt Cap</span>
+          <div class="comp-cap-bar"><div class="comp-cap-fill" data-pct="100"></div></div>
+          <span class="comp-cap-num">$149.7B</span>
+        </div>
+        <div class="comp-cap-row">
+          <span class="comp-cap-label">Revenue</span>
+          <div class="comp-cap-bar"><div class="comp-cap-fill" data-pct="96"></div></div>
+          <span class="comp-cap-num">$8.45B</span>
+        </div>
+        <div class="comp-desc">The <em>incumbent.</em> Pure-play senior housing after the 2025 pivot.</div>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-head">
+          <span class="comp-name">Ventas</span>
+          <span class="comp-tk">NYSE · VTR</span>
+        </div>
+        <div class="comp-cap-row">
+          <span class="comp-cap-label">Mkt Cap</span>
+          <div class="comp-cap-bar"><div class="comp-cap-fill" data-pct="28"></div></div>
+          <span class="comp-cap-num">$41.6B</span>
+        </div>
+        <div class="comp-cap-row">
+          <span class="comp-cap-label">Revenue</span>
+          <div class="comp-cap-bar"><div class="comp-cap-fill" data-pct="49"></div></div>
+          <span class="comp-cap-num">$4.29B</span>
+        </div>
+        <div class="comp-desc">The <em>direct peer.</em> Same operators, same targets, same continents. Revenue growth +18.5% YoY.</div>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-head">
+          <span class="comp-name">Healthpeak Properties</span>
+          <span class="comp-tk">NYSE · DOC</span>
+        </div>
+        <div class="comp-cap-row">
+          <span class="comp-cap-label">Mkt Cap</span>
+          <div class="comp-cap-bar"><div class="comp-cap-fill" data-pct="8.2"></div></div>
+          <span class="comp-cap-num">$12.2B</span>
+        </div>
+        <div class="comp-cap-row">
+          <span class="comp-cap-label">Revenue</span>
+          <div class="comp-cap-bar"><div class="comp-cap-fill" data-pct="7"></div></div>
+          <span class="comp-cap-num">$0.60B</span>
+        </div>
+        <div class="comp-desc">The <em>third sister.</em> Outpatient medical and senior housing, chasing the same acquisition targets.</div>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-head">
+          <span class="comp-name">Prologis</span>
+          <span class="comp-tk">NYSE · PLD</span>
+        </div>
+        <div class="comp-cap-row">
+          <span class="comp-cap-label">Mkt Cap</span>
+          <div class="comp-cap-bar"><div class="comp-cap-fill" data-pct="91"></div></div>
+          <span class="comp-cap-num">$135.6B</span>
+        </div>
+        <div class="comp-cap-row">
+          <span class="comp-cap-label">Revenue</span>
+          <div class="comp-cap-bar"><div class="comp-cap-fill" data-pct="100"></div></div>
+          <span class="comp-cap-num">$8.79B</span>
+        </div>
+        <div class="comp-desc">The <em>template.</em> Logistics REIT whose data-driven Essentials platform Welltower is benchmarking on the way to becoming a tech-differentiated REIT.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CLOSING ===== -->
+  <section class="close" data-screen-label="08 Close">
+    <div class="eyebrow">The takeaway</div>
+    <h2>America keeps <em>aging.</em><br/>Welltower keeps <em>buying.</em></h2>
+
+    <p class="body" style="margin-top:34px;">The hero opened with a generation getting older. The page closes with a balance sheet built to <em>own the rooms they sleep in.</em> <span style="color:var(--ink-mute);">A landlord with a fifty-five-year head start on a demographic that is only beginning.</span></p>
+
+    <div class="close-foot">
+      <span>NYSE · WELL</span>
+      <span>FY '25 Recap</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ============ SCROLL PROGRESS ============
+  const progress = document.getElementById('progress');
+  const page = document.getElementById('page');
+
+  function updateProgress() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = maxScroll > 0 ? Math.min(1, scrollTop / maxScroll) : 0;
+    progress.style.width = (pct * 100) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, {passive: true});
+  updateProgress();
+
+  // ============ INTERSECTION REVEAL ============
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+      }
+    });
+  }, {threshold: 0.15, rootMargin: '0px 0px -10% 0px'});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ============ HERO CURVE DRAW ON SCROLL ============
+  const curveLine = document.getElementById('curveLine');
+  const curveDot = document.getElementById('curveDot');
+  const curveLen = curveLine.getTotalLength ? curveLine.getTotalLength() : 800;
+  curveLine.style.strokeDasharray = curveLen;
+  curveLine.style.strokeDashoffset = curveLen;
+  const ageCurveEl = document.querySelector('.age-curve');
+
+  function updateHeroCurve() {
+    const rect = ageCurveEl.getBoundingClientRect();
+    const vh = window.innerHeight;
+    // start drawing when curve is ~80% from top, finish when at ~30%
+    const start = vh * 0.85;
+    const end = vh * 0.3;
+    let p = (start - rect.top) / (start - end);
+    p = Math.max(0, Math.min(1, p));
+    curveLine.style.strokeDashoffset = curveLen * (1 - p);
+    curveDot.style.opacity = p > 0.95 ? 1 : 0;
+    curveDot.style.transition = 'opacity 0.4s ease';
+  }
+  window.addEventListener('scroll', updateHeroCurve, {passive: true});
+  updateHeroCurve();
+
+  // ============ BUSINESS — TOWER GROW + COUNT-UP ============
+  const bizRow = document.getElementById('bizRow');
+  const bizTowers = bizRow.querySelectorAll('.biz-tower');
+  bizTowers.forEach(t => { t.style.height = '0%'; t.style.transition = 'height 1.4s cubic-bezier(0.2,0.8,0.2,1)'; });
+  const bizNums = bizRow.querySelectorAll('.b-num');
+
+  function animateCount(el, target, duration, decimals) {
+    const start = performance.now();
+    decimals = decimals || 0;
+    function frame(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const val = target * eased;
+      el.textContent = decimals ? val.toFixed(decimals) : Math.round(val).toString();
+      if (t < 1) requestAnimationFrame(frame);
+      else el.textContent = decimals ? target.toFixed(decimals) : target.toString();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  const bizIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        bizTowers.forEach(t => {
+          const h = parseFloat(t.dataset.h) * 100;
+          t.style.height = h + '%';
+        });
+        bizNums.forEach(n => {
+          const target = parseInt(n.dataset.target, 10);
+          animateCount(n, target, 1400, 0);
+        });
+        bizIO.disconnect();
+      }
+    });
+  }, {threshold: 0.4});
+  bizIO.observe(bizRow);
+
+  // ============ SCALE COUNT-UP ============
+  document.querySelectorAll('.s-num').forEach(el => {
+    const sIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const target = parseFloat(el.dataset.target);
+          const decimals = parseInt(el.dataset.decimals || '0', 10);
+          const format = el.dataset.format;
+          const start = performance.now();
+          const duration = 1600;
+          function frame(now) {
+            const t = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - t, 3);
+            const val = target * eased;
+            let txt;
+            if (format === 'comma') {
+              txt = Math.round(val).toLocaleString();
+            } else {
+              txt = val.toFixed(decimals);
+            }
+            el.textContent = txt;
+            if (t < 1) requestAnimationFrame(frame);
+          }
+          requestAnimationFrame(frame);
+          sIO.unobserve(el);
+        }
+      });
+    }, {threshold: 0.5});
+    sIO.observe(el);
+  });
+
+  // ============ COMMUNITY GRID — 2,500 dots ============
+  const commGrid = document.getElementById('commGrid');
+  const TOTAL = 250; // 2,500 / 10 — visual density
+  const us = Math.round(TOTAL * 0.80);
+  const ca = Math.round(TOTAL * 0.12);
+  const uk = TOTAL - us - ca;
+  const arr = [];
+  for (let i = 0; i < us; i++) arr.push('us');
+  for (let i = 0; i < ca; i++) arr.push('ca');
+  for (let i = 0; i < uk; i++) arr.push('uk');
+  // Shuffle slightly but cluster: keep regions in groups
+  arr.forEach((cls, i) => {
+    const span = document.createElement('span');
+    span.className = cls;
+    span.style.opacity = 0;
+    span.style.transition = 'opacity 0.5s ease';
+    span.style.transitionDelay = (i * 3) + 'ms';
+    commGrid.appendChild(span);
+  });
+  const gIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        commGrid.querySelectorAll('span').forEach(s => s.style.opacity = '');
+        gIO.disconnect();
+      }
+    });
+  }, {threshold: 0.3});
+  gIO.observe(commGrid);
+
+  // ============ GEOGRAPHY BARS ============
+  const geoStack = document.getElementById('geoStack');
+  const geoIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        geoStack.querySelectorAll('.geo-bar').forEach(b => {
+          b.style.width = b.dataset.pct + '%';
+        });
+        geoIO.disconnect();
+      }
+    });
+  }, {threshold: 0.4});
+  geoIO.observe(geoStack);
+
+  // ============ COMPETITORS BARS ============
+  const compWrap = document.getElementById('compWrap');
+  const cIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        compWrap.querySelectorAll('.comp-cap-fill').forEach((f, i) => {
+          setTimeout(() => { f.style.width = f.dataset.pct + '%'; }, i * 60);
+        });
+        cIO.disconnect();
+      }
+    });
+  }, {threshold: 0.2});
+  cIO.observe(compWrap);
+
+  // ============ BET FLOW LINES DRAW ============
+  const flowOutPath = document.getElementById('flowOutPath');
+  const flowInPath = document.getElementById('flowInPath');
+  [flowOutPath, flowInPath].forEach(p => {
+    if (p && p.getTotalLength) {
+      const len = p.getTotalLength();
+      p.style.strokeDasharray = len;
+      p.style.strokeDashoffset = len;
+    }
+  });
+  const betFlow = document.getElementById('betFlow');
+  function updateBetFlow() {
+    const rect = betFlow.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const start = vh * 0.9;
+    const end = vh * 0.2;
+    let p = (start - rect.top) / (start - end);
+    p = Math.max(0, Math.min(1, p));
+    [flowOutPath, flowInPath].forEach((path) => {
+      if (path && path.getTotalLength) {
+        const len = path.getTotalLength();
+        path.style.strokeDashoffset = len * (1 - p);
+      }
+    });
+  }
+  window.addEventListener('scroll', updateBetFlow, {passive: true});
+  updateBetFlow();
+
+</script>
+</body>
+</html>

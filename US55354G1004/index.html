@@ -1,0 +1,1282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>MSCI · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* ───────── Tokens (lifted from Zair Naqvi DS, retuned for MSCI) ───────── */
+  :root {
+    --paper:       #F4F1EA;        /* warm ledger paper */
+    --paper-2:     #ECE7DD;
+    --paper-3:     #E2DCD0;
+    --ink:         #0E1726;        /* deep ledger ink (slight blue tilt) */
+    --ink-2:       #2B364A;
+    --ink-3:       #5A6376;
+    --ink-4:       #8E94A2;
+    --line:        #D7D1C3;
+    --line-strong: #BFB8A6;
+
+    /* MSCI signal — institutional ledger blue (drawn from biggest_costs[0]) */
+    --signal:      #1F3A6B;
+    --signal-2:    #2C5491;
+    --signal-soft: #DCE3EE;
+
+    /* DS coral — reserved for the closing inversion only */
+    --coral:       #FF7A57;
+    --coral-2:     #F25A37;
+
+    /* Cost palette — the ONLY chart that uses these supplied hexes */
+    --c1: #4F86C6;
+    --c2: #E07B54;
+    --c3: #6DBF82;
+    --c4: #F2C94C;
+    --c5: #A78BFA;
+
+    --font-display: 'Instrument Serif', 'Times New Roman', serif;
+    --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono:    'Geist Mono', ui-monospace, Menlo, monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { background: #1a1714; }      /* outside-the-page letterbox */
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* ───────── Page shell — mobile-sized, centered ───────── */
+  .page {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 80px rgba(0,0,0,0.25);
+  }
+
+  /* ───────── Persistent chrome ───────── */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    background: rgba(244, 241, 234, 0.78);
+    border-bottom: 1px solid rgba(215, 209, 195, 0.6);
+  }
+  .chrome-row {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 14px 22px 10px;
+  }
+  .chrome-l { display: flex; align-items: baseline; gap: 10px; }
+  .ticker {
+    font-family: var(--font-mono); font-size: 13px; font-weight: 500;
+    letter-spacing: 0.06em; color: var(--ink);
+  }
+  .name {
+    font-family: var(--font-display); font-size: 18px; line-height: 1; color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .recap-label {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .progress {
+    height: 1.5px; background: transparent; position: relative;
+  }
+  .progress::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--signal);
+    width: var(--scroll, 0%);
+    transition: width 60ms linear;
+  }
+
+  /* ───────── Section primitives ───────── */
+  section { position: relative; padding: 64px 22px; }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--signal); font-weight: 500;
+    display: inline-block; margin-bottom: 28px;
+  }
+  .eyebrow .dot { display:inline-block; width:5px; height:5px; border-radius:50%; background:var(--signal); margin: 0 8px 1.5px; vertical-align: middle; }
+
+  h1.display, h2.display, h3.display, p.display {
+    font-family: var(--font-display); font-weight: 400;
+    margin: 0; color: var(--ink); letter-spacing: -0.02em;
+  }
+  h1.display { font-size: 56px; line-height: 0.96; }
+  h2.display { font-size: 40px; line-height: 1.02; letter-spacing: -0.02em; }
+  h3.display { font-size: 30px; line-height: 1.05; }
+  em.it { font-style: italic; }
+  em.it-signal { font-style: italic; color: var(--signal); }
+  em.it-coral { font-style: italic; color: var(--coral-2); }
+
+  p.body {
+    font-family: var(--font-sans); font-size: 16px; line-height: 1.55;
+    color: var(--ink-2); margin: 0; max-width: 36ch;
+    text-wrap: pretty;
+  }
+  p.body em { font-family: var(--font-display); font-style: italic; font-size: 1.08em; color: var(--ink); }
+  p.body em.s { color: var(--signal); }
+
+  .mono-cap {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+
+  /* ───────── Reset beat band ───────── */
+  .reset {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 56px 26px;
+    position: relative;
+    overflow: hidden;
+  }
+  .reset.paper {
+    background: var(--paper-2);
+    color: var(--ink);
+  }
+  .reset .quote {
+    font-family: var(--font-display);
+    font-size: 26px; line-height: 1.18;
+    font-style: italic;
+    letter-spacing: -0.005em;
+    color: inherit;
+  }
+  .reset.dark .quote em { color: #FFB69E; font-style: normal; font-family: var(--font-display); font-style: italic; }
+  .reset.paper .quote em { color: var(--signal); font-style: italic; }
+  .reset .attrib {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; opacity: 0.6; margin-top: 22px; display: block;
+  }
+
+  /* ───────── HERO — measurement gridlines ───────── */
+  .hero {
+    padding: 48px 22px 56px;
+    min-height: 86vh;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative;
+  }
+  .hero .gridlines {
+    position: absolute; inset: 0; pointer-events: none;
+  }
+  .hero h1 {
+    font-size: 64px; line-height: 0.94; letter-spacing: -0.025em;
+    margin-top: 36px;
+  }
+  .hero h1 .num {
+    color: var(--signal);
+    font-style: italic;
+  }
+  .hero .lede {
+    font-family: var(--font-sans); font-size: 15px; line-height: 1.55;
+    color: var(--ink-2); max-width: 32ch; margin-top: 26px;
+  }
+  .hero .lede em { font-family: var(--font-display); font-style: italic; font-size: 1.1em; color: var(--ink); }
+  .hero .meta-row {
+    display: flex; gap: 18px; margin-top: 28px; align-items: center;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .hero .meta-row .pip {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--signal);
+    display: inline-block; margin-right: 8px; vertical-align: 1px;
+  }
+
+  /* draws-on tick rows */
+  .ticks {
+    position: relative;
+    height: 110px;
+    margin-top: 8px;
+  }
+  .tick-row {
+    position: absolute; left: 0; right: 0; height: 1px;
+    background: var(--ink-4);
+    transform-origin: left center;
+    opacity: 0.5;
+  }
+  .tick-row.major { background: var(--signal); opacity: 0.9; height: 1.5px; }
+  .tick-label {
+    position: absolute; right: 0;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-3);
+    transform: translateY(-100%); padding-bottom: 4px;
+  }
+  .tick-label.major { color: var(--signal); }
+
+  /* ───────── BUSINESS — concentric segments ───────── */
+  .biz { padding-top: 48px; padding-bottom: 64px; }
+  .biz .ring-wrap { display: flex; justify-content: center; margin: 24px 0 8px; }
+  .biz svg { display: block; width: 320px; height: 320px; max-width: 100%; }
+  .biz .legend { margin-top: 20px; display: flex; flex-direction: column; gap: 0; }
+  .biz .legend-row {
+    display: grid;
+    grid-template-columns: 26px 1fr auto;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    gap: 12px;
+  }
+  .biz .legend-row:last-child { border-bottom: none; }
+  .legend-tick {
+    height: 10px; width: 2px; background: var(--signal); justify-self: end;
+    transform-origin: center bottom;
+  }
+  .legend-name { font-family: var(--font-sans); font-size: 15px; color: var(--ink); font-weight: 500; }
+  .legend-pct { font-family: var(--font-display); font-size: 24px; color: var(--ink); font-style: italic; line-height: 1; }
+  .legend-sub { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-top: 3px; }
+
+  /* ───────── SCALE — big-number scaffolding ───────── */
+  .scale { padding-top: 64px; padding-bottom: 48px; }
+  .scale .stack { margin-top: 12px; }
+  .scale .row {
+    display: grid; grid-template-columns: 1fr auto; align-items: end;
+    padding: 26px 0 10px;
+    border-bottom: 1px solid var(--line);
+    column-gap: 16px;
+  }
+  .scale .row .lhs { display: flex; flex-direction: column; gap: 4px; }
+  .scale .row .lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+  .scale .row .sub { font-family: var(--font-sans); font-size: 13px; color: var(--ink-2); max-width: 24ch; }
+  .scale .row .sub em { font-family: var(--font-display); font-style: italic; color: var(--ink); }
+  .scale .row .num {
+    font-family: var(--font-display); font-style: italic; line-height: 0.95;
+    color: var(--ink); font-size: 56px; letter-spacing: -0.02em;
+  }
+  .scale .row .num.signal { color: var(--signal); }
+  .scale .row .unit {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    color: var(--ink-3); text-transform: uppercase; margin-left: 4px;
+  }
+  .scale .row.big .num { font-size: 88px; }
+
+  /* ───────── COSTS — horizontal benchmark bar ───────── */
+  .costs { padding-top: 56px; padding-bottom: 56px; }
+  .costs h2 { max-width: 16ch; }
+  .cost-frame { margin-top: 28px; position: relative; }
+  .cost-bar {
+    height: 56px; width: 100%; display: flex;
+    border: 1px solid var(--ink); border-radius: 0;
+    overflow: hidden;
+  }
+  .cost-seg {
+    height: 100%; position: relative;
+    transition: flex-basis 1.4s var(--ease-out, cubic-bezier(0.22,1,0.36,1));
+  }
+  .cost-seg .seg-pct {
+    position: absolute; bottom: -22px; left: 0;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
+    color: var(--ink); white-space: nowrap;
+  }
+  .cost-axis {
+    position: relative; height: 1px; background: var(--ink); margin-top: 64px;
+  }
+  .cost-axis::before, .cost-axis::after {
+    content: ""; position: absolute; width: 1px; height: 8px; background: var(--ink); top: -4px;
+  }
+  .cost-axis::before { left: 0; }
+  .cost-axis::after { right: 0; }
+  .cost-axis .label-l, .cost-axis .label-r {
+    position: absolute; top: 12px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .cost-axis .label-l { left: 0; }
+  .cost-axis .label-r { right: 0; }
+
+  .cost-list { margin-top: 56px; }
+  .cost-row {
+    display: grid; grid-template-columns: 14px 1fr auto; gap: 14px;
+    align-items: baseline;
+    padding: 12px 0; border-bottom: 1px solid var(--line);
+  }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-swatch { width: 12px; height: 12px; transform: translateY(2px); border-radius: 2px; }
+  .cost-label { font-family: var(--font-sans); font-size: 14px; color: var(--ink); line-height: 1.3; }
+  .cost-pct { font-family: var(--font-display); font-style: italic; font-size: 22px; color: var(--ink); line-height: 1; }
+  .cost-meta { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .residual {
+    margin-top: 22px; padding: 18px 0 0;
+    border-top: 1px dashed var(--line-strong);
+    display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 12px;
+  }
+  .residual .lbl { font-family: var(--font-sans); font-size: 13px; color: var(--ink-2); }
+  .residual .lbl em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+  .residual .val { font-family: var(--font-display); font-style: italic; font-size: 34px; color: var(--signal); line-height: 1; }
+
+  /* ───────── FOOTPRINT — globe with arcs ───────── */
+  .geo { padding-top: 56px; padding-bottom: 56px; }
+  .geo .globe-wrap { display: flex; justify-content: center; margin: 12px 0 24px; }
+  .geo svg { width: 320px; height: 320px; max-width: 100%; }
+  .geo .stat {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: baseline;
+    column-gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line);
+  }
+  .geo .stat:last-child { border-bottom: none; }
+  .geo .pip { width: 8px; height: 8px; border-radius: 50%; background: var(--signal); transform: translateY(2px); }
+  .geo .pip.b { background: var(--signal-2); opacity: 0.75; }
+  .geo .pip.c { background: var(--ink-3); opacity: 0.55; }
+  .geo .stat .reg { font-family: var(--font-sans); font-size: 15px; color: var(--ink); }
+  .geo .stat .pct { font-family: var(--font-display); font-style: italic; font-size: 28px; color: var(--ink); line-height: 1; }
+
+  /* ───────── BET — capital allocation ledger ───────── */
+  .bet { background: #07101F; color: #E5E9F0; padding: 64px 22px 72px; }
+  .bet .eyebrow { color: #7AA0D9; }
+  .bet .eyebrow .dot { background: #7AA0D9; }
+  .bet h2 { color: #F2EFE7; max-width: 14ch; }
+  .bet h2 em { color: #FF9078; font-style: italic; }
+  .bet p.body { color: #BCC4D2; }
+  .bet p.body em { color: #F2EFE7; }
+  .bet p.body em.s { color: #7AA0D9; }
+  .bet .ledger { margin-top: 28px; }
+  .bet .lrow {
+    display: grid; grid-template-columns: 1fr auto; align-items: end;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    gap: 14px;
+  }
+  .bet .lrow .lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #7E8B9F; }
+  .bet .lrow .desc { font-family: var(--font-sans); font-size: 13px; color: #BCC4D2; max-width: 26ch; margin-top: 4px; line-height: 1.45; }
+  .bet .lrow .desc em { font-family: var(--font-display); font-style: italic; color: #F2EFE7; }
+  .bet .lrow .v { font-family: var(--font-display); font-style: italic; font-size: 44px; line-height: 0.95; color: #F2EFE7; letter-spacing: -0.02em; }
+  .bet .lrow .v.neg { color: #FF9078; }
+  .bet .lrow .v.pos { color: #88E0A2; }
+  .bet .vis { margin-top: 36px; }
+  .bet .vis-cap { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #7E8B9F; margin-bottom: 14px; }
+  .buyback-bar {
+    height: 28px; width: 100%; position: relative;
+    border: 1px solid rgba(255,255,255,0.18); display: flex;
+  }
+  .buyback-bar .filled { height: 100%; background: linear-gradient(90deg, rgba(255,144,120,0.85), rgba(255,180,150,0.6)); }
+  .buyback-bar .residual-fill { height: 100%; flex: 1; background: rgba(255,255,255,0.04); }
+  .buyback-cap {
+    display: flex; justify-content: space-between; margin-top: 8px;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: #7E8B9F;
+  }
+
+  .div-streak { margin-top: 28px; }
+  .div-streak svg { display: block; width: 100%; height: 60px; }
+
+  /* ───────── COMPETITION — gravitational masses ───────── */
+  .comp { padding-top: 56px; padding-bottom: 64px; }
+  .comp h2 { max-width: 16ch; }
+  .comp .field {
+    margin: 28px 0 24px; position: relative;
+    height: 280px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .comp .axis {
+    position: absolute; left: 0; right: 0; bottom: 18px; height: 1px; background: var(--ink-4);
+  }
+  .comp .axis-tick {
+    position: absolute; bottom: 18px; height: 6px; width: 1px; background: var(--ink-4);
+  }
+  .comp .axis-label {
+    position: absolute; bottom: 0;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-3);
+    transform: translateX(-50%);
+  }
+  .mass {
+    position: absolute; bottom: 18px;
+    transform: translate(-50%, 0);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .mass .disc {
+    border-radius: 50%; border: 1.5px solid var(--ink);
+    background: transparent;
+  }
+  .mass.us .disc {
+    background: var(--signal); border-color: var(--signal);
+  }
+  .mass .tag {
+    margin-top: 6px;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink); white-space: nowrap;
+  }
+  .mass.us .tag { color: var(--signal); font-weight: 500; }
+  .mass .cap {
+    font-family: var(--font-display); font-style: italic; font-size: 14px; color: var(--ink-2); margin-top: 1px;
+  }
+  .mass.us .cap { color: var(--signal); }
+
+  .comp-rows { margin-top: 12px; }
+  .crow {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: baseline;
+  }
+  .crow:last-child { border-bottom: none; }
+  .crow .nm { font-family: var(--font-sans); font-size: 15px; color: var(--ink); font-weight: 500; }
+  .crow .tk { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; color: var(--ink-3); }
+  .crow .mc { font-family: var(--font-display); font-style: italic; font-size: 24px; color: var(--ink); line-height: 1; }
+  .crow .gr { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--ink-3); margin-top: 4px; text-align: right; }
+  .crow .gr.up { color: #2BB673; }
+  .crow.us {
+    background: linear-gradient(90deg, var(--signal-soft), transparent 70%);
+    margin-left: -22px; margin-right: -22px; padding-left: 22px; padding-right: 22px;
+    border-bottom: 1px solid var(--signal);
+  }
+  .crow.us .nm, .crow.us .mc { color: var(--signal); }
+
+  /* ───────── TAKEAWAY — closing inversion ───────── */
+  .close {
+    padding: 80px 22px 96px;
+    background: var(--paper);
+    position: relative;
+  }
+  .close .stamp {
+    position: absolute; top: 28px; right: 22px;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink-3); text-align: right; line-height: 1.5;
+  }
+  .close .invert {
+    font-family: var(--font-display); font-size: 48px; line-height: 1.0;
+    letter-spacing: -0.02em; color: var(--ink);
+  }
+  .close .invert em { font-style: italic; color: var(--coral-2); }
+  .close .invert em.s { color: var(--signal); font-style: italic; }
+  .close .meas {
+    margin-top: 36px; height: 1px; background: var(--ink); position: relative;
+  }
+  .close .meas::before, .close .meas::after {
+    content: ""; position: absolute; width: 1px; height: 8px; background: var(--ink); top: -4px;
+  }
+  .close .meas::before { left: 0; }
+  .close .meas::after { right: 0; }
+  .close .meas .midmark {
+    position: absolute; top: -14px; left: 50%;
+    width: 1px; height: 22px; background: var(--coral-2);
+    transform: translateX(-50%);
+  }
+  .close .meas .lhs, .close .meas .rhs {
+    position: absolute; top: 14px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .close .meas .lhs { left: 0; }
+  .close .meas .rhs { right: 0; }
+  .close .meas .midlabel {
+    position: absolute; top: -34px; left: 50%; transform: translateX(-50%);
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--coral-2); white-space: nowrap;
+  }
+  .close .signoff {
+    margin-top: 56px;
+    font-family: var(--font-sans); font-size: 14px; color: var(--ink-3); line-height: 1.55;
+    max-width: 32ch;
+  }
+  .close .signoff em { font-family: var(--font-display); font-style: italic; color: var(--ink); }
+  .close .footnote {
+    margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+
+  /* ───────── Reveal animation ───────── */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 600ms cubic-bezier(0.22,1,0.36,1), transform 600ms cubic-bezier(0.22,1,0.36,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal.delay-1 { transition-delay: 80ms; }
+  .reveal.delay-2 { transition-delay: 160ms; }
+  .reveal.delay-3 { transition-delay: 240ms; }
+  .reveal.delay-4 { transition-delay: 320ms; }
+
+  /* counted-up numerics get drawn from data attr via JS — no extra style needed */
+
+  /* svg helpers */
+  .draw {
+    stroke-dasharray: var(--len, 1000);
+    stroke-dashoffset: var(--len, 1000);
+    transition: stroke-dashoffset 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal.in .draw { stroke-dashoffset: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .draw { stroke-dashoffset: 0; transition: none; }
+    .cost-seg { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page" id="page">
+
+  <!-- Persistent chrome -->
+  <header class="chrome" role="banner">
+    <div class="chrome-row">
+      <div class="chrome-l">
+        <span class="ticker">MSCI</span>
+        <span class="name">MSCI Inc.</span>
+      </div>
+      <span class="recap-label">Recap · FY '25</span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </header>
+
+  <!-- ─────────────── HERO ─────────────── -->
+  <section class="hero">
+    <svg class="gridlines" viewBox="0 0 420 800" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="gridFade" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#0E1726" stop-opacity="0.08"/>
+          <stop offset="100%" stop-color="#0E1726" stop-opacity="0.0"/>
+        </linearGradient>
+      </defs>
+      <!-- vertical hairlines — measurement scaffolding -->
+      <line x1="60"  y1="0" x2="60"  y2="800" stroke="url(#gridFade)" stroke-width="1"/>
+      <line x1="160" y1="0" x2="160" y2="800" stroke="url(#gridFade)" stroke-width="1"/>
+      <line x1="260" y1="0" x2="260" y2="800" stroke="url(#gridFade)" stroke-width="1"/>
+      <line x1="360" y1="0" x2="360" y2="800" stroke="url(#gridFade)" stroke-width="1"/>
+    </svg>
+
+    <div class="reveal in">
+      <div style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); margin-top: 14px;">
+        The opener · Index licensor
+      </div>
+    </div>
+
+    <div style="position: relative; z-index: 2;">
+      <h1 class="display reveal in">
+        <span class="num">$16.5T</span><br/>
+        orbits a<br/>
+        <em class="it">number.</em>
+      </h1>
+      <p class="lede reveal delay-1 in">
+        MSCI doesn't trade markets. It <em>measures</em> them. Over $16.5 trillion in client assets are benchmarked to its indexes — every basis point of drift, priced.
+      </p>
+      <div class="meta-row reveal delay-2 in">
+        <span><span class="pip"></span>NYSE: MSCI</span>
+        <span>$43.03B mkt cap</span>
+      </div>
+    </div>
+
+    <!-- measurement ticks at base of hero -->
+    <div class="ticks reveal delay-3" id="heroTicks">
+      <div class="tick-row major" style="top: 18%; --len: 360;"></div>
+      <span class="tick-label major" style="top: 18%; right: 0;">Index · 56%</span>
+
+      <div class="tick-row" style="top: 42%; width: 76%;"></div>
+      <span class="tick-label" style="top: 42%; right: 24%;">Analytics · 24%</span>
+
+      <div class="tick-row" style="top: 64%; width: 56%;"></div>
+      <span class="tick-label" style="top: 64%; right: 44%;">ESG &amp; Climate · 11%</span>
+
+      <div class="tick-row" style="top: 84%; width: 42%;"></div>
+      <span class="tick-label" style="top: 84%; right: 58%;">Private Assets · 9%</span>
+    </div>
+  </section>
+
+  <!-- ─────────────── BUSINESS ─────────────── -->
+  <section class="biz">
+    <span class="eyebrow">The business <span class="dot"></span> Four signals</span>
+    <h2 class="display reveal">
+      A franchise built on <em class="it">subscription</em><br/>
+      and <em class="it-signal">basis points.</em>
+    </h2>
+
+    <div class="ring-wrap reveal delay-1">
+      <svg viewBox="0 0 320 320" id="ringSvg" aria-label="MSCI revenue mix as concentric measurement rings">
+        <defs>
+          <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#1F3A6B" stop-opacity="0.18"/>
+            <stop offset="60%" stop-color="#1F3A6B" stop-opacity="0.04"/>
+            <stop offset="100%" stop-color="#1F3A6B" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="160" cy="160" r="155" fill="url(#centerGlow)"/>
+
+        <!-- crosshairs -->
+        <line x1="160" y1="6" x2="160" y2="314" stroke="#0E1726" stroke-opacity="0.12" stroke-width="0.5" stroke-dasharray="2 4"/>
+        <line x1="6" y1="160" x2="314" y2="160" stroke="#0E1726" stroke-opacity="0.12" stroke-width="0.5" stroke-dasharray="2 4"/>
+
+        <!-- concentric tick rings (full circles, faint) -->
+        <circle cx="160" cy="160" r="56"  fill="none" stroke="#0E1726" stroke-opacity="0.12" stroke-width="1"/>
+        <circle cx="160" cy="160" r="92"  fill="none" stroke="#0E1726" stroke-opacity="0.10" stroke-width="1"/>
+        <circle cx="160" cy="160" r="124" fill="none" stroke="#0E1726" stroke-opacity="0.08" stroke-width="1"/>
+        <circle cx="160" cy="160" r="150" fill="none" stroke="#0E1726" stroke-opacity="0.06" stroke-width="1"/>
+
+        <!-- segments as draw-on arcs starting at top, going clockwise.
+             Stroke length = pct% of full circumference. Each ring at different radius. -->
+        <!-- Index 56%: r=150, C ≈ 942 -->
+        <circle class="draw seg" cx="160" cy="160" r="150"
+                fill="none" stroke="#1F3A6B" stroke-width="6"
+                stroke-dasharray="527.5 942" stroke-dashoffset="0"
+                transform="rotate(-90 160 160)" stroke-linecap="butt"/>
+        <!-- Analytics 24%: r=124 -->
+        <circle class="draw seg" cx="160" cy="160" r="124"
+                fill="none" stroke="#2C5491" stroke-width="6"
+                stroke-dasharray="187 779" stroke-dashoffset="0"
+                transform="rotate(-90 160 160)" stroke-linecap="butt"/>
+        <!-- ESG 11%: r=92 -->
+        <circle class="draw seg" cx="160" cy="160" r="92"
+                fill="none" stroke="#5A82B6" stroke-width="6"
+                stroke-dasharray="63.6 578" stroke-dashoffset="0"
+                transform="rotate(-90 160 160)" stroke-linecap="butt"/>
+        <!-- Private Assets 9%: r=56 -->
+        <circle class="draw seg" cx="160" cy="160" r="56"
+                fill="none" stroke="#8FA8C9" stroke-width="6"
+                stroke-dasharray="31.7 352" stroke-dashoffset="0"
+                transform="rotate(-90 160 160)" stroke-linecap="butt"/>
+
+        <!-- center label -->
+        <text x="160" y="156" text-anchor="middle"
+              font-family="Instrument Serif" font-size="36" font-style="italic" fill="#0E1726">$3.13B</text>
+        <text x="160" y="178" text-anchor="middle"
+              font-family="Geist Mono" font-size="9" letter-spacing="1.6" fill="#5A6376">FY '25 REVENUE</text>
+      </svg>
+    </div>
+
+    <div class="legend reveal delay-2">
+      <div class="legend-row">
+        <div class="legend-tick"></div>
+        <div>
+          <div class="legend-name">Index</div>
+          <div class="legend-sub">$6.4T linked · subs + basis-point fees</div>
+        </div>
+        <div class="legend-pct">56%</div>
+      </div>
+      <div class="legend-row">
+        <div class="legend-tick" style="background: var(--signal-2)"></div>
+        <div>
+          <div class="legend-name">Analytics</div>
+          <div class="legend-sub">Barra · RiskMetrics · subscriptions</div>
+        </div>
+        <div class="legend-pct">24%</div>
+      </div>
+      <div class="legend-row">
+        <div class="legend-tick" style="background: #5A82B6"></div>
+        <div>
+          <div class="legend-name">ESG &amp; Climate</div>
+          <div class="legend-sub">ratings · scores · regulatory mandates</div>
+        </div>
+        <div class="legend-pct">11%</div>
+      </div>
+      <div class="legend-row">
+        <div class="legend-tick" style="background: #8FA8C9"></div>
+        <div>
+          <div class="legend-name">Private Assets</div>
+          <div class="legend-sub">Burgiss · private-markets data</div>
+        </div>
+        <div class="legend-pct">9%</div>
+      </div>
+    </div>
+
+    <p class="body reveal delay-3" style="margin-top: 28px;">
+      Most of the revenue is <em>recurring</em> — subscriptions and <em class="s">asset-based fees</em> tied to AUM in ETFs and indexed products. When markets rise, MSCI's take rises with them.
+    </p>
+  </section>
+
+  <!-- Reset beat 1 -->
+  <div class="reset paper">
+    <p class="quote">
+      They don't pick the winners.<br/>
+      They <em>define the contest.</em>
+    </p>
+    <span class="attrib">— On the licensing model</span>
+  </div>
+
+  <!-- ─────────────── SCALE ─────────────── -->
+  <section class="scale">
+    <span class="eyebrow">The scale <span class="dot"></span> What it touches</span>
+    <h2 class="display reveal">
+      One <em class="it-signal">data shop.</em><br/>
+      Half the world's money.
+    </h2>
+
+    <div class="stack">
+      <div class="row reveal delay-1">
+        <div class="lhs">
+          <span class="lbl">Assets benchmarked</span>
+          <span class="sub">to <em>MSCI</em> indexes worldwide</span>
+        </div>
+        <div class="num signal">$16.5<span class="unit">TRN</span></div>
+      </div>
+      <div class="row reveal delay-1">
+        <div class="lhs">
+          <span class="lbl">Linked product</span>
+          <span class="sub">ETFs &amp; <em>non-ETF funds</em> tracking MSCI</span>
+        </div>
+        <div class="num">$6.4<span class="unit">TRN</span></div>
+      </div>
+      <div class="row reveal delay-2">
+        <div class="lhs">
+          <span class="lbl">Operating margin</span>
+          <span class="sub">Q1 '26 EPS <em>$4.55</em></span>
+        </div>
+        <div class="num">54.7<span class="unit">%</span></div>
+      </div>
+      <div class="row reveal delay-2">
+        <div class="lhs">
+          <span class="lbl">Free cash flow</span>
+          <span class="sub">on $39.3M of <em>capex</em></span>
+        </div>
+        <div class="num">$1.55<span class="unit">B</span></div>
+      </div>
+      <div class="row reveal delay-3">
+        <div class="lhs">
+          <span class="lbl">Clients · countries</span>
+          <span class="sub">institutional buy-side</span>
+        </div>
+        <div class="num">7.1<span class="unit">K · 100+</span></div>
+      </div>
+      <div class="row reveal delay-3">
+        <div class="lhs">
+          <span class="lbl">Employees</span>
+          <span class="sub">at <em>7 World Trade Center</em> &amp; abroad</span>
+        </div>
+        <div class="num">6,268</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── COSTS ─────────────── -->
+  <section class="costs" style="background: var(--paper-2);">
+    <span class="eyebrow">The cost basis <span class="dot"></span> 48¢ on the dollar</span>
+    <h2 class="display reveal">
+      What it costs to <em class="it">measure</em> the world.
+    </h2>
+    <p class="body reveal delay-1" style="margin-top: 22px;">
+      An <em>asset-light</em> franchise — almost everything in the cost stack is people, software, and the data they buy to resell.
+    </p>
+
+    <div class="cost-frame reveal delay-2">
+      <div class="cost-bar" id="costBar" aria-label="Cost breakdown bar">
+        <!-- segments rendered by JS so they animate flex-basis from 0 -->
+      </div>
+      <div class="cost-axis"></div>
+      <div class="cost-axis" style="display:none"></div>
+    </div>
+    <div style="position: relative; height: 14px;"></div>
+    <div style="display:flex; justify-content: space-between; margin-top: -10px;">
+      <span class="mono-cap">0%</span>
+      <span class="mono-cap">opex as share of revenue · ~48%</span>
+    </div>
+
+    <div class="cost-list">
+      <div class="cost-row reveal delay-2">
+        <div class="cost-swatch" style="background: #4F86C6"></div>
+        <div>
+          <div class="cost-label">Compensation &amp; benefits</div>
+          <div class="cost-meta">people · the largest line</div>
+        </div>
+        <div class="cost-pct">28%</div>
+      </div>
+      <div class="cost-row reveal delay-2">
+        <div class="cost-swatch" style="background: #E07B54"></div>
+        <div>
+          <div class="cost-label">Depreciation &amp; amortization</div>
+          <div class="cost-meta">acquired intangibles · burgiss · ipd</div>
+        </div>
+        <div class="cost-pct">8%</div>
+      </div>
+      <div class="cost-row reveal delay-3">
+        <div class="cost-swatch" style="background: #6DBF82"></div>
+        <div>
+          <div class="cost-label">Information technology &amp; data</div>
+          <div class="cost-meta">infra · data the firm resells</div>
+        </div>
+        <div class="cost-pct">6%</div>
+      </div>
+      <div class="cost-row reveal delay-3">
+        <div class="cost-swatch" style="background: #F2C94C"></div>
+        <div>
+          <div class="cost-label">Professional fees &amp; market data</div>
+          <div class="cost-meta">advisors · third-party feeds</div>
+        </div>
+        <div class="cost-pct">4%</div>
+      </div>
+      <div class="cost-row reveal delay-3">
+        <div class="cost-swatch" style="background: #A78BFA"></div>
+        <div>
+          <div class="cost-label">Occupancy &amp; facilities</div>
+          <div class="cost-meta">offices · 7 wtc + global</div>
+        </div>
+        <div class="cost-pct">2%</div>
+      </div>
+
+      <div class="residual reveal delay-4">
+        <div class="lbl">Everything else flows to <em>operating margin</em>.</div>
+        <div class="val">≈ 52%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── FOOTPRINT ─────────────── -->
+  <section class="geo">
+    <span class="eyebrow">The footprint <span class="dot"></span> Across 100+ countries</span>
+    <h2 class="display reveal">
+      Three <em class="it-signal">arcs</em>,<br/>
+      one ledger.
+    </h2>
+
+    <div class="globe-wrap reveal delay-1">
+      <svg viewBox="0 0 320 320" id="globeSvg" aria-label="Geographic distribution of MSCI revenue">
+        <defs>
+          <radialGradient id="globeGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#1F3A6B" stop-opacity="0.10"/>
+            <stop offset="100%" stop-color="#1F3A6B" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- globe -->
+        <circle cx="160" cy="160" r="120" fill="url(#globeGlow)" stroke="#0E1726" stroke-opacity="0.18" stroke-width="1"/>
+
+        <!-- latitude lines -->
+        <ellipse cx="160" cy="160" rx="120" ry="40" fill="none" stroke="#0E1726" stroke-opacity="0.12" stroke-width="0.6"/>
+        <ellipse cx="160" cy="160" rx="120" ry="80" fill="none" stroke="#0E1726" stroke-opacity="0.10" stroke-width="0.6"/>
+        <!-- longitude lines (compressed ellipses) -->
+        <ellipse cx="160" cy="160" rx="40"  ry="120" fill="none" stroke="#0E1726" stroke-opacity="0.10" stroke-width="0.6"/>
+        <ellipse cx="160" cy="160" rx="80"  ry="120" fill="none" stroke="#0E1726" stroke-opacity="0.08" stroke-width="0.6"/>
+        <line x1="160" y1="40" x2="160" y2="280" stroke="#0E1726" stroke-opacity="0.10" stroke-width="0.6"/>
+        <line x1="40" y1="160" x2="280" y2="160" stroke="#0E1726" stroke-opacity="0.10" stroke-width="0.6"/>
+
+        <!-- region arcs — drawn as stroked partial circles, weighted by pct.
+             47 / 35 / 18 = 47%, 35%, 18% of 360° = 169.2° / 126° / 64.8° -->
+        <!-- Americas 47% -->
+        <circle class="draw" cx="160" cy="160" r="138"
+                fill="none" stroke="#1F3A6B" stroke-width="4"
+                stroke-dasharray="354.4 866" stroke-dashoffset="0"
+                transform="rotate(-90 160 160)" stroke-linecap="round"/>
+        <!-- EMEA 35% -->
+        <circle class="draw" cx="160" cy="160" r="148"
+                fill="none" stroke="#2C5491" stroke-width="4"
+                stroke-dasharray="282 930" stroke-dashoffset="0"
+                transform="rotate(60 160 160)" stroke-linecap="round" opacity="0.85"/>
+        <!-- APAC 18% -->
+        <circle class="draw" cx="160" cy="160" r="158"
+                fill="none" stroke="#5A6376" stroke-width="4"
+                stroke-dasharray="155 992" stroke-dashoffset="0"
+                transform="rotate(195 160 160)" stroke-linecap="round" opacity="0.7"/>
+
+        <!-- region pip dots -->
+        <circle cx="92"  cy="170" r="3" fill="#1F3A6B"/>
+        <circle cx="172" cy="135" r="3" fill="#2C5491"/>
+        <circle cx="232" cy="190" r="3" fill="#5A6376"/>
+
+        <!-- center label -->
+        <text x="160" y="156" text-anchor="middle"
+              font-family="Geist Mono" font-size="9" letter-spacing="1.6" fill="#5A6376">REVENUE BY</text>
+        <text x="160" y="172" text-anchor="middle"
+              font-family="Instrument Serif" font-style="italic" font-size="22" fill="#0E1726">geography</text>
+      </svg>
+    </div>
+
+    <div class="reveal delay-2">
+      <div class="stat">
+        <span class="pip"></span>
+        <span class="reg">Americas</span>
+        <span class="pct">47%</span>
+      </div>
+      <div class="stat">
+        <span class="pip b"></span>
+        <span class="reg">Europe, Middle East &amp; Africa</span>
+        <span class="pct">35%</span>
+      </div>
+      <div class="stat">
+        <span class="pip c"></span>
+        <span class="reg">Asia-Pacific</span>
+        <span class="pct">18%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reset beat 2 — the tonal interlude -->
+  <div class="reset dark">
+    <p class="quote">
+      Behind the franchise, a <em>balance sheet</em> that looks like a confession.
+    </p>
+    <span class="attrib">— The capital structure</span>
+  </div>
+
+  <!-- ─────────────── BET ─────────────── -->
+  <section class="bet">
+    <span class="eyebrow">The bet <span class="dot"></span> Capital allocation</span>
+    <h2 class="display">
+      Levered for one purpose: to send <em>cash back</em> to owners.
+    </h2>
+    <p class="body" style="margin-top: 22px; max-width: 32ch;">
+      MSCI carries <em class="s">$6.20B in debt</em> against <em>negative</em> book equity. Not distress — a decade of <em>shareholder returns</em> outrunning retained earnings.
+    </p>
+
+    <div class="ledger">
+      <div class="lrow">
+        <div>
+          <div class="lbl">Total debt</div>
+          <div class="desc">target leverage <em>3.0–3.5×</em> EBITDA</div>
+        </div>
+        <div class="v">$6.20B</div>
+      </div>
+      <div class="lrow">
+        <div>
+          <div class="lbl">Book equity</div>
+          <div class="desc">a feature of the model, not a flaw</div>
+        </div>
+        <div class="v neg">−$2.65B</div>
+      </div>
+      <div class="lrow">
+        <div>
+          <div class="lbl">Free cash flow</div>
+          <div class="desc">at <em>$39.3M</em> capex — barely a rounding error</div>
+        </div>
+        <div class="v pos">$1.55B</div>
+      </div>
+      <div class="lrow">
+        <div>
+          <div class="lbl">Dividends paid · FY '25</div>
+          <div class="desc">10 consecutive annual <em>increases</em></div>
+        </div>
+        <div class="v">$556.5M</div>
+      </div>
+      <div class="lrow" style="border-bottom: none;">
+        <div>
+          <div class="lbl">Buybacks · TTM</div>
+          <div class="desc">avg price <em>~$117</em> since 2012</div>
+        </div>
+        <div class="v">$488M</div>
+      </div>
+    </div>
+
+    <div class="vis">
+      <div class="vis-cap">Shares retired since 2012</div>
+      <div class="buyback-bar" id="buybackBar">
+        <div class="filled" style="flex-basis: 40%;"></div>
+        <div class="residual-fill"></div>
+      </div>
+      <div class="buyback-cap">
+        <span>≈ 40% of float bought back</span>
+        <span>at ~$117 avg</span>
+      </div>
+    </div>
+
+    <div class="div-streak">
+      <div class="vis-cap" style="margin-top: 28px;">Dividend streak · 10 years up</div>
+      <svg viewBox="0 0 376 60" preserveAspectRatio="none">
+        <!-- baseline -->
+        <line x1="0" y1="56" x2="376" y2="56" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+        <!-- 10 ascending bars -->
+        <g fill="#FF9078">
+          <rect x="0"   y="46" width="28" height="10"/>
+          <rect x="38"  y="42" width="28" height="14"/>
+          <rect x="76"  y="38" width="28" height="18"/>
+          <rect x="114" y="33" width="28" height="23"/>
+          <rect x="152" y="28" width="28" height="28"/>
+          <rect x="190" y="23" width="28" height="33"/>
+          <rect x="228" y="18" width="28" height="38"/>
+          <rect x="266" y="13" width="28" height="43"/>
+          <rect x="304" y="8"  width="28" height="48"/>
+          <rect x="342" y="2"  width="28" height="54"/>
+        </g>
+        <!-- year labels -->
+        <g font-family="Geist Mono" font-size="7" fill="#7E8B9F" letter-spacing="0.5">
+          <text x="0"   y="68">'16</text>
+          <text x="342" y="68">'25</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Reset beat 3 -->
+  <div class="reset paper">
+    <p class="quote">
+      Three rivals on the field.<br/>
+      Only one was built to <em>measure</em> the others.
+    </p>
+    <span class="attrib">— On competition</span>
+  </div>
+
+  <!-- ─────────────── COMPETITION ─────────────── -->
+  <section class="comp">
+    <span class="eyebrow">The competition <span class="dot"></span> Mass &amp; gravity</span>
+    <h2 class="display reveal">
+      Bigger by mass.<br/>
+      <em class="it-signal">Sharper</em> by mandate.
+    </h2>
+    <p class="body reveal delay-1" style="margin-top: 20px;">
+      MSCI sits between giants and specialists. <em>S&amp;P</em> is bigger; <em class="s">FactSet</em> is leaner. MSCI is the one you call when you want the index <em>itself.</em>
+    </p>
+
+    <!-- Gravitational masses field -->
+    <div class="field reveal delay-2" id="compField" aria-label="Competitor market caps as gravitational masses">
+      <!-- positions: x is market cap on log-ish scale, disc size scales -->
+      <!-- SPGI 132B -->
+      <div class="mass" style="left: 88%; --d: 130px;">
+        <div class="disc" style="width: 130px; height: 130px;"></div>
+        <div class="tag">SPGI</div>
+        <div class="cap">$132B</div>
+      </div>
+      <!-- NDAQ 49B -->
+      <div class="mass" style="left: 56%; --d: 78px;">
+        <div class="disc" style="width: 78px; height: 78px;"></div>
+        <div class="tag">NDAQ</div>
+        <div class="cap">$49B</div>
+      </div>
+      <!-- MSCI 43B -->
+      <div class="mass us" style="left: 30%; --d: 72px;">
+        <div class="disc" style="width: 72px; height: 72px;"></div>
+        <div class="tag">MSCI</div>
+        <div class="cap">$43B</div>
+      </div>
+      <!-- FDS 8.5B -->
+      <div class="mass" style="left: 10%; --d: 32px;">
+        <div class="disc" style="width: 32px; height: 32px;"></div>
+        <div class="tag">FDS</div>
+        <div class="cap">$8.5B</div>
+      </div>
+
+      <div class="axis"></div>
+      <div class="axis-tick" style="left: 10%;"></div>
+      <div class="axis-tick" style="left: 30%;"></div>
+      <div class="axis-tick" style="left: 56%;"></div>
+      <div class="axis-tick" style="left: 88%;"></div>
+      <div class="axis-label" style="left: 10%;">$8B</div>
+      <div class="axis-label" style="left: 30%;">$43B</div>
+      <div class="axis-label" style="left: 56%;">$49B</div>
+      <div class="axis-label" style="left: 88%;">$132B</div>
+    </div>
+
+    <div class="comp-rows reveal delay-3">
+      <div class="crow us">
+        <div>
+          <div class="nm">MSCI Inc.</div>
+          <div class="tk">MSCI · $3.13B rev · 54.7% op margin</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="mc">$43.0B</div>
+          <div class="gr">indexes · analytics · esg</div>
+        </div>
+      </div>
+      <div class="crow">
+        <div>
+          <div class="nm">S&amp;P Global</div>
+          <div class="tk">SPGI · $15.34B rev · P/E 29.6</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="mc">$132.2B</div>
+          <div class="gr up">+7.95% rev YoY</div>
+        </div>
+      </div>
+      <div class="crow">
+        <div>
+          <div class="nm">Nasdaq</div>
+          <div class="tk">NDAQ · $8.26B rev · P/E 27.7</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="mc">$49.5B</div>
+          <div class="gr up">+11.08% rev YoY</div>
+        </div>
+      </div>
+      <div class="crow">
+        <div>
+          <div class="nm">FactSet</div>
+          <div class="tk">FDS · $2.32B rev · P/E 14.4</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="mc">$8.5B</div>
+          <div class="gr up">+6.51% rev YoY</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── TAKEAWAY (close inverts open) ─────────────── -->
+  <section class="close">
+    <div class="stamp">
+      The close<br/>
+      Recap · FY '25
+    </div>
+
+    <span class="eyebrow" style="margin-bottom: 24px;">The takeaway <span class="dot"></span> Returning to the open</span>
+
+    <p class="invert reveal">
+      $16.5 trillion<br/>
+      orbits the index.<br/>
+      <em class="s">The index</em><br/>
+      <em>measures itself</em><br/>
+      at <em>$43B.</em>
+    </p>
+
+    <div class="meas reveal delay-2">
+      <span class="lhs">$0</span>
+      <span class="midmark"></span>
+      <span class="midlabel">MSCI · $43B</span>
+      <span class="rhs">$16.5T benchmarked</span>
+    </div>
+
+    <p class="signoff reveal delay-3">
+      A <em>data shop</em> sized at one-quarter of one percent of the money it measures — <em>levered, asset-light,</em> and selling the same subscription back to a wider audience every year.
+    </p>
+
+    <div class="footnote">
+      <span>END · MSCI</span>
+      <span>FY '25</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ───── Scroll progress ─────
+  const page = document.getElementById('page');
+  const progress = document.getElementById('progress');
+  function updateProgress() {
+    const max = (document.documentElement.scrollHeight - window.innerHeight);
+    const p = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
+    progress.style.setProperty('--scroll', p + '%');
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+  updateProgress();
+
+  // ───── Reveal on scroll ─────
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        // for SVG draw segments inside, kick the dashoffset
+        e.target.querySelectorAll('.seg, .draw').forEach(el => {
+          // already styled; class .in bumps animation
+        });
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -10% 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ───── SVG draw-on for segments (uses stroke-dashoffset trick) ─────
+  // We pre-set stroke-dasharray with [visibleLen, totalCircum]. To animate the visible
+  // arc growing, animate stroke-dashoffset from totalCircum -> 0 (so the gap is "consumed"
+  // and the visible portion appears to draw on). Then set offset to 0 for full state.
+  function setupArc(circle, visibleLen, total) {
+    circle.setAttribute('stroke-dasharray', `${visibleLen} ${total}`);
+    // start with offset that hides the visible arc
+    circle.setAttribute('stroke-dashoffset', total);
+    circle.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(0.22,1,0.36,1)';
+    return () => circle.setAttribute('stroke-dashoffset', 0);
+  }
+
+  // Ring chart segments
+  const ringSvg = document.getElementById('ringSvg');
+  if (ringSvg) {
+    const segs = [
+      { r: 150, pct: 0.56 },
+      { r: 124, pct: 0.24 },
+      { r: 92,  pct: 0.11 },
+      { r: 56,  pct: 0.09 },
+    ];
+    const circles = ringSvg.querySelectorAll('circle.seg');
+    const reveals = [];
+    circles.forEach((c, i) => {
+      const r = segs[i].r;
+      const total = 2 * Math.PI * r;
+      const visible = total * segs[i].pct;
+      reveals.push(setupArc(c, visible, total));
+    });
+    const ringIo = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          reveals.forEach((fn, i) => setTimeout(fn, 200 + i * 180));
+          ringIo.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    ringIo.observe(ringSvg);
+  }
+
+  // Globe arcs
+  const globeSvg = document.getElementById('globeSvg');
+  if (globeSvg) {
+    const circles = globeSvg.querySelectorAll('circle.draw');
+    const arcs = [
+      { r: 138, pct: 0.47 },
+      { r: 148, pct: 0.35 },
+      { r: 158, pct: 0.18 },
+    ];
+    const reveals = [];
+    circles.forEach((c, i) => {
+      const r = arcs[i].r;
+      const total = 2 * Math.PI * r;
+      const visible = total * arcs[i].pct;
+      reveals.push(setupArc(c, visible, total));
+    });
+    const gIo = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          reveals.forEach((fn, i) => setTimeout(fn, 200 + i * 220));
+          gIo.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    gIo.observe(globeSvg);
+  }
+
+  // Cost bar — animate widths from 0
+  const costBar = document.getElementById('costBar');
+  if (costBar) {
+    const data = [
+      { pct: 28, color: '#4F86C6' },
+      { pct: 8,  color: '#E07B54' },
+      { pct: 6,  color: '#6DBF82' },
+      { pct: 4,  color: '#F2C94C' },
+      { pct: 2,  color: '#A78BFA' },
+      // residual: revenue not consumed by listed opex (operating margin + other lines)
+      { pct: 52, color: 'transparent', residual: true },
+    ];
+    data.forEach(d => {
+      const seg = document.createElement('div');
+      seg.className = 'cost-seg';
+      seg.style.background = d.color;
+      seg.style.flexBasis = '0%';
+      if (d.residual) {
+        seg.style.background = 'repeating-linear-gradient(45deg, transparent 0 6px, rgba(14,23,38,0.08) 6px 7px)';
+      }
+      costBar.appendChild(seg);
+    });
+    const cIo = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          [...costBar.children].forEach((seg, i) => {
+            setTimeout(() => {
+              seg.style.flexBasis = data[i].pct + '%';
+            }, 200 + i * 90);
+          });
+          cIo.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+    cIo.observe(costBar);
+  }
+
+  // Buyback bar — animate from 0 to 40%
+  const bb = document.querySelector('#buybackBar .filled');
+  if (bb) {
+    bb.style.flexBasis = '0%';
+    bb.style.transition = 'flex-basis 1.6s cubic-bezier(0.22,1,0.36,1)';
+    const bIo = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          setTimeout(() => bb.style.flexBasis = '40%', 200);
+          bIo.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+    bIo.observe(bb);
+  }
+
+  // Hero ticks — initial reveal classes already applied; nothing else needed.
+</script>
+
+</body>
+</html>

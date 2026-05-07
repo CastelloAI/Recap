@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>VST · Recap</title>
+<link rel="stylesheet" href="design-system.css" />
+<style>
+  :root {
+    /* Vistra-tuned palette: warm paper + ledger ink + coral as "current" */
+    --vst-paper:   #F6F2EA;          /* warmer than DS paper — Texas earth */
+    --vst-paper-2: #EFEAE0;
+    --vst-paper-3: #E6E0D2;
+    --vst-ink:     #16140F;          /* deep warm near-black */
+    --vst-ink-2:   #34302A;
+    --vst-ink-3:   #6B665C;
+    --vst-line:    #DAD3C2;
+    --vst-current: #FF6A2C;          /* slightly hotter coral — "current" */
+    --vst-current-glow: rgba(255,106,44,0.5);
+    --vst-amber:   #E8A33B;
+    --vst-mint:    #2BB673;
+    --vst-iris:    #7B71F5;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; }
+  body {
+    background: var(--vst-paper);
+    color: var(--vst-ink);
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  #root { width: 100%; }
+  ::selection { background: var(--vst-current); color: #fff; }
+
+  /* === Mobile-only frame: page IS the design, sized for mobile === */
+  .device {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--vst-paper);
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+  }
+  @media (min-width: 480px) {
+    body { background: #1a1815; padding: 24px 0; }
+    .device {
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+      border-radius: 8px;
+    }
+  }
+
+  /* === Sticky chrome === */
+  .chrome {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    background: rgba(246,242,234,0.78);
+    border-bottom: 1px solid rgba(218,211,194,0.6);
+  }
+  .chrome-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 10px;
+  }
+  .chrome-left { display: flex; align-items: baseline; gap: 10px; }
+  .chrome-ticker {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--vst-ink);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .chrome-ticker::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--vst-current);
+    box-shadow: 0 0 0 0 var(--vst-current-glow);
+    animation: pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255,106,44,0.55); }
+    70% { box-shadow: 0 0 0 10px rgba(255,106,44,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,106,44,0); }
+  }
+  .chrome-name {
+    font-size: 13px; color: var(--vst-ink-2); font-weight: 400;
+  }
+  .chrome-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--vst-ink-3);
+  }
+  .progress {
+    height: 1.5px; width: 100%;
+    background: rgba(20,20,15,0.06);
+    position: relative; overflow: hidden;
+  }
+  .progress-fill {
+    position: absolute; top: 0; left: 0; height: 100%;
+    background: var(--vst-current);
+    width: 0%;
+    will-change: width;
+  }
+
+  /* === Common typographic atoms === */
+  .eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--vst-ink-3);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .eyebrow .dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--vst-current);
+  }
+  .display {
+    font-family: 'Instrument Serif', 'Times New Roman', serif;
+    font-weight: 400; line-height: 0.95; letter-spacing: -0.02em;
+    color: var(--vst-ink);
+  }
+  .display em, .display i {
+    font-style: italic; color: var(--vst-current);
+  }
+  .body { font-size: 15.5px; line-height: 1.55; color: var(--vst-ink-2); }
+  .body em, .body i { font-style: italic; font-family: 'Instrument Serif', serif; font-size: 1.12em; color: var(--vst-current); }
+  .mono { font-family: 'Geist Mono', monospace; }
+
+  /* === Section spacing — no card-on-card; alternate base/raised tones === */
+  section { padding: 64px 24px; position: relative; }
+  section.tight { padding: 40px 24px; }
+  .raised { background: var(--vst-paper-2); }
+  .deep { background: var(--vst-ink); color: #F4F0E6; }
+  .deep .display { color: #F4F0E6; }
+  .deep .body { color: rgba(244,240,230,0.78); }
+  .deep .eyebrow { color: rgba(244,240,230,0.55); }
+
+  /* === Reset beats — italic-serif interludes on a contrasting band === */
+  .reset {
+    padding: 56px 28px;
+    background: var(--vst-paper-3);
+    border-top: 1px solid var(--vst-line);
+    border-bottom: 1px solid var(--vst-line);
+  }
+  .reset .quote {
+    font-family: 'Instrument Serif', serif;
+    font-size: 26px; line-height: 1.18; letter-spacing: -0.01em;
+    color: var(--vst-ink);
+    font-style: italic;
+  }
+  .reset .quote .hot { color: var(--vst-current); }
+  .reset .marker {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--vst-ink-3);
+    margin-bottom: 18px;
+  }
+
+  /* === Reveal-on-scroll === */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease-out, cubic-bezier(0.22,1,0.36,1)), transform 600ms var(--ease-out, cubic-bezier(0.22,1,0.36,1)); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* === Footer === */
+  .foot { padding: 40px 24px 60px; text-align: center; }
+  .foot .meta { font-family:'Geist Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--vst-ink-3); }
+
+  /* Tap-to-deepen card */
+  .flip { perspective: 1000px; }
+  .flip-inner { position: relative; transition: transform 600ms cubic-bezier(0.65,0,0.35,1); transform-style: preserve-3d; }
+  .flip.open .flip-inner { transform: rotateY(180deg); }
+  .flip-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .flip-back { position: absolute; top:0; left:0; right:0; bottom:0; transform: rotateY(180deg); }
+
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="vistra-app.jsx"></script>
+</body>
+</html>

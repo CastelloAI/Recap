@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WEC · FY '25 Recap</title>
+<link rel="stylesheet" href="design-system.css">
+<style>
+  /* =========================================================
+     WEC Energy Group — recap page
+     Palette: warm paper / ink / regulated-blue / electric amber
+     Type: Instrument Serif (display) + Geist + Geist Mono
+     ========================================================= */
+  :root{
+    /* Base inherited from design system. Layer WEC tokens on top. */
+    --paper:       #F4F1EA;          /* warmer than default paper — utility manila */
+    --paper-2:     #ECE7DC;
+    --paper-3:     #E2DBCA;
+    --ink:         #15171C;
+    --ink-2:       #353941;
+    --ink-3:       #6B6F77;
+    --line:        #DCD5C5;
+
+    /* Signal: electric amber (filament, regulated returns) */
+    --signal:      #C8631C;          /* primary */
+    --signal-2:    #E08A3E;          /* lighter */
+    --signal-soft: #F2D9B8;
+
+    /* Utility-blue for gas, water, grid */
+    --grid:        #1F3A5F;          /* deep regulated navy */
+    --grid-2:      #335B86;
+    --grid-soft:   #C8D4E2;
+
+    --night:       #0B0E14;          /* the "weight" beat */
+  }
+
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0; background:var(--paper); color:var(--ink); overflow-x:hidden}
+  body{
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ------- Layout shell ------- */
+  .page{
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    position: relative;
+    background: var(--paper);
+  }
+
+  /* ------- Persistent chrome ------- */
+  .chrome{
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(244,241,234,0.78);
+    backdrop-filter: blur(18px) saturate(1.15);
+    -webkit-backdrop-filter: blur(18px) saturate(1.15);
+    border-bottom: 1px solid rgba(220,213,197,0.6);
+  }
+  .chrome-row{
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 12px;
+  }
+  .chrome-left{display:flex; align-items:baseline; gap:10px}
+  .ticker{
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .ticker .dot{
+    display:inline-block; width:6px; height:6px; border-radius:50%;
+    background: var(--signal); margin-right: 8px; transform: translateY(-1px);
+    box-shadow: 0 0 8px rgba(200,99,28,0.6);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1; box-shadow:0 0 8px rgba(200,99,28,0.6)}
+    50%{opacity:0.55; box-shadow:0 0 2px rgba(200,99,28,0.2)}
+  }
+  .companyname{
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ink-2);
+  }
+  .recaplabel{
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .scrollbar{
+    height: 1.5px; width: 100%;
+    background: transparent;
+  }
+  .scrollbar-fill{
+    height: 100%;
+    background: var(--signal);
+    width: 0%;
+    transition: width 80ms linear;
+  }
+
+  /* ------- Section primitives ------- */
+  section{position: relative; padding: 56px 24px 56px}
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--signal);
+    font-weight: 500;
+    margin-bottom: 18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow .bar{
+    display:inline-block; width: 18px; height:1px; background: var(--signal); opacity:0.7;
+  }
+  .display{
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.018em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .display em, em{font-style: italic; font-family: var(--font-display)}
+  .signal{color: var(--signal)}
+  .grid-c{color: var(--grid)}
+  .body-copy{
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .body-copy em{font-family: var(--font-display); font-style: italic; font-size: 1.05em}
+  .meta-mono{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ------- Reset beat (italic interlude band) ------- */
+  .reset{
+    padding: 44px 28px;
+    background: var(--paper-2);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .reset.dark{background: var(--night); border-color:#1d212b}
+  .reset.dark .interlude{color:#D8D3C4}
+  .reset.dark .interlude em{color: var(--signal-2)}
+  .interlude{
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--ink-2);
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .interlude em{color: var(--signal); font-style: italic}
+
+  /* ------- HERO ------- */
+  .hero{
+    padding: 72px 24px 72px;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(200,99,28,0.06) 0%, transparent 60%),
+      var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero h1{
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.94;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 24px 0 24px;
+  }
+  .hero h1 em{color: var(--signal)}
+  .hero-meta{
+    display:flex; gap:14px; align-items:center;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .hero-meta .stat{
+    flex:1;
+  }
+  .hero-meta .stat .num{
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .hero-meta .stat .lbl{
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 6px;
+    display:block;
+  }
+
+  /* ------- The grid line — the through-thread ------- */
+  .threadwrap{position:relative; height: 280px; margin: 24px -24px 0; overflow:hidden}
+  .thread-svg{position:absolute; inset:0; width:100%; height:100%}
+
+  /* ------- Big number ------- */
+  .bignum{
+    font-family: var(--font-display);
+    font-size: 84px;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  .bignum.signal{color: var(--signal)}
+  .bignum sub{font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; vertical-align: middle; color: var(--ink-3); margin-left:6px; text-transform: uppercase}
+
+  /* ------- Scale grid ------- */
+  .scaleblock{
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+  .scaleblock .cell{
+    padding: 20px 16px 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .scaleblock .cell:nth-child(odd){border-right: 1px solid var(--line)}
+  .scaleblock .cell .v{
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .scaleblock .cell .v em{color: var(--signal)}
+  .scaleblock .cell .l{
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-top: 8px;
+    line-height: 1.35;
+  }
+
+  /* ------- Cost flow ------- */
+  .costwrap{margin-top: 28px}
+  .costrow{
+    display:grid;
+    grid-template-columns: 56px 1fr 56px;
+    align-items:center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .costrow:last-child{border-bottom:none}
+  .costrow .pct{
+    font-family: var(--font-display);
+    font-size: 28px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .costrow .lbl{
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.3;
+    color: var(--ink-2);
+  }
+  .costrow .barwrap{
+    grid-column: 1 / -1;
+    height: 4px;
+    background: var(--paper-3);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .costrow .bar{
+    height: 100%;
+    width: 0%;
+    transition: width 1.2s var(--ease-out);
+    border-radius: 2px;
+  }
+
+  /* ------- Footprint map ------- */
+  .mapwrap{margin: 24px -24px 0; padding: 0 24px}
+  .map-svg{width:100%; height:auto; display:block}
+  .footrow{
+    display:flex; justify-content: space-between; align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .footrow:last-child{border-bottom:none}
+  .footrow .reg{font-family: var(--font-sans); font-size: 14px; color: var(--ink-2)}
+  .footrow .reg .swatch{display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:10px; vertical-align: middle}
+  .footrow .pct{font-family: var(--font-display); font-size: 22px; color: var(--ink)}
+
+  /* ------- Capex bet timeline ------- */
+  .betwrap{margin-top: 28px}
+  .betsvg{width:100%; height:auto; display:block; margin-top: 16px}
+  .betlabel{display:flex; justify-content:space-between; margin-top:10px}
+  .betlabel span{font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; color: var(--ink-3); text-transform: uppercase}
+
+  /* ------- Competitor comparison (vertical bars) ------- */
+  .compwrap{margin-top: 28px}
+  .comprow{
+    padding: 18px 0 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .comprow:last-child{border-bottom:none}
+  .comp-head{display:flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px}
+  .comp-name{font-family: var(--font-sans); font-size: 14px; font-weight: 500; color: var(--ink)}
+  .comp-name .tk{font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); margin-left: 8px; letter-spacing: 0.06em}
+  .comp-cap{font-family: var(--font-display); font-size: 22px; color: var(--ink)}
+  .comp-bar-track{
+    height: 8px;
+    background: var(--paper-3);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .comp-bar-fill{
+    height: 100%;
+    width: 0%;
+    transition: width 1.2s var(--ease-out);
+    border-radius: 4px;
+  }
+  .comp-meta{
+    margin-top: 10px;
+    display:flex; gap: 14px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .comp-meta span strong{color: var(--ink-2); font-weight: 500}
+  .comp-desc{
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .comp-desc em{font-family: var(--font-display); font-style: italic; color: var(--signal); font-size: 1.05em}
+
+  /* ------- Dividend streak ------- */
+  .streakwrap{
+    background: var(--night);
+    color: #E8E2D4;
+    padding: 64px 24px 64px;
+    margin: 56px -0 0;
+    border-top: 1px solid #1d212b;
+    border-bottom: 1px solid #1d212b;
+  }
+  .streakwrap .eyebrow{color: var(--signal-2)}
+  .streakwrap .display{color: #F1ECDB}
+  .streakwrap .display em{color: var(--signal-2)}
+  .streakwrap .body-copy{color: #B7B0A0}
+  .streakwrap .body-copy em{color: var(--signal-2)}
+  .streakdots{
+    display:grid;
+    grid-template-columns: repeat(11, 1fr);
+    gap: 8px;
+    margin: 32px 0 22px;
+  }
+  .streakdot{
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background: rgba(232,138,62,0.18);
+    border: 1px solid rgba(232,138,62,0.3);
+    transition: background 280ms var(--ease-out), border-color 280ms var(--ease-out), transform 280ms var(--ease-out);
+  }
+  .streakdot.lit{
+    background: var(--signal);
+    border-color: var(--signal-2);
+    box-shadow: 0 0 6px rgba(232,138,62,0.6);
+  }
+  .streakcaption{
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em;
+    color: #6F6A5F; text-transform: uppercase;
+    display:flex; justify-content: space-between;
+  }
+
+  /* ------- Closing ------- */
+  .close{
+    padding: 80px 24px 100px;
+    text-align: left;
+  }
+  .close .display{font-size: 56px}
+
+  /* ------- Footer mark ------- */
+  .footermark{
+    padding: 28px 24px 48px;
+    border-top: 1px solid var(--line);
+    display:flex; justify-content: space-between; align-items: center;
+  }
+  .footermark .meta-mono{font-size: 10px}
+
+  /* ------- Reveal-on-scroll ------- */
+  .reveal{
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 520ms var(--ease-out), transform 520ms var(--ease-out);
+  }
+  .reveal.in{opacity:1; transform:none}
+
+  /* ------- 60Hz hum hairline ------- */
+  .hum{
+    height: 28px;
+    margin: 0 -24px;
+    overflow: hidden;
+  }
+  .hum svg{width:100%; height:100%; display:block}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =========================================================
+       PERSISTENT CHROME
+       ========================================================= -->
+  <div class="chrome">
+    <div class="chrome-row">
+      <div class="chrome-left">
+        <span class="ticker"><span class="dot"></span>WEC</span>
+        <span class="companyname">WEC Energy Group</span>
+      </div>
+      <span class="recaplabel">Recap · FY '25</span>
+    </div>
+    <div class="scrollbar"><div class="scrollbar-fill" id="scrollFill"></div></div>
+  </div>
+
+  <!-- =========================================================
+       1. THESIS — HERO
+       ========================================================= -->
+  <section class="hero" data-screen-label="01 Thesis">
+    <div class="eyebrow"><span class="bar"></span>The thesis · NYSE: WEC</div>
+    <h1 class="display">
+      4.7 million meters.<br>
+      <em>One steady current.</em>
+    </h1>
+    <p class="body-copy" style="margin-top:20px; max-width:34ch">
+      A regulated electric and gas utility built since <em>1896</em> in Milwaukee — paid not for what it sells, but for what it builds.
+    </p>
+
+    <div class="threadwrap" aria-hidden="true">
+      <svg class="thread-svg" viewBox="0 0 440 280" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="threadGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#C8631C" stop-opacity="0"/>
+            <stop offset="20%" stop-color="#C8631C" stop-opacity="1"/>
+            <stop offset="80%" stop-color="#C8631C" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#C8631C" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="poleGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#15171C"/>
+            <stop offset="100%" stop-color="#353941"/>
+          </linearGradient>
+        </defs>
+
+        <!-- horizon -->
+        <line x1="0" y1="220" x2="440" y2="220" stroke="#DCD5C5" stroke-width="1"/>
+
+        <!-- distant houses (4.7M meters as silhouettes) -->
+        <g fill="#E2DBCA" stroke="none">
+          <!-- row of small houses -->
+          <g id="houseRow"></g>
+        </g>
+
+        <!-- transmission poles -->
+        <g stroke="url(#poleGrad)" stroke-width="2" fill="none">
+          <line x1="40"  y1="220" x2="40"  y2="120"/>
+          <line x1="160" y1="220" x2="160" y2="100"/>
+          <line x1="280" y1="220" x2="280" y2="110"/>
+          <line x1="400" y1="220" x2="400" y2="125"/>
+          <!-- crossarms -->
+          <line x1="20"  y1="135" x2="60"  y2="135"/>
+          <line x1="138" y1="115" x2="182" y2="115"/>
+          <line x1="258" y1="125" x2="302" y2="125"/>
+          <line x1="380" y1="140" x2="420" y2="140"/>
+        </g>
+
+        <!-- the line itself: catenary curves between poles -->
+        <path id="wire1" d="M 40 135 Q 100 175, 160 115 T 280 125 T 400 140"
+              fill="none" stroke="url(#threadGrad)" stroke-width="1.6"/>
+        <path id="wire2" d="M 40 142 Q 100 180, 160 122 T 280 132 T 400 147"
+              fill="none" stroke="#C8631C" stroke-opacity="0.35" stroke-width="1"/>
+
+        <!-- pulse traveling along the wire -->
+        <circle r="3" fill="#FF9E50" filter="url(#glow)">
+          <animateMotion dur="6s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#wire1"/>
+          </animateMotion>
+        </circle>
+        <circle r="2" fill="#C8631C">
+          <animateMotion dur="6s" begin="-2s" repeatCount="indefinite">
+            <mpath href="#wire1"/>
+          </animateMotion>
+        </circle>
+
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+
+        <!-- ground texture: meters glowing -->
+        <g id="meters"></g>
+      </svg>
+    </div>
+
+    <div class="hero-meta">
+      <div class="stat">
+        <div class="num">$36.70<span style="font-size:14px; color:var(--ink-3); margin-left:2px">B</span></div>
+        <span class="lbl">Market cap</span>
+      </div>
+      <div class="stat">
+        <div class="num">7,000</div>
+        <span class="lbl">Employees</span>
+      </div>
+      <div class="stat">
+        <div class="num">8,160<span style="font-size:14px; color:var(--ink-3); margin-left:2px">MW</span></div>
+        <span class="lbl">Generation</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== reset beat ===== -->
+  <div class="reset">
+    <p class="interlude">
+      A utility doesn't sell electricity. <em>It rents the steel that delivers it.</em>
+    </p>
+  </div>
+
+  <!-- =========================================================
+       2. THE BUSINESS — HOW IT MAKES MONEY
+       ========================================================= -->
+  <section data-screen-label="02 Business">
+    <div class="eyebrow"><span class="bar"></span>The mechanism · Rate base</div>
+    <h2 class="display" style="font-size:42px">
+      Build a dollar of pipe.<br>
+      <em class="signal">Earn a regulated return on it.</em>
+    </h2>
+
+    <p class="body-copy" style="margin-top: 22px">
+      Over <em>99%</em> of earnings come from regulated operations across five segments — Wisconsin, Illinois, Other States, Electric Transmission, and Non-Utility Energy Infrastructure.
+    </p>
+
+    <!-- Rate-base diagram: capital invested → infrastructure → regulated return -->
+    <div style="margin: 32px -24px 0; padding: 0 24px;" class="reveal">
+      <svg viewBox="0 0 392 280" style="width:100%; height:auto; display:block" aria-hidden="true">
+        <defs>
+          <linearGradient id="capGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C8631C"/>
+            <stop offset="100%" stop-color="#E08A3E"/>
+          </linearGradient>
+          <pattern id="brick" patternUnits="userSpaceOnUse" width="22" height="10">
+            <rect width="22" height="10" fill="#1F3A5F"/>
+            <line x1="0" y1="10" x2="22" y2="10" stroke="#0F2438" stroke-width="0.5"/>
+            <line x1="11" y1="0" x2="11" y2="10" stroke="#0F2438" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+
+        <!-- capital invested (column) -->
+        <text x="20" y="20" font-family="Geist Mono" font-size="9" fill="#6B6F77" letter-spacing="1.5">CAPITAL IN</text>
+        <rect x="20" y="30" width="60" height="220" fill="url(#capGrad)" rx="2"/>
+        <g font-family="Instrument Serif" fill="#fff" font-size="16">
+          <text x="50" y="65" text-anchor="middle">$</text>
+          <text x="50" y="105" text-anchor="middle">$</text>
+          <text x="50" y="145" text-anchor="middle">$</text>
+          <text x="50" y="185" text-anchor="middle">$</text>
+          <text x="50" y="225" text-anchor="middle">$</text>
+        </g>
+
+        <!-- arrow -->
+        <path d="M 88 140 L 132 140 M 122 132 L 132 140 L 122 148" stroke="#15171C" stroke-width="1.5" fill="none"/>
+
+        <!-- rate base: stack of regulated assets -->
+        <text x="140" y="20" font-family="Geist Mono" font-size="9" fill="#6B6F77" letter-spacing="1.5">RATE BASE · $34.6B PP&amp;E</text>
+        <g>
+          <rect x="140" y="200" width="160" height="50" fill="url(#brick)"/>
+          <rect x="140" y="150" width="160" height="50" fill="url(#brick)"/>
+          <rect x="140" y="100" width="160" height="50" fill="url(#brick)"/>
+          <rect x="140" y="50"  width="160" height="50" fill="url(#brick)"/>
+          <text x="220" y="232" font-family="Geist" font-size="10" fill="#fff" text-anchor="middle" opacity="0.85">Distribution mains</text>
+          <text x="220" y="182" font-family="Geist" font-size="10" fill="#fff" text-anchor="middle" opacity="0.85">Generation</text>
+          <text x="220" y="132" font-family="Geist" font-size="10" fill="#fff" text-anchor="middle" opacity="0.85">Transmission</text>
+          <text x="220" y="82"  font-family="Geist" font-size="10" fill="#fff" text-anchor="middle" opacity="0.85">Renewables</text>
+        </g>
+
+        <!-- arrow out -->
+        <path d="M 308 140 L 350 140 M 340 132 L 350 140 L 340 148" stroke="#15171C" stroke-width="1.5" fill="none"/>
+
+        <!-- regulated return -->
+        <text x="360" y="20" font-family="Geist Mono" font-size="9" fill="#6B6F77" letter-spacing="1.5">RETURN</text>
+        <circle cx="370" cy="140" r="22" fill="none" stroke="#C8631C" stroke-width="2"/>
+        <text x="370" y="138" text-anchor="middle" font-family="Instrument Serif" font-size="14" fill="#C8631C" font-style="italic">≈10%</text>
+        <text x="370" y="152" text-anchor="middle" font-family="Geist Mono" font-size="7" fill="#6B6F77" letter-spacing="1">ALLOWED</text>
+      </svg>
+    </div>
+
+    <!-- KPI strip -->
+    <div class="scaleblock">
+      <div class="cell">
+        <div class="v">$<em>9.80</em>B</div>
+        <div class="l">FY2025 revenue</div>
+      </div>
+      <div class="cell">
+        <div class="v">66.7<em>%</em></div>
+        <div class="l">Gross margin</div>
+      </div>
+      <div class="cell">
+        <div class="v">22.9<em>%</em></div>
+        <div class="l">Operating margin</div>
+      </div>
+      <div class="cell">
+        <div class="v">$<em>0.97</em></div>
+        <div class="l">Q4 '25 EPS · on $2.54B revenue</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== reset beat ===== -->
+  <div class="reset">
+    <p class="interlude">
+      Stable, but not small. <em>Fifty-one billion dollars of steel and copper</em> stretched across four states.
+    </p>
+  </div>
+
+  <!-- =========================================================
+       3. THE SCALE — physical footprint
+       ========================================================= -->
+  <section data-screen-label="03 Scale">
+    <div class="eyebrow"><span class="bar"></span>The scale · what's underground</div>
+    <h2 class="display" style="font-size:44px">
+      Forty-seven thousand<br>
+      <em class="grid-c">two hundred miles.</em>
+    </h2>
+    <p class="body-copy" style="margin-top:18px">
+      Of natural gas distribution mains, threading <em>four states</em>. Long enough to ring the equator <em>almost twice</em>.
+    </p>
+
+    <!-- Pipe length comparator -->
+    <div class="reveal" style="margin: 32px -24px 24px; padding: 0 24px;">
+      <svg viewBox="0 0 392 200" style="width:100%; height:auto; display:block" aria-hidden="true">
+        <defs>
+          <linearGradient id="earthGrad" cx="0.5" cy="0.5" r="0.6">
+            <stop offset="0%" stop-color="#335B86"/>
+            <stop offset="100%" stop-color="#1F3A5F"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Earth circle as comparator -->
+        <circle cx="100" cy="100" r="62" fill="url(#earthGrad)"/>
+        <circle cx="100" cy="100" r="62" fill="none" stroke="#C8D4E2" stroke-width="0.5" opacity="0.4"/>
+        <!-- meridians -->
+        <ellipse cx="100" cy="100" rx="62" ry="20" fill="none" stroke="#C8D4E2" stroke-width="0.5" opacity="0.3"/>
+        <ellipse cx="100" cy="100" rx="20" ry="62" fill="none" stroke="#C8D4E2" stroke-width="0.5" opacity="0.3"/>
+        <ellipse cx="100" cy="100" rx="42" ry="62" fill="none" stroke="#C8D4E2" stroke-width="0.5" opacity="0.2"/>
+
+        <!-- pipe wrapped around earth (1.9 turns) -->
+        <path id="pipeWrap"
+              d="M 100 38 a 62 62 0 1 1 -0.1 0
+                 M 100 38 a 62 62 0 1 1 -0.2 0"
+              fill="none" stroke="#C8631C" stroke-width="2.2" opacity="0.95"/>
+        <!-- approximate using two arcs to suggest wrapping -->
+        <path d="M 38 100 A 62 62 0 0 1 162 100" fill="none" stroke="#C8631C" stroke-width="2.4"/>
+        <path d="M 162 100 A 62 62 0 0 1 38 100" fill="none" stroke="#C8631C" stroke-width="2.4" stroke-dasharray="2 2"/>
+
+        <text x="100" y="184" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#6B6F77" letter-spacing="1.5">EARTH · 24,901 MI</text>
+
+        <!-- WEC pipe line snaking right -->
+        <text x="200" y="32" font-family="Geist Mono" font-size="9" fill="#C8631C" letter-spacing="1.5">WEC GAS MAINS</text>
+        <text x="200" y="56" font-family="Instrument Serif" font-size="36" fill="#15171C" letter-spacing="-0.02em">47,200<tspan font-size="14" fill="#6B6F77" font-family="Geist Mono"> MI</tspan></text>
+
+        <!-- accumulated dots showing scale -->
+        <g fill="#C8631C">
+          <circle cx="200" cy="84" r="2"/>
+          <circle cx="216" cy="84" r="2"/>
+          <circle cx="232" cy="84" r="2"/>
+          <circle cx="248" cy="84" r="2"/>
+          <circle cx="264" cy="84" r="2"/>
+          <circle cx="280" cy="84" r="2"/>
+          <circle cx="296" cy="84" r="2"/>
+          <circle cx="312" cy="84" r="2"/>
+          <circle cx="328" cy="84" r="2"/>
+          <circle cx="344" cy="84" r="2"/>
+          <circle cx="360" cy="84" r="2"/>
+          <circle cx="376" cy="84" r="2"/>
+        </g>
+        <text x="200" y="106" font-family="Geist" font-size="10" fill="#3B3A37">≈ 1.9 trips around the planet</text>
+
+        <!-- second comparator: customers -->
+        <line x1="200" y1="124" x2="376" y2="124" stroke="#DCD5C5" stroke-width="0.5"/>
+        <text x="200" y="146" font-family="Geist Mono" font-size="9" fill="#6B6F77" letter-spacing="1.5">CUSTOMERS</text>
+        <text x="200" y="174" font-family="Instrument Serif" font-size="32" fill="#15171C" letter-spacing="-0.02em">4.7<tspan font-size="14" fill="#6B6F77" font-family="Geist Mono"> M</tspan></text>
+      </svg>
+    </div>
+
+    <div class="scaleblock" style="margin-top: 0">
+      <div class="cell">
+        <div class="v">$<em>51</em>B</div>
+        <div class="l">Total assets</div>
+      </div>
+      <div class="cell">
+        <div class="v">$<em>34.6</em>B</div>
+        <div class="l">Net property, plant &amp; equipment</div>
+      </div>
+      <div class="cell">
+        <div class="v">8,160<em> MW</em></div>
+        <div class="l">Generation capacity owned</div>
+      </div>
+      <div class="cell">
+        <div class="v">5<em></em></div>
+        <div class="l">Reporting segments</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== reset beat ===== -->
+  <div class="reset">
+    <p class="interlude">
+      Every dollar of revenue arrives. <em>Then it has to be spent — and most of it already is.</em>
+    </p>
+  </div>
+
+  <!-- =========================================================
+       4. WHERE THE MONEY GOES — costs as power-flow
+       ========================================================= -->
+  <section data-screen-label="04 Costs">
+    <div class="eyebrow"><span class="bar"></span>Where the dollar goes</div>
+    <h2 class="display" style="font-size:42px">
+      Of every dollar of revenue,<br>
+      <em>eighty-four cents</em> have a name.
+    </h2>
+
+    <!-- Sankey-style cost flow: dollar enters, splits by hex-colored streams -->
+    <div class="reveal" style="margin: 32px -24px 0; padding: 0 24px;">
+      <svg viewBox="0 0 392 320" style="width:100%; height:auto; display:block" aria-hidden="true">
+        <!-- source bar (one dollar) -->
+        <rect x="14" y="20" width="44" height="280" fill="#15171C" rx="2"/>
+        <text x="36" y="14" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#6B6F77" letter-spacing="1.5">$1 IN</text>
+        <text x="36" y="160" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#F4F1EA">$</text>
+
+        <!-- streams: each cost as a curved band -->
+        <!-- 33% Cost of Revenue -->
+        <path d="M 58 28 C 160 28, 200 28, 290 28
+                 L 290 122 C 200 122, 160 124, 58 116 Z"
+              fill="#4E79A7" opacity="0.92"/>
+        <text x="296" y="50" font-family="Geist" font-size="11" fill="#15171C" font-weight="500">33¢</text>
+        <text x="296" y="64" font-family="Geist" font-size="9" fill="#3B3A37">Fuel &amp; purchased</text>
+        <text x="296" y="76" font-family="Geist" font-size="9" fill="#3B3A37">power</text>
+
+        <!-- 22% O&M -->
+        <path d="M 58 116 C 160 124, 200 130, 290 130
+                 L 290 192 C 200 192, 160 184, 58 178 Z"
+              fill="#F28E2B" opacity="0.92"/>
+        <text x="296" y="148" font-family="Geist" font-size="11" fill="#15171C" font-weight="500">22¢</text>
+        <text x="296" y="162" font-family="Geist" font-size="9" fill="#3B3A37">Operation &amp;</text>
+        <text x="296" y="174" font-family="Geist" font-size="9" fill="#3B3A37">maintenance</text>
+
+        <!-- 12% D&A -->
+        <path d="M 58 178 C 160 184, 200 196, 290 196
+                 L 290 230 C 200 230, 160 220, 58 212 Z"
+              fill="#59A14F" opacity="0.92"/>
+        <text x="296" y="206" font-family="Geist" font-size="11" fill="#15171C" font-weight="500">12¢</text>
+        <text x="296" y="220" font-family="Geist" font-size="9" fill="#3B3A37">D&amp;A</text>
+
+        <!-- 7% Transmission -->
+        <path d="M 58 212 C 160 220, 200 232, 290 234
+                 L 290 254 C 200 254, 160 240, 58 234 Z"
+              fill="#E15759" opacity="0.92"/>
+        <text x="296" y="244" font-family="Geist" font-size="11" fill="#15171C" font-weight="500">7¢</text>
+        <text x="296" y="258" font-family="Geist" font-size="9" fill="#3B3A37">Transmission</text>
+
+        <!-- 6% Interest -->
+        <path d="M 58 234 C 160 240, 200 256, 290 258
+                 L 290 274 C 200 274, 160 256, 58 250 Z"
+              fill="#B07AA1" opacity="0.92"/>
+        <text x="296" y="270" font-family="Geist" font-size="11" fill="#15171C" font-weight="500">6¢</text>
+        <text x="296" y="284" font-family="Geist" font-size="9" fill="#3B3A37">Interest</text>
+
+        <!-- 4% Taxes -->
+        <path d="M 58 250 C 160 256, 200 272, 290 276
+                 L 290 290 C 200 290, 160 270, 58 264 Z"
+              fill="#76B7B2" opacity="0.92"/>
+        <text x="296" y="296" font-family="Geist" font-size="11" fill="#15171C" font-weight="500">4¢</text>
+        <text x="296" y="310" font-family="Geist" font-size="9" fill="#3B3A37">Other taxes</text>
+
+        <!-- residual signal -->
+        <line x1="58" y1="264" x2="58" y2="300" stroke="#C8631C" stroke-width="2"/>
+        <text x="68" y="294" font-family="Instrument Serif" font-style="italic" font-size="14" fill="#C8631C">~16¢</text>
+        <text x="68" y="308" font-family="Geist Mono" font-size="8" fill="#6B6F77" letter-spacing="1">REMAINS</text>
+      </svg>
+    </div>
+
+    <p class="body-copy" style="margin-top: 22px">
+      The biggest line — <em>fuel and purchased power</em> — is largely <em>passed through</em> to ratepayers. The economics live in the lines below it.
+    </p>
+  </section>
+
+  <!-- =========================================================
+       5. FOOTPRINT — geography
+       ========================================================= -->
+  <section data-screen-label="05 Footprint" style="background: var(--paper-2); margin-top: 0">
+    <div class="eyebrow"><span class="bar"></span>The footprint · four states</div>
+    <h2 class="display" style="font-size:42px">
+      Centered on <em class="grid-c">Wisconsin</em>,<br>
+      drawn out across the lake.
+    </h2>
+
+    <div class="mapwrap">
+      <!-- Stylized map: Wisconsin dominant, IL/MI/MN around -->
+      <svg class="map-svg" viewBox="0 0 392 320" aria-hidden="true">
+        <defs>
+          <pattern id="wiHatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(40)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#C8631C" stroke-width="1.6"/>
+          </pattern>
+        </defs>
+
+        <!-- Lake Michigan as negative space -->
+        <path d="M 220 60 Q 240 120, 235 200 Q 232 250, 220 290 L 268 290 Q 280 200, 268 100 L 230 50 Z"
+              fill="#1F3A5F" opacity="0.08"/>
+        <text x="244" y="180" font-family="Instrument Serif" font-style="italic" font-size="10" fill="#6B6F77">Lake</text>
+        <text x="244" y="194" font-family="Instrument Serif" font-style="italic" font-size="10" fill="#6B6F77">Michigan</text>
+
+        <!-- Minnesota (4%) -->
+        <path d="M 30 40 L 110 36 L 116 130 L 50 138 L 30 100 Z"
+              fill="#ECE7DC" stroke="#DCD5C5" stroke-width="1"/>
+        <text x="64" y="92" font-family="Geist Mono" font-size="8" fill="#6B6F77" letter-spacing="1">MN · 4%</text>
+
+        <!-- Wisconsin (65%) — dominant, hatched in signal color -->
+        <path d="M 116 36 L 218 50 L 226 200 L 130 218 L 110 130 Z"
+              fill="url(#wiHatch)" opacity="0.95"/>
+        <path d="M 116 36 L 218 50 L 226 200 L 130 218 L 110 130 Z"
+              fill="none" stroke="#C8631C" stroke-width="1.4"/>
+        <text x="160" y="118" font-family="Instrument Serif" font-size="22" fill="#15171C" letter-spacing="-0.01em">Wisconsin</text>
+        <text x="160" y="138" font-family="Geist Mono" font-size="10" fill="#C8631C" font-weight="500" letter-spacing="1.5">65%</text>
+
+        <!-- Michigan UP (7%) -->
+        <path d="M 130 30 L 230 26 L 234 50 L 218 50 L 116 36 Z"
+              fill="#ECE7DC" stroke="#DCD5C5" stroke-width="1"/>
+        <text x="170" y="46" font-family="Geist Mono" font-size="8" fill="#6B6F77" letter-spacing="1">MI · 7%</text>
+
+        <!-- Illinois (22%) -->
+        <path d="M 130 218 L 226 200 L 240 290 L 130 296 Z"
+              fill="#F2D9B8" stroke="#C8631C" stroke-width="1" opacity="0.85"/>
+        <text x="160" y="258" font-family="Instrument Serif" font-size="16" fill="#15171C">Illinois</text>
+        <text x="160" y="276" font-family="Geist Mono" font-size="10" fill="#C8631C" letter-spacing="1.5">22%</text>
+
+        <!-- Milwaukee dot (HQ) -->
+        <circle cx="200" cy="170" r="4" fill="#C8631C"/>
+        <circle cx="200" cy="170" r="9" fill="none" stroke="#C8631C" stroke-width="1" opacity="0.5">
+          <animate attributeName="r" values="4;14;4" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.7;0;0.7" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <line x1="200" y1="170" x2="280" y2="170" stroke="#15171C" stroke-width="0.5" stroke-dasharray="2 2"/>
+        <text x="284" y="167" font-family="Geist" font-size="11" fill="#15171C">Milwaukee</text>
+        <text x="284" y="180" font-family="Geist Mono" font-size="8" fill="#6B6F77" letter-spacing="1.2">HQ · EST. 1896</text>
+
+        <!-- Other US -->
+        <text x="284" y="276" font-family="Geist Mono" font-size="8" fill="#6B6F77" letter-spacing="1">OTHER · 2%</text>
+        <line x1="284" y1="280" x2="320" y2="280" stroke="#DCD5C5" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <!-- Distribution rows -->
+    <div style="margin-top: 16px">
+      <div class="footrow">
+        <span class="reg"><span class="swatch" style="background:#C8631C"></span>Wisconsin</span>
+        <span class="pct">65<em style="color:var(--ink-3); font-size:14px">%</em></span>
+      </div>
+      <div class="footrow">
+        <span class="reg"><span class="swatch" style="background:#E08A3E"></span>Illinois</span>
+        <span class="pct">22<em style="color:var(--ink-3); font-size:14px">%</em></span>
+      </div>
+      <div class="footrow">
+        <span class="reg"><span class="swatch" style="background:#F2D9B8"></span>Michigan</span>
+        <span class="pct">7<em style="color:var(--ink-3); font-size:14px">%</em></span>
+      </div>
+      <div class="footrow">
+        <span class="reg"><span class="swatch" style="background:#C8D4E2"></span>Minnesota</span>
+        <span class="pct">4<em style="color:var(--ink-3); font-size:14px">%</em></span>
+      </div>
+      <div class="footrow">
+        <span class="reg"><span class="swatch" style="background:#DCD5C5"></span>Other US (Non-Utility)</span>
+        <span class="pct">2<em style="color:var(--ink-3); font-size:14px">%</em></span>
+      </div>
+    </div>
+
+    <p class="body-copy" style="margin-top: 24px">
+      Six subsidiaries — <em>We Energies</em>, Wisconsin Public Service, Peoples Gas, North Shore Gas, Michigan Gas Utilities, Minnesota Energy Resources — covering one connected service map.
+    </p>
+  </section>
+
+  <!-- ===== reset beat ===== -->
+  <div class="reset">
+    <p class="interlude">
+      You don't grow a regulated utility by buying companies. <em>You grow it by pouring concrete.</em>
+    </p>
+  </div>
+
+  <!-- =========================================================
+       6. THE BET — capex plan
+       ========================================================= -->
+  <section data-screen-label="06 The Bet">
+    <div class="eyebrow"><span class="bar"></span>The bet · 2025–2029</div>
+    <h2 class="display" style="font-size:64px; line-height:0.92">
+      $<em class="signal">24.4</em>B<br>
+      <span style="font-size:0.55em">in five years.</span>
+    </h2>
+    <p class="body-copy" style="margin-top: 18px">
+      A regulated capex plan aimed at infrastructure — plus <em>$3.2B more</em> for WEC's share of ATC transmission projects. <em>No buybacks. No M&amp;A.</em> Just rate base, growing.
+    </p>
+
+    <!-- Capex shovel diagram: 5 years of construction -->
+    <div class="betwrap reveal">
+      <svg class="betsvg" viewBox="0 0 392 240" aria-hidden="true">
+        <defs>
+          <linearGradient id="capexGrad" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="#C8631C" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="#C8631C" stop-opacity="0.95"/>
+          </linearGradient>
+        </defs>
+
+        <!-- baseline -->
+        <line x1="20" y1="200" x2="372" y2="200" stroke="#DCD5C5" stroke-width="1"/>
+
+        <!-- 5 capex bars climbing -->
+        <g>
+          <rect class="capbar" x="36"  y="135" width="48" height="65"  fill="url(#capexGrad)"/>
+          <rect class="capbar" x="100" y="120" width="48" height="80"  fill="url(#capexGrad)"/>
+          <rect class="capbar" x="164" y="100" width="48" height="100" fill="url(#capexGrad)"/>
+          <rect class="capbar" x="228" y="80"  width="48" height="120" fill="url(#capexGrad)"/>
+          <rect class="capbar" x="292" y="60"  width="48" height="140" fill="url(#capexGrad)"/>
+        </g>
+        <!-- year labels -->
+        <g font-family="Geist Mono" font-size="9" fill="#6B6F77" text-anchor="middle" letter-spacing="1">
+          <text x="60" y="216">2025</text>
+          <text x="124" y="216">2026</text>
+          <text x="188" y="216">2027</text>
+          <text x="252" y="216">2028</text>
+          <text x="316" y="216">2029</text>
+        </g>
+
+        <!-- composition flags above bars -->
+        <g font-family="Geist Mono" font-size="8" fill="#15171C" letter-spacing="1">
+          <line x1="316" y1="50" x2="316" y2="60" stroke="#15171C" stroke-width="0.5"/>
+          <text x="316" y="40" text-anchor="middle">PEAK BUILD</text>
+        </g>
+        <text x="60" y="124" text-anchor="middle" font-family="Instrument Serif" font-size="11" fill="#15171C" font-style="italic">solar</text>
+        <text x="188" y="88" text-anchor="middle" font-family="Instrument Serif" font-size="11" fill="#15171C" font-style="italic">wind</text>
+        <text x="316" y="48" text-anchor="middle" font-family="Instrument Serif" font-size="11" fill="#15171C" font-style="italic">storage</text>
+      </svg>
+      <div class="betlabel">
+        <span>FY 25</span>
+        <span>5-year plan · $24.4B</span>
+        <span>FY 29</span>
+      </div>
+    </div>
+
+    <!-- composition: solar / wind / battery -->
+    <div style="margin-top: 36px; display:grid; grid-template-columns: repeat(3, 1fr); gap: 8px">
+      <div style="border-top: 2px solid #C8631C; padding-top: 12px">
+        <div style="font-family:var(--font-display); font-size: 30px; line-height: 1">2,900</div>
+        <div style="font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.12em; color: var(--ink-3); text-transform: uppercase; margin-top: 6px">MW · Solar</div>
+      </div>
+      <div style="border-top: 2px solid #E08A3E; padding-top: 12px">
+        <div style="font-family:var(--font-display); font-size: 30px; line-height: 1">900</div>
+        <div style="font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.12em; color: var(--ink-3); text-transform: uppercase; margin-top: 6px">MW · Wind</div>
+      </div>
+      <div style="border-top: 2px solid #1F3A5F; padding-top: 12px">
+        <div style="font-family:var(--font-display); font-size: 30px; line-height: 1">565</div>
+        <div style="font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.12em; color: var(--ink-3); text-transform: uppercase; margin-top: 6px">MW · Storage</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== reset beat ===== -->
+  <div class="reset">
+    <p class="interlude">
+      Three other utilities are running the same playbook. <em>Different rivers, same kind of dam.</em>
+    </p>
+  </div>
+
+  <!-- =========================================================
+       7. THE COMPETITION
+       ========================================================= -->
+  <section data-screen-label="07 Competition">
+    <div class="eyebrow"><span class="bar"></span>The neighbors · regulated rivals</div>
+    <h2 class="display" style="font-size:42px">
+      Three other utilities,<br>
+      <em>three other rate bases.</em>
+    </h2>
+
+    <div class="compwrap">
+      <!-- WEC (self) -->
+      <div class="comprow" style="background: var(--paper-2); margin: 12px -10px 0; padding: 18px 10px 14px; border-radius: 6px; border-bottom: none">
+        <div class="comp-head">
+          <div>
+            <span class="comp-name" style="color:var(--signal)">WEC Energy <span class="tk">WEC</span></span>
+          </div>
+          <div class="comp-cap signal">$36.7B</div>
+        </div>
+        <div class="comp-bar-track">
+          <div class="comp-bar-fill" data-w="71.7" style="background: var(--signal)"></div>
+        </div>
+        <div class="comp-meta">
+          <span><strong>REV</strong> $9.80B</span>
+          <span><strong>22</strong> YR DIV STREAK</span>
+        </div>
+      </div>
+
+      <!-- AEE -->
+      <div class="comprow">
+        <div class="comp-head">
+          <div>
+            <span class="comp-name">Ameren <span class="tk">AEE</span></span>
+          </div>
+          <div class="comp-cap">$31.2B</div>
+        </div>
+        <div class="comp-bar-track">
+          <div class="comp-bar-fill" data-w="60.9" style="background: #335B86"></div>
+        </div>
+        <div class="comp-meta">
+          <span><strong>REV</strong> $8.80B</span>
+          <span><strong>P/E</strong> 21.42</span>
+          <span><strong>YOY</strong> +15.4%</span>
+        </div>
+        <p class="comp-desc">
+          Direct Midwest competitor in <em>Missouri &amp; Illinois</em>. Same regulatory frame, same customer mix.
+        </p>
+      </div>
+
+      <!-- PEG -->
+      <div class="comprow">
+        <div class="comp-head">
+          <div>
+            <span class="comp-name">PSEG <span class="tk">PEG</span></span>
+          </div>
+          <div class="comp-cap">$40.7B</div>
+        </div>
+        <div class="comp-bar-track">
+          <div class="comp-bar-fill" data-w="79.5" style="background: #335B86"></div>
+        </div>
+        <div class="comp-meta">
+          <span><strong>REV</strong> $12.17B</span>
+          <span><strong>P/E</strong> 19.27</span>
+          <span><strong>YOY</strong> +18.3%</span>
+        </div>
+        <p class="comp-desc">
+          Mid-Atlantic regulated utility with a <em>nuclear-and-renewables</em> buildout that mirrors WEC's playbook on a different river.
+        </p>
+      </div>
+
+      <!-- XEL -->
+      <div class="comprow">
+        <div class="comp-head">
+          <div>
+            <span class="comp-name">Xcel Energy <span class="tk">XEL</span></span>
+          </div>
+          <div class="comp-cap">$51.2B</div>
+        </div>
+        <div class="comp-bar-track">
+          <div class="comp-bar-fill" data-w="100" style="background: #15171C"></div>
+        </div>
+        <div class="comp-meta">
+          <span><strong>REV</strong> $3.56B Q</span>
+          <span><strong>P/E</strong> 25.37</span>
+          <span><strong>YOY</strong> +9.2%</span>
+        </div>
+        <p class="comp-desc">
+          The <em>most direct rival</em> — overlapping Minnesota and Michigan, head-to-head for industrial and data-center load, with a near-identical solar–wind–storage capital plan.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== reset beat — DARK, the editorial pivot ===== -->
+  <div class="reset dark">
+    <p class="interlude">
+      A regulated utility's only loyalty is to <em>the slow compounding of its own balance sheet.</em>
+    </p>
+  </div>
+
+  <!-- =========================================================
+       8. DIVIDEND STREAK (the inversion: current OUT)
+       ========================================================= -->
+  <div class="streakwrap" data-screen-label="08 Dividend">
+    <div class="eyebrow"><span class="bar" style="background:var(--signal-2)"></span>The streak · 22 years and counting</div>
+    <h2 class="display" style="font-size:48px; color:#F1ECDB">
+      Twenty-two consecutive<br>
+      <em style="color:var(--signal-2)">dividend raises.</em>
+    </h2>
+
+    <div class="streakdots" id="streakdots" aria-hidden="true">
+      <!-- 22 dots, generated by JS, 22 lit -->
+    </div>
+    <div class="streakcaption">
+      <span>2003</span>
+      <span>22 years</span>
+      <span>2025</span>
+    </div>
+
+    <p class="body-copy" style="color:#B7B0A0; margin-top: 28px">
+      $<em style="color:var(--signal-2)">1.15B</em> in dividends paid in FY '25 — comfortably covered by <em style="color:var(--signal-2)">$3.38B</em> in operating cash flow.
+    </p>
+
+    <!-- waveform: 22-year dividend hum -->
+    <div style="margin: 32px -24px 0">
+      <svg viewBox="0 0 392 80" style="width:100%; height: 80px; display:block" aria-hidden="true">
+        <path id="divWave"
+              d="M 0 60 L 18 56 L 36 52 L 54 48 L 72 46 L 90 42 L 108 40 L 126 36 L 144 34
+                 L 162 30 L 180 28 L 198 24 L 216 22 L 234 18 L 252 16 L 270 14 L 288 10
+                 L 306 8 L 324 6 L 342 4 L 360 2 L 378 0 L 392 0"
+              fill="none" stroke="#E08A3E" stroke-width="2"
+              stroke-dasharray="800" stroke-dashoffset="800"/>
+        <line x1="0" y1="78" x2="392" y2="78" stroke="#3B3A37" stroke-width="0.5"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       9. THE TAKEAWAY — close (inverts the open)
+       ========================================================= -->
+  <section class="close" data-screen-label="09 Takeaway">
+    <div class="eyebrow"><span class="bar"></span>The takeaway</div>
+    <h2 class="display" style="font-size: 56px; line-height: 0.96">
+      Four point seven million meters in.<br>
+      <em class="signal">A dollar twenty-two</em><br>
+      out, every year, <em>for a generation.</em>
+    </h2>
+
+    <p class="body-copy" style="margin-top: 28px; max-width: 36ch">
+      The current that started this page <em>doesn't stop at the meter</em>. It runs through rate base, into operating cash flow, and out again — back to the people who wired the company in the first place.
+    </p>
+
+    <div style="margin-top: 40px; display:flex; gap: 20px; align-items:baseline; padding-top: 24px; border-top: 1px solid var(--line)">
+      <div style="flex:1">
+        <div style="font-family: var(--font-display); font-size: 38px; line-height: 1">$<em>3.38</em>B</div>
+        <div style="font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.12em; color: var(--ink-3); text-transform: uppercase; margin-top: 6px">Operating cash · in</div>
+      </div>
+      <div style="font-family: var(--font-display); font-style: italic; font-size: 18px; color: var(--ink-3)">→</div>
+      <div style="flex:1; text-align: right">
+        <div style="font-family: var(--font-display); font-size: 38px; line-height: 1; color: var(--signal)">$<em>1.15</em>B</div>
+        <div style="font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.12em; color: var(--ink-3); text-transform: uppercase; margin-top: 6px">Dividends · out</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- footer mark -->
+  <div class="footermark">
+    <span class="meta-mono">WEC · NYSE · FY '25 RECAP</span>
+    <span class="meta-mono">END · ↑</span>
+  </div>
+
+</div>
+
+<script>
+  // ---------- Scroll progress ----------
+  const fill = document.getElementById('scrollFill');
+  function updateFill(){
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const pct = max > 0 ? (h.scrollTop || document.body.scrollTop) / max : 0;
+    fill.style.width = (pct * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', updateFill, {passive: true});
+  updateFill();
+
+  // ---------- Reveal on scroll ----------
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold: 0.15});
+
+  // mark all sections + reveals
+  document.querySelectorAll('section, .reset, .streakwrap, .reveal').forEach(el => {
+    el.classList.add('reveal');
+    io.observe(el);
+  });
+
+  // ---------- Cost bars width-fill ----------
+  document.querySelectorAll('.comp-bar-fill').forEach(bar => {
+    const w = bar.dataset.w;
+    const obs = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          requestAnimationFrame(()=> bar.style.width = w + '%');
+          obs.unobserve(bar);
+        }
+      });
+    }, {threshold: 0.4});
+    obs.observe(bar);
+  });
+
+  // ---------- Hero meters: small glowing meter dots ----------
+  (function(){
+    const meters = document.querySelector('#meters');
+    if(!meters) return;
+    const ns = 'http://www.w3.org/2000/svg';
+    for(let i=0;i<60;i++){
+      const c = document.createElementNS(ns,'circle');
+      const x = (i * 7.4) + 4;
+      const y = 220 + (Math.random() * 40);
+      c.setAttribute('cx', x);
+      c.setAttribute('cy', y);
+      c.setAttribute('r', 0.9 + Math.random() * 0.6);
+      c.setAttribute('fill', '#C8631C');
+      c.setAttribute('opacity', 0.25 + Math.random() * 0.55);
+      meters.appendChild(c);
+    }
+    // tiny house silhouettes on horizon
+    const houses = document.querySelector('#houseRow');
+    if(houses){
+      for(let i=0;i<22;i++){
+        const x = (i * 21) + 6;
+        const h = 6 + Math.random()*4;
+        const r = document.createElementNS(ns,'rect');
+        r.setAttribute('x', x);
+        r.setAttribute('y', 220 - h);
+        r.setAttribute('width', 14);
+        r.setAttribute('height', h);
+        r.setAttribute('fill', '#E2DBCA');
+        houses.appendChild(r);
+        const tri = document.createElementNS(ns,'polygon');
+        tri.setAttribute('points', `${x},${220-h} ${x+7},${220-h-5} ${x+14},${220-h}`);
+        tri.setAttribute('fill', '#D7CDB7');
+        houses.appendChild(tri);
+      }
+    }
+  })();
+
+  // ---------- Streak dots ----------
+  (function(){
+    const wrap = document.getElementById('streakdots');
+    if(!wrap) return;
+    for(let i=0;i<22;i++){
+      const d = document.createElement('div');
+      d.className = 'streakdot';
+      wrap.appendChild(d);
+    }
+    // light them up sequentially when the section enters view
+    const obs = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          const dots = wrap.querySelectorAll('.streakdot');
+          dots.forEach((d, idx) => {
+            setTimeout(()=> d.classList.add('lit'), idx * 80);
+          });
+          obs.unobserve(wrap);
+        }
+      });
+    }, {threshold: 0.3});
+    obs.observe(wrap);
+  })();
+
+  // ---------- Dividend wave: draw on ----------
+  (function(){
+    const path = document.getElementById('divWave');
+    if(!path) return;
+    const obs = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          path.style.transition = 'stroke-dashoffset 2400ms cubic-bezier(0.22, 1, 0.36, 1)';
+          path.style.strokeDashoffset = 0;
+          obs.unobserve(path);
+        }
+      });
+    }, {threshold: 0.4});
+    obs.observe(path);
+  })();
+
+  // ---------- Capex bars: rise on enter ----------
+  (function(){
+    const bars = document.querySelectorAll('.capbar');
+    bars.forEach((b, i) => {
+      const origY = +b.getAttribute('y');
+      const origH = +b.getAttribute('height');
+      b.setAttribute('y', 200);
+      b.setAttribute('height', 0);
+      b.style.transition = `transform 900ms cubic-bezier(0.22, 1, 0.36, 1) ${i * 120}ms`;
+    });
+    const sect = document.querySelector('.betsvg');
+    if(!sect) return;
+    const obs = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          bars.forEach((b, i) => {
+            // Restore via animation by setting attributes after delay
+            const targetY = [135, 120, 100, 80, 60][i];
+            const targetH = [65, 80, 100, 120, 140][i];
+            setTimeout(()=>{
+              b.setAttribute('y', targetY);
+              b.setAttribute('height', targetH);
+            }, i * 140);
+          });
+          obs.unobserve(sect);
+        }
+      });
+    }, {threshold: 0.3});
+    obs.observe(sect);
+  })();
+</script>
+</body>
+</html>

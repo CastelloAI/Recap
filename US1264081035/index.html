@@ -1,0 +1,2006 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>CSX · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSX Recap · editorial-industrial mobile recap
+   Base palette inherits from Zair Naqvi DS, but the dominant
+   material here is rail navy + ledger cream + signal yellow.
+   ============================================================ */
+
+:root {
+  /* Inherited */
+  --paper:        #FBFAF7;
+  --paper-2:      #F4F2ED;
+  --paper-3:      #ECEAE3;
+  --ink:          #141414;
+  --ink-2:        #3B3A37;
+  --ink-3:        #6B6A65;
+  --ink-4:        #A4A29C;
+  --line:         #E4E1D9;
+  --line-strong:  #CFCBC0;
+  --coral-400:    #FF7A57;
+
+  /* CSX-flavored material */
+  --rail:         #0E1B2C;     /* deep rail navy — primary material */
+  --rail-2:       #152436;
+  --rail-soft:    #1F324A;
+  --signal:       #F4C430;     /* signal yellow — accent / locomotive */
+  --signal-deep:  #D9A924;
+  --rust:         #B5552A;
+  --rust-soft:    #E8834A;     /* matches biggest_costs orange */
+  --steel:        #6F8AA8;
+  --gravel:       #2A2A2A;     /* near-black for debt tonal interlude */
+
+  /* Type */
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, 'Menlo', monospace;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; }
+
+html {
+  background: #0a0a0a; /* the letterbox gutter when viewport > page width */
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background: var(--paper);
+  max-width: 440px;
+  margin: 0 auto;
+  overflow-x: hidden;
+  position: relative;
+  /* mild ledger texture */
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(14,27,44,0.018) 0%, transparent 60%),
+    radial-gradient(circle at 90% 80%, rgba(244,196,48,0.025) 0%, transparent 50%);
+}
+
+/* Subtle paper grain overlay */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.04 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+/* ============================================================
+   Persistent chrome — ticker + recap label + progress hairline
+   ============================================================ */
+.chrome {
+  position: fixed; top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; max-width: 440px;
+  z-index: 50;
+  background: rgba(251, 250, 247, 0.78);
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  border-bottom: 1px solid rgba(228, 225, 217, 0.6);
+}
+.chrome .row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 20px 12px;
+}
+.chrome .ticker {
+  font-family: var(--font-mono);
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--rail);
+  background: var(--signal);
+  padding: 4px 8px 3px;
+  border-radius: 3px;
+  line-height: 1;
+}
+.chrome .name {
+  font-family: var(--font-sans);
+  font-size: 14px; font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+.chrome .recap {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.chrome .progress-track {
+  height: 1.5px;
+  background: rgba(228, 225, 217, 0.5);
+  width: 100%;
+}
+.chrome .progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--rail) 0%, var(--rust) 60%, var(--signal) 100%);
+  transition: width 80ms linear;
+}
+
+/* ============================================================
+   Page scaffold
+   ============================================================ */
+main { position: relative; z-index: 2; }
+
+section {
+  position: relative;
+  padding: 0 22px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 18px;
+}
+.eyebrow::before {
+  content: "";
+  width: 18px; height: 1px;
+  background: var(--rail);
+  display: inline-block;
+}
+.eyebrow .num { color: var(--rust); }
+
+h1, h2, h3 { margin: 0; font-weight: 400; }
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.serif-italic { font-family: var(--font-display); font-style: italic; }
+
+p {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0;
+  text-wrap: pretty;
+}
+p em, p .it { font-family: var(--font-display); font-style: italic; font-size: 1.08em; color: var(--rail); font-weight: 400; }
+p .signal { color: var(--rust); font-style: italic; font-family: var(--font-display); font-size: 1.08em; }
+
+.mono { font-family: var(--font-mono); }
+
+/* Reveal-on-scroll */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 700ms var(--ease-out, cubic-bezier(0.22,1,0.36,1)), transform 700ms cubic-bezier(0.22,1,0.36,1); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* ============================================================
+   HERO — Thesis
+   "Two-thirds of America. One railroad."
+   Background: rail navy with parallax tracks receding to vanishing
+   point + a slow-moving signal-yellow locomotive silhouette.
+   ============================================================ */
+.hero {
+  background: var(--rail);
+  color: var(--paper);
+  padding: 90px 22px 64px;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+.hero .stars {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 12%, rgba(244,196,48,0.5), transparent),
+    radial-gradient(1px 1px at 80% 22%, rgba(244,196,48,0.3), transparent),
+    radial-gradient(1px 1px at 50% 8%, rgba(255,255,255,0.18), transparent),
+    radial-gradient(1px 1px at 35% 30%, rgba(255,255,255,0.15), transparent);
+  pointer-events: none;
+}
+.hero .horizon {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 38%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(244,196,48,0.25) 30%, rgba(244,196,48,0.4) 50%, rgba(244,196,48,0.25) 70%, transparent);
+}
+
+.hero-tracks {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 38%;
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  color: var(--signal);
+  text-transform: uppercase;
+  display: flex; align-items: center; gap: 10px;
+  position: relative; z-index: 2;
+  margin-bottom: 14px;
+}
+.hero-eyebrow::before {
+  content: "";
+  width: 22px; height: 1px;
+  background: var(--signal);
+}
+.hero-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: rgba(244,242,237,0.55);
+  position: relative; z-index: 2;
+  margin-bottom: 80px;
+  display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+}
+.hero-meta .dot { color: var(--signal); }
+.hero-meta .price { color: var(--paper); font-weight: 500; }
+.hero-meta .delta { color: #6DBF7E; }
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  color: var(--paper);
+  position: relative; z-index: 2;
+  margin: 0 0 20px;
+}
+.hero h1 .yellow { color: var(--signal); }
+.hero h1 .it { font-style: italic; }
+
+.hero .sub {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(244,242,237,0.7);
+  max-width: 320px;
+  position: relative; z-index: 2;
+  margin: 0;
+}
+.hero .sub strong { color: var(--paper); font-weight: 500; }
+
+.hero .scroll-cue {
+  position: absolute;
+  bottom: 18px;
+  left: 50%; transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: rgba(244,242,237,0.45);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  z-index: 2;
+}
+.scroll-cue .line {
+  width: 1px; height: 28px;
+  background: linear-gradient(180deg, transparent, var(--signal));
+  animation: cueDrop 2.4s ease-in-out infinite;
+}
+@keyframes cueDrop {
+  0%, 100% { transform: scaleY(0.4); transform-origin: top; opacity: 0.4; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+/* ============================================================
+   Reset beats — italic-serif interludes
+   ============================================================ */
+.reset {
+  padding: 56px 32px;
+  text-align: left;
+  position: relative;
+}
+.reset.cream { background: var(--paper-2); }
+.reset.dark { background: var(--rail); color: var(--paper); }
+.reset p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.25;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.reset.dark p { color: var(--paper); }
+.reset p .signal { color: var(--rust); font-family: inherit; font-style: italic; font-size: 1em; }
+.reset.dark p .signal { color: var(--signal); }
+.reset .mark {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--ink-3);
+  margin-bottom: 14px;
+  display: block;
+}
+.reset.dark .mark { color: rgba(244,242,237,0.4); }
+
+/* ============================================================
+   THE MANIFEST — revenue mix as train cars
+   ============================================================ */
+.manifest {
+  background: var(--paper);
+  padding: 80px 22px 40px;
+}
+.manifest h2, .scale h2, .bill h2, .map h2, .bet h2, .rivals h2, .close h2 {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 16px;
+}
+.manifest h2 .it { font-style: italic; color: var(--rail); }
+.manifest .lede {
+  font-size: 16px; line-height: 1.55; color: var(--ink-2);
+  margin: 0 0 36px;
+  max-width: 360px;
+}
+
+.train-track {
+  position: relative;
+  padding: 14px 0 38px;
+  margin: 0 -22px;
+}
+.train-track .rail-line {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 22px;
+  height: 4px;
+  background: var(--rail);
+}
+.train-track .ties {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 14px;
+  height: 8px;
+  background-image: repeating-linear-gradient(90deg, var(--ink-2) 0, var(--ink-2) 8px, transparent 8px, transparent 22px);
+  opacity: 0.55;
+}
+.cars {
+  display: flex; flex-direction: column;
+  gap: 14px;
+  padding: 0 22px;
+}
+.car {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px 14px;
+  border-radius: 4px;
+  color: var(--paper);
+  font-family: var(--font-mono);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 6px 14px -8px rgba(14,27,44,0.45);
+}
+.car::before, .car::after {
+  /* couplers */
+  content: ""; position: absolute;
+  bottom: -6px;
+  width: 14px; height: 6px;
+  background: var(--rail-soft);
+  border-radius: 0 0 2px 2px;
+}
+.car::before { left: 12px; }
+.car::after { right: 12px; }
+.car .label-row { display: flex; flex-direction: column; gap: 4px; }
+.car .commodity {
+  font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+  font-weight: 500; opacity: 0.85;
+}
+.car .nice {
+  font-family: var(--font-display);
+  font-size: 22px; font-style: italic;
+  color: var(--paper);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.car .amount {
+  font-family: var(--font-display);
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  line-height: 1;
+}
+.car .amount .unit { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; opacity: 0.7; margin-left: 3px; }
+.car .pct { font-family: var(--font-mono); font-size: 11px; opacity: 0.7; margin-top: 4px; letter-spacing: 0.05em; }
+
+.car.merch     { background: var(--rail); }
+.car.intermodal{ background: var(--rail-soft); }
+.car.coal      { background: var(--gravel); }
+.car.trucking  { background: var(--rust); }
+
+.car .wheel-row {
+  position: absolute;
+  left: 14px; right: 14px;
+  bottom: -10px;
+  display: flex; justify-content: space-between;
+  pointer-events: none;
+}
+.wheel {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--rail-2);
+  border: 2px solid var(--ink-3);
+  box-shadow: inset 0 0 0 2px var(--rail);
+}
+
+.locomotive {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 22px 0;
+  margin-bottom: 8px;
+}
+.loco-svg { width: 86px; height: 50px; flex-shrink: 0; }
+.loco-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+.loco-meta strong { color: var(--ink); font-weight: 500; }
+
+.total-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 22px 22px 0;
+  border-top: 1px solid var(--line);
+  margin: 36px -22px 0;
+  padding-left: 44px; padding-right: 44px; padding-top: 22px;
+}
+.total-row .lab {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.16em; color: var(--ink-3); text-transform: uppercase;
+}
+.total-row .v {
+  font-family: var(--font-display); font-size: 38px;
+  letter-spacing: -0.02em;
+}
+.total-row .v .it { font-style: italic; color: var(--rust); }
+.delta-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 0.06em;
+  color: var(--ink-2);
+  margin-left: 8px;
+  background: var(--paper);
+}
+.delta-pill.down { color: var(--rust); border-color: rgba(181,85,42,0.3); background: #FFF1EC; }
+
+/* ============================================================
+   THE SCALE — count-up numerics
+   ============================================================ */
+.scale {
+  background: var(--paper-2);
+  padding: 90px 22px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.scale h2 .yellow { background: var(--signal); padding: 0 6px; color: var(--rail); }
+.scale h2 .it { font-style: italic; color: var(--rail); }
+.scale .lede { color: var(--ink-2); margin: 0 0 44px; max-width: 360px; }
+
+.scale-figure {
+  position: relative;
+  margin: 32px -22px 0;
+  padding: 0 22px;
+}
+
+.scalebars {
+  display: flex; flex-direction: column; gap: 28px;
+}
+.sbar { display: flex; flex-direction: column; gap: 6px; }
+.sbar .lab {
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.sbar .lab .name {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.sbar .lab .num {
+  font-family: var(--font-display);
+  font-size: 38px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.sbar .lab .num .it { font-style: italic; color: var(--rust); }
+.sbar .lab .num .unit { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em; color: var(--ink-3); margin-left: 4px; }
+.sbar .track {
+  height: 6px; background: var(--paper-3);
+  border-radius: 3px; overflow: hidden; position: relative;
+}
+.sbar .fill {
+  position: absolute; inset: 0;
+  width: 0;
+  background: linear-gradient(90deg, var(--rail), var(--rust));
+  border-radius: 3px;
+  transition: width 1.6s cubic-bezier(0.22,1,0.36,1);
+}
+.sbar .caption {
+  font-family: var(--font-sans); font-size: 13px;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+.sbar .caption .it { font-family: var(--font-display); font-style: italic; color: var(--rail); font-size: 14px; }
+
+/* ============================================================
+   BILL — biggest costs, supplied hex.
+   Treatment: stacked horizontal bars styled like a freight
+   manifest / waybill ledger.
+   ============================================================ */
+.bill {
+  background: var(--paper);
+  padding: 90px 22px 70px;
+  position: relative;
+}
+.bill h2 .it { font-style: italic; color: var(--rust); }
+.bill .lede { margin: 0 0 36px; max-width: 360px; color: var(--ink-2); }
+
+.waybill {
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding: 18px 0 6px;
+  margin: 0 -22px;
+}
+.waybill-head {
+  display: grid;
+  grid-template-columns: 24px 1fr 56px;
+  gap: 12px;
+  padding: 0 22px 12px;
+  border-bottom: 1px dashed var(--line-strong);
+  margin-bottom: 14px;
+}
+.waybill-head span {
+  font-family: var(--font-mono); font-size: 9.5px;
+  letter-spacing: 0.18em; color: var(--ink-3); text-transform: uppercase;
+}
+.waybill-head .r { text-align: right; }
+
+.cost-row {
+  display: grid;
+  grid-template-columns: 24px 1fr 56px;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 22px 16px;
+  border-bottom: 1px dashed var(--line);
+}
+.cost-row:last-child { border-bottom: none; }
+.cost-row .swatch {
+  width: 18px; height: 18px;
+  border-radius: 2px;
+  position: relative;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+.cost-row .body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.cost-row .top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.cost-row .lab {
+  font-family: var(--font-sans);
+  font-size: 14px; font-weight: 500; color: var(--ink);
+  letter-spacing: -0.005em;
+}
+.cost-row .bar-wrap {
+  height: 8px;
+  background: var(--paper-2);
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+}
+.cost-row .bar {
+  height: 100%;
+  width: 0;
+  transition: width 1.4s cubic-bezier(0.22,1,0.36,1);
+}
+.cost-row .pct {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-align: right;
+  color: var(--ink);
+}
+.cost-row .pct .sm { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--ink-3); margin-left: 2px; }
+.cost-row .sub {
+  font-family: var(--font-mono); font-size: 10.5px;
+  letter-spacing: 0.04em; color: var(--ink-3);
+}
+
+.bill .rest {
+  margin: 28px 0 0;
+  padding: 22px 22px;
+  margin-left: -22px; margin-right: -22px;
+  background: var(--paper-2);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+}
+.bill .rest .lab {
+  font-family: var(--font-display); font-style: italic; font-size: 18px;
+  color: var(--ink-2); max-width: 220px; line-height: 1.3;
+}
+.bill .rest .v {
+  font-family: var(--font-display); font-size: 32px; color: var(--rail);
+  letter-spacing: -0.02em;
+}
+.bill .rest .v .sm { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; color: var(--ink-3); display: block; text-align: right; margin-top: 2px; text-transform: uppercase; }
+
+/* ============================================================
+   MAP — eastern US footprint
+   ============================================================ */
+.map-section {
+  background: var(--rail);
+  color: var(--paper);
+  padding: 90px 22px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.map-section h2 { color: var(--paper); }
+.map-section h2 .yellow { color: var(--signal); font-style: italic; }
+.map-section .eyebrow { color: rgba(244,242,237,0.55); }
+.map-section .eyebrow::before { background: var(--signal); }
+.map-section .eyebrow .num { color: var(--signal); }
+.map-section .lede { color: rgba(244,242,237,0.7); margin: 0 0 32px; max-width: 360px; }
+
+.map-wrap {
+  position: relative;
+  width: 100%;
+  margin: 24px 0 28px;
+  border-radius: 2px;
+  overflow: visible;
+}
+#mapSvg { display: block; width: 100%; height: auto; }
+#mapSvg .land { fill: var(--rail-soft); stroke: rgba(244,196,48,0.15); stroke-width: 0.6; }
+#mapSvg .land.served { fill: #2A4566; stroke: rgba(244,196,48,0.45); }
+#mapSvg .rail { fill: none; stroke: var(--signal); stroke-width: 1.2; stroke-linecap: round; stroke-dasharray: 1200; stroke-dashoffset: 1200; transition: stroke-dashoffset 2.4s cubic-bezier(0.22,1,0.36,1); }
+#mapSvg .rail.thin { stroke-width: 0.8; opacity: 0.7; }
+#mapSvg .city {
+  fill: var(--signal);
+  stroke: var(--rail);
+  stroke-width: 1.4;
+}
+#mapSvg .city-label {
+  font-family: var(--font-mono); font-size: 6.5px;
+  letter-spacing: 0.06em;
+  fill: rgba(244,242,237,0.75);
+  text-transform: uppercase;
+}
+#mapSvg .ocean { fill: #0A1320; }
+
+.map-stats {
+  display: flex; justify-content: space-between; gap: 8px;
+  margin-top: 12px;
+  border-top: 1px solid rgba(244,242,237,0.15);
+  padding-top: 22px;
+}
+.geo-stat { flex: 1; }
+.geo-stat .pct {
+  font-family: var(--font-display);
+  font-size: 38px;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  line-height: 1;
+}
+.geo-stat .pct.signal { color: var(--signal); font-style: italic; }
+.geo-stat .pct .sm { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em; color: rgba(244,242,237,0.55); margin-left: 1px; }
+.geo-stat .lab {
+  font-family: var(--font-mono); font-size: 9.5px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(244,242,237,0.55);
+  margin-top: 8px;
+  line-height: 1.3;
+}
+
+.map-meta {
+  margin-top: 22px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: rgba(244,242,237,0.45);
+  text-transform: uppercase;
+  display: flex; flex-wrap: wrap; gap: 12px 18px;
+}
+.map-meta .row { display: flex; align-items: center; gap: 6px; }
+.map-meta .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--signal); }
+
+/* ============================================================
+   THE BET — tunnel + capex
+   ============================================================ */
+.bet {
+  background: var(--paper);
+  padding: 90px 22px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.bet h2 .it { font-style: italic; color: var(--rail); }
+.bet .lede { color: var(--ink-2); margin: 0 0 36px; max-width: 360px; }
+
+.tunnel {
+  position: relative;
+  height: 220px;
+  margin: 24px -22px 32px;
+  background: var(--paper-2);
+  overflow: hidden;
+}
+#tunnelSvg { width: 100%; height: 100%; display: block; }
+
+.capex-list {
+  display: flex; flex-direction: column;
+  border-top: 1px solid var(--ink);
+  margin: 0 -22px;
+}
+.capex {
+  display: grid;
+  grid-template-columns: 64px 1fr 76px;
+  gap: 14px;
+  padding: 18px 22px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.capex .yr {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+}
+.capex .yr strong { display: block; font-family: var(--font-display); font-size: 26px; color: var(--ink); letter-spacing: -0.02em; line-height: 1; margin-top: 2px; font-weight: 400; }
+.capex .desc {
+  font-family: var(--font-sans); font-size: 13.5px; line-height: 1.4;
+  color: var(--ink-2);
+}
+.capex .desc strong { color: var(--ink); font-weight: 500; }
+.capex .amt {
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  text-align: right;
+  color: var(--rail);
+  line-height: 1;
+}
+.capex.signal .amt { color: var(--rust); font-style: italic; }
+.capex .amt .sm { font-family: var(--font-mono); font-size: 9.5px; display: block; letter-spacing: 0.08em; color: var(--ink-3); margin-top: 4px; text-transform: uppercase; }
+
+.fcf-callout {
+  margin: 36px -22px 0;
+  padding: 28px 22px;
+  background: var(--rail);
+  color: var(--paper);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  align-items: center;
+}
+.fcf-callout .lab { font-family: var(--font-display); font-style: italic; font-size: 19px; line-height: 1.3; color: rgba(244,242,237,0.85); }
+.fcf-callout .lab .signal { color: var(--signal); }
+.fcf-callout .v { font-family: var(--font-display); font-size: 44px; line-height: 0.95; color: var(--signal); letter-spacing: -0.02em; font-style: italic; }
+
+/* ============================================================
+   DEBT — tonal interlude (near-black)
+   ============================================================ */
+.debt {
+  background: #0A0A0B;
+  color: #E8E6E0;
+  padding: 100px 22px 100px;
+  position: relative;
+  overflow: hidden;
+}
+.debt::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  pointer-events: none;
+  opacity: 0.6;
+}
+.debt > * { position: relative; z-index: 2; }
+
+.debt .eyebrow { color: rgba(232,230,224,0.5); }
+.debt .eyebrow::before { background: var(--signal); }
+.debt .eyebrow .num { color: var(--signal); }
+
+.debt h2 {
+  font-family: var(--font-display);
+  font-size: 46px; line-height: 1; color: #F4F2ED;
+  letter-spacing: -0.025em;
+  margin: 0 0 22px;
+}
+.debt h2 .heavy { font-style: italic; color: var(--signal); }
+.debt p { color: rgba(232,230,224,0.7); font-size: 15px; max-width: 360px; margin: 0 0 36px; }
+.debt p .it { color: #F4F2ED; }
+
+.scale-vis {
+  position: relative;
+  display: flex; align-items: flex-end; justify-content: center;
+  gap: 30px;
+  margin: 12px 0 32px;
+  height: 220px;
+}
+.weight {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px;
+  flex: 1;
+  max-width: 150px;
+}
+.weight .stack {
+  width: 100%;
+  position: relative;
+  display: flex; flex-direction: column-reverse;
+  gap: 2px;
+}
+.weight .block {
+  width: 100%;
+  background: linear-gradient(180deg, #2A2A2C 0%, #15151A 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -1px 0 rgba(0,0,0,0.4);
+  border-radius: 1px;
+}
+.weight.cash .block {
+  background: linear-gradient(180deg, var(--signal) 0%, var(--signal-deep) 100%);
+}
+.weight .num {
+  font-family: var(--font-display);
+  font-size: 30px;
+  letter-spacing: -0.02em;
+  color: #F4F2ED;
+}
+.weight.debt .num { font-style: italic; }
+.weight .num .sm { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: rgba(232,230,224,0.5); margin-left: 2px; }
+.weight .lab {
+  font-family: var(--font-mono);
+  font-size: 9.5px; letter-spacing: 0.16em;
+  color: rgba(232,230,224,0.5);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.debt .ledger {
+  border-top: 1px solid rgba(232,230,224,0.15);
+  padding-top: 22px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 28px;
+  font-family: var(--font-mono);
+}
+.ledger-cell .lab {
+  font-size: 9.5px; letter-spacing: 0.16em;
+  color: rgba(232,230,224,0.45); text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.ledger-cell .v {
+  font-family: var(--font-display);
+  font-size: 24px; letter-spacing: -0.02em;
+  color: #F4F2ED;
+}
+.ledger-cell .v .sm { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; color: rgba(232,230,224,0.5); margin-left: 2px; }
+
+/* Returned to shareholders strip */
+.returned {
+  margin-top: 32px;
+  padding: 22px 0 0;
+  border-top: 1px solid rgba(232,230,224,0.15);
+}
+.returned .row { display: flex; align-items: baseline; justify-content: space-between; padding: 8px 0; }
+.returned .row .l { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: rgba(232,230,224,0.65); text-transform: uppercase; }
+.returned .row .r { font-family: var(--font-display); font-size: 22px; color: var(--signal); font-style: italic; letter-spacing: -0.01em; }
+
+/* ============================================================
+   RIVALS — three locomotives, sized to scale
+   ============================================================ */
+.rivals {
+  background: var(--paper);
+  padding: 90px 22px 60px;
+}
+.rivals h2 .it { font-style: italic; color: var(--rust); }
+.rivals .lede { margin: 0 0 32px; max-width: 360px; color: var(--ink-2); }
+
+.csx-anchor {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--rail);
+  color: var(--paper);
+  margin: 0 -22px 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.csx-anchor .ticker { color: var(--signal); font-weight: 600; }
+.csx-anchor .v { font-family: var(--font-display); font-style: italic; font-size: 22px; letter-spacing: -0.01em; color: var(--paper); text-transform: none; }
+
+.rival {
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: 26px 0 22px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.rival:last-child { border-bottom: none; }
+
+.rival-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.rival-head .left { display: flex; align-items: baseline; gap: 8px; }
+.rival-head .tk {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--rail);
+  background: var(--paper-2);
+  padding: 3px 6px 2px;
+  border-radius: 3px;
+}
+.rival-head .nm {
+  font-family: var(--font-sans); font-size: 14px; font-weight: 500; color: var(--ink);
+}
+.rival-head .threat {
+  font-family: var(--font-mono); font-size: 9.5px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.rival-head .threat.high { color: var(--rust); }
+
+.bar-pair {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-bottom: 12px;
+}
+.bp-row { display: grid; grid-template-columns: 84px 1fr 76px; gap: 10px; align-items: center; }
+.bp-row .lab { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--ink-3); text-transform: uppercase; }
+.bp-row .track { height: 10px; background: var(--paper-2); position: relative; border-radius: 1px; overflow: hidden; }
+.bp-row .fill { height: 100%; width: 0; transition: width 1.5s cubic-bezier(0.22,1,0.36,1); }
+.bp-row .fill.csx { background: var(--rail); }
+.bp-row .fill.rival { background: var(--rust-soft); }
+.bp-row .fill.rival.sig { background: var(--signal); }
+.bp-row .v { font-family: var(--font-display); font-size: 17px; text-align: right; letter-spacing: -0.01em; color: var(--ink); line-height: 1; }
+.bp-row .v.muted { color: var(--ink-3); }
+
+.rival p {
+  font-size: 13.5px; line-height: 1.5; color: var(--ink-2);
+}
+.rival p .it { color: var(--rail); font-size: 1em; }
+
+/* ============================================================
+   CLOSE — the dollar.
+   100 cents grid, with operating margin lit and FCF margin glowing.
+   ============================================================ */
+.close {
+  background: var(--paper-2);
+  padding: 100px 22px 60px;
+  position: relative;
+  overflow: hidden;
+}
+.close .eyebrow .num { color: var(--rail); }
+
+.close h2 {
+  font-family: var(--font-display);
+  font-size: 50px; line-height: 0.98;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0 0 24px;
+}
+.close h2 .it { font-style: italic; color: var(--rust); }
+.close .lede { font-size: 16px; color: var(--ink-2); margin: 0 0 36px; max-width: 360px; }
+.close .lede .it { font-family: var(--font-display); font-style: italic; color: var(--rail); font-size: 1.08em; }
+
+.dollar {
+  margin: 12px -22px 0;
+  padding: 28px 22px;
+  background: var(--paper);
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.dollar .head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.dollar .head .l { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.16em; color: var(--ink-3); text-transform: uppercase; }
+.dollar .head .r { font-family: var(--font-display); font-size: 16px; font-style: italic; color: var(--rail); }
+
+.cents {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  margin: 8px 0 18px;
+}
+.cent {
+  aspect-ratio: 1;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  position: relative;
+}
+.cent.cost { background: var(--ink-3); border-color: var(--ink-3); }
+.cent.opex { background: var(--rail); border-color: var(--rail); }
+.cent.tax  { background: var(--rust-soft); border-color: var(--rust-soft); }
+.cent.fcf  { background: var(--signal); border-color: var(--signal-deep); box-shadow: 0 0 12px rgba(244,196,48,0.6); }
+.cent.profit { background: var(--rust); border-color: var(--rust); }
+
+.cents-legend {
+  display: flex; flex-direction: column; gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  margin-top: 14px;
+}
+.cents-legend .lg { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+.cents-legend .sw { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.cents-legend .l { flex: 1; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px; }
+.cents-legend .v { font-family: var(--font-display); font-size: 16px; font-style: italic; color: var(--ink); letter-spacing: -0.01em; }
+.cents-legend .v.signal { color: var(--rust); }
+
+.kicker {
+  margin: 64px -22px 0;
+  padding: 56px 22px 60px;
+  background: var(--rail);
+  color: var(--paper);
+  text-align: left;
+  position: relative;
+}
+.kicker .eyebrow { color: rgba(244,242,237,0.55); }
+.kicker .eyebrow::before { background: var(--signal); }
+.kicker h2 {
+  font-family: var(--font-display);
+  font-size: 46px; line-height: 0.98;
+  letter-spacing: -0.025em;
+  color: var(--paper);
+  margin: 0 0 18px;
+}
+.kicker h2 .it { font-style: italic; color: var(--signal); }
+.kicker p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.3;
+  color: rgba(244,242,237,0.85);
+  letter-spacing: -0.005em;
+  max-width: 360px;
+}
+.kicker p .signal { color: var(--signal); }
+
+/* Footer */
+footer {
+  background: var(--rail);
+  color: rgba(244,242,237,0.45);
+  padding: 32px 22px 40px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-top: 1px solid rgba(244,242,237,0.08);
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+footer .csx { color: var(--signal); }
+
+/* small-screen tightening */
+@media (max-width: 360px) {
+  .hero h1 { font-size: 56px; }
+  .manifest h2, .scale h2, .bill h2, .map-section h2, .bet h2, .rivals h2, .close h2 { font-size: 36px; }
+  .car .amount { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     PERSISTENT CHROME
+     ============================================================ -->
+<div class="chrome" id="chrome">
+  <div class="row">
+    <span class="ticker">CSX</span>
+    <span class="name">CSX Corporation</span>
+    <span class="recap">Recap · FY '25</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+</div>
+
+<main>
+
+<!-- ============================================================
+     1. HERO — Thesis
+     ============================================================ -->
+<section class="hero">
+  <div class="stars"></div>
+
+  <!-- Tracks receding to vanishing point -->
+  <svg class="hero-tracks" viewBox="0 0 412 280" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+    <!-- horizon glow -->
+    <defs>
+      <linearGradient id="railGrad" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#F4C430" stop-opacity="0.05"/>
+        <stop offset="100%" stop-color="#F4C430" stop-opacity="0.65"/>
+      </linearGradient>
+      <linearGradient id="tieGrad" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#3B3A37" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#5A5853" stop-opacity="0.55"/>
+      </linearGradient>
+      <radialGradient id="hHaze" cx="0.5" cy="0.05" r="0.6">
+        <stop offset="0%" stop-color="#F4C430" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="#F4C430" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect x="0" y="0" width="412" height="280" fill="url(#hHaze)"/>
+    <!-- ties (railroad ties) -->
+    <g>
+      <!-- 14 ties from horizon (top) to bottom, scaling -->
+      <g id="ties">
+        <!-- generated, but write inline -->
+      </g>
+    </g>
+    <!-- left rail -->
+    <path d="M 206 8 L 30 280" stroke="url(#railGrad)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- right rail -->
+    <path d="M 206 8 L 382 280" stroke="url(#railGrad)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- vanishing point glow -->
+    <circle cx="206" cy="8" r="3" fill="#F4C430"/>
+    <circle cx="206" cy="8" r="10" fill="#F4C430" fill-opacity="0.18"/>
+  </svg>
+  <div class="horizon"></div>
+
+  <div class="hero-eyebrow">CSX · NASDAQ · FY ’25</div>
+  <div class="hero-meta">
+    <span class="price">$41.18</span>
+    <span class="dot">·</span>
+    <span>Mkt cap <strong style="color:#F4F2ED;font-weight:500">$80.04B</strong></span>
+    <span class="dot">·</span>
+    <span>Rev <strong style="color:#F4F2ED;font-weight:500">$14.09B</strong></span>
+  </div>
+
+  <h1>
+    <span class="it">Two-thirds</span><br>
+    of America.<br>
+    <span class="yellow">One railroad.</span>
+  </h1>
+  <p class="sub">
+    20,000 route miles. 26 states. Every major metro east of the Mississippi sits inside CSX's reach &mdash;
+    <strong>and almost every box of cereal you'll eat tomorrow rides on it.</strong>
+  </p>
+
+  <div class="scroll-cue">
+    <span>SCROLL</span>
+    <span class="line"></span>
+  </div>
+</section>
+
+<!-- Reset beat 1 -->
+<div class="reset cream">
+  <span class="mark">— TRANSITION 01</span>
+  <p>Steel is steel. The story is in <span class="signal">what the trains carry</span>, and in who buys the room inside them.</p>
+</div>
+
+<!-- ============================================================
+     2. THE MANIFEST — revenue mix as train cars
+     ============================================================ -->
+<section class="manifest">
+  <div class="eyebrow"><span class="num">02</span><span>The manifest · $14.09B</span></div>
+  <h2>Four cars. <span class="it">One train.</span></h2>
+  <p class="lede">Merchandise pays the rent. Coal and intermodal fight over the rest. A small trucking arm fills the cracks. Every dollar of FY '25 revenue, by what was inside the boxcar.</p>
+
+  <div class="locomotive">
+    <svg class="loco-svg" viewBox="0 0 86 50" aria-hidden="true">
+      <!-- locomotive silhouette -->
+      <rect x="2" y="22" width="62" height="18" rx="2" fill="#0E1B2C"/>
+      <rect x="64" y="14" width="18" height="26" rx="1" fill="#0E1B2C"/>
+      <rect x="68" y="18" width="10" height="6" fill="#F4C430"/>
+      <rect x="6" y="26" width="56" height="2" fill="#F4C430"/>
+      <circle cx="14" cy="42" r="5" fill="#1F324A" stroke="#F4C430" stroke-width="1.5"/>
+      <circle cx="32" cy="42" r="5" fill="#1F324A" stroke="#F4C430" stroke-width="1.5"/>
+      <circle cx="52" cy="42" r="5" fill="#1F324A" stroke="#F4C430" stroke-width="1.5"/>
+      <circle cx="73" cy="42" r="5" fill="#1F324A" stroke="#F4C430" stroke-width="1.5"/>
+      <rect x="70" y="6" width="6" height="10" fill="#0E1B2C"/>
+      <ellipse cx="73" cy="6" rx="6" ry="2" fill="rgba(244,196,48,0.18)"/>
+    </svg>
+    <div class="loco-meta">
+      Pulling<br><strong>4 commodity classes</strong>
+    </div>
+  </div>
+
+  <div class="train-track">
+    <div class="rail-line"></div>
+    <div class="ties"></div>
+
+    <div class="cars">
+      <div class="car merch reveal">
+        <div class="label-row">
+          <div class="commodity">Merchandise</div>
+          <div class="nice">chemicals · ag · autos · metals</div>
+        </div>
+        <div>
+          <div class="amount">$8.8B<span class="unit">rev</span></div>
+          <div class="pct">62.5% of total</div>
+        </div>
+        <div class="wheel-row"><div class="wheel"></div><div class="wheel"></div></div>
+      </div>
+
+      <div class="car intermodal reveal">
+        <div class="label-row">
+          <div class="commodity">Intermodal</div>
+          <div class="nice">containers, port-to-door</div>
+        </div>
+        <div>
+          <div class="amount">$2.1B<span class="unit">rev</span></div>
+          <div class="pct">14.9% of total</div>
+        </div>
+        <div class="wheel-row"><div class="wheel"></div><div class="wheel"></div></div>
+      </div>
+
+      <div class="car coal reveal">
+        <div class="label-row">
+          <div class="commodity">Coal</div>
+          <div class="nice">domestic util. + export</div>
+        </div>
+        <div>
+          <div class="amount">$1.9B<span class="unit">rev</span></div>
+          <div class="pct">13.5% of total</div>
+        </div>
+        <div class="wheel-row"><div class="wheel"></div><div class="wheel"></div></div>
+      </div>
+
+      <div class="car trucking reveal">
+        <div class="label-row">
+          <div class="commodity">Trucking · Quality Carriers</div>
+          <div class="nice">bulk liquid haul</div>
+        </div>
+        <div>
+          <div class="amount">$816M<span class="unit">rev</span></div>
+          <div class="pct">5.8% of total</div>
+        </div>
+        <div class="wheel-row"><div class="wheel"></div><div class="wheel"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="total-row">
+    <span class="lab">Total · FY '25</span>
+    <span class="v">$14.09B <span class="delta-pill down">−3.08% YoY</span></span>
+  </div>
+</section>
+
+<!-- Reset beat 2 -->
+<div class="reset dark">
+  <span class="mark">— TRANSITION 02</span>
+  <p>Now <span class="signal">picture the route map.</span> The story changes when you can see it on the ground.</p>
+</div>
+
+<!-- ============================================================
+     3. THE SCALE — 20,000 miles, 22,000 people
+     ============================================================ -->
+<section class="scale">
+  <div class="eyebrow"><span class="num">03</span><span>The reach · East of the Mississippi</span></div>
+  <h2>Steel laid <span class="it">on a continental</span> scale.</h2>
+  <p class="lede">A network that took <em>a hundred and forty years</em> to assemble, mostly through the merger of Chessie System and Seaboard Coast Line in 1980. You don't build this twice.</p>
+
+  <div class="scale-figure">
+    <div class="scalebars">
+      <div class="sbar reveal" data-fill="100">
+        <div class="lab"><span class="name">Route miles</span><span class="num" data-count="20000" data-suffix="">0</span></div>
+        <div class="track"><div class="fill"></div></div>
+        <div class="caption">26 states · DC · Ontario · Quebec</div>
+      </div>
+      <div class="sbar reveal" data-fill="66">
+        <div class="lab"><span class="name">U.S. population reached</span><span class="num"><span class="it">⅔</span> <span class="unit">of America</span></span></div>
+        <div class="track"><div class="fill"></div></div>
+        <div class="caption">every major metro in the Eastern U.S.</div>
+      </div>
+      <div class="sbar reveal" data-fill="55">
+        <div class="lab"><span class="name">Employees</span><span class="num" data-count="22000" data-suffix="">0</span></div>
+        <div class="track"><div class="fill"></div></div>
+        <div class="caption">conductors · engineers · maintainers · dispatch</div>
+      </div>
+      <div class="sbar reveal" data-fill="80">
+        <div class="lab"><span class="name">Market capitalization</span><span class="num">$<span data-count="80.04" data-decimals="2">0</span><span class="unit">B</span></span></div>
+        <div class="track"><div class="fill"></div></div>
+        <div class="caption">Fortune 500 · Jacksonville, FL · NYSE: CSX</div>
+      </div>
+      <div class="sbar reveal" data-fill="38">
+        <div class="lab"><span class="name">Operating margin</span><span class="num"><span class="it">32.1</span><span class="unit">%</span></span></div>
+        <div class="track"><div class="fill"></div></div>
+        <div class="caption">FY '25 · diluted EPS $1.54</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     4. THE BILL — biggest costs (waybill metaphor)
+     ============================================================ -->
+<section class="bill">
+  <div class="eyebrow"><span class="num">04</span><span>The waybill · $9.6B in costs</span></div>
+  <h2>Where the money <span class="it">goes</span>.</h2>
+  <p class="lede">Two-thirds of operating costs aren't fuel — they're <em>people</em> and the services that keep 20,000 miles of track alive. Run a railroad and you learn this fast.</p>
+
+  <div class="waybill">
+    <div class="waybill-head">
+      <span></span>
+      <span>Cost line · FY '25</span>
+      <span class="r">% rev</span>
+    </div>
+    <!-- 24 / 20 / 12 / 8 / 4 — supplied colors -->
+    <div class="cost-row reveal" data-pct="24" data-color="#4F86C6">
+      <div class="swatch" style="background:#4F86C6"></div>
+      <div class="body">
+        <div class="top">
+          <div>
+            <div class="lab">Labor and Fringe</div>
+            <div class="sub">conductors · engineers · benefits</div>
+          </div>
+        </div>
+        <div class="bar-wrap"><div class="bar" style="background:#4F86C6"></div></div>
+      </div>
+      <div class="pct">24<span class="sm">%</span></div>
+    </div>
+
+    <div class="cost-row reveal" data-pct="20" data-color="#E8834A">
+      <div class="swatch" style="background:#E8834A"></div>
+      <div class="body">
+        <div class="top">
+          <div>
+            <div class="lab">Purchased Services & Other</div>
+            <div class="sub">contractors · materials · insurance</div>
+          </div>
+        </div>
+        <div class="bar-wrap"><div class="bar" style="background:#E8834A"></div></div>
+      </div>
+      <div class="pct">20<span class="sm">%</span></div>
+    </div>
+
+    <div class="cost-row reveal" data-pct="12" data-color="#6DBF7E">
+      <div class="swatch" style="background:#6DBF7E"></div>
+      <div class="body">
+        <div class="top">
+          <div>
+            <div class="lab">Depreciation & Amortization</div>
+            <div class="sub">$43.7B in track, locos, terminals</div>
+          </div>
+        </div>
+        <div class="bar-wrap"><div class="bar" style="background:#6DBF7E"></div></div>
+      </div>
+      <div class="pct">12<span class="sm">%</span></div>
+    </div>
+
+    <div class="cost-row reveal" data-pct="8" data-color="#E8C84A">
+      <div class="swatch" style="background:#E8C84A"></div>
+      <div class="body">
+        <div class="top">
+          <div>
+            <div class="lab">Fuel</div>
+            <div class="sub">diesel · with surcharge pass-through</div>
+          </div>
+        </div>
+        <div class="bar-wrap"><div class="bar" style="background:#E8C84A"></div></div>
+      </div>
+      <div class="pct">8<span class="sm">%</span></div>
+    </div>
+
+    <div class="cost-row reveal" data-pct="4" data-color="#A97DC9">
+      <div class="swatch" style="background:#A97DC9"></div>
+      <div class="body">
+        <div class="top">
+          <div>
+            <div class="lab">Equipment & Other Rents</div>
+            <div class="sub">leased cars, locomotives</div>
+          </div>
+        </div>
+        <div class="bar-wrap"><div class="bar" style="background:#A97DC9"></div></div>
+      </div>
+      <div class="pct">4<span class="sm">%</span></div>
+    </div>
+  </div>
+
+  <div class="rest">
+    <span class="lab">Everything else &amp; what's left over</span>
+    <span class="v">32%<span class="sm">→ op income</span></span>
+  </div>
+</section>
+
+<!-- Reset beat 3 -->
+<div class="reset cream">
+  <span class="mark">— TRANSITION 03</span>
+  <p>Track is geography. Geography is <span class="signal">moat.</span></p>
+</div>
+
+<!-- ============================================================
+     5. MAP — Eastern footprint
+     ============================================================ -->
+<section class="map-section">
+  <div class="eyebrow"><span class="num">05</span><span>The footprint · 26 states + 2 provinces</span></div>
+  <h2>The map is the <span class="yellow">moat</span>.</h2>
+  <p class="lede">CSX's right-of-way reaches every major Eastern port, every major Eastern metro, and most of the Great Lakes industrial belt. You can't permit a parallel network. You can only buy this one.</p>
+
+  <div class="map-wrap">
+    <svg id="mapSvg" viewBox="0 0 380 300" aria-hidden="true">
+      <rect class="ocean" x="0" y="0" width="380" height="300"/>
+
+      <!-- Western US (not served, dim) -->
+      <path class="land" d="M 10 90 L 10 230 L 175 230 L 180 200 L 175 170 L 168 140 L 160 110 L 145 90 L 80 88 Z"/>
+
+      <!-- Eastern US (served, illuminated) -->
+      <path class="land served" d="
+        M 175 90
+        L 178 78
+        L 195 65
+        L 220 60
+        L 240 55
+        L 260 58
+        L 285 70
+        L 305 90
+        L 318 115
+        L 325 145
+        L 322 170
+        L 318 195
+        L 308 220
+        L 290 240
+        L 268 250
+        L 245 252
+        L 220 248
+        L 200 240
+        L 185 225
+        L 178 210
+        L 175 190
+        L 175 90 Z"/>
+
+      <!-- Canada — Ontario/Quebec sliver served -->
+      <path class="land served" d="M 200 50 L 235 42 L 270 40 L 295 48 L 285 58 L 255 60 L 225 62 L 205 60 Z" opacity="0.85"/>
+      <path class="land" d="M 100 30 L 200 30 L 200 50 L 175 65 L 130 60 L 100 50 Z"/>
+
+      <!-- Florida peninsula -->
+      <path class="land served" d="M 245 252 L 252 268 L 258 285 L 263 282 L 268 270 L 262 252 Z"/>
+
+      <!-- Rail network (drawn via JS for animation) -->
+      <g id="railGroup">
+        <!-- main spine: Chicago → DC → Atlanta → Florida -->
+        <path class="rail" d="M 200 110 Q 210 130 230 145 T 260 175 T 250 220 T 248 270" />
+        <!-- Northeast corridor: Cleveland → Pittsburgh → Baltimore → Philadelphia -->
+        <path class="rail" d="M 220 95 Q 240 100 260 105 T 290 115 T 305 130" />
+        <!-- Midwest extension: St. Louis → Cincinnati → Charleston -->
+        <path class="rail" d="M 180 145 Q 200 150 225 160 T 270 178 T 295 200" />
+        <!-- Southern: Atlanta → Mobile → Tampa -->
+        <path class="rail thin" d="M 245 215 Q 255 225 252 245 T 250 270" />
+        <!-- Lake spur: Toronto → Buffalo → Cleveland -->
+        <path class="rail thin" d="M 260 55 Q 245 70 240 90 T 230 110" />
+        <!-- Florida east coast -->
+        <path class="rail thin" d="M 252 252 Q 256 268 260 280" />
+        <!-- Appalachian: Tunnel route -->
+        <path class="rail thin" d="M 230 145 Q 240 160 245 180 T 248 220" />
+      </g>
+
+      <!-- Major nodes -->
+      <g id="cities">
+        <circle class="city" cx="200" cy="110" r="3.5"/><text class="city-label" x="207" y="113">CHI</text>
+        <circle class="city" cx="305" cy="130" r="3"/><text class="city-label" x="294" y="125">NYC</text>
+        <circle class="city" cx="290" cy="145" r="2.8"/><text class="city-label" x="294" y="148">BAL</text>
+        <circle class="city" cx="260" cy="155" r="2.5"/><text class="city-label" x="266" y="158">DC</text>
+        <circle class="city" cx="245" cy="218" r="3"/><text class="city-label" x="252" y="221">ATL</text>
+        <circle class="city" cx="225" cy="160" r="2.5"/><text class="city-label" x="201" y="163">CIN</text>
+        <circle class="city" cx="248" cy="270" r="3"/><text class="city-label" x="232" y="285">JAX*</text>
+        <circle class="city" cx="295" cy="200" r="2.5"/><text class="city-label" x="300" y="203">CHA</text>
+        <circle class="city" cx="260" cy="55" r="2.5"/><text class="city-label" x="265" y="52">TOR</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="map-stats">
+    <div class="geo-stat">
+      <div class="pct signal">88<span class="sm">%</span></div>
+      <div class="lab">Eastern<br>United States</div>
+    </div>
+    <div class="geo-stat">
+      <div class="pct">8<span class="sm">%</span></div>
+      <div class="lab">Canada<br>(ON · QC)</div>
+    </div>
+    <div class="geo-stat">
+      <div class="pct">4<span class="sm">%</span></div>
+      <div class="lab">International<br>via ports</div>
+    </div>
+  </div>
+
+  <div class="map-meta">
+    <div class="row"><span class="dot"></span><span>HQ Jacksonville, FL</span></div>
+    <div class="row"><span>Founded 1980 — Chessie + SCL merger</span></div>
+  </div>
+</section>
+
+<!-- Reset beat 4 -->
+<div class="reset cream">
+  <span class="mark">— TRANSITION 04</span>
+  <p>A railroad <span class="signal">never finishes</span> being built. Every year, billions go back into the ground.</p>
+</div>
+
+<!-- ============================================================
+     6. THE BET — capex
+     ============================================================ -->
+<section class="bet">
+  <div class="eyebrow"><span class="num">06</span><span>The bet · $2.9B into the network</span></div>
+  <h2>Tunnels, tracks, <span class="it">tomorrow</span>.</h2>
+  <p class="lede">FY '25 capital spend went into one of the largest infrastructure rebuilds the eastern network has seen — punching the Howard Street Tunnel wider for double-stack containers, and remaking the Blue Ridge Subdivision after washouts. Then planning to spend <em>less</em> next year.</p>
+
+  <!-- Tunnel SVG: an animated open tunnel mouth, with rails receding -->
+  <div class="tunnel">
+    <svg id="tunnelSvg" viewBox="0 0 380 220" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <radialGradient id="tunnelGlow" cx="0.5" cy="0.6" r="0.55">
+          <stop offset="0%" stop-color="#F4C430" stop-opacity="0.45"/>
+          <stop offset="40%" stop-color="#0E1B2C" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="#0E1B2C" stop-opacity="1"/>
+        </radialGradient>
+        <linearGradient id="brick" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#3B3A37"/>
+          <stop offset="100%" stop-color="#1A1917"/>
+        </linearGradient>
+      </defs>
+      <!-- sky / surrounding stone -->
+      <rect x="0" y="0" width="380" height="220" fill="url(#brick)"/>
+      <!-- brick texture lines -->
+      <g stroke="rgba(0,0,0,0.25)" stroke-width="0.6">
+        <line x1="0" y1="20" x2="380" y2="20"/>
+        <line x1="0" y1="40" x2="380" y2="40"/>
+        <line x1="0" y1="60" x2="380" y2="60"/>
+        <line x1="0" y1="80" x2="380" y2="80"/>
+        <line x1="0" y1="100" x2="380" y2="100"/>
+      </g>
+      <!-- tunnel arch mouth -->
+      <path d="M 100 200 L 100 110 Q 100 40 190 40 Q 280 40 280 110 L 280 200 Z" fill="url(#tunnelGlow)"/>
+      <!-- arch keystone outline -->
+      <path d="M 100 200 L 100 110 Q 100 40 190 40 Q 280 40 280 110 L 280 200" fill="none" stroke="#F4C430" stroke-width="1.2" opacity="0.6"/>
+      <!-- vanishing tracks inside tunnel -->
+      <path d="M 190 80 L 145 200" stroke="rgba(244,196,48,0.5)" stroke-width="1.2"/>
+      <path d="M 190 80 L 235 200" stroke="rgba(244,196,48,0.5)" stroke-width="1.2"/>
+      <!-- ties inside -->
+      <g stroke="rgba(244,196,48,0.35)" stroke-linecap="round">
+        <line x1="178" y1="100" x2="202" y2="100" stroke-width="0.8"/>
+        <line x1="170" y1="120" x2="210" y2="120" stroke-width="1.0"/>
+        <line x1="160" y1="145" x2="220" y2="145" stroke-width="1.2"/>
+        <line x1="148" y1="175" x2="232" y2="175" stroke-width="1.4"/>
+      </g>
+      <!-- "HOWARD ST" sign -->
+      <rect x="148" y="20" width="84" height="14" fill="#F4C430"/>
+      <text x="190" y="30" text-anchor="middle" fill="#0E1B2C" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.5">HOWARD ST · 1895</text>
+    </svg>
+  </div>
+
+  <div class="capex-list">
+    <div class="capex">
+      <div class="yr">FY '25<strong>$2.9B</strong></div>
+      <div class="desc"><strong>Capex deployed.</strong> Howard Street Tunnel expansion + Blue Ridge Subdivision rebuild after storms.</div>
+      <div class="amt">100<span class="sm">% baseline</span></div>
+    </div>
+    <div class="capex">
+      <div class="yr">FY '25<strong>$4.6B</strong></div>
+      <div class="desc"><strong>Operating cash flow</strong> — the engine that funds the rebuild without new debt.</div>
+      <div class="amt">+59<span class="sm">% of capex</span></div>
+    </div>
+    <div class="capex signal">
+      <div class="yr">FY '26<strong>&lt;$2.4B</strong></div>
+      <div class="desc"><strong>Planned capex.</strong> Big-project peak passes; cash spend steps down.</div>
+      <div class="amt">−17<span class="sm">% YoY</span></div>
+    </div>
+  </div>
+
+  <div class="fcf-callout">
+    <div class="lab">Free cash flow guided to grow <span class="signal">more than 60%</span> in 2026 as capex steps down.</div>
+    <div class="v">+60%</div>
+  </div>
+</section>
+
+<!-- ============================================================
+     7. DEBT — tonal interlude (near-black)
+     This is the dramatic palette departure.
+     ============================================================ -->
+<section class="debt">
+  <div class="eyebrow"><span class="num">07</span><span>The weight · capital structure</span></div>
+  <h2>Eighteen <span class="heavy">point two</span><br>billion in debt.</h2>
+  <p>Capital-intensive railroads run leveraged. The question isn't <em class="it">whether</em> CSX has debt — it's whether the cash flow that services it ever stops moving. So far: no.</p>
+
+  <!-- Visual: stacked weight tower vs cash sliver -->
+  <div class="scale-vis">
+    <div class="weight debt">
+      <div class="num"><span class="it">18.2B</span></div>
+      <div class="stack" id="debtStack"></div>
+      <div class="lab">Long-term<br>debt</div>
+    </div>
+    <div class="weight cash">
+      <div class="num">670<span class="sm">M</span></div>
+      <div class="stack" id="cashStack"></div>
+      <div class="lab">Cash &<br>equivalents</div>
+    </div>
+  </div>
+
+  <div class="ledger">
+    <div class="ledger-cell">
+      <div class="lab">Total assets</div>
+      <div class="v">$43.7<span class="sm">B</span></div>
+    </div>
+    <div class="ledger-cell">
+      <div class="lab">Total equity</div>
+      <div class="v">$13.16<span class="sm">B</span></div>
+    </div>
+    <div class="ledger-cell">
+      <div class="lab">Op. cash flow</div>
+      <div class="v">$4.61<span class="sm">B</span></div>
+    </div>
+    <div class="ledger-cell">
+      <div class="lab">Free cash flow</div>
+      <div class="v">$1.71<span class="sm">B</span></div>
+    </div>
+  </div>
+
+  <div class="returned">
+    <div class="row"><span class="l">FY '25 dividends</span><span class="r">$972M</span></div>
+    <div class="row"><span class="l">FY '25 buybacks</span><span class="r">≈$1.4B</span></div>
+    <div class="row"><span class="l">Q1 '26 dividend hike</span><span class="r">+8%</span></div>
+  </div>
+</section>
+
+<!-- Reset beat 5 -->
+<div class="reset cream">
+  <span class="mark">— TRANSITION 05</span>
+  <p>You don't compete with CSX <span class="signal">on price.</span> You compete with it on the geography it already owns.</p>
+</div>
+
+<!-- ============================================================
+     8. RIVALS
+     ============================================================ -->
+<section class="rivals">
+  <div class="eyebrow"><span class="num">08</span><span>The rivals · sized to scale</span></div>
+  <h2>Three challengers, <span class="it">three angles</span>.</h2>
+  <p class="lede">One twin to the north. One ground giant pulling boxes off rail. And a unified continental network that didn't exist five years ago.</p>
+
+  <div class="csx-anchor">
+    <span><span class="ticker">CSX</span> · MKT CAP</span>
+    <span class="v">$80.04B</span>
+  </div>
+
+  <div class="rival">
+    <div class="rival-head">
+      <div class="left"><span class="tk">NSC</span><span class="nm">Norfolk Southern</span></div>
+      <div class="threat high">Direct rival</div>
+    </div>
+    <div class="bar-pair">
+      <div class="bp-row">
+        <span class="lab">Mkt cap</span>
+        <div class="track"><div class="fill rival" data-w="92"></div></div>
+        <span class="v">$74.0B</span>
+      </div>
+      <div class="bp-row">
+        <span class="lab">Revenue</span>
+        <div class="track"><div class="fill rival" data-w="86"></div></div>
+        <span class="v">$12.2B</span>
+      </div>
+    </div>
+    <p>Same eastern footprint, same shippers, same corridors. <em class="it">A mirror, not a competitor.</em> Where CSX runs north–south, NSC runs the same lanes from a parallel right-of-way.</p>
+  </div>
+
+  <div class="rival">
+    <div class="rival-head">
+      <div class="left"><span class="tk">UPS</span><span class="nm">United Parcel Service</span></div>
+      <div class="threat">Modal threat</div>
+    </div>
+    <div class="bar-pair">
+      <div class="bp-row">
+        <span class="lab">Mkt cap</span>
+        <div class="track"><div class="fill rival" data-w="100"></div></div>
+        <span class="v">$90.5B</span>
+      </div>
+      <div class="bp-row">
+        <span class="lab">Revenue</span>
+        <div class="track"><div class="fill rival" data-w="100"></div></div>
+        <span class="v">$88.7B</span>
+      </div>
+    </div>
+    <p>Six times the revenue, but in a different sport. UPS pulls volume <em class="it">off the rails</em> when speed beats cost — and is expanding ground capacity to do more of it.</p>
+  </div>
+
+  <div class="rival">
+    <div class="rival-head">
+      <div class="left"><span class="tk">CP</span><span class="nm">Canadian Pacific Kansas City</span></div>
+      <div class="threat high">Strategic threat</div>
+    </div>
+    <div class="bar-pair">
+      <div class="bp-row">
+        <span class="lab">Mkt cap</span>
+        <div class="track"><div class="fill rival sig" data-w="100"></div></div>
+        <span class="v">$98.6B</span>
+      </div>
+      <div class="bp-row">
+        <span class="lab">Revenue</span>
+        <div class="track"><div class="fill rival sig" data-w="100"></div></div>
+        <span class="v">$15.1B</span>
+      </div>
+    </div>
+    <p>The new geography. CPKC's single-line CA→US→MX network — sealed by the Meridian Speedway acquisition — <em class="it">cuts diagonally</em> across CSX's southern reach. The first cross-continental rail since the 1880s.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     9. THE CLOSE — the dollar
+     ============================================================ -->
+<section class="close">
+  <div class="eyebrow"><span class="num">09</span><span>A hundred cents in</span></div>
+  <h2>For every dollar of revenue, <span class="it">these survive.</span></h2>
+  <p class="lede">100 cents into the locomotive. <span class="it">Thirty-two</span> come out as operating income. <span class="it">Twelve</span> survive as free cash. The rest is what it costs to keep America's east coast moving.</p>
+
+  <div class="dollar">
+    <div class="head">
+      <span class="l">$1.00 of FY '25 revenue</span>
+      <span class="r">→ what's left</span>
+    </div>
+
+    <div class="cents" id="centsGrid">
+      <!-- 100 cents, populated by JS -->
+    </div>
+
+    <div class="cents-legend">
+      <div class="lg">
+        <span class="sw" style="background:var(--ink-3)"></span>
+        <span class="l">Operating costs</span>
+        <span class="v">68¢</span>
+      </div>
+      <div class="lg">
+        <span class="sw" style="background:var(--rust)"></span>
+        <span class="l">Operating income</span>
+        <span class="v">32¢</span>
+      </div>
+      <div class="lg">
+        <span class="sw" style="background:var(--signal)"></span>
+        <span class="l">Free cash flow</span>
+        <span class="v signal">12¢</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- KICKER -->
+  <div class="kicker">
+    <div class="eyebrow"><span class="num">10</span><span>The takeaway</span></div>
+    <h2>Two-thirds of America still <span class="it">moves on rails.</span></h2>
+    <p>And until somebody re-permits a new continental right-of-way, CSX is one of the four companies <span class="signal">that owns it.</span></p>
+  </div>
+</section>
+
+<footer>
+  <span class="csx">CSX · NASDAQ</span>
+  <span>FY '25 RECAP</span>
+  <span>FIGURES PER FILING</span>
+</footer>
+
+</main>
+
+<script>
+/* ============================================================
+   Scripts: scroll progress, reveals, counters, draw-on
+   ============================================================ */
+
+// Scroll progress
+(function() {
+  const fill = document.getElementById('progress');
+  const update = () => {
+    const h = document.documentElement;
+    const total = h.scrollHeight - h.clientHeight;
+    const pct = total > 0 ? Math.min(100, Math.max(0, (h.scrollTop / total) * 100)) : 0;
+    fill.style.width = pct + '%';
+  };
+  document.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+// IntersectionObserver — reveal-on-scroll + count-ups + bar fills
+(function() {
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const el = e.target;
+      el.classList.add('in');
+
+      // count-up children
+      el.querySelectorAll('[data-count]').forEach(c => {
+        if (c.dataset.done === '1') return;
+        c.dataset.done = '1';
+        const target = parseFloat(c.dataset.count);
+        const decimals = parseInt(c.dataset.decimals || '0', 10);
+        const dur = 1400;
+        const t0 = performance.now();
+        const fmt = (v) => {
+          if (decimals > 0) return v.toFixed(decimals);
+          return Math.round(v).toLocaleString('en-US');
+        };
+        const tick = (t) => {
+          const k = Math.min(1, (t - t0) / dur);
+          const eased = 1 - Math.pow(1 - k, 3);
+          c.textContent = fmt(target * eased);
+          if (k < 1) requestAnimationFrame(tick);
+          else c.textContent = fmt(target);
+        };
+        requestAnimationFrame(tick);
+      });
+
+      // sbar fills
+      if (el.matches('.sbar') && el.dataset.fill) {
+        const fillEl = el.querySelector('.fill');
+        if (fillEl) requestAnimationFrame(() => fillEl.style.width = el.dataset.fill + '%');
+      }
+
+      // cost row bars
+      if (el.matches('.cost-row') && el.dataset.pct) {
+        const bar = el.querySelector('.bar');
+        if (bar) requestAnimationFrame(() => { bar.style.width = (parseFloat(el.dataset.pct) / 24 * 100) + '%'; });
+      }
+
+      io.unobserve(el);
+    }
+  }, { threshold: 0.18, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal, .sbar, .cost-row').forEach(el => io.observe(el));
+})();
+
+// Map: animate rail draw-on when map enters
+(function() {
+  const map = document.getElementById('mapSvg');
+  if (!map) return;
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const rails = map.querySelectorAll('.rail');
+      rails.forEach((r, i) => {
+        const len = r.getTotalLength ? r.getTotalLength() : 1200;
+        r.style.strokeDasharray = len;
+        r.style.strokeDashoffset = len;
+        r.getBoundingClientRect(); // force layout
+        r.style.transition = `stroke-dashoffset 2.0s cubic-bezier(0.22,1,0.36,1) ${i * 200}ms`;
+        requestAnimationFrame(() => r.style.strokeDashoffset = '0');
+      });
+      // Pulse cities
+      map.querySelectorAll('.city').forEach((c, i) => {
+        c.style.transformOrigin = `${c.getAttribute('cx')}px ${c.getAttribute('cy')}px`;
+        c.style.transform = 'scale(0)';
+        c.style.transition = `transform 600ms cubic-bezier(0.34,1.56,0.64,1) ${600 + i * 80}ms`;
+        requestAnimationFrame(() => c.style.transform = 'scale(1)');
+      });
+      io.unobserve(map);
+    }
+  }, { threshold: 0.25 });
+  io.observe(map);
+})();
+
+// Hero ties (railroad ties receding to vanishing point)
+(function() {
+  const ties = document.getElementById('ties');
+  if (!ties) return;
+  // Vanishing point at (206, 8). Bottom at y=280.
+  // Tie spacing increases with depth (perspective).
+  const tieList = [];
+  let y = 280, step = 28;
+  while (y > 24 && tieList.length < 14) {
+    tieList.push(y);
+    step *= 0.78;
+    y -= step;
+  }
+  tieList.forEach((ty, i) => {
+    // Tie width tapers toward the vanishing point.
+    const k = (280 - ty) / (280 - 8); // 0 at bottom, 1 at top
+    const halfWidth = 90 * (1 - k) + 4 * k;
+    const x1 = 206 - halfWidth;
+    const x2 = 206 + halfWidth;
+    const opacity = 0.35 - k * 0.3;
+    const sw = 3.5 * (1 - k) + 0.8 * k;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x1);
+    line.setAttribute('x2', x2);
+    line.setAttribute('y1', ty);
+    line.setAttribute('y2', ty);
+    line.setAttribute('stroke', '#5A5853');
+    line.setAttribute('stroke-width', sw);
+    line.setAttribute('stroke-linecap', 'round');
+    line.setAttribute('opacity', opacity);
+    ties.appendChild(line);
+  });
+})();
+
+// Debt: stack blocks in proportion. Long-term debt 18.2B vs cash 670M.
+// Choose total tower height ~200px; debt = 200, cash = 200 * (670/18200) ≈ 7.4 → too small.
+// Use logarithmic-ish but keep visible: cash gets at least 18px.
+(function() {
+  const debtStack = document.getElementById('debtStack');
+  const cashStack = document.getElementById('cashStack');
+  if (!debtStack || !cashStack) return;
+  const totalH = 180;
+  const debtH = totalH;
+  const cashH = Math.max(14, Math.round(totalH * (670 / 18200) * 1.4)); // bumped slightly so it's readable
+  // Build debt as 12 blocks
+  for (let i = 0; i < 12; i++) {
+    const b = document.createElement('div');
+    b.className = 'block';
+    b.style.height = (debtH / 12) + 'px';
+    debtStack.appendChild(b);
+  }
+  // Cash as a single bright block
+  const cash = document.createElement('div');
+  cash.className = 'block';
+  cash.style.height = cashH + 'px';
+  cashStack.appendChild(cash);
+
+  // Reveal: animate from 0 height upwards
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const blocks = debtStack.querySelectorAll('.block');
+      blocks.forEach((b, i) => {
+        const h = b.style.height;
+        b.style.height = '0';
+        b.getBoundingClientRect();
+        b.style.transition = `height 280ms cubic-bezier(0.22,1,0.36,1) ${i * 120}ms`;
+        requestAnimationFrame(() => b.style.height = h);
+      });
+      const ch = cash.style.height;
+      cash.style.height = '0';
+      cash.getBoundingClientRect();
+      cash.style.transition = 'height 600ms cubic-bezier(0.22,1,0.36,1) 1700ms';
+      requestAnimationFrame(() => cash.style.height = ch);
+      io.unobserve(debtStack);
+    }
+  }, { threshold: 0.3 });
+  io.observe(debtStack);
+})();
+
+// Rival bar fills
+(function() {
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      e.target.querySelectorAll('.fill[data-w]').forEach((f, i) => {
+        const w = f.dataset.w;
+        f.style.transitionDelay = (i * 120) + 'ms';
+        requestAnimationFrame(() => f.style.width = w + '%');
+      });
+      io.unobserve(e.target);
+    }
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.rival').forEach(r => io.observe(r));
+})();
+
+// Build the 100-cents grid
+(function() {
+  const grid = document.getElementById('centsGrid');
+  if (!grid) return;
+  // 100 cents. Costs = 68 (gray). Operating income = 32 (rust).
+  // Of those 32, FCF = 12 (signal), the remaining 20 = rust.
+  // Order: costs first, then rust (op income), then signal (FCF) at the end.
+  // We'll place them grid-style: rows of 10. Bottom-up readability would be nice,
+  // but for quick scanning fill cost first across 7 rows (70 cents won't be needed
+  // — adjust to exact split).
+  const seq = [];
+  for (let i = 0; i < 68; i++) seq.push('cost');
+  for (let i = 0; i < 20; i++) seq.push('profit');
+  for (let i = 0; i < 12; i++) seq.push('fcf');
+  for (let i = 0; i < 100; i++) {
+    const c = document.createElement('div');
+    c.className = 'cent';
+    grid.appendChild(c);
+  }
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const cells = grid.children;
+      seq.forEach((cls, i) => {
+        setTimeout(() => cells[i].classList.add(cls), 6 * i + 50);
+      });
+      io.unobserve(grid);
+    }
+  }, { threshold: 0.3 });
+  io.observe(grid);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>DVA · Recap</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    /* Clinical-editorial palette derived for DaVita.
+       Cream "ledger" paper + deep ink + clinical fluid blue.
+       Coral kept for one signal moment (the bet / debt). */
+    --paper:        #F5F2EA;     /* warm clinical cream — lab folder, not Apple white */
+    --paper-2:      #EFEBE0;     /* raised paper */
+    --paper-3:      #E5DFCF;     /* deeper / divider */
+    --ink:          #14171C;     /* deep ledger ink */
+    --ink-2:        #3A3F47;
+    --ink-3:        #6E737B;
+    --ink-4:        #A4A8AE;
+    --line:         #DDD7C7;
+    --line-strong:  #C8C0AB;
+
+    /* Clinical fluid — DaVita's circulatory blue */
+    --fluid-50:  #EAF1F7;
+    --fluid-100: #C9DCEC;
+    --fluid-200: #9CBEDB;
+    --fluid-300: #6BA0CC;
+    --fluid-400: #4A90D9;   /* honors JSON biggest_costs primary */
+    --fluid-500: #3A75B5;
+    --fluid-600: #275689;
+    --fluid-700: #1A3F66;
+    --fluid-900: #0E1F33;
+
+    /* Cost palette honoring JSON */
+    --cost-care:  #4A90D9;
+    --cost-ga:    #E8734A;
+    --cost-da:    #6DBF8A;
+    --cost-int:   #B57BCC;
+
+    /* Signal color — used sparingly for the debt/bet beat */
+    --signal:     #C84B2E;
+
+    --font-display: 'Instrument Serif', 'Times New Roman', serif;
+    --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  html { background: #1a1a1a; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* The page is a mobile-sized artifact, centered in a dark frame on desktop. */
+  .stage {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--paper);
+    min-height: 100vh;
+    position: relative;
+    box-shadow: 0 0 80px rgba(0,0,0,0.25);
+    overflow: hidden;
+  }
+
+  /* ---------- PERSISTENT CHROME ---------- */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    background: rgba(245, 242, 234, 0.78);
+    border-bottom: 1px solid rgba(221, 215, 199, 0.6);
+  }
+  .chrome-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px 12px;
+  }
+  .chrome-ticker {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .chrome-spacer { flex: 1; }
+  .chrome-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .chrome-progress {
+    height: 1.5px;
+    background: transparent;
+    width: 100%;
+    position: relative;
+  }
+  .chrome-progress::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: var(--scroll, 0%);
+    background: linear-gradient(90deg, var(--fluid-300), var(--fluid-500));
+    transition: width 60ms linear;
+  }
+
+  /* ---------- TYPE PRIMITIVES ---------- */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.96;
+    color: var(--ink);
+  }
+  .display-italic { font-style: italic; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fluid-500);
+  }
+  .eyebrow-num {
+    color: var(--ink-3);
+    margin-right: 6px;
+  }
+  .body-copy {
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .body-copy em { font-family: var(--font-display); font-style: italic; color: var(--fluid-600); font-size: 1.06em; letter-spacing: -0.005em; }
+  .body-copy .signal { color: var(--signal); font-style: italic; font-family: var(--font-display); font-size: 1.06em; }
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- BEAT (section) BASE ---------- */
+  .beat {
+    position: relative;
+    padding: 72px 24px 40px;
+  }
+  .beat-eyebrow { margin-bottom: 28px; display: flex; align-items: baseline; gap: 4px; }
+  .beat-eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--fluid-400);
+    display: inline-block;
+    margin-right: 10px;
+    transform: translateY(-1px);
+  }
+
+  /* Reset beats — short italic interludes on a tonal band */
+  .reset-beat {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 56px 28px;
+    position: relative;
+  }
+  .reset-beat .reset-text {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.25;
+    color: var(--paper);
+    letter-spacing: -0.01em;
+  }
+  .reset-beat .reset-text .hit { color: var(--fluid-300); }
+  .reset-beat .reset-text .signal-hit { color: #FF8A6A; }
+  .reset-beat .reset-mark {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 18px;
+  }
+
+  /* Tonal interlude — the dark "weight" beat */
+  .beat-dark {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .beat-dark .display { color: var(--paper); }
+  .beat-dark .body-copy { color: rgba(244, 242, 237, 0.78); }
+  .beat-dark .eyebrow { color: #FF8A6A; }
+  .beat-dark .meta { color: rgba(244,242,237,0.5); }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 32px 24px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-eyebrow {
+    margin-top: 12px;
+    margin-bottom: 28px;
+  }
+  .hero-headline {
+    font-size: 58px;
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  .hero-headline .accent {
+    color: var(--fluid-500);
+    font-style: italic;
+  }
+  .hero-sub {
+    margin-top: 28px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 32ch;
+  }
+  .hero-stats {
+    margin-top: 44px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 16px;
+  }
+  .hero-stat .num {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .hero-stat .num.italic { font-style: italic; color: var(--fluid-500); }
+  .hero-stat .lab {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* The hero "droplet" — a beating filtration drop */
+  .droplet-stage {
+    position: absolute;
+    top: 0; right: -30px;
+    width: 280px;
+    height: 380px;
+    pointer-events: none;
+    opacity: 0.95;
+  }
+
+  /* ---------- BUSINESS BEAT (dialysis cycle) ---------- */
+  .cycle-stage {
+    margin-top: 32px;
+    width: 100%;
+    aspect-ratio: 1 / 1.05;
+    position: relative;
+  }
+  .cycle-caption {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  .cycle-caption .cap {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    line-height: 1.4;
+  }
+  .cycle-caption .cap b {
+    display: block;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  /* ---------- SCALE BEAT (constellation) ---------- */
+  .scale-figures {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .scale-fig .num {
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .scale-fig .num .it { font-style: italic; color: var(--fluid-500); }
+  .scale-fig .lab {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 6px;
+  }
+  .constellation {
+    margin-top: 32px;
+    width: 100%;
+    height: 240px;
+    position: relative;
+  }
+
+  /* ---------- COSTS — filtration column ---------- */
+  .costs-stage {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: stretch;
+  }
+  .costs-svg-wrap {
+    width: 100%;
+    height: 360px;
+  }
+  .costs-legend {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 8px 0;
+  }
+  .legend-row {
+    border-top: 1px solid var(--line);
+    padding: 10px 0 12px;
+    display: grid;
+    grid-template-columns: 12px 1fr auto;
+    gap: 10px;
+    align-items: baseline;
+  }
+  .legend-row:last-child { border-bottom: 1px solid var(--line); }
+  .legend-row .swatch {
+    width: 8px; height: 8px;
+    border-radius: 1px;
+    transform: translateY(2px);
+  }
+  .legend-row .name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.25;
+    color: var(--ink);
+  }
+  .legend-row .pct {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .legend-row .pct .small { font-size: 13px; color: var(--ink-3); margin-left: 1px; font-family: var(--font-mono); }
+  .costs-bottom {
+    margin-top: 18px;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .costs-bottom .residue {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .costs-bottom .residue .it { font-style: italic; color: var(--fluid-500); }
+  .costs-bottom .residue-cap {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    max-width: 14ch;
+  }
+
+  /* ---------- PAYER SPLIT ---------- */
+  .payer-stage {
+    margin-top: 24px;
+    width: 100%;
+    height: 280px;
+    position: relative;
+  }
+  .payer-callout {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .payer-callout .col .lab {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 6px;
+  }
+  .payer-callout .col .pct {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .payer-callout .col.commercial .pct { font-style: italic; color: var(--fluid-500); }
+  .payer-callout .col .desc {
+    margin-top: 8px;
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+
+  /* ---------- FOOTPRINT ---------- */
+  .footprint-stage {
+    margin-top: 24px;
+    width: 100%;
+    height: 320px;
+    position: relative;
+  }
+  .footprint-num {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 18px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+  .footprint-num .row {
+    display: flex;
+    flex-direction: column;
+  }
+  .footprint-num .num {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .footprint-num .num .it { font-style: italic; }
+  .footprint-num .lab {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 6px;
+  }
+
+  /* ---------- THE BET (dark) ---------- */
+  .bet-equity-stage {
+    margin-top: 28px;
+    width: 100%;
+    height: 320px;
+    position: relative;
+  }
+  .bet-figures {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 12px;
+    border-top: 1px solid rgba(244,242,237,0.18);
+    padding-top: 22px;
+  }
+  .bet-fig .num {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+    color: var(--paper);
+  }
+  .bet-fig .num.signal { color: #FF8A6A; font-style: italic; }
+  .bet-fig .lab {
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(244,242,237,0.55);
+  }
+
+  /* ---------- COMPETITORS ---------- */
+  .competitors-list { margin-top: 28px; }
+  .comp-row {
+    border-top: 1px solid var(--line);
+    padding: 18px 0;
+    cursor: pointer;
+    transition: background 220ms var(--ease-out, ease);
+  }
+  .comp-row:last-child { border-bottom: 1px solid var(--line); }
+  .comp-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .comp-ticker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    background: var(--paper-2);
+    padding: 3px 6px;
+    border-radius: 3px;
+  }
+  .comp-name {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 14.5px;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .comp-mcap {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--ink);
+  }
+  .comp-mcap .small {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    color: var(--ink-3);
+    margin-left: 2px;
+    letter-spacing: 0.05em;
+  }
+  .comp-bar {
+    margin-top: 14px;
+    height: 6px;
+    background: var(--paper-2);
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+  .comp-bar .fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: var(--fluid-400);
+    border-radius: 3px;
+    transition: width 600ms var(--ease-out, cubic-bezier(0.22,1,0.36,1));
+  }
+  .comp-bar .fill.dva { background: var(--ink); }
+  .comp-tag {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 8px;
+  }
+  .comp-detail {
+    overflow: hidden;
+    transition: max-height 320ms cubic-bezier(0.22,1,0.36,1);
+  }
+  .comp-detail .inner {
+    padding: 14px 0 4px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .comp-detail .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px 10px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+  }
+  .comp-detail .stats .s .v {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .comp-detail .stats .s .l {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+
+  /* ---------- CLOSE ---------- */
+  .close {
+    padding: 80px 24px 96px;
+    position: relative;
+  }
+  .close-headline {
+    font-family: var(--font-display);
+    font-size: 52px;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  .close-headline .it { font-style: italic; color: var(--fluid-500); }
+  .close-stage {
+    margin: 36px 0 28px;
+    width: 100%;
+    height: 220px;
+    position: relative;
+  }
+  .close-foot {
+    margin-top: 28px;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .close-foot .l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- COMMON SVG ANIMATIONS ---------- */
+  @keyframes pulse-drop {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+  }
+  @keyframes flow {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: -40; }
+  }
+  @keyframes flow-rev {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: 40; }
+  }
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 0.85; }
+    50% { opacity: 1; }
+  }
+  @keyframes drift {
+    from { transform: translateY(0); }
+    to { transform: translateY(-12px); }
+  }
+
+  .anim-pulse { animation: pulse-drop 2.4s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+  .anim-flow  { stroke-dasharray: 6 8; animation: flow 2s linear infinite; }
+  .anim-flow-rev { stroke-dasharray: 6 8; animation: flow-rev 2s linear infinite; }
+  .anim-pulse-soft { animation: pulse-soft 3s ease-in-out infinite; }
+
+  /* Scroll-reveal helper */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 700ms cubic-bezier(0.22,1,0.36,1), transform 700ms cubic-bezier(0.22,1,0.36,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* Footer / colophon */
+  .colophon {
+    padding: 32px 24px 48px;
+    border-top: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .colophon .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .colophon .blurb {
+    margin-top: 16px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.4;
+    color: var(--ink-3);
+  }
+
+  /* Wide-viewport gutters for desktop preview */
+  .desktop-gutter {
+    display: none;
+  }
+  @media (min-width: 480px) {
+    body { padding: 0; }
+    .stage { margin-top: 24px; margin-bottom: 24px; border-radius: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="hooks.jsx"></script>
+<script type="text/babel" src="scenes.jsx"></script>
+<script type="text/babel" src="app.jsx"></script>
+
+</body>
+</html>

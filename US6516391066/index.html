@@ -1,0 +1,1768 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NEM · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ---------- TOKENS ---------- */
+:root{
+  /* Newmont palette: charcoal base, ore browns, gold signal */
+  --bg:        #0E0C09;        /* deep ore-shadow */
+  --bg-2:      #14110D;        /* slightly raised */
+  --bg-3:      #1B1813;        /* card surface */
+  --paper:     #F4EFE3;        /* warm cream — light interludes */
+  --paper-2:   #E9E2D0;
+  --paper-3:   #D9CFB8;
+  --ink:       #0E0C09;
+  --ink-2:     #2A241B;
+  --ink-3:     #5A4F3D;
+  --ink-4:     #8A7E68;
+  --line-d:    rgba(244,239,227,0.10);
+  --line-d-2:  rgba(244,239,227,0.18);
+  --line-l:    rgba(14,12,9,0.10);
+  --line-l-2:  rgba(14,12,9,0.20);
+
+  /* Gold — the signal */
+  --gold:      #E6B449;
+  --gold-2:    #F2CB6E;
+  --gold-3:    #C99634;
+  --gold-deep: #8C6418;
+  --gold-glow: rgba(230,180,73,0.35);
+
+  /* Ore palette for strata */
+  --ore-1: #6B5A3D;
+  --ore-2: #4F4128;
+  --ore-3: #382C19;
+
+  /* Costs (from JSON — DO NOT change) */
+  --c-cas:    #C0392B;
+  --c-dda:    #E67E22;
+  --c-recl:   #27AE60;
+  --c-ga:     #2980B9;
+  --c-expl:   #8E44AD;
+  --c-capex:  #16A085;
+  --c-rest:   #E6B449; /* what survives — gold */
+
+  --serif: 'Instrument Serif', 'Times New Roman', serif;
+  --sans:  'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --mono:  'Geist Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html, body{margin:0; padding:0;}
+html{ background:#000; }
+body{
+  font-family: var(--sans);
+  color: #EDE6D4;
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* mobile-first frame: 412 default, but flex up to ~440 */
+.page{
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  position: relative;
+  background: var(--bg);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ---------- CHROME ---------- */
+.chrome{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  background: rgba(14,12,9,0.72);
+  border-bottom: 1px solid var(--line-d);
+}
+.chrome-row{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px 12px;
+}
+.chrome .tkr{
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  background: rgba(230,180,73,0.10);
+  border: 1px solid rgba(230,180,73,0.28);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.chrome .name{
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: #F4EFE3;
+  letter-spacing: -0.005em;
+}
+.chrome .label{
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: rgba(244,239,227,0.55);
+  text-transform: uppercase;
+}
+.progress{
+  height: 1.5px;
+  background: rgba(244,239,227,0.06);
+  position: relative;
+  overflow: hidden;
+}
+.progress-fill{
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold) 60%, var(--gold-2));
+  box-shadow: 0 0 8px var(--gold-glow);
+}
+
+/* ---------- TYPE ---------- */
+.eyebrow{
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.eyebrow .dim{ color: rgba(244,239,227,0.45); }
+.eyebrow.dark{ color: var(--gold-deep); }
+.eyebrow.dark .dim{ color: rgba(14,12,9,0.45); }
+
+.serif{ font-family: var(--serif); font-weight: 400; letter-spacing:-0.015em; }
+.serif-i{ font-family: var(--serif); font-style: italic; font-weight: 400; }
+
+.kicker{
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--gold-2);
+}
+.kicker-dark{ color: var(--gold-deep); }
+
+p.copy{
+  font-size: 16px;
+  line-height: 1.55;
+  color: rgba(244,239,227,0.78);
+  font-weight: 300;
+  margin: 0;
+}
+p.copy.dark{
+  color: var(--ink-2);
+}
+
+/* sections */
+section{
+  position: relative;
+  padding: 64px 24px;
+}
+section.tight{ padding: 40px 24px; }
+section.dark{ background: var(--bg); color: #EDE6D4; }
+section.deeper{ background: #07060500; }
+section.cream{
+  background: var(--paper);
+  color: var(--ink);
+}
+section.cream p.copy{ color: var(--ink-2); }
+section.bar{ padding: 36px 24px; }
+
+.eyebrow-row{
+  display:flex; align-items:center; gap:10px;
+  margin-bottom: 24px;
+}
+.eyebrow-row .dotline{
+  flex:1; height:1px;
+  background: linear-gradient(90deg, currentColor, transparent);
+  opacity: .25;
+}
+
+/* ---------- HERO ---------- */
+.hero{
+  position: relative;
+  min-height: calc(100vh - 56px);
+  padding: 32px 24px 56px;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 50% 30%, rgba(230,180,73,0.12), transparent 60%),
+    radial-gradient(80% 60% at 50% 100%, rgba(140,100,24,0.18), transparent 60%),
+    var(--bg);
+}
+.hero-canvas{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.hero-inner{
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 56px - 88px);
+  min-height: 600px;
+  justify-content: space-between;
+}
+.hero-top{
+  display:flex; flex-direction:column; gap: 10px;
+  padding-top: 8px;
+}
+.hero h1{
+  font-family: var(--serif);
+  font-size: 64px;
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  margin: 0;
+  color: #F4EFE3;
+}
+.hero h1 .ital{ font-style: italic; color: var(--gold-2); }
+.hero h1 .small-em{
+  display:block;
+  font-size: 28px;
+  line-height: 1.1;
+  font-style: italic;
+  color: rgba(244,239,227,0.65);
+  margin-top: 14px;
+}
+.hero-bot{
+  display:flex; align-items:flex-end; justify-content: space-between;
+  gap: 16px;
+}
+.hero-meta{
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(244,239,227,0.55);
+  line-height: 1.6;
+}
+.hero-meta b{ color: var(--gold); font-weight: 500; }
+.hero-scroll{
+  display:flex; align-items:center; gap:8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(244,239,227,0.55);
+}
+.hero-scroll .arrow{
+  width: 1px; height: 28px;
+  background: linear-gradient(180deg, transparent, rgba(244,239,227,0.5));
+  position: relative;
+}
+.hero-scroll .arrow::after{
+  content:""; position:absolute; bottom:0; left:-3px;
+  width:7px; height:7px; border-right:1px solid rgba(244,239,227,0.5);
+  border-bottom:1px solid rgba(244,239,227,0.5);
+  transform: rotate(45deg) translate(-2px,-2px);
+}
+
+/* HERO ingot — central visual */
+.ingot-wrap{
+  position: relative;
+  margin: 24px auto;
+  width: 220px;
+  height: 220px;
+  display:flex; align-items:center; justify-content:center;
+}
+.ingot-wrap svg{ width:100%; height:100%; display:block; overflow: visible; }
+
+/* falling gold dust */
+.dust{
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ---------- RESET BEAT ---------- */
+.reset{
+  padding: 56px 28px;
+  text-align: left;
+  background: var(--bg-2);
+  border-top: 1px solid var(--line-d);
+  border-bottom: 1px solid var(--line-d);
+}
+.reset.cream{
+  background: var(--paper-2);
+  border-color: var(--line-l);
+}
+.reset .quote{
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 28px;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: rgba(244,239,227,0.86);
+}
+.reset.cream .quote{ color: var(--ink); }
+.reset .quote em{
+  color: var(--gold);
+  font-style: italic;
+}
+.reset.cream .quote em{ color: var(--gold-deep); }
+
+/* ---------- BUSINESS / MINE-TO-MARKET ---------- */
+.beat-h{
+  font-family: var(--serif);
+  font-size: 40px;
+  line-height: 1.04;
+  letter-spacing: -0.018em;
+  margin: 0 0 18px 0;
+  color: #F4EFE3;
+}
+.beat-h.dark{ color: var(--ink); }
+.beat-h .ital{ font-style: italic; color: var(--gold-2); }
+.beat-h.dark .ital{ color: var(--gold-deep); }
+
+.flow-stage{
+  margin: 28px -8px 8px;
+  position: relative;
+  height: 320px;
+}
+.flow-stage svg{ width:100%; height:100%; display:block; overflow: visible; }
+
+.flow-rows{
+  display:grid; grid-template-columns: 22px 1fr auto; gap: 14px;
+  margin-top: 28px;
+}
+.flow-rows .step{
+  display: contents;
+}
+.flow-rows .num{
+  font-family: var(--mono); font-size: 11px;
+  color: var(--gold); letter-spacing: 0.10em;
+  padding-top: 4px;
+}
+.flow-rows .lab{
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1.2;
+  color: #F4EFE3;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed var(--line-d-2);
+}
+.flow-rows .lab .it{ font-style: italic; color: var(--gold-2); }
+.flow-rows .val{
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: rgba(244,239,227,0.7);
+  padding-top: 8px;
+  text-align: right;
+  white-space: nowrap;
+}
+.step:last-child .lab{ border-bottom: none; }
+
+/* ---------- SCALE ---------- */
+.scale-stage{
+  position: relative;
+  margin: 24px -24px 0;
+  padding: 24px;
+  border-top: 1px solid var(--line-d);
+  border-bottom: 1px solid var(--line-d);
+  background:
+    radial-gradient(80% 60% at 80% 0%, rgba(230,180,73,0.06), transparent 60%),
+    var(--bg-2);
+}
+.bignum{
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+}
+.scale-grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+.scale-row{
+  display:flex; align-items:flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+.scale-row .num{
+  font-family: var(--serif);
+  font-size: 64px;
+  line-height: 0.9;
+  color: #F4EFE3;
+  letter-spacing: -0.025em;
+}
+.scale-row .num .u{
+  font-size: 28px;
+  color: var(--gold);
+  font-style: italic;
+  margin-left: 4px;
+  letter-spacing: -0.01em;
+}
+.scale-row .num.gold{ color: var(--gold-2); }
+.scale-row .lbl{
+  flex: 0 0 130px;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(244,239,227,0.55);
+  text-align: right;
+  line-height: 1.5;
+  padding-bottom: 10px;
+}
+.scale-row + .scale-row{ border-top: 1px dashed var(--line-d); padding-top: 28px; }
+
+/* tier-1 ounces glyph */
+.ounces-bar{
+  margin-top: 6px;
+  height: 6px;
+  background: rgba(244,239,227,0.06);
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+}
+.ounces-bar > span{
+  display:block; height:100%;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold), var(--gold-2));
+  width: 0%;
+  transition: width 1.2s var(--ease-out, cubic-bezier(.22,1,.36,1));
+}
+
+/* ---------- DOLLAR / COSTS ---------- */
+.dollar-stage{
+  position: relative;
+  margin: 24px auto 8px;
+  width: 260px; height: 260px;
+}
+.dollar-stage svg{ width: 100%; height: 100%; overflow: visible; }
+.cost-legend{
+  margin-top: 24px;
+  display: flex; flex-direction: column; gap: 0;
+}
+.cost-row{
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--line-l);
+}
+.cost-row:last-child{ border-bottom: none; }
+.cost-dot{
+  width: 10px; height: 10px;
+  border-radius: 2px;
+}
+.cost-label{
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink-2);
+  font-weight: 400;
+}
+.cost-pct{
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.cost-row.gold .cost-label{ color: var(--gold-deep); font-weight: 500; }
+.cost-row.gold .cost-pct{ color: var(--gold-deep); }
+
+/* survives line */
+.survives{
+  margin-top: 28px;
+  padding: 18px 16px;
+  border: 1px solid var(--line-l-2);
+  border-radius: 4px;
+  background: rgba(230,180,73,0.10);
+  display:flex; align-items:baseline; justify-content: space-between;
+  gap: 12px;
+}
+.survives .text{
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--ink);
+  line-height: 1.25;
+}
+.survives .num{
+  font-family: var(--serif);
+  font-size: 32px;
+  color: var(--gold-deep);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+/* ---------- FOOTPRINT (geographic) ---------- */
+.footprint-stage{
+  margin: 24px -24px 0;
+  padding: 36px 24px 24px;
+  background:
+    radial-gradient(70% 60% at 50% 0%, rgba(230,180,73,0.06), transparent 60%),
+    var(--bg-2);
+  border-top: 1px solid var(--line-d);
+  border-bottom: 1px solid var(--line-d);
+}
+.footprint-svg{ width: 100%; height: 200px; display:block; overflow: visible; }
+.region-list{
+  margin-top: 20px;
+  display: grid; gap: 0;
+}
+.region-row{
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line-d);
+}
+.region-row:last-child{ border-bottom: none; }
+.region-num{
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+}
+.region-name{
+  font-family: var(--serif);
+  font-size: 20px;
+  color: #F4EFE3;
+  line-height: 1.2;
+}
+.region-bar{
+  position: absolute; left: 0; bottom: 0; height: 1px;
+  background: var(--gold);
+}
+.region-row{ position: relative; }
+.region-pct{
+  font-family: var(--mono);
+  font-size: 13px;
+  color: rgba(244,239,227,0.85);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+.region-pct b{ color: var(--gold-2); font-weight: 500; }
+
+/* ---------- THE BET / capital allocation ---------- */
+.bet-stage{
+  margin: 24px 0 0;
+  position: relative;
+}
+.alloc-stack{
+  display: grid; gap: 0;
+  margin-top: 20px;
+  border-top: 1px dashed var(--line-d-2);
+}
+.alloc-item{
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  gap: 10px;
+  padding: 16px 0;
+  border-bottom: 1px dashed var(--line-d-2);
+  align-items: center;
+}
+.alloc-rank{
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+}
+.alloc-name{
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.2;
+  color: #F4EFE3;
+}
+.alloc-name .it{ font-style: italic; color: rgba(244,239,227,0.65); }
+.alloc-amt{
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(244,239,227,0.6);
+  letter-spacing: 0.04em;
+  text-align: right;
+}
+
+/* FCF water-fill */
+.fcf-row{
+  display:flex; align-items:flex-end; justify-content: space-between;
+  gap: 16px;
+  margin-top: 14px;
+}
+.fcf-vessel{
+  width: 90px;
+  height: 130px;
+  position: relative;
+}
+.fcf-vessel svg{ width:100%; height:100%; overflow: visible; }
+.fcf-meta{
+  flex:1;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(244,239,227,0.65);
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.fcf-meta b{ color: var(--gold-2); font-weight: 500; }
+.fcf-num{
+  font-family: var(--serif);
+  font-size: 56px;
+  line-height: 0.9;
+  color: var(--gold-2);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+/* ---------- COMPETITORS ---------- */
+.peers-stage{
+  margin-top: 28px;
+}
+.peer{
+  padding: 22px 0 18px;
+  border-bottom: 1px solid var(--line-l);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.peer:last-child{ border-bottom: none; }
+.peer-head{
+  display:flex; align-items: baseline; gap: 8px;
+}
+.peer-name{
+  font-family: var(--serif);
+  font-size: 26px;
+  line-height: 1.05;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+}
+.peer-tkr{
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gold-deep);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+.peer-bar-wrap{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+}
+.peer-cap-row{
+  display:flex; align-items:center; gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.peer-cap-row .num{
+  color: var(--ink);
+  font-size: 11px;
+}
+.peer-bar{
+  height: 14px;
+  background: rgba(14,12,9,0.05);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+}
+.peer-bar > .fill{
+  position: absolute; inset: 0 auto 0 0;
+  background: var(--ink);
+  width: 0%;
+}
+.peer.is-self .peer-bar > .fill{
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold) 60%, var(--gold-2));
+}
+.peer-blurb{
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-3);
+  font-weight: 400;
+  margin: 0;
+}
+.peer-blurb em{ color: var(--ink); font-style: italic; font-family: var(--serif); font-size: 14px; }
+.peer-meta{
+  display:flex; flex-wrap: wrap; gap: 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.peer-meta span b{ color: var(--ink); font-weight: 500; }
+
+.peers-head{
+  display:flex; align-items: baseline; gap: 12px;
+  margin-bottom: 6px;
+}
+
+/* ---------- CLOSE ---------- */
+.close{
+  padding: 80px 24px 100px;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(80% 60% at 50% 100%, rgba(230,180,73,0.18), transparent 60%),
+    var(--bg);
+}
+.close h2{
+  font-family: var(--serif);
+  font-size: 56px;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  margin: 0 0 32px;
+  color: #F4EFE3;
+}
+.close h2 .ital{ font-style: italic; color: var(--gold-2); }
+.close .perounce{
+  display:flex; flex-direction:column; gap: 4px;
+  margin: 32px 0;
+  padding: 24px 0;
+  border-top: 1px solid var(--line-d);
+  border-bottom: 1px solid var(--line-d);
+}
+.close .perounce .row{
+  display:flex; align-items: baseline; justify-content: space-between;
+  gap: 10px;
+}
+.close .perounce .lbl{
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  color: rgba(244,239,227,0.5);
+  text-transform: uppercase;
+}
+.close .perounce .num{
+  font-family: var(--serif);
+  font-size: 28px;
+  color: #F4EFE3;
+  letter-spacing: -0.015em;
+}
+.close .perounce .num.gold{ color: var(--gold-2); font-style: italic; }
+.close .signoff{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(244,239,227,0.45);
+  margin-top: 40px;
+  display:flex; align-items:center; gap: 10px;
+}
+.close .signoff .dot{
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+/* footer mini */
+.footer{
+  padding: 24px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(244,239,227,0.35);
+  text-align: center;
+  border-top: 1px solid var(--line-d);
+}
+
+/* ---------- REVEAL ---------- */
+.rv{ opacity: 0; transform: translateY(14px); transition: opacity .65s cubic-bezier(.22,1,.36,1), transform .65s cubic-bezier(.22,1,.36,1); }
+.rv.in{ opacity: 1; transform: none; }
+.rv.d1{ transition-delay: 60ms; }
+.rv.d2{ transition-delay: 140ms; }
+.rv.d3{ transition-delay: 220ms; }
+.rv.d4{ transition-delay: 300ms; }
+
+/* helper */
+.gold{ color: var(--gold-2); }
+.gold-deep{ color: var(--gold-deep); }
+
+/* sticky-ingot scene wrapper for mine-to-market */
+.scroll-scene{
+  position: relative;
+  height: 220vh;
+}
+.scroll-scene .sticky{
+  position: sticky; top: 56px;
+  height: calc(100vh - 56px);
+  display:flex; align-items:center; justify-content:center;
+  overflow: hidden;
+}
+
+/* metaphor: gold core sample bar (right side of page) */
+.core-sample{
+  position: fixed;
+  top: 56px;
+  right: 6px;
+  bottom: 0;
+  width: 4px;
+  pointer-events: none;
+  z-index: 40;
+  display: none; /* enable if useful */
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ============ CHROME ============ -->
+  <header class="chrome" role="banner">
+    <div class="chrome-row">
+      <span class="tkr">NEM</span>
+      <span class="name">Newmont</span>
+      <span class="label">Recap · FY '25</span>
+    </div>
+    <div class="progress" aria-hidden="true">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" aria-labelledby="hero-h">
+    <canvas class="hero-canvas" id="dust"></canvas>
+
+    <div class="hero-inner">
+      <div class="hero-top">
+        <div class="eyebrow"><span>Thesis</span> <span class="dim">·  the only one</span></div>
+
+        <h1 id="hero-h">
+          5.9 <span class="ital">million</span><br>
+          ounces. <span class="ital">One</span><br>
+          company.
+          <span class="small-em">The sole gold producer in the&nbsp;S&amp;P 500.</span>
+        </h1>
+      </div>
+
+      <!-- center ingot visual -->
+      <div class="ingot-wrap" aria-hidden="true">
+        <svg viewBox="-110 -110 220 220">
+          <defs>
+            <linearGradient id="gIngot" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#FFE6A6"/>
+              <stop offset="35%" stop-color="#F2CB6E"/>
+              <stop offset="65%" stop-color="#E6B449"/>
+              <stop offset="100%" stop-color="#8C6418"/>
+            </linearGradient>
+            <linearGradient id="gIngotEdge" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFEFC2" stop-opacity=".9"/>
+              <stop offset="100%" stop-color="#8C6418" stop-opacity="0"/>
+            </linearGradient>
+            <radialGradient id="gIngotGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#E6B449" stop-opacity=".55"/>
+              <stop offset="100%" stop-color="#E6B449" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- glow -->
+          <ellipse cx="0" cy="10" rx="110" ry="60" fill="url(#gIngotGlow)"/>
+          <!-- ingot top face -->
+          <g id="ingot" transform="translate(0,0)">
+            <!-- side -->
+            <polygon points="-72,16 72,16 84,46 -84,46" fill="#8C6418"/>
+            <polygon points="-72,16 72,16 84,46 -84,46" fill="url(#gIngot)" opacity=".55"/>
+            <!-- top trapezoid -->
+            <polygon points="-66,-16 66,-16 72,16 -72,16" fill="url(#gIngot)"/>
+            <!-- top highlight -->
+            <polygon points="-58,-12 58,-12 62,-2 -62,-2" fill="url(#gIngotEdge)" opacity=".9"/>
+            <!-- stamp -->
+            <g font-family="Geist Mono, monospace" font-size="6" letter-spacing="0.6" fill="#5A3F0E" opacity=".75">
+              <text x="-40" y="6">NEM · 999.9</text>
+              <text x="-40" y="12" font-size="4">5.9 Moz · FY25</text>
+            </g>
+          </g>
+          <!-- micro highlight -->
+          <path d="M-58,-12 Q-30,-15 0,-15 T58,-12" stroke="#FFF6D9" stroke-width="1.2" fill="none" opacity=".7"/>
+        </svg>
+      </div>
+
+      <div class="hero-bot">
+        <div class="hero-meta">
+          NYSE · <b>NEM</b><br>
+          Mkt cap <b>$120.79B</b><br>
+          FY25 rev <b>$22.67B</b>
+        </div>
+        <div class="hero-scroll">
+          Scroll
+          <div class="arrow"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 1 ============ -->
+  <section class="reset" aria-hidden="false">
+    <p class="quote rv">
+      You don't index gold by accident. <em>You mine it</em> — and Newmont is the only one of its kind on the&nbsp;500.
+    </p>
+  </section>
+
+  <!-- ============ HOW IT MAKES MONEY ============ -->
+  <section class="dark" aria-labelledby="biz-h">
+    <div class="eyebrow-row rv"><span class="eyebrow"><span class="dim">02 ·</span>  Mine to market</span><span class="dotline"></span></div>
+
+    <h2 class="beat-h rv" id="biz-h">
+      Rock in. <br><span class="ital">Bullion</span> out.
+    </h2>
+    <p class="copy rv d1">
+      Almost every dollar starts as ore. Newmont digs it, grinds it, refines it, and sells it
+      <span class="kicker">at the day's spot price</span> — with copper, silver, zinc and lead falling out as by-products along the way.
+    </p>
+
+    <!-- flow visual -->
+    <div class="flow-stage rv d2" aria-hidden="true">
+      <svg viewBox="0 0 360 320" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="gOre" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6B5A3D"/>
+            <stop offset="100%" stop-color="#382C19"/>
+          </linearGradient>
+          <linearGradient id="gBar" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#FFE6A6"/>
+            <stop offset="100%" stop-color="#C99634"/>
+          </linearGradient>
+          <linearGradient id="gPipe" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#382C19"/>
+            <stop offset="50%" stop-color="#6B5A3D"/>
+            <stop offset="100%" stop-color="#C99634"/>
+          </linearGradient>
+        </defs>
+
+        <!-- earth strata cross-section -->
+        <g opacity=".9">
+          <path d="M0,40 Q90,28 180,42 T360,38 L360,90 L0,90 Z" fill="#1B1813"/>
+          <path d="M0,90 Q90,80 180,98 T360,86 L360,150 L0,150 Z" fill="#251D11"/>
+          <path d="M0,150 Q90,140 180,160 T360,148 L360,220 L0,220 Z" fill="#352812"/>
+          <path d="M0,220 Q90,210 180,232 T360,218 L360,320 L0,320 Z" fill="#1A130A"/>
+          <!-- ore veins -->
+          <path d="M40,210 Q120,160 200,180 T340,150" stroke="#E6B449" stroke-width="1.3" fill="none" opacity=".5"/>
+          <path d="M20,250 Q100,210 180,230 T350,200" stroke="#E6B449" stroke-width=".8" fill="none" opacity=".35"/>
+          <path d="M50,290 Q140,260 230,275 T350,260" stroke="#E6B449" stroke-width=".6" fill="none" opacity=".25"/>
+        </g>
+
+        <!-- mine shaft -->
+        <g>
+          <path d="M40,40 L60,30 L80,40 L80,210 Q80,225 60,225 Q40,225 40,210 Z" fill="#0E0C09" stroke="#E6B449" stroke-width="0.8" stroke-opacity=".25"/>
+          <!-- shaft segments -->
+          <line x1="42" y1="60" x2="78" y2="60" stroke="#E6B449" stroke-width=".4" stroke-opacity=".35"/>
+          <line x1="42" y1="100" x2="78" y2="100" stroke="#E6B449" stroke-width=".4" stroke-opacity=".35"/>
+          <line x1="42" y1="140" x2="78" y2="140" stroke="#E6B449" stroke-width=".4" stroke-opacity=".35"/>
+          <line x1="42" y1="180" x2="78" y2="180" stroke="#E6B449" stroke-width=".4" stroke-opacity=".35"/>
+        </g>
+
+        <!-- ore truck -->
+        <g transform="translate(95,180)">
+          <rect x="0" y="0" width="34" height="14" rx="1" fill="url(#gOre)"/>
+          <rect x="2" y="-4" width="22" height="6" fill="#3a2e18"/>
+          <circle cx="6" cy="16" r="3" fill="#0E0C09" stroke="#5A4F3D" stroke-width=".6"/>
+          <circle cx="28" cy="16" r="3" fill="#0E0C09" stroke="#5A4F3D" stroke-width=".6"/>
+          <!-- ore lumps -->
+          <circle cx="8" cy="0" r="1.6" fill="#E6B449" opacity=".7"/>
+          <circle cx="14" cy="-1" r="1.2" fill="#F2CB6E" opacity=".8"/>
+          <circle cx="20" cy="0" r="1.4" fill="#E6B449" opacity=".5"/>
+        </g>
+
+        <!-- arrow -->
+        <path d="M138,187 L165,187" stroke="#E6B449" stroke-width="1" fill="none" stroke-dasharray="2 2"/>
+        <path d="M163,184 L168,187 L163,190 Z" fill="#E6B449"/>
+
+        <!-- mill -->
+        <g transform="translate(170,160)">
+          <rect x="0" y="0" width="50" height="40" fill="#1B1813" stroke="#5A4F3D" stroke-width=".6"/>
+          <circle cx="25" cy="20" r="13" fill="none" stroke="#E6B449" stroke-width=".8" stroke-opacity=".6"/>
+          <circle cx="25" cy="20" r="8" fill="none" stroke="#E6B449" stroke-width=".6" stroke-opacity=".5"/>
+          <circle cx="25" cy="20" r="3" fill="#E6B449"/>
+          <text x="25" y="50" text-anchor="middle" font-family="Geist Mono" font-size="5" fill="#8A7E68" letter-spacing="1">MILL</text>
+        </g>
+
+        <!-- pipe -->
+        <path d="M225,180 Q250,180 260,160 T290,120" stroke="url(#gPipe)" stroke-width="3" fill="none"/>
+        <path d="M225,180 Q250,180 260,160 T290,120" stroke="#E6B449" stroke-width="0.6" fill="none" opacity=".6"/>
+
+        <!-- refinery / pour -->
+        <g transform="translate(280,80)">
+          <!-- crucible -->
+          <path d="M0,0 L40,0 L36,28 L4,28 Z" fill="#0E0C09" stroke="#5A4F3D" stroke-width=".6"/>
+          <ellipse cx="20" cy="0" rx="20" ry="3" fill="#F2CB6E"/>
+          <ellipse cx="20" cy="0" rx="14" ry="2" fill="#FFE6A6"/>
+          <!-- molten drip -->
+          <path d="M20,3 Q19,18 20,30" stroke="#F2CB6E" stroke-width="1.5" fill="none"/>
+          <!-- bar tray -->
+          <g transform="translate(-2,46)">
+            <rect x="0" y="0" width="44" height="10" rx="1" fill="url(#gBar)"/>
+            <rect x="2" y="2" width="40" height="2" rx="1" fill="#FFEFC2" opacity=".7"/>
+            <rect x="0" y="0" width="44" height="10" fill="none" stroke="#8C6418" stroke-width=".5"/>
+          </g>
+        </g>
+
+        <!-- spot price tag -->
+        <g transform="translate(255,40)">
+          <rect x="0" y="0" width="80" height="22" rx="2" fill="#0E0C09" stroke="#E6B449" stroke-width=".6"/>
+          <text x="6" y="9" font-family="Geist Mono" font-size="5" letter-spacing="1.2" fill="#8A7E68">SPOT · OZ</text>
+          <text x="6" y="18" font-family="Instrument Serif" font-size="11" fill="#F2CB6E">→ market</text>
+        </g>
+
+        <!-- ground line -->
+        <line x1="0" y1="40" x2="360" y2="40" stroke="#E6B449" stroke-width=".4" stroke-opacity=".3"/>
+        <text x="4" y="36" font-family="Geist Mono" font-size="5" fill="#8A7E68" letter-spacing="1">SURFACE</text>
+      </svg>
+    </div>
+
+    <div class="flow-rows">
+      <div class="step rv">
+        <div class="num">01</div>
+        <div class="lab">Extract <span class="it">ore</span> from Tier-1 mines</div>
+        <div class="val">5 continents</div>
+      </div>
+      <div class="step rv d1">
+        <div class="num">02</div>
+        <div class="lab">Mill, leach, <span class="it">refine</span></div>
+        <div class="val">$1,358 / oz AISC</div>
+      </div>
+      <div class="step rv d2">
+        <div class="num">03</div>
+        <div class="lab">Sell at <span class="it">spot</span></div>
+        <div class="val">$22.67B FY25</div>
+      </div>
+      <div class="step rv d3">
+        <div class="num">04</div>
+        <div class="lab">By-products <span class="it">trail behind</span></div>
+        <div class="val">Cu · Ag · Zn · Pb</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCALE ============ -->
+  <section class="dark tight" aria-labelledby="scale-h">
+    <div class="eyebrow-row rv"><span class="eyebrow"><span class="dim">03 ·</span>  The scale</span><span class="dotline"></span></div>
+    <h2 class="beat-h rv" id="scale-h">
+      Numbers that <span class="ital">don't</span><br>fit on a coin.
+    </h2>
+    <p class="copy rv d1">
+      A $120.79B market cap built one ounce at a time. Last year, Newmont pulled <span class="kicker">5.9 million</span> of them from the ground — plus 28 million ounces of silver and 135 thousand tonnes of copper as the metallic exhaust.
+    </p>
+  </section>
+
+  <section class="scale-stage" aria-hidden="false">
+    <div class="scale-grid">
+      <div class="scale-row rv">
+        <div class="num gold" data-count="5.9" data-suffix="M">0<span class="u">oz Au</span></div>
+        <div class="lbl">Attributable<br>gold ounces</div>
+      </div>
+      <div class="scale-row rv d1">
+        <div class="num" data-count="22.67" data-prefix="$" data-suffix="B">$0<span class="u">FY25 rev</span></div>
+        <div class="lbl">Total revenue<br>FY 2025</div>
+      </div>
+      <div class="scale-row rv d2">
+        <div class="num" data-count="120.79" data-prefix="$" data-suffix="B">$0<span class="u">mkt cap</span></div>
+        <div class="lbl">Market<br>capitalization</div>
+      </div>
+      <div class="scale-row rv d3">
+        <div class="num" data-count="28" data-suffix="K+">0<span class="u">people</span></div>
+        <div class="lbl">Employees<br>worldwide</div>
+      </div>
+      <div class="scale-row rv d4">
+        <div class="num" data-count="7.31" data-prefix="$" data-suffix="B">$0<span class="u">Q1 '26 rev</span></div>
+        <div class="lbl">Most recent<br>quarter</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 2 ============ -->
+  <section class="reset" aria-hidden="false">
+    <p class="quote rv">
+      A barrel of revenue arrives. <em>Most of it leaves before sundown</em> — the bill for digging is steep.
+    </p>
+  </section>
+
+  <!-- ============ THE DOLLAR / COSTS — light interlude ============ -->
+  <section class="cream" aria-labelledby="cost-h">
+    <div class="eyebrow-row rv"><span class="eyebrow dark"><span class="dim">04 ·</span>  Where the dollar goes</span><span class="dotline" style="background:linear-gradient(90deg,var(--ink-3),transparent);"></span></div>
+
+    <h2 class="beat-h dark rv" id="cost-h">
+      One dollar of revenue, <span class="ital">cut into cents</span>.
+    </h2>
+    <p class="copy dark rv d1">
+      For every $1 Newmont earns, this is what it actually costs to dig. The biggest slice — <span class="kicker kicker-dark">forty-seven cents</span> — never makes it past the pit wall.
+    </p>
+
+    <!-- the dollar coin chart — concentric rings -->
+    <div class="dollar-stage rv d2" aria-hidden="true">
+      <svg id="dollarSvg" viewBox="-130 -130 260 260">
+        <defs>
+          <radialGradient id="coinFace" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0%" stop-color="#FFFBF0"/>
+            <stop offset="100%" stop-color="#E9E2D0"/>
+          </radialGradient>
+          <radialGradient id="coinGold" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0%" stop-color="#FFE6A6"/>
+            <stop offset="100%" stop-color="#C99634"/>
+          </radialGradient>
+        </defs>
+
+        <!-- coin shadow -->
+        <ellipse cx="0" cy="115" rx="105" ry="8" fill="rgba(14,12,9,0.10)"/>
+
+        <!-- back ring (full circle of cost) -->
+        <circle cx="0" cy="0" r="105" fill="url(#coinFace)" stroke="#0E0C09" stroke-width="0.6" stroke-opacity=".15"/>
+        <circle cx="0" cy="0" r="105" fill="none" stroke="#0E0C09" stroke-width="0.5" stroke-opacity=".10"/>
+
+        <!-- arc segments (donut) -->
+        <g id="costArcs"></g>
+
+        <!-- inner — survives -->
+        <circle cx="0" cy="0" r="58" fill="url(#coinGold)"/>
+        <!-- inner stamp -->
+        <g font-family="Instrument Serif" text-anchor="middle" fill="#5A3F0E">
+          <text x="0" y="-8" font-size="14" letter-spacing="2" font-style="italic" opacity=".75">survives</text>
+          <text x="0" y="22" font-size="40" letter-spacing="-0.04em">24¢</text>
+        </g>
+        <!-- coin rim ticks -->
+        <g stroke="#0E0C09" stroke-opacity=".18" stroke-width=".5">
+          <line x1="0" y1="-108" x2="0" y2="-100"/>
+          <line x1="0" y1="100" x2="0" y2="108"/>
+          <line x1="-108" y1="0" x2="-100" y2="0"/>
+          <line x1="100" y1="0" x2="108" y2="0"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="cost-legend rv d3">
+      <!-- rendered rows -->
+      <div class="cost-row" style="">
+        <div class="cost-dot" style="background:#C0392B"></div>
+        <div class="cost-label">Cost of revenue · CAS &amp; production</div>
+        <div class="cost-pct">47¢</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-dot" style="background:#E67E22"></div>
+        <div class="cost-label">Depreciation, depletion &amp; amortization</div>
+        <div class="cost-pct">12¢</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-dot" style="background:#16A085"></div>
+        <div class="cost-label">Capital expenditures · sustaining</div>
+        <div class="cost-pct">9¢</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-dot" style="background:#27AE60"></div>
+        <div class="cost-label">Reclamation &amp; remediation</div>
+        <div class="cost-pct">4¢</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-dot" style="background:#2980B9"></div>
+        <div class="cost-label">General &amp; administrative</div>
+        <div class="cost-pct">2¢</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-dot" style="background:#8E44AD"></div>
+        <div class="cost-label">Exploration</div>
+        <div class="cost-pct">2¢</div>
+      </div>
+      <div class="cost-row gold">
+        <div class="cost-dot" style="background:#E6B449"></div>
+        <div class="cost-label">What survives — to fund the next dig</div>
+        <div class="cost-pct">24¢</div>
+      </div>
+    </div>
+
+    <div class="survives rv d4">
+      <div class="text">Twenty-four cents <em>make it back to the surface</em>.</div>
+      <div class="num">24¢</div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTPRINT ============ -->
+  <section class="dark" aria-labelledby="foot-h">
+    <div class="eyebrow-row rv"><span class="eyebrow"><span class="dim">05 ·</span>  Footprint</span><span class="dotline"></span></div>
+
+    <h2 class="beat-h rv" id="foot-h">
+      Four <span class="ital">continents</span>,<br>one ledger.
+    </h2>
+    <p class="copy rv d1">
+      Tier-1 mines spread across favorable jurisdictions — none big enough to halt the company if a single regime turns. The portfolio is the hedge.
+    </p>
+
+    <div class="footprint-stage rv d2" aria-hidden="false">
+      <!-- abstract continent dot map -->
+      <svg class="footprint-svg" viewBox="0 0 360 200" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="hot" cx=".5" cy=".5" r=".5">
+            <stop offset="0%" stop-color="#F2CB6E"/>
+            <stop offset="100%" stop-color="#E6B449" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- soft equator lines -->
+        <line x1="0" y1="100" x2="360" y2="100" stroke="#F4EFE3" stroke-opacity=".05" stroke-dasharray="2 4"/>
+        <line x1="0" y1="60" x2="360" y2="60" stroke="#F4EFE3" stroke-opacity=".04"/>
+        <line x1="0" y1="140" x2="360" y2="140" stroke="#F4EFE3" stroke-opacity=".04"/>
+
+        <!-- continent dot clusters (stylized) -->
+        <!-- North America -->
+        <g id="r-na" opacity=".95">
+          <g fill="rgba(244,239,227,0.18)">
+            <!-- continent silhouette via small circles -->
+            <circle cx="40" cy="70" r="2"/><circle cx="46" cy="66" r="2"/><circle cx="52" cy="68" r="2"/><circle cx="58" cy="72" r="2"/>
+            <circle cx="44" cy="74" r="2"/><circle cx="50" cy="76" r="2"/><circle cx="56" cy="78" r="2"/>
+            <circle cx="48" cy="82" r="2"/><circle cx="54" cy="84" r="2"/><circle cx="60" cy="80" r="2"/>
+            <circle cx="40" cy="80" r="2"/><circle cx="46" cy="86" r="2"/><circle cx="52" cy="90" r="2"/>
+            <circle cx="58" cy="92" r="2"/><circle cx="44" cy="92" r="2"/>
+          </g>
+          <!-- hotspot -->
+          <circle cx="50" cy="80" r="22" fill="url(#hot)" opacity="0"/>
+          <circle class="hotspot" data-pct="25" cx="50" cy="80" r="6" fill="#E6B449" opacity=".95"/>
+          <text x="50" y="50" text-anchor="middle" font-family="Geist Mono" font-size="6" fill="#F2CB6E" letter-spacing="1">25%</text>
+        </g>
+
+        <!-- Latin America & Caribbean -->
+        <g id="r-la">
+          <g fill="rgba(244,239,227,0.18)">
+            <circle cx="80" cy="110" r="2"/><circle cx="84" cy="116" r="2"/><circle cx="88" cy="122" r="2"/>
+            <circle cx="86" cy="128" r="2"/><circle cx="92" cy="130" r="2"/><circle cx="90" cy="138" r="2"/>
+            <circle cx="94" cy="144" r="2"/><circle cx="88" cy="148" r="2"/><circle cx="92" cy="156" r="2"/>
+            <circle cx="86" cy="162" r="2"/><circle cx="90" cy="168" r="2"/>
+            <circle cx="80" cy="120" r="2"/><circle cx="76" cy="128" r="2"/>
+          </g>
+          <circle class="hotspot" data-pct="27" cx="88" cy="140" r="6" fill="#E6B449" opacity=".95"/>
+          <text x="88" y="178" text-anchor="middle" font-family="Geist Mono" font-size="6" fill="#F2CB6E" letter-spacing="1">27%</text>
+        </g>
+
+        <!-- Africa -->
+        <g id="r-af">
+          <g fill="rgba(244,239,227,0.18)">
+            <circle cx="180" cy="84" r="2"/><circle cx="186" cy="90" r="2"/><circle cx="192" cy="96" r="2"/>
+            <circle cx="186" cy="100" r="2"/><circle cx="192" cy="104" r="2"/><circle cx="198" cy="110" r="2"/>
+            <circle cx="190" cy="114" r="2"/><circle cx="194" cy="120" r="2"/><circle cx="190" cy="128" r="2"/>
+            <circle cx="184" cy="134" r="2"/><circle cx="188" cy="140" r="2"/><circle cx="194" cy="138" r="2"/>
+            <circle cx="186" cy="146" r="2"/>
+            <circle cx="178" cy="92" r="2"/>
+          </g>
+          <circle class="hotspot" data-pct="20" cx="188" cy="116" r="5" fill="#E6B449" opacity=".95"/>
+          <text x="188" y="158" text-anchor="middle" font-family="Geist Mono" font-size="6" fill="#F2CB6E" letter-spacing="1">20%</text>
+        </g>
+
+        <!-- Australia & PNG -->
+        <g id="r-au">
+          <g fill="rgba(244,239,227,0.18)">
+            <circle cx="290" cy="120" r="2"/><circle cx="296" cy="118" r="2"/><circle cx="302" cy="120" r="2"/><circle cx="308" cy="122" r="2"/>
+            <circle cx="294" cy="124" r="2"/><circle cx="300" cy="126" r="2"/><circle cx="306" cy="128" r="2"/>
+            <circle cx="298" cy="132" r="2"/><circle cx="304" cy="134" r="2"/>
+            <circle cx="312" cy="124" r="2"/><circle cx="316" cy="120" r="2"/>
+            <!-- PNG -->
+            <circle cx="312" cy="105" r="2"/><circle cx="318" cy="108" r="2"/>
+          </g>
+          <circle class="hotspot" data-pct="28" cx="302" cy="125" r="6.5" fill="#E6B449" opacity=".95"/>
+          <text x="302" y="150" text-anchor="middle" font-family="Geist Mono" font-size="6" fill="#F2CB6E" letter-spacing="1">28%</text>
+        </g>
+
+        <!-- connecting hairlines (denver to each region) -->
+        <g stroke="#E6B449" stroke-opacity=".25" stroke-width=".5" fill="none" stroke-dasharray="1.5 2">
+          <path d="M50,80 Q70,90 88,140"/>
+          <path d="M50,80 Q120,40 188,116"/>
+          <path d="M50,80 Q170,30 302,125"/>
+        </g>
+        <!-- Denver pin -->
+        <g>
+          <circle cx="50" cy="80" r="3" fill="#F4EFE3" stroke="#E6B449" stroke-width=".8"/>
+          <text x="58" y="78" font-family="Geist Mono" font-size="5" fill="#F4EFE3" opacity=".7" letter-spacing="1">DENVER · HQ</text>
+        </g>
+      </svg>
+
+      <div class="region-list">
+        <div class="region-row rv" data-w="28">
+          <div class="region-num">01</div>
+          <div class="region-name">Australia &amp; Papua New Guinea</div>
+          <div class="region-pct"><b>28%</b></div>
+          <div class="region-bar" style="width:0%"></div>
+        </div>
+        <div class="region-row rv d1" data-w="27">
+          <div class="region-num">02</div>
+          <div class="region-name">Latin America &amp; Caribbean</div>
+          <div class="region-pct"><b>27%</b></div>
+          <div class="region-bar" style="width:0%"></div>
+        </div>
+        <div class="region-row rv d2" data-w="25">
+          <div class="region-num">03</div>
+          <div class="region-name">North America</div>
+          <div class="region-pct"><b>25%</b></div>
+          <div class="region-bar" style="width:0%"></div>
+        </div>
+        <div class="region-row rv d3" data-w="20">
+          <div class="region-num">04</div>
+          <div class="region-name">Africa</div>
+          <div class="region-pct"><b>20%</b></div>
+          <div class="region-bar" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 3 ============ -->
+  <section class="reset" aria-hidden="false">
+    <p class="quote rv">
+      Cash is the mine after the mine. <em>Newmont sent $3.4 billion home</em> last year — and still kept the lights on.
+    </p>
+  </section>
+
+  <!-- ============ THE BET — capital allocation ============ -->
+  <section class="dark" aria-labelledby="bet-h">
+    <div class="eyebrow-row rv"><span class="eyebrow"><span class="dim">06 ·</span>  The bet</span><span class="dotline"></span></div>
+
+    <h2 class="beat-h rv" id="bet-h">
+      $7.30B <span class="ital">free cash</span>.<br>Five priorities. <span class="ital">In order.</span>
+    </h2>
+    <p class="copy rv d1">
+      A record year of free cash flow gave management the rare luxury of choice. The order matters: keep the mines running first, the balance sheet honest second, growth and dividends after — buybacks soak up whatever is left.
+    </p>
+
+    <!-- FCF vessel -->
+    <div class="fcf-row rv d2" aria-hidden="true">
+      <div class="fcf-vessel">
+        <svg viewBox="0 0 90 130">
+          <defs>
+            <linearGradient id="vessGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#F2CB6E"/>
+              <stop offset="100%" stop-color="#8C6418"/>
+            </linearGradient>
+            <clipPath id="vessClip">
+              <path d="M14,8 L76,8 L72,30 Q72,42 78,52 Q84,62 84,80 Q84,118 45,120 Q6,118 6,80 Q6,62 12,52 Q18,42 18,30 Z"/>
+            </clipPath>
+          </defs>
+          <!-- vessel outline -->
+          <path d="M14,8 L76,8 L72,30 Q72,42 78,52 Q84,62 84,80 Q84,118 45,120 Q6,118 6,80 Q6,62 12,52 Q18,42 18,30 Z"
+                fill="none" stroke="#E6B449" stroke-width="0.8" stroke-opacity=".7"/>
+          <!-- molten fill (top portion) -->
+          <g clip-path="url(#vessClip)">
+            <rect x="0" y="34" width="90" height="100" fill="url(#vessGrad)"/>
+            <path id="vessWave" d="M0,38 Q22,32 45,38 T90,38 L90,140 L0,140 Z" fill="#FFE6A6" opacity=".6"/>
+          </g>
+          <!-- ticks -->
+          <g font-family="Geist Mono" font-size="5" fill="#8A7E68" letter-spacing="1">
+            <line x1="84" y1="38" x2="90" y2="38" stroke="#8A7E68" stroke-width=".4"/>
+            <text x="-2" y="40" text-anchor="end" fill="#F2CB6E">$7.30B</text>
+            <line x1="84" y1="65" x2="90" y2="65" stroke="#8A7E68" stroke-width=".4"/>
+            <text x="-2" y="67" text-anchor="end">$3.4B paid</text>
+            <line x1="84" y1="92" x2="90" y2="92" stroke="#8A7E68" stroke-width=".4"/>
+            <text x="-2" y="94" text-anchor="end">$1B target</text>
+          </g>
+          <text x="45" y="6" text-anchor="middle" font-family="Geist Mono" font-size="5" fill="#8A7E68" letter-spacing="1.5">FCF · FY25</text>
+        </svg>
+      </div>
+      <div class="fcf-meta">
+        <div class="fcf-num">$7.30<span style="font-size:24px;color:rgba(244,239,227,.5);">B</span></div>
+        Operating cash<br><b>$10.33B</b><br>·<br>Net cash position<br><b>~$2.1B</b><br>·<br>Moody's <b>↑ A3</b>
+      </div>
+    </div>
+
+    <div class="alloc-stack rv d3">
+      <div class="alloc-item">
+        <div class="alloc-rank">01</div>
+        <div class="alloc-name">Sustaining capital — <span class="it">keep the mines breathing</span></div>
+        <div class="alloc-amt">$3.04B<br><span style="opacity:.5">capex</span></div>
+      </div>
+      <div class="alloc-item">
+        <div class="alloc-rank">02</div>
+        <div class="alloc-name">Resilient balance sheet</div>
+        <div class="alloc-amt">$1B<br><span style="opacity:.5">net cash target</span></div>
+      </div>
+      <div class="alloc-item">
+        <div class="alloc-rank">03</div>
+        <div class="alloc-name">Development capital</div>
+        <div class="alloc-amt">growth<br><span style="opacity:.5">projects</span></div>
+      </div>
+      <div class="alloc-item">
+        <div class="alloc-rank">04</div>
+        <div class="alloc-name">Sustainable dividend</div>
+        <div class="alloc-amt">$1.11B<br><span style="opacity:.5">paid '25</span></div>
+      </div>
+      <div class="alloc-item">
+        <div class="alloc-rank">05</div>
+        <div class="alloc-name">Buybacks — <span class="it">whatever is left</span></div>
+        <div class="alloc-amt">$2.4B<br><span style="opacity:.5">remaining</span></div>
+      </div>
+    </div>
+
+    <p class="copy rv d4" style="margin-top:24px">
+      Debt cut by <span class="kicker">$3.4B</span> in 2025. The buyback authorization sits at $6.0B; $2.4B is still on the shelf, ready when management says <span class="kicker">when</span>.
+    </p>
+  </section>
+
+  <!-- ============ COMPETITORS — light interlude ============ -->
+  <section class="cream" aria-labelledby="peers-h">
+    <div class="eyebrow-row rv"><span class="eyebrow dark"><span class="dim">07 ·</span>  The rivals</span><span class="dotline" style="background:linear-gradient(90deg,var(--ink-3),transparent);"></span></div>
+
+    <h2 class="beat-h dark rv" id="peers-h">
+      Two miners, <span class="ital">one streamer</span>.
+    </h2>
+    <p class="copy dark rv d1" style="margin-bottom: 28px;">
+      Newmont's three closest rivals split into two camps. Two of them dig. <span class="kicker kicker-dark">One simply lends the capital and waits</span> — and is winning the room from senior producers.
+    </p>
+
+    <div class="peers-stage">
+      <div class="peer is-self rv">
+        <div class="peer-head">
+          <div class="peer-name">Newmont</div>
+          <div class="peer-tkr">NEM</div>
+        </div>
+        <div class="peer-bar-wrap">
+          <div class="peer-cap-row"><span>Mkt cap</span><span class="num">$120.79B</span></div>
+          <div class="peer-bar"><div class="fill" data-w="100"></div></div>
+        </div>
+        <p class="peer-blurb"><em>The benchmark.</em> Sole gold producer in the S&amp;P 500. Tier-1 portfolio, mine-to-market, 5.9 Moz pulled in FY25.</p>
+        <div class="peer-meta"><span>Rev <b>$22.67B</b></span><span>5.9 Moz Au</span><span>S&amp;P 500</span></div>
+      </div>
+
+      <div class="peer rv d1">
+        <div class="peer-head">
+          <div class="peer-name">Agnico Eagle</div>
+          <div class="peer-tkr">AEM</div>
+        </div>
+        <div class="peer-bar-wrap">
+          <div class="peer-cap-row"><span>Mkt cap</span><span class="num">$147.57B</span></div>
+          <div class="peer-bar"><div class="fill" data-w="100"></div></div>
+        </div>
+        <p class="peer-blurb"><em>The peer above.</em> Long-life underground mines across Canada, Australia, Finland, Mexico — widely seen as the closest match to Newmont's Tier-1 standard.</p>
+        <div class="peer-meta"><span>Q rev <b>$3.06B</b></span><span>P/E <b>24.16</b></span><span>YoY <b>+43.7%</b></span></div>
+      </div>
+
+      <div class="peer rv d2">
+        <div class="peer-head">
+          <div class="peer-name">Barrick Mining</div>
+          <div class="peer-tkr">B</div>
+        </div>
+        <div class="peer-bar-wrap">
+          <div class="peer-cap-row"><span>Mkt cap</span><span class="num">$97.44B</span></div>
+          <div class="peer-bar"><div class="fill" data-w="66"></div></div>
+        </div>
+        <p class="peer-blurb"><em>The direct rival.</em> JV partner at Nevada Gold Mines and active counterparty in disputes — head-to-head for the same ounces, capital, and Tier-1 development.</p>
+        <div class="peer-meta"><span>Rev <b>$1.45B</b></span><span>P/E <b>14.25</b></span><span>YoY <b>+31.2%</b></span></div>
+      </div>
+
+      <div class="peer rv d3">
+        <div class="peer-head">
+          <div class="peer-name">Wheaton Precious</div>
+          <div class="peer-tkr">WPM</div>
+        </div>
+        <div class="peer-bar-wrap">
+          <div class="peer-cap-row"><span>Mkt cap</span><span class="num">$92.20B</span></div>
+          <div class="peer-bar"><div class="fill" data-w="62"></div></div>
+        </div>
+        <p class="peer-blurb"><em>The structural threat.</em> A streamer — gold and silver exposure without the operational risk. Capital-light, drawing institutional flows away from senior producers like Newmont.</p>
+        <div class="peer-meta"><span>Q rev <b>$476M</b></span><span>P/E <b>45.75</b></span><span>YoY <b>+80.2%</b></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLOSE / TAKEAWAY ============ -->
+  <section class="close" aria-labelledby="close-h">
+    <div class="eyebrow-row rv"><span class="eyebrow"><span class="dim">08 ·</span>  The takeaway</span><span class="dotline"></span></div>
+
+    <h2 id="close-h" class="rv">
+      Per ounce, <span class="ital">$1,358</span><br>to dig it.<br>
+      The rest is <span class="ital">gravity.</span>
+    </h2>
+
+    <div class="perounce rv d1">
+      <div class="row"><span class="lbl">All-in sustaining cost</span><span class="num">$1,358 / oz</span></div>
+      <div class="row"><span class="lbl">Ounces produced</span><span class="num">5.9M</span></div>
+      <div class="row"><span class="lbl">Returned to shareholders</span><span class="num gold">$3.4B</span></div>
+      <div class="row"><span class="lbl">Free cash flow</span><span class="num gold">$7.30B</span></div>
+    </div>
+
+    <p class="copy rv d2">
+      The opening claim was a number: <span class="kicker">5.9 million ounces, one company.</span> The closing claim is the same number, multiplied. <span class="serif-i" style="color:#F4EFE3;">Once the bill is paid, what remains is the only thing that ever was — gold, gravity, and time.</span>
+    </p>
+
+    <div class="signoff">
+      <span class="dot"></span>
+      End of recap · NEM · FY '25
+    </div>
+  </section>
+
+  <div class="footer">
+    Recap derived from Newmont FY 2025 disclosures.<br>
+    For research only · not investment advice
+  </div>
+
+</div>
+
+<script>
+/* ---------- SCROLL PROGRESS ---------- */
+const progressEl = document.getElementById('progress');
+function updateProgress(){
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+  progressEl.style.width = pct + '%';
+}
+window.addEventListener('scroll', updateProgress, {passive:true});
+window.addEventListener('resize', updateProgress);
+updateProgress();
+
+/* ---------- REVEAL ---------- */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      // count-up support
+      const num = e.target.querySelector ? null : null;
+      if(e.target.matches && e.target.matches('.scale-row')){
+        const numEl = e.target.querySelector('.num');
+        const target = parseFloat(numEl.dataset.count);
+        const prefix = numEl.dataset.prefix || '';
+        const suffix = numEl.dataset.suffix || '';
+        const u = numEl.querySelector('.u');
+        const uHTML = u ? u.outerHTML : '';
+        animateCount(numEl, 0, target, 1100, (v)=>{
+          numEl.innerHTML = prefix + formatNum(v, target) + uHTML.replace('>'+u.textContent+'<', '> '+u.textContent+' <').replace(u.textContent, suffix && !u.textContent.includes(suffix)?u.textContent: u.textContent);
+        });
+        // simpler: rewrite cleanly
+        const finalize = () => {};
+        // re-do using a clean approach below
+      }
+      if(e.target.matches && e.target.matches('.region-row')){
+        const w = parseFloat(e.target.dataset.w);
+        const bar = e.target.querySelector('.region-bar');
+        bar.style.transition = 'width 1.1s cubic-bezier(.22,1,.36,1)';
+        bar.style.width = (w * 2) + '%'; // visually amplify - max 56
+        setTimeout(()=>{
+          bar.style.width = (Math.min(w*2.6, 100)) + '%';
+        }, 30);
+      }
+      if(e.target.matches && e.target.matches('.peer')){
+        const fill = e.target.querySelector('.fill');
+        const w = parseFloat(fill.dataset.w);
+        setTimeout(()=>{
+          fill.style.transition = 'width 1.1s cubic-bezier(.22,1,.36,1)';
+          fill.style.width = w + '%';
+        }, 60);
+      }
+      io.unobserve(e.target);
+    }
+  });
+}, {threshold: 0.18, rootMargin: '0px 0px -8% 0px'});
+
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+/* ---------- COUNT UP (cleaner, separate observer) ---------- */
+function animateCount(el, from, to, dur, render){
+  const t0 = performance.now();
+  function step(t){
+    const k = Math.min(1, (t - t0) / dur);
+    const ease = 1 - Math.pow(1 - k, 3);
+    const v = from + (to - from) * ease;
+    render(v);
+    if(k < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+function formatNum(v, target){
+  // mimic precision of target
+  if (target >= 100) return v.toFixed(2);
+  if (target >= 10) return v.toFixed(2);
+  if (target >= 1) return v.toFixed(1);
+  return v.toFixed(0);
+}
+
+const numIO = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const numEl = e.target;
+    const target = parseFloat(numEl.dataset.count);
+    const prefix = numEl.dataset.prefix || '';
+    const suffix = numEl.dataset.suffix || '';
+    const uTxt = numEl.querySelector('.u') ? numEl.querySelector('.u').textContent : '';
+    animateCount(numEl, 0, target, 1200, (v)=>{
+      numEl.innerHTML = prefix + formatNum(v, target) + (suffix?suffix:'') + (uTxt?'<span class="u">'+uTxt+'</span>':'');
+    });
+    numIO.unobserve(numEl);
+  });
+}, {threshold: 0.4});
+document.querySelectorAll('.scale-row .num[data-count]').forEach(el=>numIO.observe(el));
+
+/* ---------- DOLLAR DONUT BUILD ---------- */
+(function buildDonut(){
+  const arcs = document.getElementById('costArcs');
+  if(!arcs) return;
+  const data = [
+    {pct:47, color:'#C0392B'},
+    {pct:12, color:'#E67E22'},
+    {pct:9,  color:'#16A085'},
+    {pct:4,  color:'#27AE60'},
+    {pct:2,  color:'#2980B9'},
+    {pct:2,  color:'#8E44AD'},
+    {pct:24, color:'#E6B449'} // survives
+  ];
+  const total = 100;
+  let acc = -90; // start at top
+  const r = 90, ri = 60;
+  data.forEach(d=>{
+    const a0 = acc;
+    const a1 = acc + (d.pct/total)*360 - 0.6; // small gap
+    acc += (d.pct/total)*360;
+    const path = annularSector(0, 0, r, ri, a0, a1);
+    const el = document.createElementNS('http://www.w3.org/2000/svg','path');
+    el.setAttribute('d', path);
+    el.setAttribute('fill', d.color);
+    el.setAttribute('opacity', '0');
+    arcs.appendChild(el);
+    // animate in when stage visible
+    requestAnimationFrame(()=>{
+      el.setAttribute('opacity','0');
+    });
+  });
+
+  function annularSector(cx, cy, r, ri, a0, a1){
+    const rad = (a)=> a * Math.PI/180;
+    const x0 = cx + r*Math.cos(rad(a0));
+    const y0 = cy + r*Math.sin(rad(a0));
+    const x1 = cx + r*Math.cos(rad(a1));
+    const y1 = cy + r*Math.sin(rad(a1));
+    const x2 = cx + ri*Math.cos(rad(a1));
+    const y2 = cy + ri*Math.sin(rad(a1));
+    const x3 = cx + ri*Math.cos(rad(a0));
+    const y3 = cy + ri*Math.sin(rad(a0));
+    const large = (a1 - a0) > 180 ? 1 : 0;
+    return `M ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} L ${x2} ${y2} A ${ri} ${ri} 0 ${large} 0 ${x3} ${y3} Z`;
+  }
+
+  // animate arcs in when SVG visible
+  const dollarSvg = document.getElementById('dollarSvg');
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        const paths = arcs.querySelectorAll('path');
+        paths.forEach((p, i)=>{
+          setTimeout(()=>{
+            p.style.transition = 'opacity .6s ease-out';
+            p.setAttribute('opacity', i === paths.length-1 ? '1' : '1');
+          }, 80 * i);
+        });
+        obs.unobserve(en.target);
+      }
+    });
+  }, {threshold: 0.3});
+  obs.observe(dollarSvg);
+})();
+
+/* ---------- HERO GOLD DUST ---------- */
+(function dust(){
+  const c = document.getElementById('dust');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  let W=0,H=0,DPR=Math.min(window.devicePixelRatio||1, 2);
+  const N = 60;
+  const parts = [];
+  function resize(){
+    const r = c.getBoundingClientRect();
+    W = r.width; H = r.height;
+    c.width = W*DPR; c.height = H*DPR;
+    c.style.width = W+'px'; c.style.height = H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  function spawn(){
+    parts.length = 0;
+    for(let i=0;i<N;i++){
+      parts.push({
+        x: Math.random()*W,
+        y: Math.random()*H,
+        vy: 0.15 + Math.random()*0.45,
+        vx: (Math.random()-0.5)*0.15,
+        r: 0.4 + Math.random()*1.2,
+        a: 0.15 + Math.random()*0.5,
+        hue: 38 + Math.random()*10
+      });
+    }
+  }
+  let scrollY = window.scrollY;
+  window.addEventListener('scroll', ()=>{ scrollY = window.scrollY; }, {passive:true});
+  let last = performance.now();
+  function tick(now){
+    const dt = Math.min(33, now-last); last = now;
+    ctx.clearRect(0,0,W,H);
+    const sBoost = 1 + Math.min(2, Math.abs(scrollY)/600);
+    for(const p of parts){
+      p.x += p.vx*dt*0.06;
+      p.y += p.vy*dt*0.06*sBoost;
+      if(p.y > H+4){ p.y = -4; p.x = Math.random()*W; }
+      if(p.x < -4) p.x = W+4;
+      if(p.x > W+4) p.x = -4;
+      ctx.beginPath();
+      ctx.fillStyle = `hsla(${p.hue}, 75%, 65%, ${p.a})`;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fill();
+    }
+    requestAnimationFrame(tick);
+  }
+  resize(); spawn();
+  window.addEventListener('resize', ()=>{ resize(); spawn(); });
+  requestAnimationFrame(tick);
+})();
+
+/* ---------- HERO INGOT ROTATE ON SCROLL ---------- */
+(function ingotRotate(){
+  const ingot = document.querySelector('.ingot-wrap svg');
+  if(!ingot) return;
+  let ticking = false;
+  function update(){
+    const r = ingot.getBoundingClientRect();
+    const center = r.top + r.height/2;
+    const vh = window.innerHeight;
+    const t = (vh/2 - center) / vh; // -1..1
+    const tilt = Math.max(-1, Math.min(1, t)) * 8;
+    const ry = Math.max(-1, Math.min(1, t)) * 14;
+    const liftY = Math.max(-1, Math.min(1, t)) * -10;
+    ingot.style.transform = `perspective(800px) rotateX(${tilt}deg) rotateY(${ry}deg) translateY(${liftY}px)`;
+    ticking = false;
+  }
+  window.addEventListener('scroll', ()=>{
+    if(!ticking){ requestAnimationFrame(update); ticking = true; }
+  }, {passive:true});
+  update();
+})();
+
+/* ---------- FCF VESSEL WAVE ANIM ---------- */
+(function vesselWave(){
+  const wave = document.getElementById('vessWave');
+  if(!wave) return;
+  let t = 0;
+  function step(){
+    t += 0.016;
+    const a = 4;
+    const y = 38;
+    const d = `M0,${y + Math.sin(t)*a} Q22,${y - 4 + Math.cos(t*1.3)*a} 45,${y + Math.sin(t+1)*a} T90,${y + Math.cos(t)*a} L90,140 L0,140 Z`;
+    wave.setAttribute('d', d);
+    requestAnimationFrame(step);
+  }
+  step();
+})();
+
+/* ---------- HOTSPOT PULSE ---------- */
+(function hotspotPulse(){
+  const dots = document.querySelectorAll('.hotspot');
+  let t = 0;
+  function step(){
+    t += 0.02;
+    dots.forEach((d, i)=>{
+      const s = 1 + Math.sin(t + i*0.7) * 0.18;
+      d.setAttribute('transform', `translate(${d.getAttribute('cx')}, ${d.getAttribute('cy')}) scale(${s}) translate(${-d.getAttribute('cx')}, ${-d.getAttribute('cy')})`);
+    });
+    requestAnimationFrame(step);
+  }
+  step();
+})();
+
+</script>
+</body>
+</html>

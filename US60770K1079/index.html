@@ -1,0 +1,2077 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=414, initial-scale=1, viewport-fit=cover" />
+<title>MRNA · Recap FY '25</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<style>
+  /* ============================================================
+     Moderna Recap — mobile-only stage
+     ============================================================ */
+
+  :root {
+    /* Moderna-specific palette — derived from biotech / clinical register.
+       The design system's coral is repurposed only as a soft warmth source;
+       the page's signal color is mRNA red (clinical, slightly mineral). */
+    --paper:       #F6F2EA;     /* manila / lab paper */
+    --paper-2:     #EFEAE0;
+    --paper-3:     #E5DFD2;
+    --ink:         #14110F;
+    --ink-2:       #3A3631;
+    --ink-3:       #6E6960;
+    --ink-4:       #A29D92;
+    --line:        #DCD6C8;
+    --line-strong: #C5BEAB;
+
+    /* mRNA red — the signal color, used sparingly */
+    --signal:      #C82F2A;     /* mRNA red */
+    --signal-soft: #E86560;
+    --signal-deep: #8E1F1B;
+
+    /* Lab inks */
+    --ledger:      #1E2A3A;     /* deep navy ledger ink */
+    --teal:        #2F7A78;     /* scrubs teal */
+    --bone:        #FAF6EC;     /* whiter card surface */
+
+    /* Cost-chart palette comes from JSON, applied inline */
+
+    --bg:          var(--paper);
+    --fg:          var(--ink);
+    --fg-muted:    var(--ink-2);
+    --fg-subtle:   var(--ink-3);
+    --accent:      var(--signal);
+
+    /* Override design system semantics so .eyebrow uses signal color */
+    --signal-on-dark: #FF6A60;
+  }
+
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: auto; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    /* Subtle paper grain */
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(200,47,42,0.025), transparent 50%),
+      radial-gradient(circle at 80% 60%, rgba(30,42,58,0.02), transparent 50%);
+  }
+
+  /* The page is mobile-sized. Center it on wider viewports with a soft frame. */
+  .stage {
+    width: 100%;
+    max-width: 414px;
+    margin: 0 auto;
+    position: relative;
+    background: var(--paper);
+    box-shadow: 0 0 80px rgba(20,17,15,0.04);
+    overflow: hidden;
+  }
+  @media (min-width: 600px) {
+    body {
+      background: #2a2722;
+      padding: 0;
+    }
+    .stage {
+      box-shadow: 0 30px 100px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+  }
+
+  /* ============================================================
+     PERSISTENT CHROME — sticky top bar with scroll-progress hairline
+     ============================================================ */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(246, 242, 234, 0.78);
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    border-bottom: 1px solid rgba(220,214,200,0.6);
+  }
+  .chrome-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px 12px;
+    gap: 12px;
+  }
+  .chrome-left { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+  .ticker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .ticker .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--signal);
+    vertical-align: middle;
+    margin-right: 8px;
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 0 rgba(200,47,42, 0.4);
+    animation: pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(200,47,42, 0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(200,47,42, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(200,47,42, 0); }
+  }
+  .ticker-name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-3);
+    font-weight: 400;
+  }
+  .recap-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 5px 9px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+  .progress-track {
+    height: 1.5px;
+    background: rgba(220,214,200, 0.4);
+    width: 100%;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--signal);
+    width: 0%;
+    transition: width 80ms linear;
+  }
+
+  /* ============================================================
+     SECTION SCAFFOLDING
+     ============================================================ */
+  section {
+    position: relative;
+    padding: 96px 24px;
+  }
+  section.tight { padding: 56px 24px; }
+
+  .eyebrow-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--signal);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow-label::before {
+    content: '';
+    width: 18px;
+    height: 1px;
+    background: var(--signal);
+    display: inline-block;
+  }
+
+  /* Display serif — large, italic-leaning where it earns it. */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .display em, .italic { font-style: italic; }
+  .signal { color: var(--signal); }
+
+  .body-copy {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+  .body-copy em {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.08em;
+  }
+  .body-copy .signal { color: var(--signal); font-style: italic; font-family: var(--font-display); }
+
+  /* ============================================================
+     1. HERO — mRNA helix
+     ============================================================ */
+  .hero {
+    padding: 72px 24px 80px;
+    position: relative;
+    min-height: 92vh;
+    overflow: hidden;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-eyebrow .pill {
+    color: var(--signal);
+    border: 1px solid rgba(200,47,42,0.35);
+    border-radius: 999px;
+    padding: 4px 9px;
+    font-size: 9.5px;
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin-bottom: 28px;
+  }
+  .hero-title .em { font-style: italic; }
+  .hero-title .em.signal { color: var(--signal); }
+
+  .hero-sub {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 33ch;
+    margin-bottom: 64px;
+  }
+  .hero-sub em { font-family: var(--font-display); font-style: italic; font-size: 1.06em; }
+
+  .helix-stage {
+    position: relative;
+    height: 320px;
+    margin: 0 -24px;
+  }
+  .helix-stage svg { width: 100%; height: 100%; display: block; }
+
+  .hero-meta {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 16px;
+  }
+  .hero-meta .cell {
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+  .hero-meta .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+  .hero-meta .v {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .hero-meta .v .unit {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-3);
+    margin-left: 4px;
+    letter-spacing: 0;
+  }
+  .hero-meta .v.signal { color: var(--signal); font-style: italic; }
+
+  /* Scroll indicator at hero bottom */
+  .scroll-cue {
+    margin-top: 64px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .scroll-cue .line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--line) 0%, transparent 100%);
+  }
+  .scroll-cue .arrow {
+    animation: bob 1.8s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  /* ============================================================
+     RESET BEATS — italic-serif interludes on contrasting band
+     ============================================================ */
+  .reset-beat {
+    padding: 56px 36px;
+    background: var(--paper-3);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .reset-beat .quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.18;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+  }
+  .reset-beat .quote .signal { color: var(--signal); }
+  .reset-beat .mark {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.5;
+    color: var(--signal);
+    opacity: 0.4;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  /* ============================================================
+     2. THE BUSINESS — Three vials
+     ============================================================ */
+  .vials-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 36px;
+  }
+  .vial-card {
+    text-align: center;
+    position: relative;
+  }
+  .vial-svg {
+    width: 100%;
+    aspect-ratio: 70/120;
+    margin-bottom: 12px;
+  }
+  .vial-name {
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .vial-tag {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    line-height: 1.4;
+  }
+  .vial-revenue-line {
+    margin-top: 36px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+  }
+  .vial-revenue-line .label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .vial-revenue-line .val {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--ink);
+    font-style: italic;
+  }
+
+  /* ============================================================
+     3. SCALE / DECLINE — pandemic peak to trough
+     ============================================================ */
+  .decline-stage {
+    position: relative;
+    height: 360px;
+    margin: 36px -10px 0;
+  }
+  .decline-stage svg { width: 100%; height: 100%; }
+  .decline-callouts {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .decline-callouts .cell {
+    border-left: 2px solid var(--signal);
+    padding: 4px 0 4px 12px;
+  }
+  .decline-callouts .cell.muted { border-left-color: var(--ink-4); }
+  .decline-callouts .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 6px;
+  }
+  .decline-callouts .v {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .decline-callouts .v.neg { color: var(--signal); }
+
+  /* ============================================================
+     4. WHERE EVERY DOLLAR GOES — costs > 100%
+     ============================================================ */
+  .cost-frame {
+    margin-top: 36px;
+    position: relative;
+  }
+  .cost-bar {
+    position: relative;
+    height: 360px;
+    width: 56px;
+    margin: 0 auto;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: visible;
+  }
+  .cost-revenue-line {
+    position: absolute;
+    left: -120px;
+    right: -120px;
+    border-top: 1.5px dashed var(--ink);
+    /* placed by JS at the 100% mark of bar height in script via inline style */
+    pointer-events: none;
+  }
+  .cost-revenue-line .label {
+    position: absolute;
+    right: 0;
+    top: -22px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .cost-stack {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    flex-direction: column-reverse;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .cost-seg {
+    width: 100%;
+    height: 0;
+    transition: height 1.2s var(--ease-out);
+    position: relative;
+  }
+  .cost-bracket {
+    position: absolute;
+    width: 80px;
+    pointer-events: none;
+  }
+  .cost-bracket.left {
+    right: calc(50% + 36px);
+    text-align: right;
+  }
+  .cost-bracket.right {
+    left: calc(50% + 36px);
+    text-align: left;
+  }
+  .cost-bracket .pct {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-style: italic;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .cost-bracket .lbl {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 4px;
+    line-height: 1.3;
+  }
+  .cost-bracket .swatch {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+  .cost-summary {
+    margin-top: 56px;
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 16px;
+  }
+  .cost-summary .cell .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 6px;
+  }
+  .cost-summary .cell .v {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1;
+    font-style: italic;
+    color: var(--ink);
+  }
+  .cost-summary .cell .v.neg { color: var(--signal); }
+
+  /* ============================================================
+     5. PIPELINE — 44 candidates as molecule rows
+     ============================================================ */
+  .pipeline-frame {
+    margin: 36px -8px 0;
+  }
+  .phase-axis {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr 0.9fr;
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 0 12px 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .phase-axis div { text-align: center; }
+  .phase-axis div:first-child { text-align: left; }
+  .pipeline-rows {
+    margin-top: 4px;
+  }
+  .pipeline-row {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr 0.9fr;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px dashed var(--line);
+    position: relative;
+  }
+  .pipeline-row .name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .pipeline-row .name .small {
+    font-family: var(--font-mono);
+    font-style: normal;
+    font-size: 9px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    display: block;
+    margin-top: 4px;
+  }
+  .pipeline-row .dot-track {
+    position: relative;
+    grid-column: 2 / 6;
+    height: 16px;
+    display: flex;
+    align-items: center;
+  }
+  .pipeline-row .progress {
+    height: 1px;
+    background: var(--line);
+    position: absolute;
+    left: 0; right: 0;
+  }
+  .pipeline-row .filled {
+    height: 1.5px;
+    background: var(--ink);
+    position: absolute;
+    left: 0;
+    width: 0%;
+  }
+  .pipeline-row .pip {
+    position: absolute;
+    width: 8px; height: 8px;
+    background: var(--paper);
+    border: 1.5px solid var(--ink-3);
+    border-radius: 50%;
+    transform: translateX(-50%);
+  }
+  .pipeline-row .pip.active {
+    background: var(--signal);
+    border-color: var(--signal);
+    box-shadow: 0 0 0 4px rgba(200,47,42,0.12);
+  }
+  .pipeline-row .pip.approved {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .pipeline-summary {
+    margin-top: 24px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0 12px;
+  }
+  .pipeline-summary .big {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .pipeline-summary .big .signal { color: var(--signal); }
+  .pipeline-summary .lbl {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: right;
+    max-width: 130px;
+    line-height: 1.5;
+  }
+
+  /* ============================================================
+     6. FOOTPRINT — geographic distribution
+     ============================================================ */
+  .footprint-stage {
+    position: relative;
+    margin: 36px -24px 0;
+    aspect-ratio: 1 / 1;
+  }
+  .footprint-stage svg { width: 100%; height: 100%; }
+
+  .footprint-legend {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .footprint-legend .row {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: baseline;
+    gap: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .footprint-legend .row:last-child { border-bottom: none; }
+  .footprint-legend .pct {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 30px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .footprint-legend .row.primary .pct { color: var(--signal); }
+  .footprint-legend .name {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .footprint-legend .meta {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ============================================================
+     7. THE BET — DARK BAND
+     ============================================================ */
+  .dark-band {
+    background: #0E0C0A;
+    color: #F0EAE0;
+    padding: 96px 24px 96px;
+    margin: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .dark-band::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 80% 20%, rgba(200,47,42,0.08), transparent 60%),
+      radial-gradient(circle at 10% 80%, rgba(255,106,96,0.04), transparent 60%);
+    pointer-events: none;
+  }
+  .dark-band .eyebrow-label { color: var(--signal-on-dark); }
+  .dark-band .eyebrow-label::before { background: var(--signal-on-dark); }
+  .dark-band .display { color: #F0EAE0; }
+  .dark-band .body-copy { color: rgba(240,234,224,0.72); }
+  .dark-band .body-copy .signal { color: var(--signal-on-dark); }
+
+  .runway-stage {
+    position: relative;
+    margin: 36px -24px 0;
+    height: 280px;
+  }
+  .runway-stage svg { width: 100%; height: 100%; }
+
+  .bet-stats {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 18px;
+    border-top: 1px solid rgba(240,234,224,0.14);
+    padding-top: 28px;
+  }
+  .bet-stats .cell .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(240,234,224,0.5);
+    margin-bottom: 8px;
+  }
+  .bet-stats .cell .v {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 32px;
+    line-height: 1;
+    color: #F0EAE0;
+    letter-spacing: -0.01em;
+  }
+  .bet-stats .cell .v.neg { color: var(--signal-on-dark); }
+  .bet-stats .cell .sub {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    color: rgba(240,234,224,0.5);
+    margin-top: 6px;
+  }
+
+  /* ============================================================
+     8. COMPETITION — orbit
+     ============================================================ */
+  .orbit-stage {
+    position: relative;
+    margin: 36px -24px 0;
+    aspect-ratio: 1 / 1.05;
+  }
+  .orbit-stage svg { width: 100%; height: 100%; }
+
+  .competitors-detail {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .competitor-row {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+  }
+  .competitor-row:last-child { border-bottom: none; }
+  .competitor-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .competitor-head .name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .competitor-head .ticker-mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+  }
+  .competitor-head .cap {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+  }
+  .competitor-head .cap.bigger { color: var(--signal); }
+  .competitor-row .vs {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .competitor-row .barwrap {
+    flex: 1;
+    height: 6px;
+    background: var(--paper-2);
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+  .competitor-row .moderna-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: var(--signal);
+    width: 0%;
+    transition: width 1.2s var(--ease-out);
+  }
+  .competitor-row .competitor-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: var(--ink);
+    width: 0%;
+    transition: width 1.2s var(--ease-out);
+  }
+  .competitor-row .desc {
+    margin-top: 12px;
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 360ms var(--ease-out), margin-top 360ms var(--ease-out);
+  }
+  .competitor-row .desc em {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.06em;
+  }
+  .competitor-row.open .desc {
+    max-height: 240px;
+  }
+  .competitor-row .toggle {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color var(--dur-fast);
+  }
+  .competitor-row .toggle .chev { transition: transform var(--dur-base) var(--ease-out); display: inline-block; }
+  .competitor-row.open .toggle { color: var(--signal); }
+  .competitor-row.open .toggle .chev { transform: rotate(180deg); }
+
+  /* ============================================================
+     9. TAKEAWAY — closing inversion
+     ============================================================ */
+  .takeaway {
+    padding: 96px 24px 80px;
+    text-align: left;
+    position: relative;
+  }
+  .takeaway-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--signal);
+    margin-bottom: 32px;
+  }
+  .takeaway .big {
+    font-family: var(--font-display);
+    font-size: 60px;
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin-bottom: 28px;
+  }
+  .takeaway .big em { font-style: italic; }
+  .takeaway .big em.signal { color: var(--signal); }
+  .takeaway .closing-line {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--ink-2);
+    margin-bottom: 56px;
+    max-width: 30ch;
+  }
+
+  .signature {
+    margin-top: 64px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .signature .right .red { color: var(--signal); }
+
+  /* ============================================================
+     ANIMATIONS — reveal on scroll
+     ============================================================ */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+  }
+  .reveal.in { opacity: 1; transform: none; }
+  .reveal.delay-1 { transition-delay: 80ms; }
+  .reveal.delay-2 { transition-delay: 160ms; }
+  .reveal.delay-3 { transition-delay: 240ms; }
+  .reveal.delay-4 { transition-delay: 320ms; }
+
+  /* count-up base */
+  .countup { font-variant-numeric: tabular-nums; }
+
+  /* SVG defaults */
+  svg { overflow: visible; }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- ============================================================ -->
+  <!-- PERSISTENT CHROME -->
+  <!-- ============================================================ -->
+  <header class="chrome">
+    <div class="chrome-row">
+      <div class="chrome-left">
+        <div class="ticker"><span class="dot"></span>MRNA</div>
+        <div class="ticker-name">Moderna</div>
+      </div>
+      <div class="recap-label">Recap · FY ’25</div>
+    </div>
+    <div class="progress-track"><div class="progress-bar" id="progress"></div></div>
+  </header>
+
+  <!-- ============================================================ -->
+  <!-- 1. HERO -->
+  <!-- ============================================================ -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="hero-eyebrow">
+      <span>Cambridge, MA</span>
+      <span>·</span>
+      <span>Founded 2010</span>
+      <span class="pill">mRNA</span>
+    </div>
+
+    <h1 class="hero-title reveal in">
+      A molecule.<br/>
+      A platform.<br/>
+      <span class="em signal">One bet.</span>
+    </h1>
+
+    <p class="hero-sub reveal delay-1 in">
+      Moderna helped invent the mRNA medicine field, then watched the pandemic make it a household name. The pandemic ended. <em>The bet didn’t.</em>
+    </p>
+
+    <div class="helix-stage" aria-hidden="true">
+      <svg viewBox="0 0 414 320" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="helixFade" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#14110F" stop-opacity="0.0"/>
+            <stop offset="20%" stop-color="#14110F" stop-opacity="1"/>
+            <stop offset="80%" stop-color="#14110F" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#14110F" stop-opacity="0"/>
+          </linearGradient>
+          <mask id="helixMask">
+            <rect x="0" y="0" width="414" height="320" fill="url(#helixFade)"/>
+          </mask>
+        </defs>
+        <g mask="url(#helixMask)" id="helix-group">
+          <!-- helix backbones - stroked sine waves -->
+          <path id="helix-a" d="" fill="none" stroke="#14110F" stroke-width="1.4" opacity="0.85"/>
+          <path id="helix-b" d="" fill="none" stroke="#C82F2A" stroke-width="1.4" opacity="0.9"/>
+          <!-- rungs and nucleotide dots get added by JS -->
+          <g id="helix-rungs"></g>
+          <g id="helix-nodes"></g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-meta">
+      <div class="cell">
+        <div class="k">Market cap</div>
+        <div class="v countup" data-target="21.22" data-decimals="2" data-prefix="$" data-suffix="B">$0.00<span class="unit">B</span></div>
+      </div>
+      <div class="cell">
+        <div class="k">FY ’25 revenue</div>
+        <div class="v signal countup" data-target="1.94" data-decimals="2" data-prefix="$" data-suffix="B">$0.00<span class="unit">B</span></div>
+      </div>
+      <div class="cell">
+        <div class="k">Approved products</div>
+        <div class="v countup" data-target="3" data-decimals="0">0</div>
+      </div>
+      <div class="cell">
+        <div class="k">In the pipeline</div>
+        <div class="v countup" data-target="44" data-decimals="0">0</div>
+      </div>
+    </div>
+
+    <div class="scroll-cue">
+      <span class="line"></span>
+      <span>Scroll</span>
+      <span class="arrow">↓</span>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- RESET BEAT 1 -->
+  <!-- ============================================================ -->
+  <div class="reset-beat" data-screen-label="02 Reset 1">
+    <span class="mark">“</span>
+    <p class="quote">
+      The pandemic gave Moderna a stage. <span class="signal italic">The encore is harder than the opener.</span>
+    </p>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 2. THE BUSINESS — three vials -->
+  <!-- ============================================================ -->
+  <section data-screen-label="03 Business">
+    <div class="eyebrow-label">The shelf · 3 products</div>
+    <h2 class="display reveal" style="font-size:46px;">
+      Three vials carry<br/>the company today.
+    </h2>
+    <p class="body-copy reveal delay-1" style="margin-top:20px;">
+      Moderna’s commercial revenue comes <em>almost entirely</em> from product sales — three approved mRNA vaccines, sold into the same at-risk adult populations and government channels worldwide.
+    </p>
+
+    <div class="vials-row" id="vials-row">
+      <!-- vials inserted by JS so we can animate fill -->
+    </div>
+
+    <div class="vial-revenue-line">
+      <div class="label">FY ’25 product sales</div>
+      <div class="val countup" data-target="1.94" data-decimals="2" data-prefix="$" data-suffix="B">$0.00B</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 3. SCALE / DECLINE -->
+  <!-- ============================================================ -->
+  <section data-screen-label="04 Decline" style="padding-top:48px;">
+    <div class="eyebrow-label">The drop · −39.93% YoY</div>
+    <h2 class="display reveal" style="font-size:46px;">
+      Then demand <em class="italic signal">normalized.</em>
+    </h2>
+    <p class="body-copy reveal delay-1" style="margin-top:20px;">
+      Revenue fell <em>nearly forty percent</em> year-over-year as COVID-19 vaccine demand dropped from pandemic-era peaks. Q4 ’25 revenue: <span class="signal">$678M</span>. Q4 EPS: <span class="signal">−$2.11</span>.
+    </p>
+
+    <div class="decline-stage" aria-hidden="true">
+      <svg viewBox="0 0 380 360" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="declineFill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#C82F2A" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#C82F2A" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <!-- y axis labels -->
+        <g font-family="Geist Mono" font-size="9" fill="#6E6960" letter-spacing="0.06em">
+          <text x="0" y="40">$20B</text>
+          <text x="0" y="120">$15B</text>
+          <text x="0" y="200">$10B</text>
+          <text x="0" y="280">$5B</text>
+          <text x="0" y="340">$0</text>
+        </g>
+        <!-- guide hairlines -->
+        <g stroke="#DCD6C8" stroke-width="0.5" stroke-dasharray="2 4">
+          <line x1="42" y1="36" x2="380" y2="36"/>
+          <line x1="42" y1="116" x2="380" y2="116"/>
+          <line x1="42" y1="196" x2="380" y2="196"/>
+          <line x1="42" y1="276" x2="380" y2="276"/>
+          <line x1="42" y1="340" x2="380" y2="340" stroke-dasharray="0"/>
+        </g>
+
+        <!-- area under line -->
+        <path id="decline-area" d="" fill="url(#declineFill)" />
+        <!-- line -->
+        <path id="decline-line" d=""
+              fill="none" stroke="#14110F" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round"
+              stroke-dasharray="2000" stroke-dashoffset="2000"/>
+        <!-- dots and labels -->
+        <g id="decline-dots"></g>
+      </svg>
+    </div>
+
+    <div class="decline-callouts">
+      <div class="cell muted">
+        <div class="k">FY ’22 peak</div>
+        <div class="v">$19.3B</div>
+      </div>
+      <div class="cell">
+        <div class="k">FY ’25</div>
+        <div class="v neg">$1.94B</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 4. WHERE EVERY DOLLAR GOES -->
+  <!-- ============================================================ -->
+  <section data-screen-label="05 Costs">
+    <div class="eyebrow-label">A hundred cents in</div>
+    <h2 class="display reveal" style="font-size:46px;">
+      <em>Two-fifty-eight</em><br/>cents go out.
+    </h2>
+    <p class="body-copy reveal delay-1" style="margin-top:20px;">
+      For every dollar of revenue, Moderna spends $2.58 — <em>roughly $1.70 of that</em> on R&amp;D alone. The dashed line is what comes in. Everything above it is <span class="signal">funded from the balance sheet.</span>
+    </p>
+
+    <div class="cost-frame">
+      <div class="cost-bar" id="cost-bar">
+        <div class="cost-stack" id="cost-stack"></div>
+        <div class="cost-revenue-line" id="cost-revenue-line">
+          <div class="label">Revenue · 100¢</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cost-summary">
+      <div class="cell">
+        <div class="k">Gross margin</div>
+        <div class="v">55.3%</div>
+      </div>
+      <div class="cell">
+        <div class="k">Operating margin</div>
+        <div class="v neg">−158.1%</div>
+      </div>
+      <div class="cell">
+        <div class="k">Cost of revenue</div>
+        <div class="v">$868M</div>
+      </div>
+      <div class="cell">
+        <div class="k">Capex FY ’25</div>
+        <div class="v">$192M</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- RESET BEAT 2 -->
+  <!-- ============================================================ -->
+  <div class="reset-beat" data-screen-label="06 Reset 2">
+    <span class="mark">“</span>
+    <p class="quote">
+      You burn cash like this for one reason. <span class="signal italic">There’s something you believe is coming.</span>
+    </p>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 5. PIPELINE -->
+  <!-- ============================================================ -->
+  <section data-screen-label="07 Pipeline">
+    <div class="eyebrow-label">The pipeline · 44 candidates</div>
+    <h2 class="display reveal" style="font-size:46px;">
+      Forty-four <em class="italic">shots</em><br/>at being right.
+    </h2>
+    <p class="body-copy reveal delay-1" style="margin-top:20px;">
+      Three approved. Forty-one in development — flu, CMV, norovirus, oncology, rare metabolic disease. <em>The platform is the bet</em>; the products are how you keep score.
+    </p>
+
+    <div class="pipeline-frame">
+      <div class="phase-axis">
+        <div>Program</div>
+        <div>Pre-clinical</div>
+        <div>Phase 1</div>
+        <div>Phase 2/3</div>
+        <div>Approved</div>
+      </div>
+
+      <div class="pipeline-rows" id="pipeline-rows">
+        <!-- inserted by JS -->
+      </div>
+
+      <div class="pipeline-summary">
+        <div class="big"><span class="signal">10</span> approvals</div>
+        <div class="lbl">stated goal across the next phase</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 6. FOOTPRINT -->
+  <!-- ============================================================ -->
+  <section data-screen-label="08 Footprint">
+    <div class="eyebrow-label">The footprint · 65/3/32</div>
+    <h2 class="display reveal" style="font-size:46px;">
+      Two-thirds of revenue<br/>comes from <em class="italic signal">home.</em>
+    </h2>
+    <p class="body-copy reveal delay-1" style="margin-top:20px;">
+      The United States is the customer; Europe is barely a footnote; the rest of the world makes up the difference. Manufacturing sits in the US, Canada, the UK, and Australia.
+    </p>
+
+    <div class="footprint-stage" aria-hidden="true">
+      <svg viewBox="0 0 320 320" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="globeFill" cx="40%" cy="35%" r="70%">
+            <stop offset="0%" stop-color="#FAF6EC"/>
+            <stop offset="100%" stop-color="#E5DFD2"/>
+          </radialGradient>
+          <clipPath id="globeClip">
+            <circle cx="160" cy="160" r="125"/>
+          </clipPath>
+        </defs>
+
+        <!-- ring -->
+        <circle cx="160" cy="160" r="125" fill="url(#globeFill)" stroke="#C5BEAB" stroke-width="0.75"/>
+
+        <!-- meridians -->
+        <g clip-path="url(#globeClip)" stroke="#C5BEAB" stroke-width="0.4" fill="none" opacity="0.55">
+          <ellipse cx="160" cy="160" rx="40" ry="125"/>
+          <ellipse cx="160" cy="160" rx="80" ry="125"/>
+          <ellipse cx="160" cy="160" rx="120" ry="125"/>
+          <line x1="35" y1="160" x2="285" y2="160"/>
+          <ellipse cx="160" cy="160" rx="125" ry="40"/>
+          <ellipse cx="160" cy="160" rx="125" ry="80"/>
+        </g>
+
+        <!-- distribution arcs (proportional ring) -->
+        <g transform="rotate(-90 160 160)" fill="none" stroke-width="14" stroke-linecap="butt">
+          <!-- 65% US (signal red) -->
+          <circle cx="160" cy="160" r="148" stroke="#C82F2A"
+                  stroke-dasharray="0 1000" id="arc-us"/>
+          <!-- 32% RoW (ink) -->
+          <circle cx="160" cy="160" r="148" stroke="#14110F"
+                  stroke-dasharray="0 1000" id="arc-row"/>
+          <!-- 3% Europe (teal) -->
+          <circle cx="160" cy="160" r="148" stroke="#2F7A78"
+                  stroke-dasharray="0 1000" id="arc-eu"/>
+        </g>
+
+        <!-- center label -->
+        <text x="160" y="155" text-anchor="middle"
+              font-family="Instrument Serif" font-style="italic" font-size="48" fill="#14110F">65%</text>
+        <text x="160" y="178" text-anchor="middle"
+              font-family="Geist Mono" font-size="9" letter-spacing="0.16em" fill="#6E6960">UNITED STATES</text>
+
+        <!-- pin dots for facilities -->
+        <g id="facility-pins"></g>
+      </svg>
+    </div>
+
+    <div class="footprint-legend">
+      <div class="row primary">
+        <div class="pct">65%</div>
+        <div>
+          <div class="name">United States</div>
+          <div class="meta">Cambridge, MA · Norwood</div>
+        </div>
+        <div class="meta">domestic</div>
+      </div>
+      <div class="row">
+        <div class="pct" style="color:var(--ink);">32%</div>
+        <div>
+          <div class="name">Rest of world</div>
+          <div class="meta">Canada · Australia</div>
+        </div>
+        <div class="meta">int’l</div>
+      </div>
+      <div class="row">
+        <div class="pct" style="color:var(--teal);">3%</div>
+        <div>
+          <div class="name">Europe</div>
+          <div class="meta">Harwell, UK</div>
+        </div>
+        <div class="meta">eu</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 7. THE BET — DARK BAND -->
+  <!-- ============================================================ -->
+  <section class="dark-band" data-screen-label="09 The bet">
+    <div class="eyebrow-label">The bet · cash to 2028</div>
+    <h2 class="display" style="font-size:50px; color:#F0EAE0;">
+      <em>Spend now.</em><br/>Survive to <em class="italic signal" style="color:#FF6A60;">break&shy;even.</em>
+    </h2>
+    <p class="body-copy" style="margin-top:20px; color:rgba(240,234,224,0.72); max-width:34ch;">
+      Operating cash flow ran <em>negative $1.87B</em>. Free cash flow ran <em>negative $2.06B</em>. Against $2.6B of cash and a fresh $1.5B term loan, Moderna says it has runway to cash breakeven by <span class="signal" style="color:#FF6A60;">2028.</span>
+    </p>
+
+    <div class="runway-stage" aria-hidden="true">
+      <svg viewBox="0 0 380 280" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="runwayCash" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#C82F2A" stop-opacity="0.0"/>
+            <stop offset="50%" stop-color="#C82F2A" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="#C82F2A" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <!-- horizon -->
+        <g font-family="Geist Mono" font-size="9" fill="rgba(240,234,224,0.45)" letter-spacing="0.16em">
+          <text x="0" y="270">2025</text>
+          <text x="120" y="270">2026</text>
+          <text x="220" y="270">2027</text>
+          <text x="316" y="270">2028</text>
+        </g>
+        <line x1="0" y1="248" x2="380" y2="248" stroke="rgba(240,234,224,0.12)" stroke-width="0.5"/>
+
+        <!-- cash level — declining bar with marker -->
+        <g id="runway-bars"></g>
+
+        <!-- runway path - dashed, animates draw -->
+        <path id="runway-path"
+              d="M 18 110 Q 110 130, 180 165 T 340 230"
+              fill="none" stroke="#FF6A60" stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-dasharray="540" stroke-dashoffset="540"/>
+
+        <!-- breakeven marker -->
+        <g id="breakeven-marker" opacity="0">
+          <circle cx="340" cy="230" r="5" fill="#FF6A60"/>
+          <circle cx="340" cy="230" r="12" fill="none" stroke="#FF6A60" stroke-width="1" opacity="0.5"/>
+          <text x="340" y="210" text-anchor="middle"
+                font-family="Instrument Serif" font-style="italic" font-size="18" fill="#FF6A60">breakeven</text>
+        </g>
+
+        <!-- cash burn label -->
+        <text x="18" y="100" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#F0EAE0">$2.6B</text>
+        <text x="18" y="120" font-family="Geist Mono" font-size="8.5" fill="rgba(240,234,224,0.55)" letter-spacing="0.1em">CASH ON HAND</text>
+      </svg>
+    </div>
+
+    <div class="bet-stats">
+      <div class="cell">
+        <div class="k">Operating cash flow</div>
+        <div class="v neg">−$1.87B</div>
+        <div class="sub">FY ’25</div>
+      </div>
+      <div class="cell">
+        <div class="k">Free cash flow</div>
+        <div class="v neg">−$2.06B</div>
+        <div class="sub">FY ’25</div>
+      </div>
+      <div class="cell">
+        <div class="k">Total debt</div>
+        <div class="v">$590M</div>
+        <div class="sub">$600M drawn / $1.5B facility</div>
+      </div>
+      <div class="cell">
+        <div class="k">Total equity</div>
+        <div class="v">$8.65B</div>
+        <div class="sub">vs. $590M debt</div>
+      </div>
+      <div class="cell">
+        <div class="k">Dividends</div>
+        <div class="v">none</div>
+        <div class="sub">no buybacks either</div>
+      </div>
+      <div class="cell">
+        <div class="k">Headcount</div>
+        <div class="v">~4,800</div>
+        <div class="sub">global</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 8. COMPETITION -->
+  <!-- ============================================================ -->
+  <section data-screen-label="10 Competition">
+    <div class="eyebrow-label">The competition · 3 rivals</div>
+    <h2 class="display reveal" style="font-size:46px;">
+      Bigger sits next door.<br/>
+      <em class="italic">Same syringe.</em>
+    </h2>
+    <p class="body-copy reveal delay-1" style="margin-top:20px;">
+      Pfizer is seven times Moderna’s market cap and sells the rival vaccine. BioNTech is a few billion larger and shares <em>the exact same platform.</em> Incyte trades a similar size on a profitable, oncology-led book.
+    </p>
+
+    <div class="orbit-stage" aria-hidden="true">
+      <svg viewBox="0 0 320 336" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="modernaCore" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#E86560"/>
+            <stop offset="100%" stop-color="#C82F2A"/>
+          </radialGradient>
+        </defs>
+
+        <!-- orbit rings -->
+        <g fill="none" stroke="#DCD6C8" stroke-width="0.5" stroke-dasharray="2 4">
+          <circle cx="160" cy="168" r="82"/>
+          <circle cx="160" cy="168" r="124"/>
+          <circle cx="160" cy="168" r="158"/>
+        </g>
+
+        <!-- moderna at center -->
+        <circle cx="160" cy="168" r="0" fill="url(#modernaCore)" id="orbit-moderna"/>
+        <text x="160" y="172" text-anchor="middle"
+              font-family="Geist Mono" font-size="10" fill="#FFFFFF" letter-spacing="0.08em" id="orbit-moderna-label" opacity="0">MRNA</text>
+
+        <!-- competitors as orbiting circles, sized by mkt cap -->
+        <!-- Incyte 19.47 - close orbit -->
+        <g id="orbit-incy" opacity="0">
+          <circle cx="160" cy="86" r="22" fill="#FAF6EC" stroke="#14110F" stroke-width="1"/>
+          <text x="160" y="90" text-anchor="middle"
+                font-family="Geist Mono" font-size="9" fill="#14110F" letter-spacing="0.08em">INCY</text>
+          <text x="160" y="60" text-anchor="middle"
+                font-family="Instrument Serif" font-style="italic" font-size="13" fill="#14110F">$19.5B</text>
+        </g>
+
+        <!-- BNTX 25.67 - mid orbit -->
+        <g id="orbit-bntx" opacity="0">
+          <circle cx="284" cy="168" r="26" fill="#FAF6EC" stroke="#14110F" stroke-width="1"/>
+          <text x="284" y="172" text-anchor="middle"
+                font-family="Geist Mono" font-size="9" fill="#14110F" letter-spacing="0.08em">BNTX</text>
+          <text x="284" y="206" text-anchor="middle"
+                font-family="Instrument Serif" font-style="italic" font-size="13" fill="#14110F">$25.7B</text>
+        </g>
+
+        <!-- PFE 156.77 - outer orbit, much bigger -->
+        <g id="orbit-pfe" opacity="0">
+          <circle cx="74" cy="280" r="62" fill="#14110F" stroke="#14110F" stroke-width="1"/>
+          <text x="74" y="278" text-anchor="middle"
+                font-family="Geist Mono" font-size="11" fill="#FAF6EC" letter-spacing="0.08em">PFE</text>
+          <text x="74" y="295" text-anchor="middle"
+                font-family="Instrument Serif" font-style="italic" font-size="14" fill="#FAF6EC">$156.8B</text>
+        </g>
+
+        <!-- caption -->
+        <text x="160" y="328" text-anchor="middle"
+              font-family="Geist Mono" font-size="8" fill="#6E6960" letter-spacing="0.16em">CIRCLES SIZED BY MARKET CAP</text>
+      </svg>
+    </div>
+
+    <div class="competitors-detail" id="competitors">
+      <!-- inserted by JS -->
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 9. TAKEAWAY -->
+  <!-- ============================================================ -->
+  <section class="takeaway" data-screen-label="11 Takeaway">
+    <div class="takeaway-eyebrow">— The recap, in one figure —</div>
+
+    <h2 class="big reveal">
+      Three vials in.<br/>
+      <em>Forty-one</em><br/>
+      <em class="signal">in front.</em>
+    </h2>
+
+    <p class="closing-line reveal delay-1">
+      The opening claim was a molecule, a platform, and one bet. The closing figure is the same platform — <span class="signal" style="font-style:italic;">spending $2.58 to make $1</span> — buying time for the next forty-one molecules to prove the platform was right.
+    </p>
+
+    <div class="signature">
+      <div class="left">MRNA · Recap · FY ’25</div>
+      <div class="right">Sources <span class="red">·</span> filings &amp; releases</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   DATA from JSON
+   ============================================================ */
+const COSTS = [
+  { pct: 45,  color: '#4F86C6', label: 'Cost of Revenue' },
+  { pct: 170, color: '#E8734A', label: 'R&D' },
+  { pct: 43,  color: '#6DBF82', label: 'SG&A' }
+];
+// Total: 258% of revenue
+const COST_TOTAL = COSTS.reduce((s,c)=>s+c.pct, 0);
+
+const VIALS = [
+  { name: 'Spikevax',   tag: 'COVID-19', fill: 0.65, color: '#C82F2A' },
+  { name: 'mNEXSPIKE',  tag: 'COVID-19 next-gen', fill: 0.45, color: '#E86560' },
+  { name: 'mRESVIA',    tag: 'RSV',      fill: 0.55, color: '#8E1F1B' }
+];
+
+// 44 candidates — we render a representative subset of meaningful programs.
+// Position 0..1 along pre-clinical → approved.
+const PIPELINE = [
+  { name: 'Spikevax',           area: 'COVID-19',  phase: 1.00, label: '' },
+  { name: 'mNEXSPIKE',          area: 'COVID-19',  phase: 1.00, label: '' },
+  { name: 'mRESVIA',            area: 'RSV',       phase: 1.00, label: '' },
+  { name: 'Flu (mRNA-1010)',    area: 'Influenza', phase: 0.86, label: 'Ph 3' },
+  { name: 'CMV (mRNA-1647)',    area: 'CMV',       phase: 0.82, label: 'Ph 3' },
+  { name: 'Intismeran auto.',   area: 'Oncology',  phase: 0.74, label: 'Ph 3' },
+  { name: 'Norovirus',          area: 'Norovirus', phase: 0.55, label: 'Ph 2' },
+  { name: 'Combo flu+COVID',    area: 'Respiratory', phase: 0.62, label: 'Ph 3' },
+  { name: 'Rare metabolic',     area: 'Rare',      phase: 0.30, label: 'Ph 1' },
+  { name: '+ 35 earlier-stage', area: 'pre-clin',  phase: 0.10, label: '' }
+];
+
+const COMPETITORS = [
+  {
+    name: 'Pfizer Inc',
+    ticker: 'PFE',
+    cap: 156.77,
+    desc: 'Through <em>Comirnaty</em> and <em>Abrysvo</em>, Pfizer competes head-on with Moderna’s entire respiratory franchise — and is investing in its own mRNA platform that could converge with Moderna’s pipeline.'
+  },
+  {
+    name: 'BioNTech SE',
+    ticker: 'BNTX',
+    cap: 25.67,
+    desc: 'Co-developer of the Pfizer-BioNTech COVID-19 vaccine and the most direct mRNA platform competitor — also advancing personalized neoantigen oncology programs that contest <em>intismeran autogene</em> directly.'
+  },
+  {
+    name: 'Incyte Corp',
+    ticker: 'INCY',
+    cap: 19.47,
+    desc: 'Profitable oncology peer with a $5.1B revenue book whose targeted small-molecule and immuno-oncology portfolio already holds the commercial positions Moderna’s neoantigen therapy is aiming for.'
+  }
+];
+const MODERNA_CAP = 21.22;
+
+/* ============================================================
+   SCROLL PROGRESS
+   ============================================================ */
+const progress = document.getElementById('progress');
+function updateProgress(){
+  const stage = document.querySelector('.stage');
+  const total = stage.scrollHeight - window.innerHeight;
+  const y = window.scrollY;
+  const pct = total > 0 ? Math.min(100, Math.max(0, (y/total)*100)) : 0;
+  progress.style.width = pct + '%';
+}
+window.addEventListener('scroll', updateProgress, { passive: true });
+window.addEventListener('resize', updateProgress);
+updateProgress();
+
+/* ============================================================
+   REVEAL ON SCROLL via IntersectionObserver
+   ============================================================ */
+const revealObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -80px 0px' });
+document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+
+/* ============================================================
+   COUNT-UP NUMBERS
+   ============================================================ */
+function animateCount(el){
+  const target = parseFloat(el.dataset.target);
+  const decimals = parseInt(el.dataset.decimals || '0', 10);
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '';
+  const dur = 1400;
+  const t0 = performance.now();
+  const unitSpan = el.querySelector('.unit');
+  function frame(t){
+    const k = Math.min(1, (t - t0) / dur);
+    const eased = 1 - Math.pow(1 - k, 3);
+    const v = (target * eased).toFixed(decimals);
+    el.firstChild.nodeValue = prefix + v + (unitSpan ? '' : suffix);
+    if (k < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+const countObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if (e.isIntersecting) {
+      animateCount(e.target);
+      countObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.countup').forEach(el=>countObs.observe(el));
+
+/* ============================================================
+   HERO HELIX — scroll-driven double helix
+   ============================================================ */
+const helixA = document.getElementById('helix-a');
+const helixB = document.getElementById('helix-b');
+const helixRungs = document.getElementById('helix-rungs');
+const helixNodes = document.getElementById('helix-nodes');
+
+function buildHelix(phase){
+  const W = 414, H = 320;
+  const cx = W/2;
+  const amp = 70;
+  const cycles = 2.4;
+  const N = 90;
+  let dA = '', dB = '';
+  let rungsHtml = '', nodesHtml = '';
+  for (let i = 0; i < N; i++){
+    const t = i / (N-1);
+    const y = t * H;
+    const angle = t * cycles * Math.PI * 2 + phase;
+    const xA = cx + Math.sin(angle) * amp;
+    const xB = cx + Math.sin(angle + Math.PI) * amp;
+    dA += (i === 0 ? `M ${xA} ${y}` : ` L ${xA} ${y}`);
+    dB += (i === 0 ? `M ${xB} ${y}` : ` L ${xB} ${y}`);
+    // every Nth point: rung + base-pair nodes
+    if (i % 5 === 0 && i > 2 && i < N-2){
+      const depth = Math.cos(angle); // -1..1, depth cue
+      const op = 0.25 + Math.max(0, depth) * 0.65;
+      const front = depth > 0;
+      rungsHtml += `<line x1="${xA}" y1="${y}" x2="${xB}" y2="${y}" stroke="${front?'#3A3631':'#A29D92'}" stroke-width="0.8" opacity="${op.toFixed(2)}"/>`;
+      const r = 2.6 + Math.abs(depth)*1.4;
+      nodesHtml += `<circle cx="${xA}" cy="${y}" r="${r}" fill="#14110F" opacity="${op.toFixed(2)}"/>`;
+      nodesHtml += `<circle cx="${xB}" cy="${y}" r="${r}" fill="#C82F2A" opacity="${op.toFixed(2)}"/>`;
+    }
+  }
+  helixA.setAttribute('d', dA);
+  helixB.setAttribute('d', dB);
+  helixRungs.innerHTML = rungsHtml;
+  helixNodes.innerHTML = nodesHtml;
+}
+buildHelix(0);
+
+// scroll-scrub the helix rotation
+let helixPhase = 0;
+function updateHelixOnScroll(){
+  const heroRect = document.querySelector('.hero').getBoundingClientRect();
+  // map scroll within hero range
+  const t = -heroRect.top / Math.max(1, heroRect.height);
+  helixPhase = t * Math.PI * 2.5;
+  buildHelix(helixPhase);
+}
+let helixTicking = false;
+window.addEventListener('scroll', ()=>{
+  if (!helixTicking){
+    requestAnimationFrame(()=>{ updateHelixOnScroll(); helixTicking = false; });
+    helixTicking = true;
+  }
+}, { passive: true });
+
+/* ============================================================
+   VIALS — render glass vials with animated fill
+   ============================================================ */
+const vialsRow = document.getElementById('vials-row');
+VIALS.forEach((v, i) => {
+  const card = document.createElement('div');
+  card.className = 'vial-card';
+  card.innerHTML = `
+    <svg class="vial-svg" viewBox="0 0 70 120">
+      <!-- cap -->
+      <rect x="22" y="2" width="26" height="10" rx="2" fill="#3A3631"/>
+      <rect x="20" y="10" width="30" height="6" rx="1" fill="#6E6960"/>
+      <!-- glass body -->
+      <path d="M 18 18 L 18 108 Q 18 116 26 116 L 44 116 Q 52 116 52 108 L 52 18 Z"
+            fill="rgba(255,255,255,0.55)" stroke="#A29D92" stroke-width="0.8"/>
+      <!-- liquid -->
+      <clipPath id="vialClip${i}">
+        <path d="M 19 19 L 19 108 Q 19 115 26 115 L 44 115 Q 51 115 51 108 L 51 19 Z"/>
+      </clipPath>
+      <g clip-path="url(#vialClip${i})">
+        <rect class="vial-fill" x="19" y="${20 + (1-v.fill)*88}" width="32" height="${v.fill*88}"
+              fill="${v.color}" opacity="0.85"
+              data-y0="${20 + (1-v.fill)*88}" data-h="${v.fill*88}"
+              style="transform: translateY(20px); transform-origin: center bottom;"/>
+        <!-- meniscus highlight -->
+        <ellipse class="vial-meniscus" cx="35" cy="${20 + (1-v.fill)*88}" rx="16" ry="2.5"
+                 fill="${v.color}" opacity="0.6"/>
+      </g>
+      <!-- side highlight -->
+      <path d="M 22 24 Q 21 60, 22 100" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <!-- label band -->
+      <rect x="18" y="60" width="34" height="22" fill="#FAF6EC" opacity="0.92"/>
+      <text x="35" y="71" text-anchor="middle"
+            font-family="Geist Mono" font-size="5.5" fill="#14110F" letter-spacing="0.08em">mRNA</text>
+      <text x="35" y="79" text-anchor="middle"
+            font-family="Geist Mono" font-size="4.5" fill="#6E6960" letter-spacing="0.1em">${v.tag.split(' ')[0].toUpperCase()}</text>
+    </svg>
+    <div class="vial-name">${v.name}</div>
+    <div class="vial-tag">${v.tag}</div>
+  `;
+  vialsRow.appendChild(card);
+});
+
+/* ============================================================
+   DECLINE CHART — line + dots, draws on view
+   ============================================================ */
+// Approximate FY revenues (peak then normalization). $B
+const DECLINE_DATA = [
+  { yr: '2020', val: 0.80 },
+  { yr: '2021', val: 17.7 },
+  { yr: '2022', val: 19.3 },
+  { yr: '2023', val: 6.85 },
+  { yr: '2024', val: 3.23 },
+  { yr: '2025', val: 1.94 }
+];
+function buildDeclineChart(){
+  const W = 380, H = 360;
+  const left = 42, right = 360, top = 36, bot = 340;
+  const innerW = right - left, innerH = bot - top;
+  const max = 20;
+  const pts = DECLINE_DATA.map((d, i) => ({
+    x: left + (i / (DECLINE_DATA.length-1)) * innerW,
+    y: bot - (d.val / max) * innerH,
+    yr: d.yr, val: d.val
+  }));
+  const linePath = pts.map((p,i) => (i===0?'M':'L') + ` ${p.x} ${p.y}`).join(' ');
+  const areaPath = linePath + ` L ${pts[pts.length-1].x} ${bot} L ${pts[0].x} ${bot} Z`;
+  document.getElementById('decline-line').setAttribute('d', linePath);
+  document.getElementById('decline-area').setAttribute('d', areaPath);
+
+  // total length for stroke-dash trick
+  const lineEl = document.getElementById('decline-line');
+  const len = lineEl.getTotalLength();
+  lineEl.setAttribute('stroke-dasharray', len);
+  lineEl.setAttribute('stroke-dashoffset', len);
+
+  const dotsG = document.getElementById('decline-dots');
+  let html = '';
+  pts.forEach((p, i) => {
+    const isPeak = (p.yr === '2022');
+    const isLast = (i === pts.length-1);
+    const color = isLast ? '#C82F2A' : (isPeak ? '#14110F' : '#A29D92');
+    const r = isLast || isPeak ? 4 : 2.4;
+    html += `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${color}" class="decline-dot" style="opacity:0; transition: opacity 400ms; transition-delay: ${300 + i*120}ms;"/>`;
+    // year labels along bottom
+    html += `<text x="${p.x}" y="${bot+16}" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#6E6960" letter-spacing="0.08em">${p.yr.slice(2)}</text>`;
+    if (isLast) {
+      html += `<text x="${p.x}" y="${p.y - 14}" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="16" fill="#C82F2A" class="decline-label" style="opacity:0; transition: opacity 600ms 1.2s;">$1.94B</text>`;
+    } else if (isPeak) {
+      html += `<text x="${p.x}" y="${p.y - 14}" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="16" fill="#14110F" class="decline-label" style="opacity:0; transition: opacity 600ms 0.6s;">$19.3B</text>`;
+    }
+  });
+  dotsG.innerHTML = html;
+}
+buildDeclineChart();
+const declineSection = document.querySelector('[data-screen-label="04 Decline"]');
+const declineObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if (e.isIntersecting){
+      const lineEl = document.getElementById('decline-line');
+      const len = lineEl.getTotalLength();
+      lineEl.style.transition = 'stroke-dashoffset 1600ms cubic-bezier(0.22, 1, 0.36, 1)';
+      lineEl.setAttribute('stroke-dashoffset', '0');
+      document.querySelectorAll('.decline-dot, .decline-label').forEach(d=>d.style.opacity = 1);
+      declineObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+declineObs.observe(declineSection);
+
+/* ============================================================
+   COSTS — stacked bar, height proportional to 258%
+   The bar's revenue line sits at the 100% mark.
+   ============================================================ */
+function buildCostBar(){
+  const stack = document.getElementById('cost-stack');
+  const bar = document.getElementById('cost-bar');
+  const lineEl = document.getElementById('cost-revenue-line');
+  const totalH = 360; // px
+  const total = COST_TOTAL; // 258
+  // 100% mark from bottom in px
+  const lineY = (100 / total) * totalH; // ~139px from bottom
+  lineEl.style.bottom = lineY + 'px';
+  // center the line div on the bar
+  // segments: bottom-up: cost of revenue, R&D, SG&A
+  // build from JSON order so colors match
+  const order = COSTS.slice(); // already correct order: COR, R&D, SG&A
+  let cumulativePx = 0;
+  order.forEach((c, i) => {
+    const segPx = (c.pct / total) * totalH;
+    const seg = document.createElement('div');
+    seg.className = 'cost-seg';
+    seg.style.background = c.color;
+    seg.dataset.target = segPx;
+    stack.appendChild(seg);
+
+    // bracket label outside the bar
+    const left = (i % 2 === 0); // alternate sides
+    const bracket = document.createElement('div');
+    bracket.className = 'cost-bracket ' + (left ? 'left' : 'right');
+    // bottom of this segment
+    const segBottom = cumulativePx;
+    const segTop = cumulativePx + segPx;
+    const midY = (segBottom + segTop)/2;
+    bracket.style.bottom = midY + 'px';
+    bracket.innerHTML = `
+      <div class="pct"><span class="swatch" style="background:${c.color}"></span>${c.pct}<span style="font-size:13px;color:var(--ink-3); font-style:normal; font-family:var(--font-sans); margin-left:1px;">¢</span></div>
+      <div class="lbl">${c.label}</div>
+    `;
+    bar.appendChild(bracket);
+    cumulativePx += segPx;
+  });
+}
+buildCostBar();
+
+const costSection = document.querySelector('[data-screen-label="05 Costs"]');
+const costObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if (e.isIntersecting){
+      document.querySelectorAll('.cost-seg').forEach((seg, i) => {
+        setTimeout(()=>{ seg.style.height = seg.dataset.target + 'px'; }, i * 220);
+      });
+      costObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.35 });
+costObs.observe(costSection);
+
+/* ============================================================
+   PIPELINE — rows, animate progress bars
+   ============================================================ */
+const pipelineRows = document.getElementById('pipeline-rows');
+PIPELINE.forEach((p, i) => {
+  const row = document.createElement('div');
+  row.className = 'pipeline-row';
+  // pip position: 4 columns from col 2 to col 5 = 4 stops at 12.5/37.5/62.5/87.5 within the dot-track
+  // We map p.phase 0..1 to overall track 0..100%
+  const isApproved = p.phase >= 0.99;
+  const pipClass = isApproved ? 'pip approved' : 'pip active';
+  row.innerHTML = `
+    <div class="name">${p.name}<span class="small">${p.area}</span></div>
+    <div class="dot-track">
+      <div class="progress"></div>
+      <div class="filled" data-target="${(p.phase * 100).toFixed(1)}%"></div>
+      <!-- phase dots at 12.5, 37.5, 62.5, 87.5 -->
+      <div class="pip" style="left:12.5%;"></div>
+      <div class="pip" style="left:37.5%;"></div>
+      <div class="pip" style="left:62.5%;"></div>
+      <div class="pip" style="left:87.5%;"></div>
+      <!-- active pip overlay -->
+      <div class="${pipClass}" style="left: ${(p.phase * 100).toFixed(1)}%;"></div>
+    </div>
+  `;
+  pipelineRows.appendChild(row);
+});
+
+const pipelineSection = document.querySelector('[data-screen-label="07 Pipeline"]');
+const pipelineObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if (e.isIntersecting){
+      document.querySelectorAll('.pipeline-row .filled').forEach((f, i) => {
+        setTimeout(()=>{
+          f.style.transition = 'width 900ms cubic-bezier(0.22, 1, 0.36, 1)';
+          f.style.width = f.dataset.target;
+        }, 80 + i*80);
+      });
+      pipelineObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+pipelineObs.observe(pipelineSection);
+
+/* ============================================================
+   FOOTPRINT — globe arcs animate
+   ============================================================ */
+function setArc(elId, pct, offsetPct){
+  const el = document.getElementById(elId);
+  const r = 148;
+  const C = 2 * Math.PI * r;
+  const dash = (pct/100) * C;
+  const offset = -((offsetPct/100) * C);
+  el.setAttribute('stroke-dasharray', `${dash} ${C - dash}`);
+  el.setAttribute('stroke-dashoffset', offset);
+}
+// initial - all 0
+const footprintSection = document.querySelector('[data-screen-label="08 Footprint"]');
+const footprintObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if (e.isIntersecting){
+      // animate dasharray growth
+      const usEl = document.getElementById('arc-us');
+      const rowEl = document.getElementById('arc-row');
+      const euEl = document.getElementById('arc-eu');
+      const r = 148;
+      const C = 2 * Math.PI * r;
+      [usEl, rowEl, euEl].forEach(el => {
+        el.style.transition = 'stroke-dasharray 1400ms cubic-bezier(0.22, 1, 0.36, 1)';
+        el.setAttribute('stroke-dasharray', `0 ${C}`);
+      });
+      // small tick gap between arcs (1% of circumference)
+      requestAnimationFrame(()=>{
+        const usD = (65/100)*C;
+        const rowD = (32/100)*C;
+        const euD = (3/100)*C;
+        usEl.setAttribute('stroke-dashoffset', '0');
+        usEl.setAttribute('stroke-dasharray', `${usD} ${C - usD}`);
+
+        rowEl.setAttribute('stroke-dashoffset', `${-usD - 4}`);
+        rowEl.setAttribute('stroke-dasharray', `${rowD} ${C - rowD}`);
+
+        euEl.setAttribute('stroke-dashoffset', `${-(usD + rowD) - 8}`);
+        euEl.setAttribute('stroke-dasharray', `${euD} ${C - euD}`);
+      });
+
+      // pin facilities
+      const pins = [
+        { x: 110, y: 130, label: 'CMA' }, // Cambridge MA
+        { x: 100, y: 124, label: '' },    // Norwood (close)
+        { x: 195, y: 110, label: 'UK' },  // UK
+        { x: 270, y: 220, label: 'AU' }   // Australia
+      ];
+      const pinG = document.getElementById('facility-pins');
+      let html = '';
+      pins.forEach((p, i) => {
+        html += `<circle cx="${p.x}" cy="${p.y}" r="2.5" fill="#C82F2A" opacity="0" class="pin" style="transition: opacity 400ms ${600 + i*150}ms;"/>`;
+        html += `<circle cx="${p.x}" cy="${p.y}" r="6" fill="none" stroke="#C82F2A" stroke-width="0.5" opacity="0" class="pin" style="transition: opacity 400ms ${600 + i*150}ms;"/>`;
+      });
+      pinG.innerHTML = html;
+      requestAnimationFrame(()=>{
+        document.querySelectorAll('.pin').forEach(p => p.style.opacity = 0.85);
+      });
+
+      footprintObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+footprintObs.observe(footprintSection);
+
+/* ============================================================
+   BET DARK BAND — runway path + cash bars
+   ============================================================ */
+function buildRunwayBars(){
+  const g = document.getElementById('runway-bars');
+  // approximate cash trajectory (illustrative, not invented data — endpoints from JSON)
+  // Start: $2.6B (cash on hand); spending cash; closes at breakeven 2028
+  const points = [
+    { x: 18,  cash: 2.6, label: '$2.6B' },
+    { x: 110, cash: 1.8, label: '$1.8B' },
+    { x: 200, cash: 1.0, label: '' },
+    { x: 290, cash: 0.4, label: '' }
+  ];
+  let html = '';
+  points.forEach((p, i) => {
+    // bar height proportional
+    const h = (p.cash / 3.0) * 130;
+    const y = 248 - h;
+    html += `<rect x="${p.x - 6}" y="${y}" width="12" height="0" fill="rgba(240,234,224,0.18)" stroke="rgba(240,234,224,0.35)" stroke-width="0.5" class="run-bar" data-h="${h}" data-y="${y}" style="transform: scaleY(0); transform-origin: ${p.x}px 248px; transition: transform 800ms cubic-bezier(0.22, 1, 0.36, 1) ${i*150}ms;"/>`;
+  });
+  g.innerHTML = html;
+}
+buildRunwayBars();
+const betSection = document.querySelector('[data-screen-label="09 The bet"]');
+const betObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if (e.isIntersecting){
+      // runway path
+      const path = document.getElementById('runway-path');
+      path.style.transition = 'stroke-dashoffset 1800ms cubic-bezier(0.22, 1, 0.36, 1)';
+      path.setAttribute('stroke-dashoffset', '0');
+      // cash bars grow
+      document.querySelectorAll('.run-bar').forEach(b => {
+        const h = b.dataset.h;
+        // set actual height using transform scaleY so it grows from baseline
+        b.setAttribute('height', h);
+        b.style.transform = 'scaleY(1)';
+      });
+      // breakeven marker fades in
+      setTimeout(()=>{
+        const m = document.getElementById('breakeven-marker');
+        m.style.transition = 'opacity 600ms';
+        m.setAttribute('opacity', '1');
+      }, 1600);
+      betObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+betObs.observe(betSection);
+
+/* ============================================================
+   COMPETITION — orbit reveals + detail rows
+   ============================================================ */
+const compSection = document.querySelector('[data-screen-label="10 Competition"]');
+const orbitObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if (e.isIntersecting){
+      // moderna scales in
+      const m = document.getElementById('orbit-moderna');
+      m.style.transition = 'r 700ms cubic-bezier(0.34, 1.56, 0.64, 1)';
+      m.setAttribute('r', '32');
+      const ml = document.getElementById('orbit-moderna-label');
+      setTimeout(()=>{ ml.style.transition='opacity 400ms'; ml.setAttribute('opacity', '1'); }, 500);
+      // competitors
+      ['orbit-incy', 'orbit-bntx', 'orbit-pfe'].forEach((id, i) => {
+        setTimeout(()=>{
+          const g = document.getElementById(id);
+          g.style.transition = 'opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)';
+          g.setAttribute('opacity', '1');
+        }, 400 + i*220);
+      });
+      orbitObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+orbitObs.observe(compSection);
+
+// build competitor detail rows
+const competitorsList = document.getElementById('competitors');
+COMPETITORS.forEach((c, i) => {
+  const row = document.createElement('div');
+  row.className = 'competitor-row';
+  const ratioComp = Math.min(100, (c.cap / 160) * 100);
+  const ratioModerna = (MODERNA_CAP / 160) * 100;
+  const isBigger = c.cap > MODERNA_CAP;
+  row.innerHTML = `
+    <div class="competitor-head">
+      <div>
+        <span class="name">${c.name}</span>
+        <span class="ticker-mono"> · ${c.ticker}</span>
+      </div>
+      <div class="cap ${isBigger ? 'bigger' : ''}">${c.cap}B</div>
+    </div>
+    <div class="vs">
+      <div class="barwrap">
+        <div class="moderna-bar" data-w="${ratioModerna}%"></div>
+        <div class="competitor-bar" data-w="${ratioComp}%" style="background: ${isBigger ? 'var(--ink)' : 'var(--ink-3)'}; opacity: 0.35;"></div>
+      </div>
+    </div>
+    <div class="toggle">
+      <span>Read context</span>
+      <span class="chev">↓</span>
+    </div>
+    <div class="desc">${c.desc}</div>
+  `;
+  row.addEventListener('click', ()=> row.classList.toggle('open'));
+  competitorsList.appendChild(row);
+});
+// animate bars on enter
+const compBarObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if (e.isIntersecting){
+      // overlap the two bars: competitor full first, moderna over the top
+      e.target.querySelectorAll('.moderna-bar, .competitor-bar').forEach((b, idx) => {
+        setTimeout(()=>{ b.style.width = b.dataset.w; }, idx * 120 + 200);
+      });
+      compBarObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.6 });
+document.querySelectorAll('.competitor-row').forEach(r => compBarObs.observe(r));
+
+/* speaker-notes parent comms — none, but post a no-op so chrome can sync */
+window.parent && window.parent.postMessage({ slideIndexChanged: 0 }, '*');
+
+</script>
+</body>
+</html>

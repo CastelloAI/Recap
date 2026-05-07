@@ -1,0 +1,1533 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=420, initial-scale=1" />
+<title>VMC · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* --------------------------------------------------------------
+   Vulcan Materials — Stock Recap
+   Aesthetic: limestone, strata, iron oxide. Editorial weight.
+   -------------------------------------------------------------- */
+:root {
+  /* Earth palette — limestone, granite, iron oxide */
+  --paper:      #F2EDE3;   /* warm limestone */
+  --paper-2:    #E8E1D2;   /* sandstone */
+  --paper-3:    #D9CFB9;   /* deeper stone */
+  --ink:        #1B1612;   /* basalt */
+  --ink-2:      #3F352B;   /* coal */
+  --ink-3:      #6B5E50;   /* shale */
+  --ink-4:      #9B8E7C;   /* aged stone */
+  --line:       #C8BDA6;
+  --line-soft:  #D9CFB9;
+
+  /* Iron oxide / rust — the signal color */
+  --rust-50:   #F5E4D9;
+  --rust-300:  #D08A5F;
+  --rust-400:  #B86840;   /* primary signal */
+  --rust-500:  #9D4A26;
+  --rust-600:  #7B3517;
+
+  /* Deep quarry — for the dark interlude */
+  --void:      #0F0C09;
+  --void-2:    #1A1612;
+  --void-3:    #2A231C;
+
+  /* Brand-supplied chart hexes (biggest_costs) — locked */
+  --c-cor: #E07B54;  /* Cost of Revenue */
+  --c-sag: #5B8DB8;  /* SAG */
+  --c-dda: #6DBF82;  /* DD&A */
+  --c-int: #A97DC9;  /* Interest */
+
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:    'Geist', -apple-system, system-ui, sans-serif;
+  --font-mono:    'Geist Mono', ui-monospace, Menlo, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+html, body { background: #1A1612; }
+
+/* Outer staging — the page sits centered on a deep stone field */
+.staging {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 50% 0%, #2A231C 0%, #14110D 70%, #0A0806 100%);
+}
+
+.page {
+  width: 420px;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  position: relative;
+  overflow: hidden;
+}
+
+/* --- Persistent chrome --- */
+.chrome {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(242,237,227,0.72);
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  border-bottom: 1px solid rgba(200,189,166,0.4);
+}
+.chrome-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px 12px;
+}
+.tick {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+.tick-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--rust-400);
+  margin-right: 8px;
+  vertical-align: middle;
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 4px rgba(184,104,64,0.15);
+}
+.short {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-style: italic;
+  color: var(--ink-2);
+  letter-spacing: -0.01em;
+}
+.recap-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.scrollbar {
+  height: 1.5px;
+  background: rgba(184,104,64,0.08);
+  position: relative;
+  overflow: hidden;
+}
+.scrollbar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--rust-400);
+  width: 0%;
+  transition: width 60ms linear;
+}
+
+/* --- Common typography --- */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rust-500);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 1px;
+  background: var(--rust-400);
+}
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 0.95;
+  color: var(--ink);
+}
+.italic { font-style: italic; }
+.signal { color: var(--rust-500); }
+.body {
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.body em {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--rust-500);
+  font-size: 1.08em;
+}
+
+/* --- Section frame --- */
+section {
+  position: relative;
+  padding: 64px 28px;
+}
+section.flush { padding-left: 0; padding-right: 0; }
+
+/* === BEAT 1 — HERO / THESIS / CORE SAMPLE ============================ */
+.hero {
+  padding: 28px 28px 48px;
+  position: relative;
+  min-height: 720px;
+  background:
+    linear-gradient(180deg, var(--paper) 0%, var(--paper) 60%, var(--paper-2) 100%);
+}
+.hero-eyebrow { margin-top: 18px; }
+.hero h1 {
+  margin-top: 22px;
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  font-weight: 400;
+}
+.hero h1 .it { font-style: italic; color: var(--rust-500); }
+.hero-sub {
+  margin-top: 22px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 320px;
+}
+.hero-meta {
+  margin-top: 28px;
+  display: flex;
+  gap: 18px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.hero-meta span strong { color: var(--ink); font-weight: 500; }
+
+/* The core-sample column — vertical, decorative, runs down right side */
+.core {
+  position: absolute;
+  right: 18px;
+  top: 90px;
+  width: 70px;
+  height: 580px;
+  pointer-events: none;
+}
+.core svg { width: 100%; height: 100%; display: block; }
+
+/* === RESET BEAT ======================================================= */
+.reset {
+  padding: 56px 36px;
+  background: var(--paper-2);
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+.reset p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink-2);
+  text-wrap: balance;
+}
+.reset p .pop {
+  color: var(--rust-500);
+}
+
+/* === BEAT 2 — THE BUSINESS / STONE TO ROAD =========================== */
+.biz {
+  background: var(--paper);
+}
+.biz h2, .scale h2, .costs h2, .map-sec h2, .compete h2, .close h2, .bet h2 {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin-top: 18px;
+  font-weight: 400;
+}
+.biz-stage {
+  margin-top: 36px;
+  background: var(--paper-2);
+  border-radius: 2px;
+  padding: 28px 0 18px;
+  position: relative;
+  overflow: hidden;
+}
+.biz-stage svg { display: block; width: 100%; height: auto; }
+.biz-caption {
+  margin-top: 18px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  text-align: center;
+}
+
+.segments {
+  margin-top: 36px;
+  display: grid;
+  gap: 14px;
+}
+.seg-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 6px;
+  padding: 14px 0 10px;
+  border-bottom: 1px solid var(--line);
+}
+.seg-row:first-child { border-top: 1px solid var(--line); }
+.seg-name {
+  font-family: var(--font-display);
+  font-size: 26px;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+.seg-name .it { font-style: italic; color: var(--rust-500); }
+.seg-pct {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.seg-bar {
+  grid-column: 1 / -1;
+  height: 3px;
+  background: var(--paper-3);
+  position: relative;
+  border-radius: 1px;
+  margin-top: 10px;
+}
+.seg-bar i {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--ink-2);
+  width: 0%;
+  transition: width 1.4s cubic-bezier(0.22,1,0.36,1);
+}
+.seg-row.active .seg-bar i { background: var(--rust-400); }
+
+.margin-row {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.margin-row > div {
+  padding: 18px 0;
+}
+.margin-row > div + div {
+  border-left: 1px solid var(--line);
+  padding-left: 18px;
+}
+.m-num {
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+}
+.m-num .it { font-style: italic; color: var(--rust-500); }
+.m-lbl {
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+
+/* === BEAT 3 — THE SCALE =============================================== */
+.scale {
+  background: var(--paper);
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+.scale-hero {
+  margin-top: 36px;
+  text-align: left;
+}
+.big-num {
+  font-family: var(--font-display);
+  font-size: 124px;
+  line-height: 0.85;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+  font-weight: 400;
+}
+.big-num .unit {
+  font-size: 36px;
+  letter-spacing: -0.02em;
+  vertical-align: 0.55em;
+  margin-left: -2px;
+  color: var(--ink-2);
+}
+.big-num.italic { font-style: italic; color: var(--rust-500); }
+.scale-cap {
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.scale-bullets {
+  margin-top: 56px;
+  display: grid;
+  gap: 0;
+}
+.scale-bullets .row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 22px;
+  padding: 22px 0;
+  border-top: 1px solid var(--line);
+}
+.scale-bullets .row:last-child { border-bottom: 1px solid var(--line); }
+.scale-bullets .num {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  min-width: 130px;
+}
+.scale-bullets .num .it { font-style: italic; color: var(--rust-500); }
+.scale-bullets .lbl {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  padding-bottom: 6px;
+}
+.scale-bullets .lbl b { font-weight: 500; color: var(--ink); }
+
+/* === BEAT 4 — WHERE THE MONEY GOES (PILE) ============================ */
+.costs {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  background: var(--paper);
+  position: relative;
+}
+.pile-stage {
+  margin-top: 40px;
+  position: relative;
+  width: 100%;
+  height: 320px;
+}
+.pile-stage svg { display: block; width: 100%; height: 100%; }
+.cost-legend {
+  margin-top: 32px;
+  display: grid;
+  gap: 0;
+}
+.cost-legend .lr {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+  cursor: pointer;
+}
+.cost-legend .lr:last-child { border-bottom: 1px solid var(--line); }
+.cost-legend .sw {
+  width: 14px; height: 14px;
+  border-radius: 2px;
+}
+.cost-legend .nm {
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  color: var(--ink);
+  font-weight: 500;
+}
+.cost-legend .nm small {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  font-weight: 400;
+  margin-top: 3px;
+}
+.cost-legend .pc {
+  font-family: var(--font-display);
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  font-style: italic;
+  color: var(--ink);
+}
+.cost-residual {
+  margin-top: 38px;
+  padding: 24px 0 0;
+  border-top: 2px solid var(--ink);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.cost-residual .lbl {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.cost-residual .val {
+  font-family: var(--font-display);
+  font-size: 52px;
+  letter-spacing: -0.025em;
+  font-style: italic;
+  color: var(--rust-500);
+  line-height: 0.95;
+}
+
+/* === BEAT 5 — FOOTPRINT =============================================== */
+.map-sec {
+  background: var(--paper);
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+.map-stage {
+  margin-top: 36px;
+  position: relative;
+  width: 100%;
+}
+.map-stage svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.map-overlay {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.map-overlay > div {
+  padding: 18px 14px;
+}
+.map-overlay > div + div { border-left: 1px solid var(--line); }
+.map-overlay .v {
+  font-family: var(--font-display);
+  font-size: 36px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--ink);
+}
+.map-overlay .v.it { font-style: italic; color: var(--rust-500); }
+.map-overlay .l {
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  line-height: 1.3;
+}
+
+/* === BEAT 6 — THE BET / WEIGHT (DARK) ================================= */
+.bet {
+  background: var(--void);
+  color: var(--paper);
+  padding: 96px 28px 88px;
+  position: relative;
+}
+.bet .eyebrow { color: var(--rust-300); }
+.bet .eyebrow::before { background: var(--rust-300); }
+.bet h2 { color: var(--paper); }
+.bet h2 .it { font-style: italic; color: var(--rust-300); }
+.bet .lede {
+  margin-top: 22px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: #C9C0B0;
+  max-width: 340px;
+}
+.bet .lede em {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--rust-300);
+  font-size: 1.08em;
+}
+
+.strata {
+  margin-top: 48px;
+  width: 100%;
+  position: relative;
+}
+.strata svg { display: block; width: 100%; height: auto; }
+
+.alloc-list {
+  margin-top: 44px;
+  display: grid;
+  gap: 0;
+}
+.alloc-list .ar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: baseline;
+  padding: 18px 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.alloc-list .ar:last-child { border-bottom: 1px solid rgba(255,255,255,0.08); }
+.alloc-list .nm {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  color: var(--paper);
+}
+.alloc-list .nm .it { font-style: italic; color: var(--rust-300); }
+.alloc-list .vl {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--paper-2);
+}
+.alloc-bar {
+  grid-column: 1 / -1;
+  height: 2px;
+  background: rgba(255,255,255,0.06);
+  margin-top: 10px;
+  position: relative;
+}
+.alloc-bar i {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--rust-400);
+  width: 0%;
+  transition: width 1.6s cubic-bezier(0.22,1,0.36,1);
+}
+
+.bet-foot {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.bet-foot > div { padding: 20px 14px; }
+.bet-foot > div + div { border-left: 1px solid rgba(255,255,255,0.12); }
+.bet-foot .v {
+  font-family: var(--font-display);
+  font-size: 36px;
+  line-height: 0.95;
+  color: var(--paper);
+  letter-spacing: -0.02em;
+}
+.bet-foot .v.it { font-style: italic; color: var(--rust-300); }
+.bet-foot .l {
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8B8278;
+  line-height: 1.4;
+}
+
+/* === BEAT 7 — COMPETITORS ============================================= */
+.compete {
+  background: var(--paper);
+  padding: 80px 28px;
+}
+.peers {
+  margin-top: 40px;
+  display: grid;
+  gap: 28px;
+}
+.peer {
+  position: relative;
+}
+.peer-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.peer-name {
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.peer-name .it { font-style: italic; color: var(--rust-500); }
+.peer-tick {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.peer-bars {
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
+}
+.pb {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+.pb-lbl {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.pb-track {
+  height: 8px;
+  background: var(--paper-2);
+  border-radius: 1px;
+  position: relative;
+}
+.pb-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--ink-2);
+  width: 0%;
+  transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
+}
+.pb-fill.vmc { background: var(--rust-400); }
+.pb-val {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--paper);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.pb-val.dark { color: var(--ink); right: -2px; transform: translate(100%,-50%); padding-left: 6px;}
+.peer-desc {
+  margin-top: 14px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.peer-desc em {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--rust-500);
+}
+.peer + .peer { padding-top: 28px; border-top: 1px solid var(--line); }
+
+/* === CLOSE ============================================================ */
+.close {
+  background: var(--paper);
+  padding: 96px 28px 96px;
+  text-align: left;
+}
+.close h2 {
+  font-size: 56px;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin-top: 18px;
+}
+.close h2 .it { font-style: italic; color: var(--rust-500); }
+.close .body {
+  margin-top: 24px;
+  font-size: 16px;
+  max-width: 340px;
+}
+.close-grid {
+  margin-top: 56px;
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+.close-grid .row {
+  padding: 22px 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: baseline;
+  border-bottom: 1px solid var(--line);
+}
+.close-grid .row .n {
+  font-family: var(--font-display);
+  font-size: 38px;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  font-style: italic;
+  color: var(--rust-500);
+  min-width: 110px;
+}
+.close-grid .row .t {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  padding-bottom: 4px;
+}
+
+.colophon {
+  padding: 40px 28px 64px;
+  background: var(--paper-2);
+  border-top: 1px solid var(--line-soft);
+}
+.colophon p {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  line-height: 1.7;
+}
+.colophon p + p { margin-top: 14px; }
+
+/* Reveal animations — applied via JS .in-view */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 700ms var(--ease-out, cubic-bezier(0.22,1,0.36,1)),
+              transform 700ms var(--ease-out, cubic-bezier(0.22,1,0.36,1));
+}
+.reveal.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal.delay-1 { transition-delay: 80ms; }
+.reveal.delay-2 { transition-delay: 160ms; }
+.reveal.delay-3 { transition-delay: 240ms; }
+
+/* Subtle paper grain */
+.page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0 0.05  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.5'/></svg>");
+  opacity: 0.06;
+  z-index: 100;
+  mix-blend-mode: multiply;
+}
+
+@media (max-width: 460px) {
+  .staging { background: #1A1612; }
+  .page { width: 100%; }
+}
+</style>
+</head>
+<body>
+<div class="staging">
+<div class="page" id="page">
+
+  <!-- ============ PERSISTENT CHROME ============ -->
+  <header class="chrome">
+    <div class="chrome-row">
+      <span class="tick"><span class="tick-dot"></span>VMC</span>
+      <span class="short">Vulcan Materials</span>
+      <span class="recap-label">Recap · FY '25</span>
+    </div>
+    <div class="scrollbar"><div class="scrollbar-fill" id="scroll-fill"></div></div>
+  </header>
+
+  <!-- ============ BEAT 1 — THESIS / CORE SAMPLE ============ -->
+  <section class="hero" id="hero">
+    <div class="eyebrow hero-eyebrow">Thesis · the foundation</div>
+    <h1>
+      America is built<br>
+      on crushed stone.<br>
+      <span class="it">Vulcan crushes&nbsp;it.</span>
+    </h1>
+    <p class="hero-sub">
+      425 active quarries. 23 states. One company that has been turning rock into roads since <strong style="color:var(--ink);font-weight:500">1909</strong>.
+    </p>
+    <div class="hero-meta">
+      <span><strong>NYSE</strong> · VMC</span>
+      <span><strong>$38.06B</strong> mcap</span>
+    </div>
+
+    <!-- Core sample column — drilled down through strata -->
+    <div class="core" aria-hidden="true">
+      <svg viewBox="0 0 70 580" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="rust-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#D08A5F"/>
+            <stop offset="1" stop-color="#9D4A26"/>
+          </linearGradient>
+        </defs>
+        <!-- core tube outline -->
+        <rect x="20" y="0" width="30" height="580" fill="#E8E1D2" stroke="#C8BDA6" stroke-width="0.6"/>
+        <!-- strata bands inside the core -->
+        <g id="strata-bands">
+          <rect x="20" y="0"   width="30" height="34" fill="#D9CFB9"/>
+          <rect x="20" y="34"  width="30" height="22" fill="#C9BC9F"/>
+          <rect x="20" y="56"  width="30" height="46" fill="#A99578"/>
+          <rect x="20" y="102" width="30" height="18" fill="#7E6A52"/>
+          <rect x="20" y="120" width="30" height="60" fill="#3F352B"/>
+          <rect x="20" y="180" width="30" height="28" fill="#5A4B3B"/>
+          <rect x="20" y="208" width="30" height="74" fill="#8D7A60"/>
+          <rect x="20" y="282" width="30" height="22" fill="#B86840"/>
+          <rect x="20" y="304" width="30" height="48" fill="#6B5E50"/>
+          <rect x="20" y="352" width="30" height="34" fill="#9B8E7C"/>
+          <rect x="20" y="386" width="30" height="60" fill="#3F352B"/>
+          <rect x="20" y="446" width="30" height="32" fill="#7B3517"/>
+          <rect x="20" y="478" width="30" height="50" fill="#2A231C"/>
+          <rect x="20" y="528" width="30" height="52" fill="#1B1612"/>
+        </g>
+        <!-- depth ticks -->
+        <g font-family="Geist Mono, monospace" font-size="7" fill="#6B5E50" letter-spacing="1">
+          <line x1="14" y1="34" x2="20" y2="34" stroke="#9B8E7C" stroke-width="0.5"/>
+          <text x="12" y="37" text-anchor="end">1909</text>
+          <line x1="14" y1="180" x2="20" y2="180" stroke="#9B8E7C" stroke-width="0.5"/>
+          <text x="12" y="183" text-anchor="end">1956</text>
+          <line x1="14" y1="304" x2="20" y2="304" stroke="#9B8E7C" stroke-width="0.5"/>
+          <text x="12" y="307" text-anchor="end">1990</text>
+          <line x1="14" y1="446" x2="20" y2="446" stroke="#9B8E7C" stroke-width="0.5"/>
+          <text x="12" y="449" text-anchor="end">2010</text>
+          <line x1="14" y1="572" x2="20" y2="572" stroke="#9B8E7C" stroke-width="0.5"/>
+          <text x="12" y="575" text-anchor="end">2025</text>
+        </g>
+        <!-- depth marker traveling with scroll -->
+        <g id="core-marker">
+          <line x1="20" y1="0" x2="50" y2="0" stroke="#B86840" stroke-width="1.2"/>
+          <polygon points="50,0 56,-3 56,3" fill="#B86840"/>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT ============ -->
+  <section class="reset">
+    <p>Every road, every runway, every foundation begins as <span class="pop"><em>a&nbsp;rock somebody had to break.</em></span></p>
+  </section>
+
+  <!-- ============ BEAT 2 — THE BUSINESS ============ -->
+  <section class="biz">
+    <div class="eyebrow reveal">The business · how rock becomes revenue</div>
+    <h2 class="reveal delay-1">
+      A quarry, a crusher,<br>
+      <span class="signal italic">and a contract.</span>
+    </h2>
+    <p class="body reveal delay-2" style="margin-top:22px;max-width:340px">
+      Vulcan extracts crushed stone, sand, and gravel — and sells it to whoever is paving, pouring, or building. <em>Aggregates</em> drive the company. Asphalt and concrete are the downstream finishers, fed by Vulcan's own quarries.
+    </p>
+
+    <!-- Stone → Crusher → Aggregate → Roadway scene -->
+    <div class="biz-stage reveal delay-3" id="biz-stage">
+      <svg viewBox="0 0 360 220" aria-hidden="true">
+        <defs>
+          <linearGradient id="stoneG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#A99578"/>
+            <stop offset="1" stop-color="#6B5E50"/>
+          </linearGradient>
+          <linearGradient id="crushG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#3F352B"/>
+            <stop offset="1" stop-color="#1B1612"/>
+          </linearGradient>
+        </defs>
+        <!-- ground line -->
+        <line x1="0" y1="170" x2="360" y2="170" stroke="#C8BDA6" stroke-width="0.8"/>
+        <!-- 1. boulder -->
+        <g transform="translate(40 110)">
+          <polygon points="0,60 12,12 38,0 64,8 76,38 70,60" fill="url(#stoneG)" stroke="#3F352B" stroke-width="0.6"/>
+          <polygon points="20,18 32,8 50,12 46,28" fill="#C9BC9F" opacity="0.5"/>
+          <text x="38" y="80" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="1.5" fill="#6B5E50">QUARRY</text>
+        </g>
+        <!-- arrow -->
+        <g transform="translate(130 140)" stroke="#9B8E7C" stroke-width="0.8" fill="none">
+          <line x1="0" y1="0" x2="22" y2="0"/>
+          <polyline points="18,-3 22,0 18,3"/>
+        </g>
+        <!-- 2. crusher (hopper) -->
+        <g transform="translate(160 90)">
+          <polygon points="0,0 60,0 50,40 10,40" fill="url(#crushG)"/>
+          <rect x="14" y="40" width="32" height="34" fill="#3F352B"/>
+          <line x1="14" y1="50" x2="46" y2="50" stroke="#1B1612"/>
+          <line x1="14" y1="60" x2="46" y2="60" stroke="#1B1612"/>
+          <line x1="14" y1="70" x2="46" y2="70" stroke="#1B1612"/>
+          <text x="30" y="92" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="1.5" fill="#6B5E50">CRUSHER</text>
+          <!-- falling pieces -->
+          <g id="biz-fall">
+            <circle cx="22" cy="80" r="2" fill="#8D7A60"/>
+            <circle cx="38" cy="84" r="1.5" fill="#A99578"/>
+            <circle cx="30" cy="76" r="1.2" fill="#6B5E50"/>
+          </g>
+        </g>
+        <!-- arrow -->
+        <g transform="translate(232 140)" stroke="#9B8E7C" stroke-width="0.8" fill="none">
+          <line x1="0" y1="0" x2="22" y2="0"/>
+          <polyline points="18,-3 22,0 18,3"/>
+        </g>
+        <!-- 3. aggregate pile -->
+        <g transform="translate(264 130)">
+          <polygon points="0,40 25,0 50,40" fill="#8D7A60" stroke="#3F352B" stroke-width="0.5"/>
+          <circle cx="14" cy="34" r="2.5" fill="#A99578"/>
+          <circle cx="20" cy="38" r="2" fill="#6B5E50"/>
+          <circle cx="32" cy="34" r="2.4" fill="#A99578"/>
+          <circle cx="38" cy="38" r="1.8" fill="#3F352B"/>
+          <circle cx="25" cy="22" r="2" fill="#A99578"/>
+          <text x="25" y="60" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="1.5" fill="#6B5E50">AGGREGATES</text>
+        </g>
+        <!-- 4. road horizon (faint, far) -->
+        <g opacity="0.55">
+          <polygon points="0,180 360,180 360,210 0,210" fill="#3F352B"/>
+          <line x1="40" y1="195" x2="80" y2="195" stroke="#F2EDE3" stroke-width="1.6" stroke-dasharray="6 8"/>
+          <line x1="120" y1="195" x2="160" y2="195" stroke="#F2EDE3" stroke-width="1.6" stroke-dasharray="6 8"/>
+          <line x1="200" y1="195" x2="240" y2="195" stroke="#F2EDE3" stroke-width="1.6" stroke-dasharray="6 8"/>
+          <line x1="280" y1="195" x2="320" y2="195" stroke="#F2EDE3" stroke-width="1.6" stroke-dasharray="6 8"/>
+        </g>
+      </svg>
+      <div class="biz-caption">Stone → crush → aggregate → infrastructure</div>
+    </div>
+
+    <!-- Three segments -->
+    <div class="segments reveal" style="margin-top:48px">
+      <div class="seg-row active" data-w="100">
+        <div class="seg-name"><span class="it">Aggregates.</span></div>
+        <div class="seg-pct">DOMINANT · 3 SEGMENTS</div>
+        <div class="seg-bar"><i style="--w:100%"></i></div>
+      </div>
+      <div class="seg-row" data-w="35">
+        <div class="seg-name">Asphalt.</div>
+        <div class="seg-pct">DOWNSTREAM · LOCAL</div>
+        <div class="seg-bar"><i></i></div>
+      </div>
+      <div class="seg-row" data-w="35">
+        <div class="seg-name">Concrete.</div>
+        <div class="seg-pct">DOWNSTREAM · LOCAL</div>
+        <div class="seg-bar"><i></i></div>
+      </div>
+    </div>
+
+    <div class="margin-row reveal">
+      <div>
+        <div class="m-num">27.4<span style="font-size:24px">%</span></div>
+        <div class="m-lbl">Gross margin</div>
+      </div>
+      <div>
+        <div class="m-num"><span class="it">20.4</span><span style="font-size:24px;font-style:italic;color:var(--rust-500)">%</span></div>
+        <div class="m-lbl">Operating margin</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT ============ -->
+  <section class="reset">
+    <p>Per-ton profit is a function of two things: <span class="pop"><em>how much you crush, and what they'll pay for it.</em></span> Both went up.</p>
+  </section>
+
+  <!-- ============ BEAT 3 — SCALE ============ -->
+  <section class="scale">
+    <div class="eyebrow reveal">Scale · FY 2025</div>
+    <h2 class="reveal delay-1">
+      Seven point<br>
+      nine four <span class="signal italic">billion</span>.
+    </h2>
+    <div class="scale-hero">
+      <div class="big-num reveal delay-2"><span id="rev-num">$7.94</span><span class="unit">B</span></div>
+      <div class="scale-cap reveal delay-3">FY 2025 Revenue · ↑ from prior years</div>
+    </div>
+
+    <div class="scale-bullets">
+      <div class="row reveal">
+        <div class="num"><span class="it">425</span></div>
+        <div class="lbl"><b>Active aggregates facilities</b><br>Across 23 states, D.C., Mexico, the Bahamas.</div>
+      </div>
+      <div class="row reveal">
+        <div class="num"><span class="it">117</span></div>
+        <div class="lbl"><b>Years in the rock business</b><br>Founded 1909 in Birmingham as Birmingham Slag.</div>
+      </div>
+      <div class="row reveal">
+        <div class="num"><span class="it">~11k</span></div>
+        <div class="lbl"><b>Employees</b><br>Roughly 10,000 to 12,000 across the network.</div>
+      </div>
+      <div class="row reveal">
+        <div class="num">$1.91<span style="font-size:30px">B</span></div>
+        <div class="lbl"><b>Q4 2025 revenue</b><br>EPS of $1.70 — pricing held, volumes grew.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT ============ -->
+  <section class="reset">
+    <p>So you crush <span class="pop"><em>seven-and-change billion</em></span> dollars of stone. Where does that money go?</p>
+  </section>
+
+  <!-- ============ BEAT 4 — WHERE THE MONEY GOES (PILE) ============ -->
+  <section class="costs">
+    <div class="eyebrow reveal">A hundred cents in</div>
+    <h2 class="reveal delay-1">
+      The pile, <span class="signal italic">partitioned</span>.
+    </h2>
+    <p class="body reveal delay-2" style="margin-top:20px;max-width:340px">
+      Every dollar of revenue is a wheelbarrow of crushed stone. Most of it — <em>seventy-three cents</em> — pays for the diesel, blasting caps, labor, and rolling stock that got it out of the ground.
+    </p>
+
+    <div class="pile-stage reveal delay-3" id="pile-stage">
+      <svg viewBox="0 0 360 320" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <filter id="grain1">
+            <feTurbulence type="fractalNoise" baseFrequency="2.4" numOctaves="2"/>
+            <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0"/>
+            <feComposite in2="SourceGraphic" operator="in"/>
+          </filter>
+        </defs>
+        <!-- ground -->
+        <line x1="20" y1="288" x2="340" y2="288" stroke="#C8BDA6" stroke-width="0.6"/>
+        <!-- pile silhouette: trapezoid-ish triangle made of bands -->
+        <!-- Total height ~218; widths reflect cost percentages against revenue (73/7/5/2) plus 13 residual.
+             The pile is divided horizontally; the residual is the brightening peak at the top. -->
+        <g>
+          <!-- 73% Cost of Revenue — the base -->
+          <polygon points="40,288 320,288 290,128 70,128" fill="#E07B54" />
+          <polygon points="40,288 320,288 290,128 70,128" fill="url(#stoneG)" opacity="0" />
+          <!-- 7% SAG -->
+          <polygon points="70,128 290,128 275,98 85,98" fill="#5B8DB8"/>
+          <!-- 5% DD&A -->
+          <polygon points="85,98 275,98 263,76 97,76" fill="#6DBF82"/>
+          <!-- 2% Interest -->
+          <polygon points="97,76 263,76 255,62 105,62" fill="#A97DC9"/>
+          <!-- residual ~13% margin — the lit peak -->
+          <polygon points="105,62 255,62 220,18 140,18" fill="#1B1612"/>
+          <polygon points="105,62 255,62 220,18 140,18" fill="url(#stoneG)" opacity="0.0"/>
+          <!-- highlight -->
+          <polygon points="180,20 220,18 215,30 184,32" fill="#B86840" opacity="0.85"/>
+        </g>
+        <!-- pebbles around base -->
+        <g>
+          <circle cx="28" cy="288" r="3" fill="#8D7A60"/>
+          <circle cx="20" cy="284" r="2" fill="#A99578"/>
+          <circle cx="334" cy="288" r="3.5" fill="#6B5E50"/>
+          <circle cx="346" cy="285" r="2" fill="#8D7A60"/>
+          <circle cx="14" cy="290" r="2.2" fill="#3F352B"/>
+        </g>
+        <!-- callout lines + labels -->
+        <g font-family="Geist Mono" font-size="8" fill="#6B5E50" letter-spacing="1.5">
+          <line x1="320" y1="208" x2="350" y2="208" stroke="#C8BDA6" stroke-width="0.5"/>
+          <text x="20" y="212" text-anchor="start" font-family="Instrument Serif" font-size="13" font-style="italic" fill="#9D4A26">73¢</text>
+
+          <line x1="290" y1="113" x2="350" y2="113" stroke="#C8BDA6" stroke-width="0.5"/>
+          <text x="20" y="117" text-anchor="start" font-family="Instrument Serif" font-size="11" font-style="italic" fill="#5B8DB8">7¢</text>
+
+          <line x1="275" y1="87" x2="350" y2="87" stroke="#C8BDA6" stroke-width="0.5"/>
+          <text x="20" y="91" text-anchor="start" font-family="Instrument Serif" font-size="11" font-style="italic" fill="#3E8B5A">5¢</text>
+
+          <line x1="259" y1="69" x2="350" y2="69" stroke="#C8BDA6" stroke-width="0.5"/>
+          <text x="20" y="73" text-anchor="start" font-family="Instrument Serif" font-size="11" font-style="italic" fill="#7C53A0">2¢</text>
+
+          <text x="180" y="14" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="2" fill="#1B1612">↑ WHAT SURVIVES</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="cost-legend">
+      <div class="lr"><span class="sw" style="background:#E07B54"></span><span class="nm">Cost of Revenue<small>Diesel · labor · explosives · haul</small></span><span class="pc">73%</span></div>
+      <div class="lr"><span class="sw" style="background:#5B8DB8"></span><span class="nm">Selling, Admin & General<small>SAG · overhead</small></span><span class="pc">7%</span></div>
+      <div class="lr"><span class="sw" style="background:#6DBF82"></span><span class="nm">Depreciation, Depletion & Amortization<small>The reserve clock ticking</small></span><span class="pc">5%</span></div>
+      <div class="lr"><span class="sw" style="background:#A97DC9"></span><span class="nm">Interest expense<small>5.0% wtd · 13.7yr avg maturity</small></span><span class="pc">2%</span></div>
+    </div>
+
+    <div class="cost-residual">
+      <div class="lbl">What's left,<br>per dollar in</div>
+      <div class="val">~13¢</div>
+    </div>
+  </section>
+
+  <!-- ============ BEAT 5 — FOOTPRINT ============ -->
+  <section class="map-sec">
+    <div class="eyebrow reveal">Footprint · 23 states</div>
+    <h2 class="reveal delay-1">
+      Almost entirely<br>
+      <span class="signal italic">domestic.</span>
+    </h2>
+    <p class="body reveal delay-2" style="margin-top:20px;max-width:340px">
+      Aggregates are heavy and expensive to ship. The business is local, hub-by-hub. Vulcan's network skews south and west, where America is still building.
+    </p>
+
+    <div class="map-stage reveal delay-3">
+      <svg viewBox="0 0 360 220" aria-hidden="true">
+        <defs>
+          <filter id="pinpulse">
+            <feGaussianBlur stdDeviation="1.4"/>
+          </filter>
+        </defs>
+        <!-- Stylized US silhouette (simplified outline) -->
+        <path d="M30,70
+                 L60,52 L90,46 L130,42 L170,40 L210,40 L250,44 L290,52 L320,70
+                 L332,98 L325,128 L310,148 L292,158 L272,162 L255,170 L240,178
+                 L218,182 L196,180 L178,176 L162,180 L150,196 L132,200 L118,194
+                 L106,178 L94,170 L80,164 L62,158 L48,144 L36,124 L28,98 Z"
+              fill="#E8E1D2" stroke="#9B8E7C" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Mexico stub -->
+        <path d="M150,196 L156,210 L168,212 L172,202 L162,198 Z"
+              fill="#D9CFB9" stroke="#9B8E7C" stroke-width="0.6"/>
+        <!-- pin clusters: south/southeast bias -->
+        <g id="map-pins" fill="#B86840">
+          <!-- AL hub (Birmingham HQ) -->
+          <circle cx="208" cy="138" r="4"/>
+          <circle cx="208" cy="138" r="9" fill="none" stroke="#B86840" stroke-width="0.8" opacity="0.5"/>
+          <circle cx="208" cy="138" r="14" fill="none" stroke="#B86840" stroke-width="0.5" opacity="0.25"/>
+          <text x="208" y="156" text-anchor="middle" font-family="Geist Mono" font-size="7" letter-spacing="1.5" fill="#7B3517">BIRMINGHAM · HQ</text>
+
+          <!-- Texas -->
+          <circle cx="158" cy="156" r="3"/>
+          <circle cx="148" cy="160" r="2.4"/>
+          <circle cx="166" cy="148" r="2"/>
+          <!-- Florida -->
+          <circle cx="244" cy="170" r="2.6"/>
+          <circle cx="252" cy="178" r="2"/>
+          <!-- Georgia / Carolinas -->
+          <circle cx="226" cy="130" r="2.4"/>
+          <circle cx="240" cy="124" r="2.6"/>
+          <circle cx="252" cy="116" r="2.2"/>
+          <!-- Tennessee -->
+          <circle cx="216" cy="116" r="2"/>
+          <!-- Virginia -->
+          <circle cx="262" cy="104" r="2.4"/>
+          <!-- Mid-Atlantic -->
+          <circle cx="270" cy="92" r="2"/>
+          <!-- Mississippi/Louisiana/Arkansas -->
+          <circle cx="190" cy="142" r="2.4"/>
+          <circle cx="180" cy="156" r="2"/>
+          <circle cx="178" cy="128" r="1.8"/>
+          <!-- Illinois/Indiana -->
+          <circle cx="200" cy="100" r="1.8"/>
+          <circle cx="212" cy="98" r="1.6"/>
+          <!-- California -->
+          <circle cx="56" cy="118" r="2.6"/>
+          <circle cx="60" cy="106" r="2"/>
+          <circle cx="52" cy="132" r="1.8"/>
+          <!-- Arizona/Nevada -->
+          <circle cx="80" cy="138" r="2.2"/>
+          <circle cx="92" cy="124" r="1.8"/>
+          <!-- New Mexico -->
+          <circle cx="118" cy="142" r="1.8"/>
+          <!-- Bahamas -->
+          <circle cx="278" cy="186" r="2.2"/>
+          <!-- Mexico -->
+          <circle cx="162" cy="206" r="2"/>
+        </g>
+        <!-- 96/3/1 marker bar at bottom -->
+        <g transform="translate(20 200)">
+          <rect x="0" y="0" width="320" height="6" fill="#E8E1D2"/>
+          <rect x="0" y="0" width="307" height="6" fill="#B86840"/>
+          <rect x="307" y="0" width="10" height="6" fill="#5B8DB8"/>
+          <rect x="317" y="0" width="3" height="6" fill="#A97DC9"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="map-overlay">
+      <div>
+        <div class="v"><span class="it">96<span style="font-size:22px">%</span></span></div>
+        <div class="l">United<br>States</div>
+      </div>
+      <div>
+        <div class="v">3<span style="font-size:22px">%</span></div>
+        <div class="l">Mexico &<br>Caribbean</div>
+      </div>
+      <div>
+        <div class="v">1<span style="font-size:22px">%</span></div>
+        <div class="l">Other<br>Int'l</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT ============ -->
+  <section class="reset">
+    <p>425 hubs is a lot of <span class="pop"><em>property, plant, and equipment</em></span> — and someone has to finance it.</p>
+  </section>
+
+  <!-- ============ BEAT 6 — THE BET (DARK / WEIGHT) ============ -->
+  <section class="bet">
+    <div class="eyebrow reveal">The bet · capital structure</div>
+    <h2 class="reveal delay-1">
+      Bedrock,<br>
+      <span class="it">leveraged.</span>
+    </h2>
+    <p class="lede reveal delay-2">
+      Vulcan sits on <em>$17B of assets</em> — quarries, decades-old goodwill, rolling stock — financed by long-duration debt at a steady weighted rate. Not a venture story. A <em>tonnage</em> story.
+    </p>
+
+    <!-- Strata visual — debt vs equity vs cash, drawn as horizontal earth layers -->
+    <div class="strata reveal delay-3">
+      <svg viewBox="0 0 360 200" aria-hidden="true">
+        <defs>
+          <pattern id="stripe" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+          </pattern>
+        </defs>
+        <!-- horizon line -->
+        <line x1="0" y1="20" x2="360" y2="20" stroke="rgba(255,255,255,0.18)" stroke-dasharray="2 4"/>
+        <text x="0" y="14" font-family="Geist Mono" font-size="8" letter-spacing="1.5" fill="#8B8278">SURFACE</text>
+
+        <!-- Cash layer (thin, near surface) -->
+        <rect x="0" y="22" width="360" height="10" fill="#5B8DB8" opacity="0.35"/>
+        <rect x="0" y="22" width="360" height="10" fill="url(#stripe)"/>
+        <text x="354" y="30" text-anchor="end" font-family="Geist Mono" font-size="8" letter-spacing="1.4" fill="#C9C0B0">CASH · $183M</text>
+
+        <!-- Equity (mid, fertile) -->
+        <rect x="0" y="34" width="360" height="60" fill="#3F352B"/>
+        <text x="354" y="48" text-anchor="end" font-family="Geist Mono" font-size="8" letter-spacing="1.4" fill="#E8E1D2">EQUITY</text>
+        <text x="354" y="78" text-anchor="end" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#F2EDE3">$8.53B</text>
+
+        <!-- Debt (deep bedrock, rust-tinted) -->
+        <rect x="0" y="96" width="360" height="92" fill="#5A4B3B"/>
+        <rect x="0" y="96" width="360" height="92" fill="#7B3517" opacity="0.45"/>
+        <text x="354" y="112" text-anchor="end" font-family="Geist Mono" font-size="8" letter-spacing="1.4" fill="#D08A5F">DEBT</text>
+        <text x="354" y="148" text-anchor="end" font-family="Instrument Serif" font-style="italic" font-size="34" fill="#F2EDE3">$4.36B</text>
+        <text x="354" y="170" text-anchor="end" font-family="Geist Mono" font-size="7" letter-spacing="1.4" fill="#9B8E7C">5.0% WTD · 13.7YR AVG</text>
+
+        <!-- depth label -->
+        <text x="6" y="190" font-family="Geist Mono" font-size="8" letter-spacing="1.5" fill="#8B8278">NET DEBT / EBITDA · 1.8×</text>
+      </svg>
+    </div>
+
+    <div class="alloc-list">
+      <div class="ar" data-w="100">
+        <div class="nm"><span class="it">Capex</span></div>
+        <div class="vl">$677.7M</div>
+        <div class="alloc-bar"><i></i></div>
+      </div>
+      <div class="ar" data-w="38">
+        <div class="nm">Dividends</div>
+        <div class="vl">$259.8M</div>
+        <div class="alloc-bar"><i></i></div>
+      </div>
+      <div class="ar" data-w="35">
+        <div class="nm">Buybacks</div>
+        <div class="vl">$707M · '23–'25</div>
+        <div class="alloc-bar"><i></i></div>
+      </div>
+    </div>
+
+    <div class="bet-foot">
+      <div>
+        <div class="v"><span class="it">$1.81<span style="font-size:22px">B</span></span></div>
+        <div class="l">Operating cash flow</div>
+      </div>
+      <div>
+        <div class="v">$1.14<span style="font-size:22px">B</span></div>
+        <div class="l">Free cash flow</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT ============ -->
+  <section class="reset">
+    <p>You don't have a moat in stone. <span class="pop"><em>You have a haul radius.</em></span> Whoever's quarry is closest, wins the contract.</p>
+  </section>
+
+  <!-- ============ BEAT 7 — COMPETITION ============ -->
+  <section class="compete">
+    <div class="eyebrow reveal">The competition · sized by market cap</div>
+    <h2 class="reveal delay-1">
+      Three rivals.<br>
+      <span class="signal italic">Different rocks.</span>
+    </h2>
+    <p class="body reveal delay-2" style="margin-top:20px;max-width:340px">
+      Vulcan is the largest <em>aggregates-pure</em> public company in the U.S. The other three play different games — one head-to-head, one a scaled spin-out, one a substitute material entirely.
+    </p>
+
+    <div class="peers" id="peers">
+      <!-- VMC anchor -->
+      <div class="peer reveal">
+        <div class="peer-head">
+          <div class="peer-name"><span class="it">Vulcan Materials</span></div>
+          <div class="peer-tick">VMC</div>
+        </div>
+        <div class="peer-bars">
+          <div class="pb"><div class="pb-lbl">Mcap</div><div class="pb-track"><div class="pb-fill vmc" data-w="85"><span class="pb-val">$38.06B</span></div></div></div>
+          <div class="pb"><div class="pb-lbl">Revenue</div><div class="pb-track"><div class="pb-fill vmc" data-w="24"><span class="pb-val">$7.94B</span></div></div></div>
+        </div>
+        <div class="peer-desc"><em>The pure play.</em> Aggregates-led, U.S.-focused, disciplined pricing.</div>
+      </div>
+
+      <!-- MLM -->
+      <div class="peer reveal">
+        <div class="peer-head">
+          <div class="peer-name">Martin Marietta</div>
+          <div class="peer-tick">MLM</div>
+        </div>
+        <div class="peer-bars">
+          <div class="pb"><div class="pb-lbl">Mcap</div><div class="pb-track"><div class="pb-fill" data-w="83"><span class="pb-val">$37.52B</span></div></div></div>
+          <div class="pb"><div class="pb-lbl">Revenue</div><div class="pb-track"><div class="pb-fill" data-w="19"><span class="pb-val">$6.15B</span></div></div></div>
+          <div class="pb"><div class="pb-lbl">Growth YoY</div><div class="pb-track"><div class="pb-fill" data-w="2"><span class="pb-val dark">0.12%</span></div></div></div>
+        </div>
+        <div class="peer-desc">Head-to-head in stone, sand, gravel — same southeastern, mid-Atlantic, and western markets. P/E TTM <em>32.99×</em>.</div>
+      </div>
+
+      <!-- AMRZ -->
+      <div class="peer reveal">
+        <div class="peer-head">
+          <div class="peer-name">Amrize</div>
+          <div class="peer-tick">AMRZ</div>
+        </div>
+        <div class="peer-bars">
+          <div class="pb"><div class="pb-lbl">Mcap</div><div class="pb-track"><div class="pb-fill" data-w="71"><span class="pb-val">$31.89B</span></div></div></div>
+          <div class="pb"><div class="pb-lbl">Revenue</div><div class="pb-track"><div class="pb-fill" data-w="36"><span class="pb-val">$11.81B</span></div></div></div>
+        </div>
+        <div class="peer-desc">The <em>Holcim spin-out</em>. Bigger top line via concrete and ready-mix; same core categories.</div>
+      </div>
+
+      <!-- NUE -->
+      <div class="peer reveal">
+        <div class="peer-head">
+          <div class="peer-name">Nucor</div>
+          <div class="peer-tick">NUE</div>
+        </div>
+        <div class="peer-bars">
+          <div class="pb"><div class="pb-lbl">Mcap</div><div class="pb-track"><div class="pb-fill" data-w="100"><span class="pb-val">$44.61B</span></div></div></div>
+          <div class="pb"><div class="pb-lbl">Revenue</div><div class="pb-track"><div class="pb-fill" data-w="98"><span class="pb-val">$32.49B</span></div></div></div>
+          <div class="pb"><div class="pb-lbl">Growth YoY</div><div class="pb-track"><div class="pb-fill" data-w="58"><span class="pb-val dark">5.73%</span></div></div></div>
+        </div>
+        <div class="peer-desc">Not a stone company — <em>a substitute</em>. Rebar and structural steel compete for the same infrastructure dollars.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT ============ -->
+  <section class="reset">
+    <p>So step back. America keeps building. The country needs <span class="pop"><em>something to build on.</em></span></p>
+  </section>
+
+  <!-- ============ CLOSE — INVERTS THE OPEN ============ -->
+  <section class="close">
+    <div class="eyebrow">The takeaway</div>
+    <h2>
+      A century of rock,<br>
+      <span class="it">paid in pennies.</span>
+    </h2>
+    <p class="body">
+      The hero promised that America is built on crushed stone. The arithmetic adds it up: of every dollar of revenue, <em>thirteen cents survive</em> to the bottom line — and on $7.94B in sales, that thirteen funds the dividend, the buybacks, and the next decade of quarries.
+    </p>
+
+    <div class="close-grid">
+      <div class="row"><div class="n">73¢</div><div class="t"><b style="color:var(--ink);font-weight:500">Spent</b> getting it out of the ground.</div></div>
+      <div class="row"><div class="n">14¢</div><div class="t"><b style="color:var(--ink);font-weight:500">Spent</b> on overhead, wear, and interest.</div></div>
+      <div class="row"><div class="n">~13¢</div><div class="t"><b style="color:var(--ink);font-weight:500">Survives</b> per dollar — funds dividend, buybacks, growth capex.</div></div>
+    </div>
+
+    <p class="body" style="margin-top:48px;font-family:var(--font-display);font-style:italic;font-size:24px;line-height:1.3;color:var(--ink);max-width:340px">
+      The opening said <span style="color:var(--rust-500)">Vulcan crushes it</span>. The close, more honest: Vulcan crushes a lot — and keeps a little.
+    </p>
+  </section>
+
+  <footer class="colophon">
+    <p>Vulcan Materials Co · NYSE: VMC · Birmingham, AL · est. 1909</p>
+    <p>Recap · FY 2025 · figures from company disclosures</p>
+    <p>Aggregates · Asphalt · Concrete</p>
+  </footer>
+
+</div><!-- /page -->
+</div><!-- /staging -->
+
+<script>
+(function() {
+  const page = document.getElementById('page');
+  const fill = document.getElementById('scroll-fill');
+  const coreMarker = document.getElementById('core-marker');
+  const revNum = document.getElementById('rev-num');
+
+  // ---- scroll progress + core-sample marker ----
+  function getScroll() {
+    const doc = document.documentElement;
+    const top = window.scrollY || doc.scrollTop;
+    const h = (doc.scrollHeight - doc.clientHeight) || 1;
+    return Math.max(0, Math.min(1, top / h));
+  }
+  function onScroll() {
+    const p = getScroll();
+    fill.style.width = (p * 100).toFixed(2) + '%';
+    if (coreMarker) {
+      // marker travels 0..580 within the core column
+      const y = p * 572;
+      coreMarker.setAttribute('transform', `translate(0 ${y})`);
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ---- IntersectionObserver reveals + bar fills ----
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('in-view');
+
+      // fill segment bars
+      e.target.querySelectorAll('.seg-row').forEach(r => {
+        const w = r.dataset.w || 100;
+        const i = r.querySelector('.seg-bar i');
+        if (i) i.style.width = w + '%';
+      });
+      // alloc-list bars
+      e.target.querySelectorAll('.ar').forEach(r => {
+        const w = r.dataset.w || 100;
+        const i = r.querySelector('.alloc-bar i');
+        if (i) i.style.width = w + '%';
+      });
+      // peer bars
+      e.target.querySelectorAll('.pb-fill').forEach(b => {
+        const w = b.dataset.w || 100;
+        b.style.width = w + '%';
+      });
+
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -60px 0px' });
+
+  document.querySelectorAll('.reveal, .peer, .seg-row, .biz, .scale, .costs, .map-sec, .bet, .compete').forEach(el => {
+    io.observe(el);
+  });
+
+  // ---- count-up the headline revenue figure ----
+  const target = 7.94;
+  let started = false;
+  const ioRev = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !started) {
+        started = true;
+        const start = performance.now();
+        const dur = 1400;
+        function tick(now) {
+          const t = Math.min(1, (now - start) / dur);
+          const eased = 1 - Math.pow(1 - t, 3);
+          const v = (target * eased).toFixed(2);
+          revNum.textContent = '$' + v;
+          if (t < 1) requestAnimationFrame(tick);
+          else revNum.textContent = '$7.94';
+        }
+        requestAnimationFrame(tick);
+      }
+    });
+  }, { threshold: 0.5 });
+  if (revNum) ioRev.observe(revNum);
+})();
+</script>
+</body>
+</html>

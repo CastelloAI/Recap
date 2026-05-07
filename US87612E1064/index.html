@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TGT · Recap FY '25</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<style>
+  /* =======================================================
+     Target Corporation — FY '25 Mobile Recap
+     Brand-adapted from the Zair Naqvi system:
+       - Coral accent → swapped to Target Red as the signal color
+       - Warm paper background retained (warmer than Target's cool white)
+       - Instrument Serif for display, Geist for body, Geist Mono for chrome
+     ======================================================= */
+  :root {
+    --tgt-red:        #CC0000;
+    --tgt-red-deep:   #990000;
+    --tgt-red-soft:   #F5D6D6;
+    --tgt-red-wash:   #FBEEEE;
+    --paper:          #FBFAF7;
+    --paper-2:        #F4F1EA;
+    --paper-3:        #ECE7DD;
+    --ink:            #141414;
+    --ink-2:          #3B3A37;
+    --ink-3:          #6B6A65;
+    --line:           #E4E1D9;
+    --max-w:          440px;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Geist', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overscroll-behavior-y: none;
+  }
+  body { display: flex; justify-content: center; }
+
+  .stage {
+    width: 100%;
+    max-width: var(--max-w);
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ---------- Persistent chrome ---------- */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(16px) saturate(1.3);
+    -webkit-backdrop-filter: blur(16px) saturate(1.3);
+    background: rgba(251,250,247,0.78);
+    border-bottom: 1px solid rgba(228,225,217,0.6);
+  }
+  .chrome-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px 12px;
+  }
+  .chrome-bullseye {
+    width: 18px; height: 18px;
+    border-radius: 999px;
+    background: var(--tgt-red);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .chrome-bullseye::after {
+    content: ''; position: absolute; inset: 5px;
+    background: var(--paper); border-radius: 999px;
+  }
+  .chrome-bullseye::before {
+    content: ''; position: absolute; inset: 7px;
+    background: var(--tgt-red); border-radius: 999px;
+    z-index: 1;
+  }
+  .chrome-ticker {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .chrome-name {
+    font-family: 'Instrument Serif', serif;
+    font-size: 17px;
+    color: var(--ink-2);
+    letter-spacing: -0.01em;
+    flex: 1;
+  }
+  .chrome-label {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .chrome-progress {
+    height: 1.5px;
+    background: var(--line);
+    position: relative;
+  }
+  .chrome-progress-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    background: var(--tgt-red);
+    transition: width 80ms linear;
+  }
+
+  /* ---------- Section primitives ---------- */
+  section {
+    padding: 96px 24px;
+    position: relative;
+  }
+  .eyebrow {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--tgt-red);
+    font-weight: 500;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow .dot {
+    width: 5px; height: 5px; border-radius: 999px; background: var(--tgt-red);
+    display: inline-block;
+  }
+  h1, h2 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    margin: 0;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  h1 { font-size: 64px; line-height: 0.95; }
+  h2 { font-size: 44px; line-height: 1.0; }
+  p {
+    margin: 0;
+    font-family: 'Geist', sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 1.15em;
+    color: var(--tgt-red);
+    letter-spacing: -0.01em;
+  }
+  .mono {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* Reset beats */
+  .reset {
+    padding: 56px 32px;
+    background: var(--paper-2);
+    text-align: center;
+  }
+  .reset.dark {
+    background: #141414;
+    color: #F4F2ED;
+  }
+  .reset.dark p { color: #C9C6BF; }
+  .reset.wash { background: var(--tgt-red-wash); }
+  .reset p {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.35;
+    color: var(--ink-2);
+    letter-spacing: -0.01em;
+  }
+  .reset em { font-size: 1em; }
+
+  /* =========================================================
+     1. HERO — concentric bullseye that pulses
+     ========================================================= */
+  .hero {
+    padding: 56px 24px 72px;
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bullseye-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: -10px 0 0;
+  }
+  .hero-bullseye {
+    width: 78%;
+    aspect-ratio: 1/1;
+    position: relative;
+  }
+  .hero-bullseye .ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: var(--tgt-red);
+  }
+  .hero-bullseye .ring.r2 { inset: 14%; background: var(--paper); }
+  .hero-bullseye .ring.r3 { inset: 28%; background: var(--tgt-red); }
+  .hero-bullseye .ring.r4 { inset: 42%; background: var(--paper); }
+  .hero-bullseye .ring.r5 { inset: 56%; background: var(--tgt-red); }
+  .hero-bullseye .ring.r6 { inset: 70%; background: var(--paper); }
+  .hero-bullseye .ring.r7 { inset: 84%; background: var(--tgt-red); }
+
+  .hero-bullseye .ticker-stamp {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--paper);
+    z-index: 5;
+  }
+  .hero h1 .one {
+    color: var(--tgt-red);
+    font-style: italic;
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .hero-meta-block .mono { margin-bottom: 4px; display: block; }
+  .hero-meta-num {
+    font-family: 'Instrument Serif', serif;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .hero-meta-num .pos { color: #1F8B4C; font-size: 14px; font-family: 'Geist Mono', monospace; letter-spacing: 0; vertical-align: 4px; margin-left: 4px;}
+  .hero-headline {
+    font-size: 60px;
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    margin-bottom: 18px;
+  }
+  .hero-headline .lede { color: var(--tgt-red); font-style: italic; }
+  .hero-sub {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.4;
+    color: var(--ink-2);
+    max-width: 320px;
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    opacity: 0.6;
+    animation: bob 2.4s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translate(-50%, 0); opacity: 0.4; }
+    50%     { transform: translate(-50%, 4px); opacity: 0.85; }
+  }
+
+  /* =========================================================
+     2. BUSINESS — six categories radiate from a center
+     ========================================================= */
+  .biz {
+    background: var(--paper);
+    padding-top: 64px;
+  }
+  .biz-radial {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    margin: 32px 0 16px;
+  }
+  .biz-radial svg { width: 100%; height: 100%; display: block; }
+  .biz-cats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--line);
+    margin-top: 24px;
+  }
+  .biz-cat {
+    padding: 18px 4px;
+    border-bottom: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+  }
+  .biz-cat:nth-child(2n) { border-right: none; }
+  .biz-cat-num {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+    margin-bottom: 6px;
+  }
+  .biz-cat-name {
+    font-family: 'Instrument Serif', serif;
+    font-size: 19px;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+  .biz-callout {
+    margin-top: 32px;
+    padding: 20px 22px;
+    background: var(--tgt-red-wash);
+    border-radius: 12px;
+  }
+  .biz-callout-stat {
+    font-family: 'Instrument Serif', serif;
+    font-size: 56px;
+    color: var(--tgt-red);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+  }
+  .biz-callout-stat .frac { font-style: italic; }
+  .biz-callout-label {
+    font-family: 'Geist', sans-serif;
+    font-size: 14px;
+    color: var(--ink-2);
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  /* =========================================================
+     3. SCALE — count-ups + 50 states grid
+     ========================================================= */
+  .scale-fig {
+    margin: 32px 0;
+  }
+  .scale-headline {
+    font-size: 88px;
+    line-height: 0.9;
+    letter-spacing: -0.035em;
+  }
+  .scale-headline .unit { font-size: 38px; vertical-align: 14px; color: var(--ink-2); font-style: italic; }
+  .scale-caption {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-2);
+    margin-top: 10px;
+  }
+  .scale-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 36px;
+    border-top: 1px solid var(--line);
+  }
+  .scale-cell {
+    padding: 22px 4px;
+    border-bottom: 1px solid var(--line);
+  }
+  .scale-cell:nth-child(odd) { border-right: 1px solid var(--line); padding-right: 14px; }
+  .scale-cell:nth-child(even) { padding-left: 14px; }
+  .scale-num {
+    font-family: 'Instrument Serif', serif;
+    font-size: 40px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .scale-num .em { color: var(--tgt-red); font-style: italic; }
+  .scale-lbl {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 8px;
+  }
+
+  /* States dot grid (50 dots) */
+  .states-svg { width: 100%; height: auto; margin: 24px 0 0; display: block; }
+
+  /* =========================================================
+     4. WHERE THE MONEY GOES — 100-cent dollar grid
+     ========================================================= */
+  .money {
+    background: #141414;
+    color: #F4F2ED;
+  }
+  .money p { color: #B8B5AE; }
+  .money .eyebrow { color: #FF8B6A; }
+  .money .eyebrow .dot { background: #FF8B6A; }
+  .money h2 { color: #F4F2ED; }
+  .money em { color: #FF8B6A; }
+  .cents-grid {
+    margin: 28px 0 24px;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px;
+    aspect-ratio: 10/10;
+  }
+  .cent {
+    aspect-ratio: 1/1;
+    border-radius: 2px;
+    background: #2A2826;
+    transition: background 220ms cubic-bezier(0.22,1,0.36,1);
+    position: relative;
+  }
+  .cent.lit-1 { background: #E05C5C; } /* COGS - 72 */
+  .cent.lit-2 { background: #5B8FD4; } /* SG&A - 21 */
+  .cent.lit-3 { background: #F5A623; } /* D&A - 2 */
+  .cent.lit-4 { background: #7ED3A2; } /* Interest - 1 */
+  .cent.survive {
+    background: #FBFAF7;
+    box-shadow: 0 0 0 1.5px #FBFAF7, 0 0 16px 2px rgba(251,250,247,0.4);
+  }
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: #C9C6BF;
+  }
+  .legend-swatch {
+    width: 12px; height: 12px; border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .legend-pct {
+    margin-left: auto;
+    color: #F4F2ED;
+    font-weight: 500;
+  }
+  .survive-callout {
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid #2A2826;
+  }
+  .survive-stat {
+    font-family: 'Instrument Serif', serif;
+    font-size: 96px;
+    line-height: 0.9;
+    color: #FBFAF7;
+    letter-spacing: -0.04em;
+  }
+  .survive-stat .em { color: #FF8B6A; font-style: italic; }
+  .survive-cap {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 19px;
+    color: #C9C6BF;
+    margin-top: 14px;
+    max-width: 320px;
+  }
+
+  /* =========================================================
+     5. FOOTPRINT — 99% one country
+     ========================================================= */
+  .foot {
+    background: var(--paper);
+  }
+  .map-wrap {
+    margin: 28px -8px 8px;
+    aspect-ratio: 16/10;
+    position: relative;
+  }
+  .map-wrap svg { width: 100%; height: 100%; display: block; }
+  .foot-stack {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-top: 24px;
+  }
+  .foot-pct {
+    font-family: 'Instrument Serif', serif;
+    font-size: 120px;
+    line-height: 0.85;
+    color: var(--tgt-red);
+    letter-spacing: -0.05em;
+    font-style: italic;
+  }
+  .foot-pct-sign {
+    font-family: 'Instrument Serif', serif;
+    font-size: 48px;
+    color: var(--tgt-red);
+    font-style: italic;
+  }
+  .foot-pct-line {
+    font-family: 'Instrument Serif', serif;
+    font-size: 24px;
+    line-height: 1.2;
+    color: var(--ink-2);
+    margin-top: 14px;
+  }
+  .foot-pct-line em { font-size: 1em; }
+  .foot-other {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .foot-other-num {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    color: var(--ink-3);
+  }
+
+  /* =========================================================
+     6. THE BET — capex / dividend / debt
+     ========================================================= */
+  .bet {
+    background: var(--paper-2);
+  }
+  .flow-svg { width: 100%; height: auto; margin: 28px 0 8px; display: block; }
+  .bet-rows {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .bet-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 14px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .bet-row:last-child { border-bottom: none; }
+  .bet-row-amt {
+    font-family: 'Instrument Serif', serif;
+    font-size: 30px;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .bet-row-amt.em { color: var(--tgt-red); font-style: italic; }
+  .bet-row-lbl {
+    font-family: 'Geist', sans-serif;
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.3;
+  }
+  .bet-row-tag {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* =========================================================
+     7. COMPETITION — relative scale bars
+     ========================================================= */
+  .comp-svg-wrap {
+    margin: 28px 0 32px;
+    position: relative;
+  }
+  .comp-row {
+    margin-bottom: 22px;
+  }
+  .comp-row-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .comp-name {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .comp-name .ticker {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+    margin-left: 8px;
+    vertical-align: 3px;
+  }
+  .comp-cap {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-2);
+    letter-spacing: 0.02em;
+    font-weight: 500;
+  }
+  .comp-bar {
+    height: 14px;
+    background: var(--paper-3);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+  .comp-bar-fill {
+    position: absolute; inset: 0 auto 0 0;
+    background: var(--ink-2);
+    border-radius: 2px;
+    transform-origin: left;
+  }
+  .comp-bar-fill.tgt { background: var(--tgt-red); }
+  .comp-bar-fill.wmt { background: var(--ink); }
+  .comp-bar-fill.kr  { background: var(--ink-2); }
+  .comp-bar-fill.syy { background: var(--ink-3); }
+  .comp-meta {
+    display: flex;
+    gap: 14px;
+    margin-top: 6px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .comp-meta span strong { color: var(--ink); font-weight: 500; }
+  .comp-note {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--ink-2);
+    margin-top: 14px;
+    line-height: 1.4;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* Walmart-vs-Target visceral ratio scene */
+  .ratio-scene {
+    margin: 28px 0 0;
+    padding: 28px 0 16px;
+    text-align: center;
+  }
+  .ratio-svg { width: 100%; height: auto; max-width: 360px; }
+  .ratio-cap {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink-2);
+    margin-top: 14px;
+    line-height: 1.4;
+  }
+  .ratio-cap em { font-size: 1em; }
+
+  /* =========================================================
+     8. CLOSE
+     ========================================================= */
+  .close {
+    background: var(--paper);
+    padding-top: 80px;
+    padding-bottom: 96px;
+    text-align: left;
+  }
+  .close-mini-bullseye {
+    width: 56px; height: 56px;
+    border-radius: 999px;
+    background: var(--tgt-red);
+    position: relative;
+    margin-bottom: 32px;
+  }
+  .close-mini-bullseye::after {
+    content: ''; position: absolute; inset: 8px;
+    background: var(--paper); border-radius: 999px;
+  }
+  .close-mini-bullseye::before {
+    content: ''; position: absolute; inset: 16px;
+    background: var(--tgt-red); border-radius: 999px;
+    z-index: 2;
+  }
+  .close-headline {
+    font-family: 'Instrument Serif', serif;
+    font-size: 56px;
+    line-height: 0.96;
+    color: var(--ink);
+    letter-spacing: -0.025em;
+    margin-bottom: 24px;
+  }
+  .close-headline .em { color: var(--tgt-red); font-style: italic; }
+  .close-body {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 21px;
+    line-height: 1.4;
+    color: var(--ink-2);
+    margin-top: 16px;
+    max-width: 360px;
+  }
+  .close-body em { font-size: 1em; }
+  .close-foot {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- Reveal-on-scroll defaults ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 720ms cubic-bezier(0.22,1,0.36,1), transform 720ms cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal.delay-1 { transition-delay: 80ms; }
+  .reveal.delay-2 { transition-delay: 160ms; }
+  .reveal.delay-3 { transition-delay: 240ms; }
+
+  /* SVG scroll-driven primitives */
+  .draw {
+    stroke-dasharray: var(--len, 1000);
+    stroke-dashoffset: var(--len, 1000);
+    transition: stroke-dashoffset 1.2s cubic-bezier(0.22,1,0.36,1);
+  }
+  .draw.in { stroke-dashoffset: 0; }
+
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- ============ PERSISTENT CHROME ============ -->
+  <div class="chrome">
+    <div class="chrome-row">
+      <div class="chrome-bullseye"></div>
+      <span class="chrome-ticker">TGT</span>
+      <span class="chrome-name">Target Corp.</span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="chrome-progress"><div class="chrome-progress-fill" id="progress"></div></div>
+  </div>
+
+  <!-- ============ 1. HERO ============ -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow"><span class="dot"></span>The bullseye</div>
+      <h1 class="hero-headline">
+        <span class="lede">$104.78B</span><br/>
+        in the<br/>
+        crosshairs.
+      </h1>
+      <p class="hero-sub">
+        Two thousand stores, fifty states,<br/>
+        <em>one</em> mark on the wall.
+      </p>
+    </div>
+
+    <div class="hero-bullseye-wrap">
+      <div class="hero-bullseye" id="heroBull">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+        <div class="ring r4"></div>
+        <div class="ring r5"></div>
+        <div class="ring r6"></div>
+        <div class="ring r7"></div>
+        <div class="ticker-stamp">TGT · NYSE</div>
+      </div>
+    </div>
+
+    <div class="hero-meta">
+      <div class="hero-meta-block">
+        <span class="mono">Market cap</span>
+        <div class="hero-meta-num">$57.89<span class="unit" style="font-size:18px;color:var(--ink-3)">B</span></div>
+      </div>
+      <div class="hero-meta-block">
+        <span class="mono">Q4 EPS</span>
+        <div class="hero-meta-num">$2.98</div>
+      </div>
+      <div class="hero-meta-block">
+        <span class="mono">FY rev</span>
+        <div class="hero-meta-num">$104.78<span class="unit" style="font-size:18px;color:var(--ink-3)">B</span></div>
+      </div>
+    </div>
+    <span class="scroll-hint">Scroll ↓</span>
+  </section>
+
+  <!-- ============ RESET BEAT 1 ============ -->
+  <div class="reset wash">
+    <p>Founded in <em>1902</em>. The first Target store opened in <em>1962</em>. Sixty-four years later, the bullseye is still painted on the same wall.</p>
+  </div>
+
+  <!-- ============ 2. THE BUSINESS ============ -->
+  <section class="biz">
+    <div class="reveal">
+      <div class="eyebrow"><span class="dot"></span>How it makes money</div>
+      <h2>Six aisles.<br/><em>One</em> register.</h2>
+    </div>
+    <div class="biz-radial reveal delay-1">
+      <svg viewBox="0 0 320 320" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="rg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FBFAF7" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#FBFAF7" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- Six wedges meeting at center, each labelled -->
+        <g id="wedges" transform="translate(160 160)">
+          <!-- 6 wedges of 60° each -->
+          <g class="wedge-group">
+            <path d="M0,0 L138.6,-80 A160,160 0 0,1 138.6,80 Z" fill="#CC0000" opacity="0.92"/>
+            <path d="M0,0 L138.6,80 A160,160 0 0,1 0,160 Z"   fill="#990000" opacity="0.92"/>
+            <path d="M0,0 L0,160 A160,160 0 0,1 -138.6,80 Z" fill="#CC0000" opacity="0.78"/>
+            <path d="M0,0 L-138.6,80 A160,160 0 0,1 -138.6,-80 Z" fill="#990000" opacity="0.78"/>
+            <path d="M0,0 L-138.6,-80 A160,160 0 0,1 0,-160 Z" fill="#CC0000" opacity="0.62"/>
+            <path d="M0,0 L0,-160 A160,160 0 0,1 138.6,-80 Z" fill="#990000" opacity="0.62"/>
+          </g>
+          <!-- Bullseye stack on top -->
+          <circle r="62" fill="#FBFAF7"/>
+          <circle r="44" fill="#CC0000"/>
+          <circle r="26" fill="#FBFAF7"/>
+          <circle r="10" fill="#CC0000"/>
+          <!-- Wedge labels -->
+          <g font-family="Geist Mono, monospace" font-size="8.5" letter-spacing="1.2" fill="#FBFAF7" text-anchor="middle">
+            <text x="100" y="-46">FOOD</text>
+            <text x="100" y="58">APPAREL</text>
+            <text x="-12" y="118">HOME</text>
+            <text x="-110" y="58">BEAUTY</text>
+            <text x="-110" y="-46">HARDLINES</text>
+            <text x="-10" y="-118">OTHER</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <p class="reveal delay-2" style="margin-top:8px;">
+      Roughly <em>one in three</em> dollars from owned and exclusive brands. The rest? National brands, and shop-in-shops with <em>Apple, Disney, Ulta</em>.
+    </p>
+
+    <div class="biz-callout reveal delay-3">
+      <div class="biz-callout-stat"><span class="frac">⅓</span></div>
+      <div class="biz-callout-label">of merchandise sales come from <strong>owned and exclusive brands</strong> — Target's private-label edge.</div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 2 ============ -->
+  <div class="reset">
+    <p>You don't operate <em>two thousand stores</em> by accident. You build the muscle, store by store — and the country comes to you.</p>
+  </div>
+
+  <!-- ============ 3. THE SCALE ============ -->
+  <section class="scale">
+    <div class="reveal">
+      <div class="eyebrow"><span class="dot"></span>The scale</div>
+      <h2>Bigger than it<br/>looks from the<br/><em>parking lot</em>.</h2>
+    </div>
+
+    <div class="scale-fig reveal delay-1">
+      <div class="scale-headline" id="revCount">$104.78<span class="unit">B</span></div>
+      <div class="scale-caption">FY 2025 revenue, all from <em>one</em> reportable segment.</div>
+    </div>
+
+    <div class="scale-row reveal delay-2">
+      <div class="scale-cell">
+        <div class="scale-num"><span class="em">~2,000</span></div>
+        <div class="scale-lbl">Stores</div>
+      </div>
+      <div class="scale-cell">
+        <div class="scale-num">415,000</div>
+        <div class="scale-lbl">Team members</div>
+      </div>
+      <div class="scale-cell">
+        <div class="scale-num">50<span style="color:var(--ink-3); font-size: 24px;"> + DC</span></div>
+        <div class="scale-lbl">U.S. states</div>
+      </div>
+      <div class="scale-cell">
+        <div class="scale-num"><span class="em">7th</span></div>
+        <div class="scale-lbl">Largest US retailer</div>
+      </div>
+    </div>
+
+    <div class="reveal delay-3" style="margin-top: 32px;">
+      <div class="mono" style="margin-bottom: 14px;">All 50 states, mapped as dots</div>
+      <svg class="states-svg" viewBox="0 0 380 80" id="statesSvg">
+        <!-- 50 dots in a 10×5 grid; each represents one state -->
+        <g id="stateDots"></g>
+      </svg>
+      <p style="margin-top: 14px; font-family: 'Instrument Serif', serif; font-style: italic; font-size: 17px; color: var(--ink-2);">
+        Each dot is a state. <em>All fifty are lit.</em>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 4. WHERE THE MONEY GOES ============ -->
+  <section class="money">
+    <div class="reveal">
+      <div class="eyebrow"><span class="dot"></span>The dollar, broken down</div>
+      <h2>For every<br/>dollar that<br/>walks in…</h2>
+    </div>
+
+    <div class="cents-grid reveal delay-1" id="centsGrid">
+      <!-- 100 cells generated by JS; classes assigned by scroll position -->
+    </div>
+
+    <div class="legend reveal delay-2">
+      <div class="legend-row"><span class="legend-swatch" style="background:#E05C5C"></span> Cost of revenue <span class="legend-pct">72¢</span></div>
+      <div class="legend-row"><span class="legend-swatch" style="background:#5B8FD4"></span> SG&amp;A <span class="legend-pct">21¢</span></div>
+      <div class="legend-row"><span class="legend-swatch" style="background:#F5A623"></span> Depreciation &amp; amortization <span class="legend-pct">2¢</span></div>
+      <div class="legend-row"><span class="legend-swatch" style="background:#7ED3A2"></span> Interest expense <span class="legend-pct">1¢</span></div>
+      <div class="legend-row"><span class="legend-swatch" style="background:#FBFAF7; box-shadow:0 0 0 1px #FF8B6A"></span> Operating margin <span class="legend-pct" style="color:#FF8B6A;">~5¢</span></div>
+    </div>
+
+    <div class="survive-callout reveal delay-3">
+      <div class="survive-stat"><span class="em">4.9¢</span></div>
+      <div class="survive-cap">— operating margin. <em>Roughly five cents</em> survive each dollar through the door.</div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 3 ============ -->
+  <div class="reset wash">
+    <p>The cents that survive are spent on <em>two things</em>: the next store, and the next dividend.</p>
+  </div>
+
+  <!-- ============ 6. THE BET ============ -->
+  <section class="bet">
+    <div class="reveal">
+      <div class="eyebrow"><span class="dot"></span>The bet</div>
+      <h2>Cash in.<br/>Cash <em>out.</em></h2>
+    </div>
+
+    <svg class="flow-svg reveal delay-1" viewBox="0 0 380 220" id="flowSvg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#CC0000"/>
+        </marker>
+      </defs>
+      <!-- Source pool -->
+      <g>
+        <rect x="20" y="84" width="100" height="52" rx="6" fill="#FBFAF7" stroke="#CC0000" stroke-width="1.2"/>
+        <text x="70" y="106" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.2" fill="#3B3A37">OPERATING CASH</text>
+        <text x="70" y="124" text-anchor="middle" font-family="Instrument Serif, serif" font-size="18" fill="#141414">$6.56B</text>
+      </g>
+      <!-- Distribution lines -->
+      <path class="draw" style="--len:160" d="M120 96 C 200 80, 240 50, 320 50" fill="none" stroke="#CC0000" stroke-width="1.6" marker-end="url(#arr)"/>
+      <path class="draw" style="--len:160" d="M120 110 C 200 110, 240 110, 320 110" fill="none" stroke="#CC0000" stroke-width="1.6" marker-end="url(#arr)"/>
+      <path class="draw" style="--len:160" d="M120 124 C 200 140, 240 170, 320 170" fill="none" stroke="#CC0000" stroke-width="1.6" marker-end="url(#arr)"/>
+
+      <!-- Destinations -->
+      <g>
+        <text x="324" y="36" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.2" fill="#3B3A37">CAPEX</text>
+        <text x="324" y="56" font-family="Instrument Serif, serif" font-size="18" fill="#141414">$3.73B</text>
+      </g>
+      <g>
+        <text x="324" y="96" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.2" fill="#3B3A37">DIVIDENDS</text>
+        <text x="324" y="116" font-family="Instrument Serif, serif" font-size="18" fill="#CC0000" font-style="italic">$2.05B</text>
+      </g>
+      <g>
+        <text x="324" y="156" font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.2" fill="#3B3A37">FREE CASH</text>
+        <text x="324" y="176" font-family="Instrument Serif, serif" font-size="18" fill="#141414">$2.83B</text>
+      </g>
+    </svg>
+
+    <div class="bet-rows reveal delay-2">
+      <div class="bet-row">
+        <div class="bet-row-amt em">$1.14</div>
+        <div class="bet-row-lbl">Quarterly dividend per share — and growing for decades.</div>
+        <div class="bet-row-tag">Per qtr</div>
+      </div>
+      <div class="bet-row">
+        <div class="bet-row-amt">$14.33B</div>
+        <div class="bet-row-lbl">Long-term debt against $16.16B equity. <em>Moderately leveraged</em>.</div>
+        <div class="bet-row-tag">Debt</div>
+      </div>
+      <div class="bet-row">
+        <div class="bet-row-amt">$631M</div>
+        <div class="bet-row-lbl">Goodwill — flat, stable. Target <em>builds</em>; it rarely buys.</div>
+        <div class="bet-row-tag">M&amp;A</div>
+      </div>
+      <div class="bet-row">
+        <div class="bet-row-amt">$57.8B</div>
+        <div class="bet-row-lbl">Total assets, growing organically.</div>
+        <div class="bet-row-tag">Assets</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5. FOOTPRINT (after bet) ============ -->
+  <section class="foot">
+    <div class="reveal">
+      <div class="eyebrow"><span class="dot"></span>Footprint</div>
+      <h2>One country.<br/><em>One</em> bullseye.</h2>
+    </div>
+
+    <div class="map-wrap reveal delay-1">
+      <svg viewBox="0 0 480 300" id="mapSvg">
+        <!-- Stylized US silhouette as a single rounded shape, filled red.
+             Coordinates approximate — editorial silhouette, not cartographic. -->
+        <defs>
+          <pattern id="dotz" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+            <circle cx="3" cy="3" r="1.6" fill="#FBFAF7" opacity="0.55"/>
+          </pattern>
+        </defs>
+        <!-- US -->
+        <path d="M40,140
+                 C 40,110 60,82 95,76
+                 L 165,72 C 200,68 230,68 268,75
+                 L 380,72 C 415,72 440,90 445,118
+                 C 450,138 442,160 428,168
+                 L 388,180 C 370,190 360,210 354,228
+                 L 340,256 C 330,272 308,278 285,275
+                 L 175,265 C 145,262 122,258 96,242
+                 L 70,228 C 52,216 42,200 40,180 Z"
+              fill="#CC0000"/>
+        <path d="M40,140
+                 C 40,110 60,82 95,76
+                 L 165,72 C 200,68 230,68 268,75
+                 L 380,72 C 415,72 440,90 445,118
+                 C 450,138 442,160 428,168
+                 L 388,180 C 370,190 360,210 354,228
+                 L 340,256 C 330,272 308,278 285,275
+                 L 175,265 C 145,262 122,258 96,242
+                 L 70,228 C 52,216 42,200 40,180 Z"
+              fill="url(#dotz)"/>
+
+        <!-- Alaska & Hawaii blobs -->
+        <ellipse cx="50" cy="265" rx="22" ry="12" fill="#CC0000" />
+        <ellipse cx="50" cy="265" rx="22" ry="12" fill="url(#dotz)"/>
+        <g>
+          <circle cx="100" cy="282" r="3.5" fill="#CC0000"/>
+          <circle cx="110" cy="285" r="3" fill="#CC0000"/>
+          <circle cx="118" cy="288" r="2.5" fill="#CC0000"/>
+        </g>
+
+        <!-- Bullseye HQ pin in Minneapolis area -->
+        <g transform="translate(232,135)">
+          <circle r="14" fill="#FBFAF7"/>
+          <circle r="10" fill="#CC0000"/>
+          <circle r="6" fill="#FBFAF7"/>
+          <circle r="2.4" fill="#CC0000"/>
+        </g>
+        <g font-family="Geist Mono, monospace" font-size="8" letter-spacing="1.2" fill="#FBFAF7">
+          <text x="248" y="138">HQ · MINNEAPOLIS</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="foot-stack reveal delay-2">
+      <div class="foot-pct">99</div>
+      <div class="foot-pct-sign">%</div>
+    </div>
+    <div class="foot-pct-line reveal delay-2">of revenue, <em>made in America.</em></div>
+
+    <div class="foot-other reveal delay-3">
+      <div>
+        <div class="mono">Other (global sourcing &amp; admin)</div>
+      </div>
+      <div class="foot-other-num">1%</div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 4 (dark) ============ -->
+  <div class="reset dark">
+    <p>But the bullseye <em>isn't alone</em> in the parking lot.</p>
+  </div>
+
+  <!-- ============ 7. COMPETITION ============ -->
+  <section class="comp">
+    <div class="reveal">
+      <div class="eyebrow"><span class="dot"></span>The competition</div>
+      <h2>Three rivals.<br/><em>One</em> giant.</h2>
+    </div>
+
+    <div class="reveal delay-1" style="margin-top: 32px;">
+      <div class="mono" style="margin-bottom: 12px;">Market cap, to scale</div>
+
+      <div class="comp-row">
+        <div class="comp-row-head">
+          <div class="comp-name">Walmart <span class="ticker">WMT</span></div>
+          <div class="comp-cap">$1.02T</div>
+        </div>
+        <div class="comp-bar"><div class="comp-bar-fill wmt" data-w="100"></div></div>
+        <div class="comp-meta">
+          <span><strong>$706.41B</strong> rev</span>
+          <span><strong>+4.73%</strong> YoY</span>
+        </div>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-row-head">
+          <div class="comp-name">Target <span class="ticker">TGT</span></div>
+          <div class="comp-cap" style="color: var(--tgt-red); font-weight: 600;">$57.89B</div>
+        </div>
+        <div class="comp-bar"><div class="comp-bar-fill tgt" data-w="5.7"></div></div>
+        <div class="comp-meta">
+          <span><strong>$104.78B</strong> rev</span>
+          <span>FY '25</span>
+        </div>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-row-head">
+          <div class="comp-name">Kroger <span class="ticker">KR</span></div>
+          <div class="comp-cap">$41.77B</div>
+        </div>
+        <div class="comp-bar"><div class="comp-bar-fill kr" data-w="4.1"></div></div>
+        <div class="comp-meta">
+          <span><strong>$147.64B</strong> rev</span>
+          <span><strong>+0.35%</strong> YoY</span>
+        </div>
+      </div>
+
+      <div class="comp-row">
+        <div class="comp-row-head">
+          <div class="comp-name">Sysco <span class="ticker">SYY</span></div>
+          <div class="comp-cap">$36.47B</div>
+        </div>
+        <div class="comp-bar"><div class="comp-bar-fill syy" data-w="3.6"></div></div>
+        <div class="comp-meta">
+          <span><strong>$81.37B</strong> rev</span>
+          <span><strong>+2.58%</strong> YoY</span>
+        </div>
+      </div>
+
+      <p class="comp-note">
+        Walmart's market cap is <em>nearly eighteen times</em> Target's — the same suburban driveway, a different scale of footprint.
+      </p>
+    </div>
+
+    <div class="ratio-scene reveal delay-2">
+      <svg class="ratio-svg" viewBox="0 0 360 180" id="ratioSvg">
+        <!-- Two bullseyes — Walmart's huge, Target's small — same parking-lot baseline -->
+        <line x1="20" y1="170" x2="340" y2="170" stroke="#CFCBC0" stroke-width="0.8" stroke-dasharray="2 4"/>
+        <!-- WMT mega bullseye -->
+        <g transform="translate(120,90)">
+          <circle r="78" fill="#141414"/>
+          <circle r="58" fill="#FBFAF7"/>
+          <circle r="40" fill="#141414"/>
+          <circle r="22" fill="#FBFAF7"/>
+          <circle r="8"  fill="#141414"/>
+          <text y="100" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.4" fill="#141414">WMT · $1.02T</text>
+        </g>
+        <!-- TGT small bullseye -->
+        <g transform="translate(290,150)">
+          <circle r="18" fill="#CC0000"/>
+          <circle r="13" fill="#FBFAF7"/>
+          <circle r="9"  fill="#CC0000"/>
+          <circle r="5"  fill="#FBFAF7"/>
+          <circle r="2"  fill="#CC0000"/>
+          <text y="36" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="1.4" fill="#CC0000">TGT · $57.89B</text>
+        </g>
+      </svg>
+      <div class="ratio-cap">Same parking lot. <em>Different planet</em>.</div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 5 ============ -->
+  <div class="reset wash">
+    <p>And yet — <em>$2.05 billion</em> in dividends went out the door this year. The bullseye still pays its shareholders, on time, every quarter.</p>
+  </div>
+
+  <!-- ============ 8. CLOSE ============ -->
+  <section class="close">
+    <div class="close-mini-bullseye reveal"></div>
+    <div class="close-headline reveal delay-1">
+      <span class="em">$57.89B</span><br/>
+      in market cap.<br/>
+      The bullseye<br/>
+      still <em>holds</em>.
+    </div>
+    <div class="close-body reveal delay-2">
+      One hundred and four billion in revenue. Two thousand stores. <em>Five cents</em> survive per dollar through the door — and <em>two billion</em> walk out as dividends.
+    </div>
+    <div class="close-body reveal delay-3" style="margin-top:18px;">
+      The seventh-largest retailer in America, painted on the same wall <em>since 1962</em>.
+    </div>
+
+    <div class="close-foot">
+      <span>TGT · NYSE</span>
+      <span>FY '25 · 10-K</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // -------------------------
+  // Scroll progress hairline
+  // -------------------------
+  const progress = document.getElementById('progress');
+  function onScroll() {
+    const h = document.documentElement;
+    const total = h.scrollHeight - h.clientHeight;
+    const p = total > 0 ? (h.scrollTop / total) * 100 : 0;
+    progress.style.width = Math.min(100, Math.max(0, p)) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // -------------------------
+  // Reveal-on-scroll
+  // -------------------------
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        // Trigger any contained .draw paths
+        e.target.querySelectorAll('.draw').forEach(p => p.classList.add('in'));
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // -------------------------
+  // 50 state dots
+  // -------------------------
+  (function buildStates() {
+    const g = document.getElementById('stateDots');
+    const cols = 10, rows = 5;
+    const cellW = 380 / cols;
+    const cellH = 80 / rows;
+    for (let i = 0; i < 50; i++) {
+      const r = Math.floor(i / cols);
+      const c = i % cols;
+      const cx = c * cellW + cellW / 2;
+      const cy = r * cellH + cellH / 2;
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', cx);
+      dot.setAttribute('cy', cy);
+      dot.setAttribute('r', 0);
+      dot.setAttribute('fill', '#CC0000');
+      dot.setAttribute('data-i', i);
+      dot.style.transition = 'r 540ms cubic-bezier(0.34,1.56,0.64,1)';
+      dot.style.transitionDelay = (i * 18) + 'ms';
+      g.appendChild(dot);
+    }
+    // Animate when statesSvg is on screen
+    const sio = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          g.querySelectorAll('circle').forEach(d => d.setAttribute('r', 3));
+          sio.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    sio.observe(document.getElementById('statesSvg'));
+  })();
+
+  // -------------------------
+  // 100-cent grid: scroll-scrubbed fill
+  // 72 red (COGS), 21 blue (SG&A), 2 amber (D&A), 1 green (interest), 4 white (operating margin = 4.9 ≈ 4-5)
+  // We'll color cells in row-major order for visual cleanliness.
+  // -------------------------
+  (function buildCents() {
+    const grid = document.getElementById('centsGrid');
+    const cells = [];
+    for (let i = 0; i < 100; i++) {
+      const c = document.createElement('div');
+      c.className = 'cent';
+      grid.appendChild(c);
+      cells.push(c);
+    }
+    // Determine which class each index belongs to
+    function classFor(i) {
+      if (i < 72) return 'lit-1';
+      if (i < 93) return 'lit-2';
+      if (i < 95) return 'lit-3';
+      if (i < 96) return 'lit-4';
+      return 'survive'; // 96..99 = 4 cells representing ~4.9¢
+    }
+
+    let lit = 0;
+    function scrubCents() {
+      const rect = grid.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // progress: 0 when grid bottom enters viewport, 1 when grid top reaches center
+      const start = vh * 0.95;
+      const end = vh * 0.30;
+      const t = (start - rect.top) / (start - end);
+      const clamped = Math.max(0, Math.min(1, t));
+      const target = Math.round(clamped * 100);
+      if (target > lit) {
+        for (let i = lit; i < target; i++) {
+          cells[i].classList.add(classFor(i));
+        }
+        lit = target;
+      } else if (target < lit) {
+        for (let i = target; i < lit; i++) {
+          cells[i].className = 'cent';
+        }
+        lit = target;
+      }
+    }
+    window.addEventListener('scroll', scrubCents, { passive: true });
+    scrubCents();
+  })();
+
+  // -------------------------
+  // Competitor bars: animate width by data-w (% relative to Walmart's $1.02T scaled to bar width)
+  // We compute bar width as a function of market cap.
+  // Walmart 1020B = 100%; Target 57.89B ≈ 5.67%; Kroger 41.77B ≈ 4.10%; Sysco 36.47B ≈ 3.58%
+  // Visually unreadable if linear, so we use a sqrt scale to keep all visible while preserving the gap feel.
+  // Actually — keep linear for honest visceral effect. Walmart fills it; the rest are slivers.
+  // -------------------------
+  (function compBars() {
+    const fills = document.querySelectorAll('.comp-bar-fill');
+    const cio = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          fills.forEach((f, idx) => {
+            const w = parseFloat(f.dataset.w);
+            f.style.transition = 'width 1.2s cubic-bezier(0.22,1,0.36,1)';
+            f.style.transitionDelay = (idx * 100) + 'ms';
+            f.style.width = '0%';
+            requestAnimationFrame(() => {
+              f.style.width = w + '%';
+            });
+          });
+          cio.disconnect();
+        }
+      });
+    }, { threshold: 0.25 });
+    fills.forEach(f => f.style.width = '0%');
+    if (fills.length) cio.observe(fills[0].closest('.comp'));
+  })();
+
+  // -------------------------
+  // Bullseye subtle parallax on hero
+  // -------------------------
+  (function heroParallax() {
+    const hb = document.getElementById('heroBull');
+    if (!hb) return;
+    function tick() {
+      const y = window.scrollY;
+      const t = Math.min(1, y / 600);
+      hb.style.transform = `scale(${1 - t * 0.08}) rotate(${t * 8}deg)`;
+      hb.style.opacity = String(1 - t * 0.5);
+    }
+    window.addEventListener('scroll', tick, { passive: true });
+    tick();
+  })();
+
+  // -------------------------
+  // Hero revenue count-up when scale section enters
+  // -------------------------
+  (function counter() {
+    const el = document.getElementById('revCount');
+    if (!el) return;
+    const target = 104.78;
+    let started = false;
+    const cio = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting && !started) {
+          started = true;
+          const start = performance.now();
+          const dur = 1400;
+          function step(t) {
+            const p = Math.min(1, (t - start) / dur);
+            const eased = 1 - Math.pow(1 - p, 3);
+            const v = (target * eased).toFixed(2);
+            el.innerHTML = '$' + v + '<span class="unit">B</span>';
+            if (p < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        }
+      });
+    }, { threshold: 0.4 });
+    cio.observe(el);
+  })();
+</script>
+</body>
+</html>

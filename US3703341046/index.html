@@ -1,0 +1,1516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=414, initial-scale=1" />
+<title>GIS · Recap · FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ---------- TOKENS (Zair Naqvi DS, retuned for General Mills) ---------- */
+:root {
+  /* Warm pantry paper — cream, butter, oat */
+  --paper:    #F4ECDB;   /* the page — oat-cream */
+  --paper-2:  #EADFC7;   /* raised — flour sack */
+  --paper-3:  #DFD2B3;   /* deeper — kraft */
+  --ink:      #1B1614;   /* roasted ink */
+  --ink-2:    #3B322C;
+  --ink-3:    #6B5F54;
+  --ink-4:    #968873;
+  --line:     #D6C8AA;
+  --line-2:   #BDAB85;
+
+  /* Earned signal — Cheerios-bowl honey */
+  --signal:   #C9412A;   /* General Mills box red */
+  --signal-2: #8E2A18;
+  --honey:    #E8A93C;   /* Nature Valley */
+  --grain:    #F2DDA8;
+  --field:    #6F8E55;   /* hint of farm green for one beat */
+  --pantry:   #1B1614;
+
+  /* Cost-chart palette — supplied verbatim */
+  --c-cor: #E05C5C;
+  --c-sga: #5B8FD4;
+  --c-adv: #F4A83A;
+  --c-rnd: #6DBF8A;
+  --c-rst: #A97DC9;
+
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:    'Geist', -apple-system, system-ui, sans-serif;
+  --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body {
+  /* subtle paper grain */
+  background-image:
+    radial-gradient(rgba(27,22,20,0.025) 1px, transparent 1.2px),
+    radial-gradient(rgba(27,22,20,0.018) 1px, transparent 1.2px);
+  background-size: 3px 3px, 7px 7px;
+  background-position: 0 0, 1px 2px;
+}
+
+#app {
+  width: 100%;
+  max-width: 414px;
+  margin: 0 auto;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ---------- PERSISTENT CHROME ---------- */
+.chrome {
+  position: sticky; top: 0; z-index: 100;
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  background: rgba(244,236,219,0.78);
+  border-bottom: 1px solid rgba(27,22,20,0.06);
+}
+.chrome-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 18px 10px;
+}
+.chrome .ticker {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+.chrome .name {
+  font-family: var(--font-display);
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  flex: 1;
+  font-style: italic;
+  color: var(--ink);
+}
+.chrome .tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.progress {
+  height: 1.5px; background: transparent;
+}
+.progress > span {
+  display: block; height: 100%;
+  background: var(--signal);
+  width: 0%;
+  transition: width 80ms linear;
+}
+
+/* ---------- BASE TYPE ---------- */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+.eyebrow .dot { color: var(--signal); }
+.serif { font-family: var(--font-display); font-weight: 400; }
+.italic { font-style: italic; }
+.signal { color: var(--signal); }
+.mono { font-family: var(--font-mono); }
+
+/* ---------- LAYOUT BANDS ---------- */
+section { position: relative; padding: 64px 24px; }
+section.tight { padding: 40px 24px; }
+
+/* Reset beats — italic interludes */
+.reset {
+  padding: 56px 28px;
+  text-align: left;
+  background: var(--paper-3);
+  border-top: 1px solid rgba(27,22,20,0.05);
+  border-bottom: 1px solid rgba(27,22,20,0.05);
+  position: relative;
+}
+.reset .quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.25;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+.reset .quote em {
+  color: var(--signal);
+  font-style: italic;
+}
+.reset .mark {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 8px;
+}
+.reset .mark::before {
+  content: ""; width: 18px; height: 1px; background: var(--line-2);
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  padding: 36px 24px 72px;
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+}
+.hero .eyebrow { margin-bottom: 22px; }
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  margin: 0 0 24px;
+  font-weight: 400;
+  color: var(--ink);
+}
+.hero h1 .num {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--signal);
+  display: inline-block;
+  letter-spacing: -0.04em;
+}
+.hero .sub {
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 32ch;
+  margin: 0 0 28px;
+}
+.hero .sub em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+.hero-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  margin-top: 14px;
+}
+.hero-meta .k {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 4px;
+}
+.hero-meta .v {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--ink);
+}
+
+/* Hero scene — pantry shelf with floating brands */
+.hero-scene {
+  position: relative;
+  height: 280px;
+  margin: 8px -24px 32px;
+  overflow: hidden;
+}
+.hero-scene svg { width: 100%; height: 100%; display: block; }
+
+/* ---------- BRANDS / BUSINESS ---------- */
+.shelf-band {
+  background: var(--paper-2);
+  padding: 56px 0 64px;
+  position: relative;
+}
+.shelf-band .head { padding: 0 24px; margin-bottom: 28px; }
+.shelf-band h2 {
+  font-family: var(--font-display);
+  font-size: 38px;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin: 8px 0 12px;
+  font-weight: 400;
+}
+.shelf-band p { color: var(--ink-2); font-size: 15px; line-height: 1.55; max-width: 34ch; }
+.shelf-band p em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+.shelf {
+  position: relative;
+  margin: 28px 0 0;
+  padding: 0 18px;
+}
+.shelf-row {
+  display: flex; gap: 10px;
+  align-items: flex-end;
+  padding: 18px 0 14px;
+  border-bottom: 6px solid var(--ink);
+  position: relative;
+}
+.shelf-row::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -10px;
+  height: 4px; background: var(--ink-3); opacity: 0.35;
+  filter: blur(2px);
+}
+.shelf-row + .shelf-row { margin-top: 22px; }
+
+.box {
+  position: relative;
+  flex: 1;
+  border-radius: 3px;
+  padding: 10px 8px 10px;
+  min-height: 92px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(27,22,20,0.18), inset 0 0 0 1px rgba(0,0,0,0.06);
+  font-family: var(--font-display);
+  color: var(--ink);
+  text-align: center;
+  overflow: hidden;
+}
+.box .pname {
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 1.0;
+  font-style: italic;
+  letter-spacing: -0.01em;
+}
+.box .ptag {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(27,22,20,0.6);
+  margin-top: 4px;
+}
+.box .pic {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  margin: 6px 0;
+}
+.box.tall { min-height: 110px; flex: 1.3; }
+.box.short { min-height: 80px; }
+
+.box-cheerios { background: var(--honey); }
+.box-cheerios .pname { color: #6E1010; font-style: normal; font-family: var(--font-display); }
+.box-pillsbury { background: #F2E5C8; }
+.box-pillsbury .pname { color: #1F4E8F; }
+.box-nv       { background: #2E5A2A; color: #F4ECDB; }
+.box-nv .pname { color: #F4ECDB; }
+.box-nv .ptag { color: rgba(244,236,219,0.65); }
+.box-bb       { background: #1F2A4A; color: var(--paper); }
+.box-bb .pname { color: var(--grain); font-style: italic; }
+.box-bb .ptag { color: rgba(244,236,219,0.6); }
+.box-oep      { background: #C9412A; color: var(--paper); }
+.box-oep .pname { color: var(--paper); }
+.box-oep .ptag { color: rgba(244,236,219,0.7); }
+.box-bc       { background: var(--signal); color: var(--paper); }
+.box-bc .pname { color: var(--paper); }
+.box-bc .ptag { color: rgba(244,236,219,0.7); }
+.box-hd       { background: var(--ink); color: var(--grain); }
+.box-hd .pname { color: var(--grain); font-style: italic; }
+.box-hd .ptag { color: rgba(242,221,168,0.55); }
+
+/* Caption under shelf */
+.shelf-cap {
+  padding: 28px 24px 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  max-width: 36ch;
+}
+.shelf-cap em { color: var(--signal); }
+
+/* ---------- SCALE ---------- */
+.scale-band {
+  padding: 72px 24px 56px;
+}
+.scale-band h2 {
+  font-family: var(--font-display);
+  font-size: 40px; line-height: 1.0;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  margin: 8px 0 8px;
+}
+.scale-band .lede {
+  font-size: 15px;
+  color: var(--ink-2);
+  line-height: 1.55;
+  max-width: 34ch;
+  margin-bottom: 36px;
+}
+.scale-band .lede em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+.scale-list { display: flex; flex-direction: column; }
+.scale-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 12px;
+  padding: 22px 0;
+  border-top: 1px solid var(--line);
+}
+.scale-row:last-child { border-bottom: 1px solid var(--line); }
+.scale-row .label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  align-self: center;
+}
+.scale-row .v {
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-align: right;
+}
+.scale-row .v .unit {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  margin-left: 6px;
+  vertical-align: middle;
+  text-transform: uppercase;
+}
+.scale-row.feature .v { color: var(--signal); font-style: italic; }
+.scale-row .note {
+  grid-column: 1 / -1;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  margin-top: 6px;
+  font-family: var(--font-sans);
+}
+
+/* ---------- COSTS — 100 cent grid ---------- */
+.cost-band {
+  background: var(--paper);
+  padding: 72px 24px 64px;
+  position: relative;
+}
+.cost-band h2 {
+  font-family: var(--font-display);
+  font-size: 40px; line-height: 1.0;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  margin: 8px 0 14px;
+}
+.cost-band .lede {
+  font-size: 15px;
+  color: var(--ink-2);
+  max-width: 34ch;
+  margin-bottom: 28px;
+}
+.cost-band .lede em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+.cents {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  padding: 14px;
+  background: var(--paper-2);
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  margin-bottom: 22px;
+}
+.cent {
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: var(--paper-3);
+  position: relative;
+  transform: scale(0.4);
+  opacity: 0;
+  transition: transform 600ms var(--ease, cubic-bezier(0.22, 1, 0.36, 1)),
+              opacity 320ms ease,
+              background 200ms ease;
+  transition-delay: var(--d, 0ms);
+}
+.cent.in { transform: scale(1); opacity: 1; }
+
+.cost-legend {
+  display: flex; flex-direction: column;
+  gap: 0;
+}
+.lrow {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.lrow:last-child { border-bottom: 1px solid var(--line); }
+.lrow .sw {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1px solid rgba(27,22,20,0.18);
+}
+.lrow .lab {
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  color: var(--ink);
+}
+.lrow .pct {
+  font-family: var(--font-display);
+  font-size: 26px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.lrow .pct .sm { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); margin-left: 2px; }
+.lrow.surplus { border-top: 1px solid var(--ink); padding-top: 18px; }
+.lrow.surplus .sw { background: var(--ink); border-color: var(--ink); }
+.lrow.surplus .pct { color: var(--signal); font-style: italic; }
+.lrow.surplus .lab { font-family: var(--font-display); font-style: italic; font-size: 17px; color: var(--ink); }
+
+/* ---------- MAP / GEO ---------- */
+.geo-band {
+  background: var(--paper-2);
+  padding: 72px 24px 72px;
+  position: relative;
+}
+.geo-band h2 {
+  font-family: var(--font-display);
+  font-size: 38px; line-height: 1.0; font-weight: 400;
+  letter-spacing: -0.02em; margin: 8px 0 14px;
+}
+.geo-band .lede {
+  font-size: 15px; color: var(--ink-2); max-width: 34ch;
+  margin-bottom: 32px;
+}
+.geo-band .lede em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+.geo-svg-wrap { margin: 0 -8px; }
+.geo-svg-wrap svg { width: 100%; height: auto; display: block; }
+
+.geo-list { margin-top: 32px; }
+.geo-row {
+  display: grid;
+  grid-template-columns: 24px 1fr 60px;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.geo-row:last-child { border-bottom: 1px solid var(--line); }
+.geo-row .gn { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); }
+.geo-row .gr { font-size: 14.5px; color: var(--ink); }
+.geo-row .gp {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  text-align: right;
+  color: var(--ink);
+}
+.geo-row.feat .gp { color: var(--signal); font-style: italic; }
+.geo-bar {
+  grid-column: 1 / -1;
+  height: 2px;
+  background: var(--paper-3);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.geo-bar > span {
+  display: block; height: 100%;
+  background: var(--signal);
+  width: 0;
+  transition: width 800ms cubic-bezier(0.22,1,0.36,1);
+}
+
+/* ---------- THE BET ---------- */
+.bet-band {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 80px 24px 80px;
+  position: relative;
+}
+.bet-band .eyebrow { color: var(--honey); }
+.bet-band .eyebrow .dot { color: var(--signal); }
+.bet-band h2 {
+  font-family: var(--font-display);
+  font-size: 42px; line-height: 1.0;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin: 10px 0 16px;
+  color: var(--paper);
+}
+.bet-band h2 em { font-style: italic; color: var(--signal); }
+.bet-band p {
+  font-size: 15.5px; line-height: 1.55;
+  color: rgba(244,236,219,0.78);
+  max-width: 36ch;
+  margin: 0 0 24px;
+}
+.bet-band p em { font-family: var(--font-display); font-style: italic; color: var(--honey); }
+
+.bet-stat {
+  border-top: 1px solid rgba(244,236,219,0.16);
+  padding-top: 22px;
+  margin-top: 22px;
+}
+.bet-stat .k {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(244,236,219,0.55);
+  margin-bottom: 6px;
+}
+.bet-stat .v {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  color: var(--paper);
+}
+.bet-stat .v .unit { font-family: var(--font-mono); font-size: 12px; color: rgba(244,236,219,0.55); margin-left: 8px; letter-spacing: 0.08em; vertical-align: middle; }
+.bet-stat .v em { font-style: italic; color: var(--honey); }
+.bet-stat .note {
+  font-size: 12.5px; color: rgba(244,236,219,0.55); margin-top: 8px; max-width: 34ch;
+}
+
+/* dividend ring */
+.ring-wrap { margin: 36px -10px 0; display: flex; justify-content: center; }
+.ring-wrap svg { width: 100%; max-width: 320px; height: auto; }
+
+.allocation {
+  display: flex; flex-direction: column;
+  margin-top: 36px;
+}
+.allocation .row {
+  display: grid; grid-template-columns: 1fr auto;
+  align-items: baseline; gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid rgba(244,236,219,0.14);
+}
+.allocation .row:last-child { border-bottom: 1px solid rgba(244,236,219,0.14); }
+.allocation .row .lab {
+  font-size: 14px; color: rgba(244,236,219,0.78);
+}
+.allocation .row .lab em { font-family: var(--font-display); font-style: italic; color: var(--honey); }
+.allocation .row .v {
+  font-family: var(--font-display); font-size: 28px; letter-spacing: -0.015em;
+  color: var(--paper);
+}
+
+/* ---------- COMPETITION ---------- */
+.comp-band {
+  padding: 72px 24px 64px;
+  background: var(--paper);
+}
+.comp-band h2 {
+  font-family: var(--font-display);
+  font-size: 40px; line-height: 1.0; font-weight: 400;
+  letter-spacing: -0.02em; margin: 8px 0 12px;
+}
+.comp-band .lede { font-size: 15px; color: var(--ink-2); max-width: 34ch; margin-bottom: 36px; }
+.comp-band .lede em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+.comp-aisle {
+  position: relative;
+  padding: 30px 0 22px;
+  margin: 0 -8px;
+}
+.comp-shelf {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 8px;
+  border-bottom: 5px solid var(--ink);
+  padding: 0 8px 0;
+  position: relative;
+}
+.comp-shelf::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -9px;
+  height: 4px; background: var(--ink-3); opacity: 0.3; filter: blur(2px);
+}
+.comp-box {
+  flex: 1;
+  position: relative;
+  border-radius: 3px;
+  padding: 12px 8px 14px;
+  text-align: left;
+  color: var(--paper);
+  font-family: var(--font-display);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.18), 0 2px 4px rgba(27,22,20,0.18);
+  display: flex; flex-direction: column; justify-content: space-between;
+  transition: transform 200ms ease;
+}
+.comp-box .ct {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+.comp-box .cn {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.0;
+  letter-spacing: -0.01em;
+}
+.comp-box .cm {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1.0;
+  letter-spacing: -0.015em;
+  margin-top: 8px;
+}
+.comp-box .cm .u {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+  margin-left: 4px;
+}
+.comp-box .grow {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em;
+  margin-top: 6px; opacity: 0.85;
+}
+
+.comp-box.gis  { background: var(--signal); }
+.comp-box.khc  { background: #2E2A26; }
+.comp-box.mkc  { background: #B65A2C; }
+.comp-box.tsn  { background: #2A4D8F; }
+
+.comp-floor {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: flex; justify-content: space-between;
+  padding: 14px 8px 0;
+}
+.comp-cap {
+  margin-top: 20px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink-2);
+  max-width: 36ch;
+}
+.comp-cap em { color: var(--signal); }
+
+.comp-detail {
+  margin-top: 28px;
+  font-size: 14px;
+  color: var(--ink-2);
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+}
+.comp-detail .row { display: grid; grid-template-columns: 56px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+.comp-detail .row:last-child { border-bottom: 0; }
+.comp-detail .tk { font-family: var(--font-mono); font-size: 11px; color: var(--ink); letter-spacing: 0.04em; }
+.comp-detail .tx { font-size: 13px; line-height: 1.5; color: var(--ink-2); }
+.comp-detail .tx em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+/* ---------- THE TAKEAWAY ---------- */
+.close-band {
+  background: var(--paper-3);
+  padding: 96px 24px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.close-band .eyebrow { margin-bottom: 24px; }
+.close-band h2 {
+  font-family: var(--font-display);
+  font-size: 56px; line-height: 0.96;
+  letter-spacing: -0.025em;
+  font-weight: 400;
+  margin: 0 0 18px;
+}
+.close-band h2 em { font-style: italic; color: var(--signal); }
+.close-band p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 21px;
+  line-height: 1.35;
+  color: var(--ink-2);
+  max-width: 30ch;
+  margin: 0 0 40px;
+}
+
+.three-line {
+  display: flex; flex-direction: column; gap: 18px;
+  border-top: 1px solid var(--ink);
+  padding-top: 28px;
+  margin-top: 12px;
+}
+.three-line .ln {
+  display: grid; grid-template-columns: 1fr auto;
+  align-items: baseline; gap: 14px;
+}
+.three-line .ln .lab {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.three-line .ln .v {
+  font-family: var(--font-display);
+  font-size: 30px; letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.three-line .ln.signal .v { color: var(--signal); font-style: italic; }
+
+.colophon {
+  margin-top: 56px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between;
+  font-family: var(--font-mono); font-size: 9.5px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ---------- REVEALS ---------- */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 700ms var(--ease, cubic-bezier(0.22,1,0.36,1)), transform 700ms var(--ease, cubic-bezier(0.22,1,0.36,1)); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal[data-d="1"] { transition-delay: 80ms; }
+.reveal[data-d="2"] { transition-delay: 160ms; }
+.reveal[data-d="3"] { transition-delay: 240ms; }
+.reveal[data-d="4"] { transition-delay: 320ms; }
+
+/* count-up class spec */
+.cu { font-variant-numeric: tabular-nums; }
+
+/* hide selection while still scrollable */
+::selection { background: rgba(201,65,42,0.22); color: var(--ink); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ============================ CHROME ============================ -->
+  <div class="chrome">
+    <div class="chrome-row">
+      <span class="ticker">GIS</span>
+      <span class="name">General Mills</span>
+      <span class="tag">RECAP · FY '25</span>
+    </div>
+    <div class="progress"><span id="prog"></span></div>
+  </div>
+
+  <!-- ============================ HERO ============================ -->
+  <section class="hero">
+    <div class="eyebrow reveal"><span class="dot">◆</span> &nbsp; The thesis · 159 years on</div>
+    <h1 class="reveal" data-d="1">
+      A flour mill<br />
+      that became<br />
+      <span class="num cu" data-target="19.49" data-decimals="2" data-prefix="$" data-suffix="B">$0.00B</span><br />
+      <span class="serif italic" style="color:var(--ink-2);">in groceries.</span>
+    </h1>
+    <p class="sub reveal" data-d="2">
+      One company. Seven aisles. <em>33,000 hands</em> moving Cheerios, Pillsbury, Old El Paso, Blue Buffalo and Häagen-Dazs into kitchens across <em>90+ countries</em>.
+    </p>
+
+    <!-- Hero scene: a tilted pantry shelf with brands floating in -->
+    <div class="hero-scene reveal" data-d="3" id="heroScene">
+      <svg viewBox="0 0 414 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <!-- soft warm glow -->
+        <defs>
+          <radialGradient id="glow" cx="50%" cy="60%" r="60%">
+            <stop offset="0%" stop-color="#F2DDA8" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#F4ECDB" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="bowl" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#F4ECDB"/>
+            <stop offset="1" stop-color="#DFD2B3"/>
+          </linearGradient>
+          <linearGradient id="milk" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#FAF6EA"/>
+            <stop offset="1" stop-color="#E8DDC0"/>
+          </linearGradient>
+        </defs>
+        <rect width="414" height="280" fill="url(#glow)"/>
+
+        <!-- big serif "G" mark, abstract -->
+        <text x="-12" y="240" font-family="Instrument Serif" font-size="320" fill="#1B1614" opacity="0.05" font-style="italic">G</text>
+
+        <!-- the bowl, center-bottom -->
+        <g transform="translate(207 200)" id="bowlG">
+          <ellipse cx="0" cy="20" rx="118" ry="14" fill="#1B1614" opacity="0.18"/>
+          <path d="M -110 0 Q -100 56 0 56 Q 100 56 110 0 Z" fill="url(#bowl)" stroke="#1B1614" stroke-width="1.2"/>
+          <ellipse cx="0" cy="0" rx="110" ry="14" fill="url(#milk)" stroke="#1B1614" stroke-width="1.2"/>
+          <!-- floating o's -->
+          <g fill="#E8A93C" stroke="#8E5A14" stroke-width="0.8">
+            <circle cx="-72" cy="-2" r="6"/>
+            <circle cx="-46" cy="2" r="6"/>
+            <circle cx="-18" cy="-3" r="6"/>
+            <circle cx="14" cy="2" r="6"/>
+            <circle cx="42" cy="-2" r="6"/>
+            <circle cx="68" cy="2" r="6"/>
+            <circle cx="-58" cy="-12" r="5" opacity="0.85"/>
+            <circle cx="-30" cy="-14" r="5" opacity="0.9"/>
+            <circle cx="2" cy="-14" r="5" opacity="0.85"/>
+            <circle cx="30" cy="-12" r="5" opacity="0.9"/>
+            <circle cx="56" cy="-13" r="5" opacity="0.85"/>
+          </g>
+          <!-- inner bowl rim -->
+          <ellipse cx="0" cy="0" rx="110" ry="14" fill="none" stroke="#1B1614" stroke-width="1.2" opacity="0.5"/>
+        </g>
+
+        <!-- floating box silhouettes (parallax) -->
+        <g id="floatBoxes">
+          <g class="fb" data-depth="0.4" transform="translate(28 30)">
+            <rect width="46" height="60" rx="2" fill="#C9412A"/>
+            <text x="23" y="36" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="13" fill="#F4ECDB">Mills</text>
+          </g>
+          <g class="fb" data-depth="0.65" transform="translate(308 24)">
+            <rect width="48" height="64" rx="2" fill="#1F4E8F"/>
+            <text x="24" y="38" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="12" fill="#F4ECDB">Pillsb.</text>
+          </g>
+          <g class="fb" data-depth="0.55" transform="translate(82 110)">
+            <rect width="40" height="52" rx="2" fill="#2E5A2A"/>
+            <text x="20" y="32" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="11" fill="#F4ECDB">N. Vly</text>
+          </g>
+          <g class="fb" data-depth="0.5" transform="translate(282 122)">
+            <rect width="38" height="48" rx="2" fill="#1F2A4A"/>
+            <text x="19" y="30" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="10" fill="#F2DDA8">Blue B.</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-meta reveal" data-d="4">
+      <div>
+        <div class="k">Mkt cap</div>
+        <div class="v">$18.95<span style="font-family:var(--font-mono); font-size:11px; color:var(--ink-3);">B</span></div>
+      </div>
+      <div>
+        <div class="k">Op income</div>
+        <div class="v">$3.30<span style="font-family:var(--font-mono); font-size:11px; color:var(--ink-3);">B</span></div>
+      </div>
+      <div>
+        <div class="k">Net income</div>
+        <div class="v">$2.30<span style="font-family:var(--font-mono); font-size:11px; color:var(--ink-3);">B</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ RESET 1 ============================ -->
+  <div class="reset">
+    <div class="mark reveal">An interlude</div>
+    <div class="quote reveal" data-d="1">
+      Founded in 1866 as a mill on the Mississippi. <em>Today the mill is global,</em> the flour is forty brands, and the bowl gets passed down a continent every morning.
+    </div>
+  </div>
+
+  <!-- ============================ THE BUSINESS / SHELF ============================ -->
+  <section class="shelf-band">
+    <div class="head">
+      <div class="eyebrow reveal"><span class="dot">◆</span> &nbsp; The aisle · how it earns</div>
+      <h2 class="reveal" data-d="1">Forty brands<br/>on one shelf.</h2>
+      <p class="reveal" data-d="2">
+        Most of the revenue comes from <em>one continent and one aisle:</em> the North America Retail segment moved <em>$11.91B</em> in FY'25 — about 61% of the company.
+      </p>
+    </div>
+
+    <!-- a constructed grocery shelf using divs -->
+    <div class="shelf reveal" data-d="2">
+      <div class="shelf-row">
+        <div class="box box-cheerios tall">
+          <div class="ptag">N. Am. Retail</div>
+          <div class="pic">
+            <svg width="38" height="28" viewBox="0 0 38 28" aria-hidden="true">
+              <ellipse cx="19" cy="22" rx="16" ry="3" fill="#6E1010" opacity="0.4"/>
+              <path d="M3 18 Q3 8 19 8 Q35 8 35 18 L31 22 Q19 26 7 22 Z" fill="#FFF6DC" stroke="#6E1010"/>
+              <circle cx="11" cy="14" r="2" fill="#E8A93C" stroke="#6E1010" stroke-width="0.6"/>
+              <circle cx="17" cy="13" r="2" fill="#E8A93C" stroke="#6E1010" stroke-width="0.6"/>
+              <circle cx="23" cy="14" r="2" fill="#E8A93C" stroke="#6E1010" stroke-width="0.6"/>
+              <circle cx="28" cy="13" r="2" fill="#E8A93C" stroke="#6E1010" stroke-width="0.6"/>
+            </svg>
+          </div>
+          <div class="pname">Cheerios</div>
+        </div>
+        <div class="box box-pillsbury">
+          <div class="ptag">Baking</div>
+          <div class="pic">
+            <svg width="22" height="32" viewBox="0 0 22 32" aria-hidden="true">
+              <ellipse cx="11" cy="11" rx="8" ry="6" fill="#FFF6DC" stroke="#1F4E8F"/>
+              <ellipse cx="11" cy="18" rx="9" ry="6" fill="#FFF6DC" stroke="#1F4E8F"/>
+              <ellipse cx="11" cy="25" rx="10" ry="6" fill="#FFF6DC" stroke="#1F4E8F"/>
+              <circle cx="9" cy="9" r="0.8" fill="#1F4E8F"/>
+              <circle cx="13" cy="10" r="0.8" fill="#1F4E8F"/>
+            </svg>
+          </div>
+          <div class="pname">Pillsbury</div>
+        </div>
+        <div class="box box-nv tall">
+          <div class="ptag">Snacks</div>
+          <div class="pic">
+            <svg width="32" height="22" viewBox="0 0 32 22" aria-hidden="true">
+              <rect x="2" y="6" width="28" height="10" rx="1" fill="#C68A2E" stroke="#F4ECDB" stroke-width="0.5"/>
+              <line x1="2" y1="11" x2="30" y2="11" stroke="#F4ECDB" stroke-width="0.4" opacity="0.5"/>
+              <circle cx="9" cy="11" r="0.8" fill="#F4ECDB"/>
+              <circle cx="16" cy="9" r="0.8" fill="#F4ECDB"/>
+              <circle cx="22" cy="12" r="0.8" fill="#F4ECDB"/>
+            </svg>
+          </div>
+          <div class="pname">Nature Valley</div>
+        </div>
+      </div>
+      <div class="shelf-row">
+        <div class="box box-bb">
+          <div class="ptag">N. Am. Pet</div>
+          <div class="pic">
+            <svg width="26" height="22" viewBox="0 0 26 22" aria-hidden="true">
+              <circle cx="13" cy="13" r="6" fill="#F2DDA8"/>
+              <circle cx="9" cy="11" r="1.5" fill="#1F2A4A"/>
+              <circle cx="17" cy="11" r="1.5" fill="#1F2A4A"/>
+              <ellipse cx="13" cy="16" rx="2" ry="1.4" fill="#1F2A4A"/>
+              <path d="M6 9 Q4 6 6 4 Q9 6 9 9" fill="#F2DDA8"/>
+              <path d="M20 9 Q22 6 20 4 Q17 6 17 9" fill="#F2DDA8"/>
+            </svg>
+          </div>
+          <div class="pname">Blue Buffalo</div>
+        </div>
+        <div class="box box-oep tall">
+          <div class="ptag">Meals</div>
+          <div class="pic">
+            <svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true">
+              <path d="M2 14 Q15 4 28 14 L26 18 Q15 22 4 18 Z" fill="#F2DDA8" stroke="#F4ECDB"/>
+              <circle cx="9" cy="13" r="1" fill="#6F8E55"/>
+              <circle cx="14" cy="12" r="1" fill="#C9412A"/>
+              <circle cx="19" cy="13" r="1" fill="#E8A93C"/>
+            </svg>
+          </div>
+          <div class="pname">Old El Paso</div>
+        </div>
+        <div class="box box-bc short">
+          <div class="ptag">Baking</div>
+          <div class="pic">
+            <svg width="22" height="20" viewBox="0 0 22 20" aria-hidden="true">
+              <path d="M3 16 Q3 8 11 8 Q19 8 19 16 Z" fill="#F2DDA8" stroke="#F4ECDB"/>
+              <path d="M11 8 L11 4" stroke="#F4ECDB" stroke-width="1.4" fill="none"/>
+              <circle cx="11" cy="3" r="1.5" fill="#F4ECDB"/>
+            </svg>
+          </div>
+          <div class="pname">Betty Crocker</div>
+        </div>
+      </div>
+      <div class="shelf-row">
+        <div class="box box-hd tall">
+          <div class="ptag">International</div>
+          <div class="pic">
+            <svg width="28" height="26" viewBox="0 0 28 26" aria-hidden="true">
+              <path d="M8 12 L20 12 L17 22 L11 22 Z" fill="#F2DDA8" stroke="#F2DDA8"/>
+              <ellipse cx="14" cy="11" rx="7" ry="4" fill="#F4ECDB"/>
+              <ellipse cx="14" cy="9" rx="5" ry="3" fill="#F2DDA8"/>
+            </svg>
+          </div>
+          <div class="pname">Häagen-Dazs</div>
+        </div>
+        <div class="box" style="background:#8E5A14; color:var(--paper); flex: 1.6;">
+          <div class="ptag" style="color:rgba(244,236,219,0.7);">N. Am. Foodservice</div>
+          <div class="pic">
+            <svg width="36" height="22" viewBox="0 0 36 22" aria-hidden="true">
+              <rect x="3" y="4" width="30" height="14" rx="2" fill="#F2DDA8"/>
+              <line x1="9" y1="4" x2="9" y2="18" stroke="#8E5A14"/>
+              <line x1="18" y1="4" x2="18" y2="18" stroke="#8E5A14"/>
+              <line x1="27" y1="4" x2="27" y2="18" stroke="#8E5A14"/>
+            </svg>
+          </div>
+          <div class="pname" style="color:var(--paper); font-style:italic;">Foodservice & beyond</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shelf-cap reveal" data-d="3">
+      Four segments. <em>One cart.</em> Retail is the engine; pet, foodservice and international ride along.
+    </div>
+  </section>
+
+  <!-- ============================ SCALE ============================ -->
+  <section class="scale-band">
+    <div class="eyebrow reveal"><span class="dot">◆</span> &nbsp; The scale · FY 2025</div>
+    <h2 class="reveal" data-d="1">By the<br/><span class="serif italic signal">numbers.</span></h2>
+    <p class="lede reveal" data-d="2">
+      Most recent quarter: <em>EPS $0.64</em> on revenue of <em>$4.44B</em>, with portfolio churn from the divested North-American yogurt line.
+    </p>
+
+    <div class="scale-list">
+      <div class="scale-row reveal feature" data-d="1">
+        <div class="label">FY'25 revenue</div>
+        <div class="v"><span class="cu" data-target="19.49" data-decimals="2" data-prefix="$">$0.00</span><span class="unit">B</span></div>
+      </div>
+      <div class="scale-row reveal" data-d="1">
+        <div class="label">N. Am. Retail share</div>
+        <div class="v"><span class="cu" data-target="61" data-suffix="%">0%</span></div>
+        <div class="note">$11.91B in cereal, snacks, meals & baking — 61% of the company.</div>
+      </div>
+      <div class="scale-row reveal" data-d="2">
+        <div class="label">Gross margin</div>
+        <div class="v"><span class="cu" data-target="34.6" data-decimals="1" data-suffix="%">0%</span></div>
+        <div class="note">Cost of revenue at 65.4%. Operating margin 17.0%.</div>
+      </div>
+      <div class="scale-row reveal" data-d="2">
+        <div class="label">Employees</div>
+        <div class="v"><span class="cu" data-target="33000" data-suffix="">0</span></div>
+        <div class="note">Across mills, plants, kitchens, and offices.</div>
+      </div>
+      <div class="scale-row reveal" data-d="3">
+        <div class="label">Countries</div>
+        <div class="v"><span class="cu" data-target="90" data-suffix="+">0+</span></div>
+      </div>
+      <div class="scale-row reveal" data-d="3">
+        <div class="label">Years on the shelf</div>
+        <div class="v"><span class="cu" data-target="159" data-suffix="">0</span></div>
+        <div class="note">Founded 1866. Modern corporation incorporated 1928.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ RESET 2 ============================ -->
+  <div class="reset">
+    <div class="mark reveal">A pause</div>
+    <div class="quote reveal" data-d="1">
+      You don't sell <em>nineteen billion dollars</em> of pantry without a long list of bills behind it. Here is the bill.
+    </div>
+  </div>
+
+  <!-- ============================ COSTS — 100 cents ============================ -->
+  <section class="cost-band">
+    <div class="eyebrow reveal"><span class="dot">◆</span> &nbsp; The bill · per dollar</div>
+    <h2 class="reveal" data-d="1">A hundred cents in.<br/><span class="serif italic signal">Where they go.</span></h2>
+    <p class="lede reveal" data-d="2">
+      Every dollar of revenue, broken into a hundred pennies — colored by what claims it.
+    </p>
+
+    <div class="cents reveal" data-d="2" id="cents"></div>
+
+    <div class="cost-legend reveal" data-d="3">
+      <div class="lrow"><span class="sw" style="background:var(--c-cor);"></span><span class="lab">Cost of revenue</span><span class="pct">65<span class="sm">¢</span></span></div>
+      <div class="lrow"><span class="sw" style="background:var(--c-sga);"></span><span class="lab">Selling, general & admin</span><span class="pct">13<span class="sm">¢</span></span></div>
+      <div class="lrow"><span class="sw" style="background:var(--c-adv);"></span><span class="lab">Advertising & media</span><span class="pct">5<span class="sm">¢</span></span></div>
+      <div class="lrow"><span class="sw" style="background:var(--c-rnd);"></span><span class="lab">Research & development</span><span class="pct">2<span class="sm">¢</span></span></div>
+      <div class="lrow"><span class="sw" style="background:var(--c-rst);"></span><span class="lab">Restructuring & other</span><span class="pct">1<span class="sm">¢</span></span></div>
+      <div class="lrow surplus"><span class="sw"></span><span class="lab">survives to the bottom</span><span class="pct"><span class="cu" data-target="14" data-suffix="¢">0¢</span></span></div>
+    </div>
+  </section>
+
+  <!-- ============================ GEO ============================ -->
+  <section class="geo-band">
+    <div class="eyebrow reveal"><span class="dot">◆</span> &nbsp; The footprint · 90+ countries</div>
+    <h2 class="reveal" data-d="1">North America<br/>does the heavy<br/><span class="serif italic signal">lifting.</span></h2>
+    <p class="lede reveal" data-d="2">
+      <em>88% of revenue</em> sits inside U.S. and Canadian pantries. The rest is the world.
+    </p>
+
+    <div class="geo-svg-wrap reveal" data-d="2">
+      <svg viewBox="0 0 380 220" aria-hidden="true">
+        <defs>
+          <pattern id="dotbg" width="8" height="8" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.6" fill="#1B1614" opacity="0.18"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="380" height="220" fill="url(#dotbg)"/>
+
+        <!-- Abstract continents — circles sized by revenue share -->
+        <!-- US 81% — big circle center-left -->
+        <g transform="translate(120 110)">
+          <circle r="78" fill="#C9412A" opacity="0.92"/>
+          <circle r="78" fill="none" stroke="#1B1614" stroke-width="1.2"/>
+          <text y="-6" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#F4ECDB">UNITED STATES</text>
+          <text y="22" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="44" fill="#F4ECDB">81%</text>
+        </g>
+        <!-- Canada 7% -->
+        <g transform="translate(238 70)">
+          <circle r="26" fill="#1B1614"/>
+          <text y="3" text-anchor="middle" font-family="Geist Mono" font-size="7" letter-spacing="1.4" fill="#F4ECDB">CANADA</text>
+          <text y="16" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="18" fill="#F4ECDB">7%</text>
+        </g>
+        <!-- Europe & Australia 6% -->
+        <g transform="translate(300 138)">
+          <circle r="24" fill="#6F8E55"/>
+          <text y="-1" text-anchor="middle" font-family="Geist Mono" font-size="6" letter-spacing="1.2" fill="#F4ECDB">EU · AU</text>
+          <text y="14" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="16" fill="#F4ECDB">6%</text>
+        </g>
+        <!-- Asia & Latam 6% -->
+        <g transform="translate(245 178)">
+          <circle r="24" fill="#8E5A14"/>
+          <text y="-1" text-anchor="middle" font-family="Geist Mono" font-size="6" letter-spacing="1.2" fill="#F4ECDB">ASIA · LATAM</text>
+          <text y="14" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="16" fill="#F4ECDB">6%</text>
+        </g>
+        <!-- thin connectors -->
+        <g stroke="#1B1614" stroke-width="0.8" fill="none" opacity="0.35" stroke-dasharray="2 2">
+          <path d="M120 110 L238 70"/>
+          <path d="M120 110 L300 138"/>
+          <path d="M120 110 L245 178"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="geo-list">
+      <div class="geo-row feat reveal" data-d="1">
+        <div class="gn">01</div>
+        <div class="gr">United States</div>
+        <div class="gp"><span class="cu" data-target="81" data-suffix="%">0%</span></div>
+        <div class="geo-bar"><span data-w="81"></span></div>
+      </div>
+      <div class="geo-row reveal" data-d="2">
+        <div class="gn">02</div>
+        <div class="gr">Canada</div>
+        <div class="gp"><span class="cu" data-target="7" data-suffix="%">0%</span></div>
+        <div class="geo-bar"><span data-w="7"></span></div>
+      </div>
+      <div class="geo-row reveal" data-d="3">
+        <div class="gn">03</div>
+        <div class="gr">Europe & Australia</div>
+        <div class="gp"><span class="cu" data-target="6" data-suffix="%">0%</span></div>
+        <div class="geo-bar"><span data-w="6"></span></div>
+      </div>
+      <div class="geo-row reveal" data-d="4">
+        <div class="gn">04</div>
+        <div class="gr">Asia & Latin America</div>
+        <div class="gp"><span class="cu" data-target="6" data-suffix="%">0%</span></div>
+        <div class="geo-bar"><span data-w="6"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ THE BET — DARK ============================ -->
+  <section class="bet-band">
+    <div class="eyebrow reveal"><span class="dot">◆</span> &nbsp; The bet · capital allocation</div>
+    <h2 class="reveal" data-d="1">A <em>127-year</em> dividend.<br/>And a pet-food pivot.</h2>
+    <p class="reveal" data-d="2">
+      General Mills has paid an uninterrupted dividend for over <em>127 years</em>. In FY'25 it returned <em>$1.34B</em> to shareholders in dividends and bought back roughly <em>$1.2B</em> in stock — under a multi-billion 2022 authorization.
+    </p>
+
+    <!-- dividend ring scene -->
+    <div class="ring-wrap reveal" data-d="2">
+      <svg viewBox="0 0 320 320" aria-hidden="true">
+        <defs>
+          <radialGradient id="ringGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#E8A93C" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#1B1614" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="160" cy="160" r="150" fill="url(#ringGlow)"/>
+
+        <!-- 127 small ticks around the ring -->
+        <g id="dividendTicks" transform="translate(160 160)" stroke="#E8A93C" stroke-width="1.4" stroke-linecap="round"></g>
+
+        <!-- center stack -->
+        <text x="160" y="142" text-anchor="middle" font-family="Geist Mono" font-size="10" letter-spacing="3" fill="#A4A29C">UNINTERRUPTED · YEARS</text>
+        <text x="160" y="200" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="120" fill="#F4ECDB">127</text>
+        <text x="160" y="232" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="3" fill="#E8A93C">SINCE 1898 →</text>
+
+        <!-- subtle outer ring -->
+        <circle cx="160" cy="160" r="130" fill="none" stroke="#3B322C" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <div class="bet-stat reveal" data-d="2">
+      <div class="k">FY'25 free cash flow</div>
+      <div class="v"><span class="cu" data-target="2.29" data-decimals="2" data-prefix="$">$0.00</span><span class="unit">B</span></div>
+      <div class="note">From $2.92B operating cash flow, after $625.3M capex.</div>
+    </div>
+
+    <div class="allocation reveal" data-d="3">
+      <div class="row"><span class="lab"><em>Dividends paid</em></span><span class="v">$1.34B</span></div>
+      <div class="row"><span class="lab">Share buybacks</span><span class="v">$1.20B</span></div>
+      <div class="row"><span class="lab">Capex</span><span class="v">$625M</span></div>
+      <div class="row"><span class="lab">Pet acquisition · Whitebridge ('25)</span><span class="v">↗</span></div>
+    </div>
+
+    <p style="margin-top:32px; font-family:var(--font-display); font-style:italic; font-size:18px; color:rgba(244,236,219,0.85); max-width:34ch;">
+      Management aims to return <span style="color:var(--honey);">80–90%</span> of free cash flow to shareholders. The rest is bought brands.
+    </p>
+  </section>
+
+  <!-- ============================ RESET 3 ============================ -->
+  <div class="reset">
+    <div class="mark reveal">Down the aisle</div>
+    <div class="quote reveal" data-d="1">
+      Three other carts share the same store. <em>Same shelves.</em> Same shoppers. Different problems.
+    </div>
+  </div>
+
+  <!-- ============================ COMPETITORS ============================ -->
+  <section class="comp-band">
+    <div class="eyebrow reveal"><span class="dot">◆</span> &nbsp; The competition · same aisle</div>
+    <h2 class="reveal" data-d="1">Boxes on the<br/>same <span class="serif italic signal">shelf.</span></h2>
+    <p class="lede reveal" data-d="2">
+      Sized by market cap. <em>Tyson stands tallest by revenue;</em> McCormick is smallest, but the only one growing the top line at a healthy clip.
+    </p>
+
+    <div class="comp-aisle reveal" data-d="2">
+      <div class="comp-shelf" id="compShelf">
+        <!-- Heights will be set in JS proportional to market cap -->
+        <div class="comp-box gis" data-mc="18.95" data-name="GIS"  style="height: 142px;">
+          <div>
+            <div class="ct">GIS</div>
+            <div class="cn">General Mills</div>
+          </div>
+          <div>
+            <div class="cm">$18.95<span class="u">B</span></div>
+            <div class="grow">FY'25 rev $19.49B</div>
+          </div>
+        </div>
+        <div class="comp-box khc" data-mc="26.60" data-name="KHC"  style="height: 200px;">
+          <div>
+            <div class="ct">KHC</div>
+            <div class="cn">Kraft Heinz</div>
+          </div>
+          <div>
+            <div class="cm">$26.60<span class="u">B</span></div>
+            <div class="grow">rev −3.5% YoY</div>
+          </div>
+        </div>
+        <div class="comp-box mkc" data-mc="14.60" data-name="MKC"  style="height: 110px;">
+          <div>
+            <div class="ct">MKC</div>
+            <div class="cn">McCormick</div>
+          </div>
+          <div>
+            <div class="cm">$14.60<span class="u">B</span></div>
+            <div class="grow">rev +5.7% YoY</div>
+          </div>
+        </div>
+        <div class="comp-box tsn" data-mc="22.37" data-name="TSN"  style="height: 168px;">
+          <div>
+            <div class="ct">TSN</div>
+            <div class="cn">Tyson Foods</div>
+          </div>
+          <div>
+            <div class="cm">$22.37<span class="u">B</span></div>
+            <div class="grow">rev +2.5% YoY</div>
+          </div>
+        </div>
+      </div>
+      <div class="comp-floor">
+        <span>Bar height = market cap</span>
+        <span>USD · billions</span>
+      </div>
+    </div>
+
+    <div class="comp-cap reveal" data-d="3">
+      <em>Same store, different bills.</em> KHC shrinks alongside GIS. MKC gains share by going small and flavor-forward. TSN comes from the freezer aisle, eating into foodservice.
+    </div>
+
+    <div class="comp-detail reveal" data-d="3">
+      <div class="row">
+        <div class="tk">KHC</div>
+        <div class="tx">Direct competitor across <em>shelf-stable meals, condiments, and snacks</em> — same aisles. Revenue $24.94B, growth −3.5% YoY. Both companies are turnaround stories.</div>
+      </div>
+      <div class="row">
+        <div class="tk">MKC</div>
+        <div class="tx">Overlaps with <em>Betty Crocker and Old El Paso</em> on baking and seasonings. Smaller ($6.84B), but P/E TTM of 8.89 and growth of +5.68% YoY.</div>
+      </div>
+      <div class="row">
+        <div class="tk">TSN</div>
+        <div class="tx">Emerging threat in <em>foodservice and convenient meals</em>. Protein-centric frozen and refrigerated displacing GIS meal solutions. Revenue $54.44B, growth +2.55% YoY.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ TAKEAWAY ============================ -->
+  <section class="close-band">
+    <div class="eyebrow reveal"><span class="dot">◆</span> &nbsp; The takeaway</div>
+    <h2 class="reveal" data-d="1">
+      <em>$19.49B</em> in.<br/>
+      $2.30B out.<br/>
+      <span class="serif italic" style="color:var(--ink);">127 years uninterrupted.</span>
+    </h2>
+    <p class="reveal" data-d="2">
+      The mill on the Mississippi grew into a <em>shelf-spanning portfolio</em> — and the shelf is what it sells. The growth sits with the cart pivot toward pet food. The dividend keeps walking.
+    </p>
+
+    <div class="three-line">
+      <div class="ln signal reveal" data-d="2"><span class="lab">Survives per dollar</span><span class="v">~14¢</span></div>
+      <div class="ln reveal" data-d="3"><span class="lab">Returned to holders FY'25</span><span class="v">$2.54B</span></div>
+      <div class="ln reveal" data-d="3"><span class="lab">Brands in the cart</span><span class="v">40+</span></div>
+      <div class="ln reveal" data-d="4"><span class="lab">Goodwill on the books</span><span class="v">$21.7B</span></div>
+    </div>
+
+    <div class="colophon">
+      <span>GIS · NYSE</span>
+      <span>RECAP · FY '25</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ---------- Scroll progress ---------- */
+const prog = document.getElementById('prog');
+function tickProgress(){
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const p = max > 0 ? (h.scrollTop / max) : 0;
+  prog.style.width = (Math.min(1, Math.max(0, p)) * 100).toFixed(2) + '%';
+}
+window.addEventListener('scroll', tickProgress, { passive: true });
+window.addEventListener('resize', tickProgress);
+tickProgress();
+
+/* ---------- Reveals ---------- */
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach((e) => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+document.querySelectorAll('.reveal').forEach((el) => revealObs.observe(el));
+
+/* ---------- Count-ups ---------- */
+function ease(t){ return 1 - Math.pow(1 - t, 3); }
+const cuObs = new IntersectionObserver((entries) => {
+  entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    cuObs.unobserve(el);
+    const target = parseFloat(el.dataset.target);
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const dur = 1100;
+    const start = performance.now();
+    function step(now){
+      const t = Math.min(1, (now - start) / dur);
+      const v = target * ease(t);
+      let s;
+      if (target >= 1000 && decimals === 0) {
+        s = Math.round(v).toLocaleString();
+      } else {
+        s = v.toFixed(decimals);
+      }
+      el.textContent = prefix + s + suffix;
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.cu').forEach((el) => cuObs.observe(el));
+
+/* ---------- 100-cent grid ---------- */
+(function(){
+  const cents = document.getElementById('cents');
+  const order = [
+    ...Array(65).fill('var(--c-cor)'),
+    ...Array(13).fill('var(--c-sga)'),
+    ...Array(5).fill('var(--c-adv)'),
+    ...Array(2).fill('var(--c-rnd)'),
+    ...Array(1).fill('var(--c-rst)'),
+    ...Array(14).fill('var(--ink)'),  // 14¢ surplus
+  ];
+  // Total = 100. Surplus 14 to balance vs 17% op margin -> use 14% net (~$2.30B/$19.49B)
+  for (let i = 0; i < 100; i++){
+    const d = document.createElement('div');
+    d.className = 'cent';
+    d.style.background = order[i];
+    d.style.setProperty('--d', (i * 8) + 'ms');
+    cents.appendChild(d);
+  }
+  const co = new IntersectionObserver((es)=>{
+    es.forEach((e)=>{
+      if (e.isIntersecting){
+        cents.querySelectorAll('.cent').forEach((d)=> d.classList.add('in'));
+        co.unobserve(cents);
+      }
+    });
+  }, { threshold: 0.2 });
+  co.observe(cents);
+})();
+
+/* ---------- Geo bars ---------- */
+(function(){
+  const bars = document.querySelectorAll('.geo-bar > span');
+  const o = new IntersectionObserver((es)=>{
+    es.forEach((e)=>{
+      if (e.isIntersecting){
+        const span = e.target;
+        const w = parseFloat(span.dataset.w);
+        // Scale relative to 81 (max)
+        const max = 81;
+        span.style.width = ((w / max) * 100) + '%';
+        o.unobserve(span);
+      }
+    });
+  }, { threshold: 0.4 });
+  bars.forEach((b)=> o.observe(b));
+})();
+
+/* ---------- Hero parallax ---------- */
+(function(){
+  const fbs = document.querySelectorAll('#floatBoxes .fb');
+  const bowl = document.getElementById('bowlG');
+  function tickHero(){
+    const y = window.scrollY;
+    fbs.forEach((g)=>{
+      const d = parseFloat(g.dataset.depth);
+      g.setAttribute('transform', g.getAttribute('transform').replace(/translate\(([-\d.]+) ([-\d.]+)\)/,
+        (m, x, oy) => `translate(${x} ${parseFloat(oy)})`));
+      g.style.transform = `translateY(${(-y * d * 0.15).toFixed(1)}px)`;
+    });
+    if (bowl){
+      bowl.style.transform = `translateY(${(y * 0.06).toFixed(1)}px)`;
+    }
+  }
+  window.addEventListener('scroll', tickHero, { passive: true });
+})();
+
+/* ---------- Dividend ticks (127 of them) ---------- */
+(function(){
+  const g = document.getElementById('dividendTicks');
+  if (!g) return;
+  const N = 127;
+  const inner = 124, outer = 138;
+  for (let i = 0; i < N; i++){
+    const a = (i / N) * Math.PI * 2 - Math.PI / 2;
+    const x1 = Math.cos(a) * inner;
+    const y1 = Math.sin(a) * inner;
+    const x2 = Math.cos(a) * outer;
+    const y2 = Math.sin(a) * outer;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x1.toFixed(2));
+    line.setAttribute('y1', y1.toFixed(2));
+    line.setAttribute('x2', x2.toFixed(2));
+    line.setAttribute('y2', y2.toFixed(2));
+    line.setAttribute('opacity', (0.35 + (i / N) * 0.55).toFixed(2));
+    g.appendChild(line);
+  }
+})();
+
+/* ---------- Comp shelf bar heights (mkt cap) ---------- */
+(function(){
+  const boxes = document.querySelectorAll('#compShelf .comp-box');
+  const max = Math.max(...[...boxes].map((b)=> parseFloat(b.dataset.mc)));
+  const minH = 96, maxH = 220;
+  boxes.forEach((b)=>{
+    const v = parseFloat(b.dataset.mc);
+    const h = minH + ((v / max) * (maxH - minH));
+    // Wait until in view to animate
+    b.style.height = '0px';
+    b.style.transition = 'height 900ms cubic-bezier(0.22,1,0.36,1)';
+    new IntersectionObserver((es, obs)=>{
+      es.forEach((e)=>{
+        if (e.isIntersecting){
+          requestAnimationFrame(()=> { b.style.height = h.toFixed(0) + 'px'; });
+          obs.unobserve(b);
+        }
+      });
+    }, { threshold: 0.3 }).observe(b);
+  });
+})();
+</script>
+</body>
+</html>

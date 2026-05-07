@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CTAS · Cintas — FY '25 Recap</title>
+<link rel="stylesheet" href="ds.css" />
+<style>
+  /* ----------------------------------------------------------
+     CINTAS — page palette overrides on top of the Zair DS.
+     The DS bones (Instrument Serif + Geist + Geist Mono,
+     paper/ink, coral as the signal color) stay intact.
+     We bias the surfaces toward Cintas's actual identity:
+     starched paper, workshirt navy, route-truck shadow.
+     Coral remains the italic-serif signal color, used
+     SPARINGLY (a few words per page).
+  ---------------------------------------------------------- */
+  :root {
+    --navy:        #0F2A44;   /* Cintas deep workshirt navy */
+    --navy-2:      #1B3A5C;
+    --navy-3:      #2C547D;
+    --workshirt:   #4A6B8A;   /* faded chambray */
+    --starch:      #F7F5EE;   /* starched paper, slightly cooler than DS paper */
+    --starch-2:    #EFEBDF;
+    --hi-vis:      #F4C542;   /* safety yellow — used once, for the AED/safety beat */
+    --fire:        #C03A2B;   /* fire-protection red — used once */
+    --thread:      #C9BFA3;   /* unbleached cotton */
+    --signal:      #FF7A57;   /* coral signal, italic-serif emphasis only */
+
+    /* re-bind page surfaces */
+    --bg:          var(--starch);
+    --bg-raised:   #FDFBF4;
+    --bg-sunken:   var(--starch-2);
+    --fg:          #0B1A2A;
+    --fg-muted:    #2D3F54;
+    --fg-subtle:   #6E7C8E;
+    --line:        #DCD5C2;
+    --line-strong: #B9B097;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #2a2620; /* letterbox color outside the mobile page */
+    overflow-x: hidden;
+    font-family: var(--font-sans);
+    color: var(--fg);
+  }
+
+  /* The whole page is the design — no phone chrome. ~414px wide. */
+  .page {
+    background: var(--bg);
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 80px rgba(0,0,0,0.35);
+  }
+
+  /* iOS-feel safe areas: generous touch padding, calm motion. */
+  .safe { padding-left: 22px; padding-right: 22px; }
+
+  /* --- Persistent chrome --- */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(18px) saturate(1.15);
+    -webkit-backdrop-filter: blur(18px) saturate(1.15);
+    background: rgba(247, 245, 238, 0.78);
+    border-bottom: 1px solid rgba(15,42,68,0.06);
+  }
+  .chrome-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 22px 10px;
+  }
+  .chrome-left { display: flex; align-items: baseline; gap: 10px; }
+  .ticker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--navy);
+    font-weight: 500;
+  }
+  .ticker .dot { color: var(--signal); margin-right: 1px; }
+  .co-name {
+    font-family: var(--font-display);
+    font-size: 17px;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .recap-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--fg-subtle);
+    text-transform: uppercase;
+  }
+  .progress-rail {
+    height: 1.5px;
+    background: rgba(15,42,68,0.06);
+    width: 100%;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--navy);
+    width: 0%;
+    transition: width 60ms linear;
+  }
+
+  /* --- Eyebrows --- */
+  .eyebrow-mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--navy);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .eyebrow-mono::before {
+    content: "";
+    width: 14px; height: 1px;
+    background: var(--navy);
+    display: inline-block;
+  }
+  .eyebrow-mono .muted { color: var(--fg-subtle); }
+
+  /* --- Display type --- */
+  .display, h1, h2 { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; }
+  .ital { font-family: var(--font-display); font-style: italic; }
+  .signal { color: var(--signal); }
+  .navy   { color: var(--navy); }
+
+  /* --- Beats / sections --- */
+  section { position: relative; }
+
+  /* Reset beats: italic-serif on a contrasting band */
+  .reset {
+    background: var(--navy);
+    color: var(--starch);
+    padding: 56px 30px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 24px;
+    line-height: 1.3;
+    letter-spacing: -0.005em;
+    position: relative;
+  }
+  .reset.subtle {
+    background: var(--starch-2);
+    color: var(--navy);
+  }
+  .reset .signal { color: var(--signal); }
+  .reset::before {
+    content: "";
+    position: absolute;
+    left: 30px; top: 30px;
+    width: 22px; height: 1px;
+    background: currentColor;
+    opacity: 0.4;
+  }
+
+  /* --- Hero --- */
+  .hero {
+    padding: 36px 22px 56px;
+    background: var(--bg);
+    position: relative;
+  }
+  .hero-thesis {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    color: var(--navy);
+    margin-top: 28px;
+  }
+  .hero-thesis .ital { color: var(--navy); }
+  .hero-thesis .accent { color: var(--signal); font-style: italic; }
+  .hero-sub {
+    margin-top: 22px;
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--fg-muted);
+    max-width: 30ch;
+  }
+  .hero-meta-row {
+    display: flex; gap: 18px;
+    margin-top: 28px;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+  .hero-meta-row .item { flex: 1; }
+  .hero-meta-row .lbl {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-subtle);
+  }
+  .hero-meta-row .val {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--navy);
+    margin-top: 4px;
+    letter-spacing: -0.01em;
+  }
+  .hero-meta-row .delta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--signal);
+    margin-left: 6px;
+  }
+
+  /* --- Section padding default --- */
+  .beat { padding: 64px 22px; }
+  .beat-tight { padding: 48px 22px; }
+
+  .lede {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1.08;
+    color: var(--navy);
+    margin-top: 18px;
+    letter-spacing: -0.018em;
+    text-wrap: balance;
+  }
+  .body-copy {
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--fg-muted);
+    margin-top: 16px;
+    max-width: 34ch;
+  }
+  .body-copy .ital { color: var(--navy); }
+  .body-copy .signal { color: var(--signal); font-style: italic; font-family: var(--font-display); font-size: 16.5px; }
+
+  .caption {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: var(--fg-subtle);
+    text-transform: uppercase;
+  }
+
+  /* --- Route scene (the weekly visit) --- */
+  .route-scene {
+    margin-top: 28px;
+    height: 320px;
+    position: relative;
+    background: linear-gradient(180deg, var(--starch) 0%, var(--starch-2) 100%);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .route-scene .week-label {
+    position: absolute; top: 14px; left: 18px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    color: var(--fg-subtle);
+    text-transform: uppercase;
+  }
+  .route-scene .day-label {
+    position: absolute; top: 14px; right: 18px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    color: var(--navy);
+    text-transform: uppercase;
+  }
+
+  /* --- Big number / count-up --- */
+  .bignum {
+    font-family: var(--font-display);
+    font-size: 110px;
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    color: var(--navy);
+    font-weight: 400;
+  }
+  .bignum .small-suffix { font-size: 0.45em; letter-spacing: -0.02em; vertical-align: 0.45em; color: var(--navy-3); }
+  .bignum .ital { font-style: italic; }
+  .bignum-sub {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-subtle);
+    margin-top: 6px;
+  }
+
+  /* --- Stat ledger row (the weekly visit broken down) --- */
+  .ledger {
+    margin-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .ledger-row {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .ledger-row .l-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg-subtle);
+  }
+  .ledger-row .l-val {
+    font-family: var(--font-display);
+    font-size: 30px;
+    color: var(--navy);
+    letter-spacing: -0.015em;
+  }
+  .ledger-row .l-val .unit { font-size: 0.45em; letter-spacing: 0.04em; color: var(--workshirt); margin-left: 4px; font-family: var(--font-mono); text-transform: uppercase; }
+
+  /* --- Dollar-bill split (cost breakdown) --- */
+  .bill-wrap { margin-top: 28px; }
+  .bill {
+    width: 100%;
+    height: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    box-shadow: 0 6px 18px -10px rgba(15,42,68,0.35), inset 0 1px 0 rgba(255,255,255,0.4);
+    position: relative;
+    border: 1px solid rgba(15,42,68,0.12);
+  }
+  .bill-seg {
+    height: 100%;
+    position: relative;
+    transition: flex-grow 600ms var(--ease-out);
+    display: flex; align-items: flex-end;
+    padding: 8px;
+  }
+  .bill-seg .pct {
+    font-family: var(--font-display);
+    color: rgba(255,255,255,0.95);
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .bill-seg.surplus {
+    background: var(--navy);
+    color: var(--starch);
+  }
+  .bill-seg.surplus .pct { color: var(--starch); }
+  .bill-legend {
+    margin-top: 18px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .bill-legend .li {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+  }
+  .bill-legend .swatch {
+    width: 14px; height: 14px; border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .bill-legend .li-label { color: var(--navy); flex: 1; }
+  .bill-legend .li-pct { font-family: var(--font-mono); color: var(--fg-subtle); font-size: 12px; }
+  .bill-legend .li.highlight .li-label { font-family: var(--font-display); font-style: italic; font-size: 16px; color: var(--signal); }
+
+  /* The "what survives" callout below the bill */
+  .surplus-callout {
+    margin-top: 30px;
+    padding: 28px 0 0;
+    border-top: 1px solid var(--line);
+  }
+
+  /* --- Footprint (North America fill) --- */
+  .footprint-scene {
+    margin-top: 28px;
+    position: relative;
+    background: var(--starch-2);
+    border-radius: var(--r-lg);
+    padding: 28px 22px 22px;
+    overflow: hidden;
+  }
+  .footprint-row {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .footprint-row .region {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg-subtle);
+  }
+  .footprint-row .pct {
+    font-family: var(--font-display); font-size: 24px; color: var(--navy); letter-spacing: -0.01em;
+  }
+  .footprint-bar-wrap {
+    height: 8px;
+    background: rgba(15,42,68,0.08);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 22px;
+  }
+  .footprint-bar {
+    height: 100%;
+    background: var(--navy);
+    border-radius: 999px;
+    width: 0%;
+    transition: width 1200ms var(--ease-out);
+  }
+  .footprint-bar.us { background: var(--navy); }
+  .footprint-bar.ca { background: var(--workshirt); }
+  .footprint-bar.la { background: var(--thread); }
+
+  /* --- Dividend ladder (42 years) --- */
+  .ladder-scene {
+    margin-top: 28px;
+    background: var(--bg-raised);
+    padding: 28px 22px 22px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .ladder-axis {
+    display: flex;
+    align-items: flex-end;
+    height: 180px;
+    gap: 2.5px;
+    padding-top: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .ladder-axis .rung {
+    flex: 1;
+    background: var(--navy);
+    border-radius: 1.5px 1.5px 0 0;
+    min-height: 2px;
+    transform-origin: bottom;
+    transition: height 800ms var(--ease-out);
+  }
+  .ladder-axis .rung.recent { background: var(--signal); }
+  .ladder-x {
+    display: flex; justify-content: space-between;
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    color: var(--fg-subtle);
+    text-transform: uppercase;
+  }
+
+  /* --- Capital allocation flow --- */
+  .allocation {
+    margin-top: 28px;
+  }
+  .alloc-row {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .alloc-row:first-child { border-top: 1px solid var(--line); }
+  .alloc-row .a-label {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    color: var(--navy);
+    flex: 1;
+  }
+  .alloc-row .a-label .ital {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--fg-subtle);
+    font-size: 12.5px;
+    margin-left: 4px;
+  }
+  .alloc-row .a-val {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .alloc-row .a-val .u { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; color: var(--workshirt); margin-left: 3px; }
+
+  /* --- Competition: weighted scale --- */
+  .compete {
+    margin-top: 28px;
+  }
+  .comp-row {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .comp-row:first-of-type { border-top: 1px solid var(--line); }
+  .comp-row.us { background: linear-gradient(90deg, rgba(15,42,68,0.04) 0%, transparent 100%); margin: 0 -22px; padding-left: 22px; padding-right: 22px; }
+  .comp-ticker {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    color: var(--navy);
+    font-weight: 500;
+  }
+  .comp-ticker .you { color: var(--signal); }
+  .comp-bar-wrap {
+    height: 22px;
+    background: var(--starch-2);
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+  .comp-bar {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--workshirt);
+    border-radius: 3px;
+    transition: width 900ms var(--ease-out);
+    width: 0%;
+  }
+  .comp-bar.you { background: var(--navy); }
+  .comp-mcap {
+    font-family: var(--font-display);
+    font-size: 17px;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .comp-name-row {
+    margin-top: 4px;
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    color: var(--fg-subtle);
+  }
+  .comp-name-row .nm { color: var(--navy); font-weight: 500; }
+
+  /* --- Closing thesis --- */
+  .close-section {
+    background: var(--navy);
+    color: var(--starch);
+    padding: 84px 22px 64px;
+    margin-top: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .close-section .eyebrow-mono { color: var(--starch); }
+  .close-section .eyebrow-mono::before { background: var(--starch); }
+  .close-section .lede { color: var(--starch); }
+  .close-section .body-copy { color: rgba(247,245,238,0.75); }
+  .close-section .bignum { color: var(--starch); }
+  .close-section .bignum .small-suffix { color: rgba(247,245,238,0.6); }
+  .close-section .signal { color: var(--signal); }
+  .close-section .footer {
+    margin-top: 64px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(247,245,238,0.18);
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(247,245,238,0.55);
+  }
+
+  /* --- Reveal animation defaults (scroll-triggered) --- */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 560ms var(--ease-out), transform 560ms var(--ease-out); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal.d1 { transition-delay: 60ms; }
+  .reveal.d2 { transition-delay: 120ms; }
+  .reveal.d3 { transition-delay: 180ms; }
+  .reveal.d4 { transition-delay: 240ms; }
+
+  /* hairline thread that runs down the spine of the page (subtle) */
+  .thread-spine {
+    position: absolute;
+    left: 22px; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent 0%, rgba(15,42,68,0.08) 8%, rgba(15,42,68,0.08) 92%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* SVG drawing animations */
+  .draw-path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    transition: stroke-dashoffset 1500ms var(--ease-out);
+  }
+  .draw-path.in { stroke-dashoffset: 0; }
+
+  /* Steam / lint particles for the laundry beat */
+  @keyframes drift {
+    0%   { transform: translateY(0) translateX(0); opacity: 0.5; }
+    50%  { opacity: 0.9; }
+    100% { transform: translateY(-30px) translateX(8px); opacity: 0; }
+  }
+  .lint {
+    position: absolute;
+    width: 4px; height: 4px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 50%;
+    animation: drift 4s ease-out infinite;
+  }
+
+  /* Subtle dot-grid on the route scene to suggest "stops" */
+  .stops-grid {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(15,42,68,0.18) 0.8px, transparent 1.4px);
+    background-size: 18px 18px;
+    background-position: 0 0;
+    opacity: 0.6;
+  }
+
+</style>
+</head>
+<body>
+  <main class="page" id="page">
+
+    <!-- =================== PERSISTENT CHROME =================== -->
+    <header class="chrome" role="banner">
+      <div class="chrome-row">
+        <div class="chrome-left">
+          <span class="ticker"><span class="dot">●</span>CTAS</span>
+          <span class="co-name">Cintas</span>
+        </div>
+        <span class="recap-tag">Recap · FY '25</span>
+      </div>
+      <div class="progress-rail"><div class="progress-fill" id="progress"></div></div>
+    </header>
+
+    <!-- spine hairline -->
+    <div class="thread-spine"></div>
+
+    <!-- =================== HERO / THESIS =================== -->
+    <section class="hero">
+      <div class="eyebrow-mono reveal">A million customers · One weekly visit</div>
+
+      <h1 class="hero-thesis reveal d1">
+        A million<br/>
+        American businesses<br/>
+        share <span class="accent">one</span><br/>
+        <span class="ital">delivery truck.</span>
+      </h1>
+
+      <p class="hero-sub reveal d2">
+        Cintas rents the uniform on your back, restocks the soap in your bathroom,
+        and tests the AED on the wall — every week, on a route, for ninety-six
+        years and counting.
+      </p>
+
+      <div class="hero-meta-row reveal d3">
+        <div class="item">
+          <div class="lbl">Market cap</div>
+          <div class="val">$71.68<span style="font-size:0.55em;letter-spacing:0;">B</span></div>
+        </div>
+        <div class="item">
+          <div class="lbl">FY25 revenue</div>
+          <div class="val">$10.34<span style="font-size:0.55em;letter-spacing:0;">B</span></div>
+        </div>
+        <div class="item">
+          <div class="lbl">Op. margin</div>
+          <div class="val">22.8%</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== RESET BEAT 1 =================== -->
+    <section class="reset">
+      It started with shop towels in 1929. <span class="signal">A century later,</span>
+      the truck still pulls up on Tuesday.
+    </section>
+
+    <!-- =================== BUSINESS / THE WEEKLY VISIT =================== -->
+    <section class="beat">
+      <div class="eyebrow-mono reveal">The route · How it works</div>
+      <h2 class="lede reveal d1">
+        The whole company is built on a <span class="ital signal">small recurring fee,</span>
+        collected weekly, from a million customers.
+      </h2>
+
+      <p class="body-copy reveal d2">
+        Two segments. <span class="ital">Uniform Rental & Facility Services</span>
+        — the bulk of revenue — covers uniforms, mats, mops, restroom supplies.
+        <span class="ital">First Aid & Safety</span> handles AED kits, fire
+        extinguishers, compliance training. The contracts are subscription-like.
+        The cash flows are <span class="signal">predictable.</span>
+      </p>
+
+      <!-- Route scene: a delivery truck on a horizontal route, dropping off uniforms -->
+      <div class="route-scene reveal d2" id="routeScene">
+        <span class="week-label">Mon · Tue · Wed · Thu · Fri</span>
+        <span class="day-label">Tuesday, 9:14 AM</span>
+        <div class="stops-grid"></div>
+
+        <svg viewBox="0 0 414 320" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;">
+          <!-- Horizon road -->
+          <line x1="0" y1="220" x2="414" y2="220" stroke="#0F2A44" stroke-width="1" stroke-opacity="0.18" />
+          <line x1="0" y1="221.5" x2="414" y2="221.5" stroke="#0F2A44" stroke-width="0.6" stroke-opacity="0.1" stroke-dasharray="4 6" />
+
+          <!-- Buildings (customer stops) -->
+          <g fill="#0F2A44" fill-opacity="0.86">
+            <!-- Left: small office -->
+            <rect x="14" y="170" width="36" height="50" />
+            <rect x="20" y="178" width="6" height="6" fill="#F7F5EE" fill-opacity="0.7"/>
+            <rect x="32" y="178" width="6" height="6" fill="#F7F5EE" fill-opacity="0.7"/>
+            <rect x="20" y="192" width="6" height="6" fill="#F7F5EE" fill-opacity="0.7"/>
+            <rect x="32" y="192" width="6" height="6" fill="#F7F5EE" fill-opacity="0.7"/>
+
+            <!-- Restaurant -->
+            <rect x="74" y="158" width="60" height="62" />
+            <rect x="84" y="166" width="40" height="20" fill="#F4C542" fill-opacity="0.85"/>
+            <text x="104" y="180" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#0F2A44" font-weight="500">DINER</text>
+            <rect x="84" y="194" width="14" height="22" fill="#F7F5EE" fill-opacity="0.85"/>
+            <rect x="106" y="194" width="14" height="22" fill="#F7F5EE" fill-opacity="0.85"/>
+
+            <!-- Hospital (taller) with red cross -->
+            <rect x="158" y="120" width="68" height="100" />
+            <rect x="168" y="132" width="10" height="10" fill="#F7F5EE" fill-opacity="0.75"/>
+            <rect x="184" y="132" width="10" height="10" fill="#F7F5EE" fill-opacity="0.75"/>
+            <rect x="200" y="132" width="10" height="10" fill="#F7F5EE" fill-opacity="0.75"/>
+            <rect x="168" y="148" width="10" height="10" fill="#F7F5EE" fill-opacity="0.75"/>
+            <rect x="184" y="148" width="10" height="10" fill="#F7F5EE" fill-opacity="0.75"/>
+            <rect x="200" y="148" width="10" height="10" fill="#F7F5EE" fill-opacity="0.75"/>
+            <rect x="168" y="164" width="10" height="10" fill="#F7F5EE" fill-opacity="0.75"/>
+            <rect x="184" y="164" width="10" height="10" fill="#F7F5EE" fill-opacity="0.75"/>
+            <rect x="200" y="164" width="10" height="10" fill="#F7F5EE" fill-opacity="0.75"/>
+            <!-- Red cross plate -->
+            <rect x="180" y="184" width="22" height="22" fill="#F7F5EE"/>
+            <rect x="188" y="186" width="6" height="18" fill="#C03A2B"/>
+            <rect x="182" y="192" width="18" height="6" fill="#C03A2B"/>
+
+            <!-- Auto shop -->
+            <rect x="248" y="172" width="62" height="48" />
+            <rect x="256" y="184" width="20" height="32" fill="#F7F5EE" fill-opacity="0.7"/>
+            <rect x="282" y="184" width="20" height="32" fill="#F7F5EE" fill-opacity="0.7"/>
+            <text x="279" y="180" text-anchor="middle" font-family="Geist Mono" font-size="8" fill="#F7F5EE" font-weight="500">AUTO</text>
+
+            <!-- Hotel -->
+            <rect x="328" y="138" width="72" height="82" />
+            <g fill="#F7F5EE" fill-opacity="0.7">
+              <rect x="336" y="148" width="8" height="8"/><rect x="350" y="148" width="8" height="8"/><rect x="364" y="148" width="8" height="8"/><rect x="378" y="148" width="8" height="8"/>
+              <rect x="336" y="162" width="8" height="8"/><rect x="350" y="162" width="8" height="8"/><rect x="364" y="162" width="8" height="8"/><rect x="378" y="162" width="8" height="8"/>
+              <rect x="336" y="176" width="8" height="8"/><rect x="350" y="176" width="8" height="8"/><rect x="364" y="176" width="8" height="8"/><rect x="378" y="176" width="8" height="8"/>
+              <rect x="336" y="190" width="8" height="8"/><rect x="350" y="190" width="8" height="8"/><rect x="364" y="190" width="8" height="8"/><rect x="378" y="190" width="8" height="8"/>
+            </g>
+          </g>
+
+          <!-- Stop labels -->
+          <g font-family="Geist Mono" font-size="7" fill="#6E7C8E" letter-spacing="0.5">
+            <text x="32" y="240" text-anchor="middle">OFFICE</text>
+            <text x="104" y="240" text-anchor="middle">RESTAURANT</text>
+            <text x="192" y="240" text-anchor="middle">HEALTHCARE</text>
+            <text x="279" y="240" text-anchor="middle">AUTO</text>
+            <text x="364" y="240" text-anchor="middle">HOSPITALITY</text>
+          </g>
+
+          <!-- Cintas truck -->
+          <g id="truck" transform="translate(0,0)">
+            <!-- Truck shadow -->
+            <ellipse cx="40" cy="218" rx="38" ry="3" fill="#0F2A44" fill-opacity="0.18"/>
+            <!-- Box -->
+            <rect x="6" y="178" width="58" height="38" rx="2" fill="#0F2A44"/>
+            <!-- Cab -->
+            <path d="M64 192 L82 192 L86 200 L86 216 L64 216 Z" fill="#1B3A5C"/>
+            <!-- Windshield -->
+            <path d="M66 194 L82 194 L84 200 L66 200 Z" fill="#7DA8CC" fill-opacity="0.8"/>
+            <!-- White stripe with logo -->
+            <rect x="6" y="190" width="58" height="10" fill="#F7F5EE"/>
+            <text x="35" y="198" font-family="Geist Mono" font-size="7" fill="#0F2A44" text-anchor="middle" font-weight="600" letter-spacing="0.5">CINTAS</text>
+            <!-- Wheels -->
+            <circle cx="20" cy="218" r="5" fill="#141414"/>
+            <circle cx="20" cy="218" r="2" fill="#3B3A37"/>
+            <circle cx="54" cy="218" r="5" fill="#141414"/>
+            <circle cx="54" cy="218" r="2" fill="#3B3A37"/>
+            <circle cx="78" cy="218" r="5" fill="#141414"/>
+            <circle cx="78" cy="218" r="2" fill="#3B3A37"/>
+          </g>
+
+          <!-- Stop indicators (lit up as truck passes) -->
+          <g id="stopDots">
+            <circle class="stop-dot" data-x="32" cx="32" cy="252" r="3" fill="#0F2A44" fill-opacity="0.18"/>
+            <circle class="stop-dot" data-x="104" cx="104" cy="252" r="3" fill="#0F2A44" fill-opacity="0.18"/>
+            <circle class="stop-dot" data-x="192" cx="192" cy="252" r="3" fill="#0F2A44" fill-opacity="0.18"/>
+            <circle class="stop-dot" data-x="279" cx="279" cy="252" r="3" fill="#0F2A44" fill-opacity="0.18"/>
+            <circle class="stop-dot" data-x="364" cx="364" cy="252" r="3" fill="#0F2A44" fill-opacity="0.18"/>
+          </g>
+
+          <!-- Sun / sky tint area at top -->
+        </svg>
+
+        <!-- Caption strip -->
+        <div style="position:absolute; bottom:14px; left:18px; right:18px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em; color:var(--fg-subtle); text-transform:uppercase;">SCROLL · The route runs</span>
+          <span style="font-family:var(--font-display); font-style:italic; font-size:14px; color:var(--navy);">a small fee, every week</span>
+        </div>
+      </div>
+
+      <!-- The two segments breakdown -->
+      <div class="ledger" style="margin-top: 32px;">
+        <div class="ledger-row reveal">
+          <div>
+            <div class="l-label">Uniform rental & facility services</div>
+            <div style="font-family:var(--font-display); font-style:italic; color:var(--fg-subtle); font-size:13px; margin-top:4px;">the bulk of every dollar</div>
+          </div>
+          <div class="l-val">~80<span class="unit">% rev</span></div>
+        </div>
+        <div class="ledger-row reveal">
+          <div>
+            <div class="l-label">First aid & safety services</div>
+            <div style="font-family:var(--font-display); font-style:italic; color:var(--fg-subtle); font-size:13px; margin-top:4px;">AEDs, kits, fire protection</div>
+          </div>
+          <div class="l-val">growing<span class="unit"></span></div>
+        </div>
+        <div class="ledger-row reveal">
+          <div>
+            <div class="l-label">All other</div>
+            <div style="font-family:var(--font-display); font-style:italic; color:var(--fg-subtle); font-size:13px; margin-top:4px;">direct uniform sales</div>
+          </div>
+          <div class="l-val">small<span class="unit"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== SCALE =================== -->
+    <section class="beat" style="background: var(--bg-sunken);">
+      <div class="eyebrow-mono reveal">The scale · FY '25</div>
+      <h2 class="lede reveal d1">
+        Add up the weekly fees and you get something <span class="ital signal">surprisingly large.</span>
+      </h2>
+
+      <div style="margin-top: 36px;" class="reveal d2">
+        <div class="bignum"><span id="rev">$10.34</span><span class="small-suffix">B</span></div>
+        <div class="bignum-sub">FY25 revenue · 50% gross margin</div>
+      </div>
+
+      <div style="margin-top: 28px; display:flex; gap:18px;" class="reveal d3">
+        <div style="flex:1;">
+          <div class="bignum" style="font-size:54px;">22.8<span style="font-size:0.45em;">%</span></div>
+          <div class="bignum-sub">Op. margin · all-time high</div>
+        </div>
+        <div style="flex:1;">
+          <div class="bignum" style="font-size:54px;">$1.24</div>
+          <div class="bignum-sub">EPS · 2026 Q3</div>
+        </div>
+      </div>
+
+      <div class="ledger" style="margin-top: 36px;">
+        <div class="ledger-row reveal">
+          <div class="l-label">Customers served</div>
+          <div class="l-val"><span id="customersBig">1M+</span></div>
+        </div>
+        <div class="ledger-row reveal">
+          <div class="l-label">Employees</div>
+          <div class="l-val">48,300</div>
+        </div>
+        <div class="ledger-row reveal">
+          <div class="l-label">Founded</div>
+          <div class="l-val">1929<span class="unit">Cincinnati</span></div>
+        </div>
+        <div class="ledger-row reveal">
+          <div class="l-label">Public since</div>
+          <div class="l-val">1983<span class="unit">42 yrs</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== RESET BEAT 2 =================== -->
+    <section class="reset subtle">
+      Fifty cents of every dollar pays for the <span class="signal">laundry.</span>
+      The rest is where the math gets interesting.
+    </section>
+
+    <!-- =================== COSTS · The dollar bill =================== -->
+    <section class="beat">
+      <div class="eyebrow-mono reveal">A hundred cents in</div>
+      <h2 class="lede reveal d1">
+        For every dollar Cintas earns, here's <span class="ital signal">where it goes.</span>
+      </h2>
+
+      <p class="body-copy reveal d2">
+        Trucks, soap, thread, payroll. The cost of revenue alone eats half the
+        page. What's left, after the office and the tax man, is the
+        <span class="signal">22.8 cents</span> Cintas keeps as operating income —
+        an all-time-high margin for a business that mostly delivers laundry.
+      </p>
+
+      <div class="bill-wrap reveal d2">
+        <div class="bill" id="bill">
+          <!-- Hex-locked colors from the JSON, in order: 50/27/5/4/1, with surplus claiming the remainder = 13 -->
+          <div class="bill-seg"  style="background:#4A90D9; flex: 0 0 50%;"><span class="pct">50¢</span></div>
+          <div class="bill-seg"  style="background:#E8734A; flex: 0 0 27%;"><span class="pct">27¢</span></div>
+          <div class="bill-seg"  style="background:#6DBF67; flex: 0 0 5%;"></div>
+          <div class="bill-seg"  style="background:#F4C542; flex: 0 0 4%;"></div>
+          <div class="bill-seg"  style="background:#9B59B6; flex: 0 0 1%;"></div>
+          <div class="bill-seg surplus" style="flex: 0 0 13%;"><span class="pct">13¢</span></div>
+        </div>
+
+        <div class="bill-legend">
+          <div class="li"><span class="swatch" style="background:#4A90D9"></span><span class="li-label">Cost of revenue</span><span class="li-pct">50%</span></div>
+          <div class="li"><span class="swatch" style="background:#E8734A"></span><span class="li-label">Selling & administrative</span><span class="li-pct">27%</span></div>
+          <div class="li"><span class="swatch" style="background:#6DBF67"></span><span class="li-label">Depreciation & amortization</span><span class="li-pct">5%</span></div>
+          <div class="li"><span class="swatch" style="background:#F4C542"></span><span class="li-label">Capital expenditures</span><span class="li-pct">4%</span></div>
+          <div class="li"><span class="swatch" style="background:#9B59B6"></span><span class="li-label">Interest expense</span><span class="li-pct">1%</span></div>
+          <div class="li highlight"><span class="swatch" style="background:#0F2A44"></span><span class="li-label">what survives.</span><span class="li-pct">~13%</span></div>
+        </div>
+      </div>
+
+      <div class="surplus-callout reveal">
+        <div class="caption">After everything · operating margin</div>
+        <div style="font-family:var(--font-display); font-size: 64px; line-height: 1; color: var(--navy); letter-spacing: -0.025em; margin-top: 8px;">
+          22.8<span style="font-size:0.45em;letter-spacing:0;">¢</span>
+          <span style="font-family: var(--font-display); font-style: italic; font-size: 28px; color: var(--signal); display:block; margin-top:14px;">an all-time high.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== FOOTPRINT =================== -->
+    <section class="beat" style="background: var(--bg-sunken);">
+      <div class="eyebrow-mono reveal">The footprint · North America</div>
+      <h2 class="lede reveal d1">
+        Cintas's whole world is the <span class="ital signal">continent next door.</span>
+      </h2>
+
+      <p class="body-copy reveal d2">
+        The route truck doesn't cross oceans. Ninety-three cents of every
+        revenue dollar comes from the United States; the rest is Canada and
+        a sliver of Latin America. <span class="signal">A domestic compounding machine.</span>
+      </p>
+
+      <!-- North America silhouette filling up -->
+      <div style="margin-top: 28px; position: relative; height: 240px;" class="reveal d2">
+        <svg viewBox="0 0 380 240" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <clipPath id="naClip">
+              <!-- Hand-drawn N. America silhouette: simplified -->
+              <path d="
+                M 70 30
+                C 90 18, 130 12, 170 14
+                C 210 16, 250 10, 290 22
+                C 320 30, 340 50, 348 80
+                C 354 105, 352 128, 340 150
+                C 326 172, 300 178, 280 190
+                C 268 198, 260 210, 240 214
+                C 220 218, 196 218, 184 226
+                C 174 232, 160 222, 152 218
+                C 144 214, 130 210, 122 204
+                C 110 196, 102 184, 94 172
+                C 84 158, 76 144, 70 128
+                C 64 112, 58 96, 60 78
+                C 62 60, 60 42, 70 30
+                Z" />
+            </clipPath>
+          </defs>
+
+          <!-- Outline -->
+          <path d="
+            M 70 30
+            C 90 18, 130 12, 170 14
+            C 210 16, 250 10, 290 22
+            C 320 30, 340 50, 348 80
+            C 354 105, 352 128, 340 150
+            C 326 172, 300 178, 280 190
+            C 268 198, 260 210, 240 214
+            C 220 218, 196 218, 184 226
+            C 174 232, 160 222, 152 218
+            C 144 214, 130 210, 122 204
+            C 110 196, 102 184, 94 172
+            C 84 158, 76 144, 70 128
+            C 64 112, 58 96, 60 78
+            C 62 60, 60 42, 70 30
+            Z"
+            fill="rgba(15,42,68,0.06)"
+            stroke="rgba(15,42,68,0.35)"
+            stroke-width="0.8"
+            stroke-dasharray="2 3"
+          />
+
+          <!-- Fill, clipped -->
+          <g clip-path="url(#naClip)">
+            <!-- US zone (large center+south) -->
+            <rect id="usFill" x="60" y="80" width="300" height="160" fill="#0F2A44" opacity="0.92" />
+            <!-- Canada zone (top) -->
+            <rect id="caFill" x="60" y="14" width="300" height="66" fill="#4A6B8A" opacity="0.85" />
+            <!-- Mexico/LatAm zone (bottom slice) -->
+            <rect id="laFill" x="60" y="216" width="300" height="14" fill="#C9BFA3" opacity="0.95" />
+            <!-- Some texture: route lines -->
+            <g stroke="#F7F5EE" stroke-width="0.6" stroke-opacity="0.18" fill="none">
+              <path d="M 80 90 Q 200 60 320 100"/>
+              <path d="M 90 130 Q 200 110 330 140"/>
+              <path d="M 100 170 Q 210 160 320 180"/>
+            </g>
+            <!-- Tiny pin dots -->
+            <g fill="#F4C542">
+              <circle cx="120" cy="90" r="1.4"/>
+              <circle cx="160" cy="110" r="1.4"/>
+              <circle cx="200" cy="100" r="1.4"/>
+              <circle cx="240" cy="120" r="1.4"/>
+              <circle cx="280" cy="100" r="1.4"/>
+              <circle cx="180" cy="140" r="1.4"/>
+              <circle cx="220" cy="160" r="1.4"/>
+              <circle cx="140" cy="160" r="1.4"/>
+              <circle cx="260" cy="170" r="1.4"/>
+              <circle cx="190" cy="180" r="1.4"/>
+              <circle cx="100" cy="120" r="1.4"/>
+              <circle cx="300" cy="140" r="1.4"/>
+            </g>
+          </g>
+
+          <!-- Region labels -->
+          <text x="200" y="55" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#F7F5EE" font-weight="500" letter-spacing="1.4" opacity="0.9">CANADA · 5%</text>
+          <text x="200" y="140" text-anchor="middle" font-family="Geist Mono" font-size="11" fill="#F7F5EE" font-weight="500" letter-spacing="1.6">UNITED STATES · 93%</text>
+          <text x="200" y="225" text-anchor="middle" font-family="Geist Mono" font-size="8" fill="#0F2A44" font-weight="500" letter-spacing="1.2">LATAM · 2%</text>
+        </svg>
+      </div>
+
+      <div class="footprint-scene reveal d3" style="background: var(--bg-raised); border:1px solid var(--line); margin-top: 24px;">
+        <div class="footprint-row"><span class="region">United States</span><span class="pct" id="pctUS">93%</span></div>
+        <div class="footprint-bar-wrap"><div class="footprint-bar us" id="barUS" data-pct="93"></div></div>
+
+        <div class="footprint-row"><span class="region">Canada</span><span class="pct">5%</span></div>
+        <div class="footprint-bar-wrap"><div class="footprint-bar ca" id="barCA" data-pct="5"></div></div>
+
+        <div class="footprint-row"><span class="region">LatAm & other</span><span class="pct">2%</span></div>
+        <div class="footprint-bar-wrap"><div class="footprint-bar la" id="barLA" data-pct="2"></div></div>
+      </div>
+    </section>
+
+    <!-- =================== RESET BEAT 3 =================== -->
+    <section class="reset">
+      Cintas has raised its dividend <span class="signal">every year since 1983.</span>
+      Forty-two years. No exceptions.
+    </section>
+
+    <!-- =================== THE BET / CAPITAL ALLOCATION =================== -->
+    <section class="beat">
+      <div class="eyebrow-mono reveal">The bet · Capital allocation</div>
+      <h2 class="lede reveal d1">
+        Cash comes in by the truckload. <span class="ital signal">It also goes out</span> with discipline.
+      </h2>
+
+      <p class="body-copy reveal d2">
+        $2.17B of operating cash flow last year. $1.76B walks out as
+        <span class="signal">free cash flow</span> after capex. That money is
+        split four ways — and the dividend, raised every year since the IPO,
+        gets the headline.
+      </p>
+
+      <!-- 42-year dividend ladder -->
+      <div class="ladder-scene reveal d2">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom: 10px;">
+          <span style="font-family: var(--font-mono); font-size: 11px; letter-spacing:0.14em; text-transform: uppercase; color: var(--fg-subtle);">Dividend, raised every year since IPO</span>
+          <span style="font-family: var(--font-display); font-size: 22px; color: var(--navy);"><span class="ital">42</span>↑</span>
+        </div>
+        <div class="ladder-axis" id="ladder"></div>
+        <div class="ladder-x">
+          <span>1983</span>
+          <span>2004</span>
+          <span>2025</span>
+        </div>
+      </div>
+
+      <div class="allocation reveal">
+        <div class="alloc-row">
+          <div class="a-label">Dividends paid <span class="ital">— FY25</span></div>
+          <div class="a-val">$611.6<span class="u">M</span></div>
+        </div>
+        <div class="alloc-row">
+          <div class="a-label">Share buybacks <span class="ital">— avg $179.07/sh</span></div>
+          <div class="a-val">$679.3<span class="u">M</span></div>
+        </div>
+        <div class="alloc-row">
+          <div class="a-label">Bolt-on acquisitions <span class="ital">— tuck-ins</span></div>
+          <div class="a-val">$232.9<span class="u">M</span></div>
+        </div>
+        <div class="alloc-row">
+          <div class="a-label">Capital expenditures <span class="ital">— route trucks, plants</span></div>
+          <div class="a-val">$408.9<span class="u">M</span></div>
+        </div>
+        <div class="alloc-row" style="border-bottom-color: var(--navy); padding-top: 22px;">
+          <div class="a-label" style="font-family: var(--font-display); font-style: italic; font-size: 17px; color: var(--signal);">Buyback dry powder, Oct '25</div>
+          <div class="a-val" style="color: var(--signal);">$1.7<span class="u">B</span></div>
+        </div>
+      </div>
+
+      <p class="body-copy reveal" style="margin-top: 22px; max-width: 38ch;">
+        Against $2.42B of debt, $4.68B of equity, $3.40B of goodwill from
+        decades of tuck-ins, and $263.97M of cash on hand. A balance sheet
+        designed to <span class="signal">keep the trucks running.</span>
+      </p>
+    </section>
+
+    <!-- =================== COMPETITION =================== -->
+    <section class="beat" style="background: var(--bg-sunken);">
+      <div class="eyebrow-mono reveal">The lane · Who else is here</div>
+      <h2 class="lede reveal d1">
+        Only one direct rival actually <span class="ital signal">runs the route.</span>
+      </h2>
+
+      <p class="body-copy reveal d2">
+        Aramark is the lookalike — uniforms, mats, route trucks, the same
+        industrial customers. <span class="ital">Comfort Systems</span> and
+        <span class="ital">Illinois Tool Works</span> live next door:
+        building services and industrial consumables that overlap, but are
+        not the same business.
+      </p>
+
+      <div class="compete reveal d2">
+        <!-- CTAS: highlighted -->
+        <div class="comp-row us">
+          <span class="comp-ticker"><span class="you">●</span> CTAS</span>
+          <div>
+            <div class="comp-bar-wrap"><div class="comp-bar you" data-pct="91" style=""></div></div>
+            <div class="comp-name-row"><span class="nm">Cintas</span> · $10.34B rev · the route itself</div>
+          </div>
+          <span class="comp-mcap">$71.7B</span>
+        </div>
+
+        <div class="comp-row">
+          <span class="comp-ticker">ARMK</span>
+          <div>
+            <div class="comp-bar-wrap"><div class="comp-bar" data-pct="15" style=""></div></div>
+            <div class="comp-name-row"><span class="nm">Aramark</span> · $18.5B rev · the direct rival</div>
+          </div>
+          <span class="comp-mcap">$11.9B</span>
+        </div>
+
+        <div class="comp-row">
+          <span class="comp-ticker">FIX</span>
+          <div>
+            <div class="comp-bar-wrap"><div class="comp-bar" data-pct="79" style=""></div></div>
+            <div class="comp-name-row"><span class="nm">Comfort Systems</span> · $9.1B rev · adjacent (HVAC)</div>
+          </div>
+          <span class="comp-mcap">$61.9B</span>
+        </div>
+
+        <div class="comp-row">
+          <span class="comp-ticker">ITW</span>
+          <div>
+            <div class="comp-bar-wrap"><div class="comp-bar" data-pct="100" style=""></div></div>
+            <div class="comp-name-row"><span class="nm">Illinois Tool Works</span> · $16.0B rev · diversified</div>
+          </div>
+          <span class="comp-mcap">$78.5B</span>
+        </div>
+      </div>
+
+      <p class="body-copy reveal" style="margin-top: 22px; max-width: 38ch;">
+        Bigger market caps live next door. None of them run a uniform route
+        every Tuesday morning to a million American businesses.
+        <span class="signal">That lane is one truck wide.</span>
+      </p>
+    </section>
+
+    <!-- =================== CLOSE / INVERSION =================== -->
+    <section class="close-section">
+      <div class="eyebrow-mono reveal">The takeaway · What survives</div>
+
+      <h2 class="lede reveal d1" style="margin-top: 18px;">
+        We opened with a <span class="ital">million customers</span>
+        and one weekly visit. Here's what walks back out.
+      </h2>
+
+      <div style="margin-top: 48px;" class="reveal d2">
+        <div class="bignum">$1.76<span class="small-suffix">B</span></div>
+        <div class="bignum-sub" style="color: rgba(247,245,238,0.65);">Free cash flow · FY25</div>
+      </div>
+
+      <p class="body-copy reveal d3" style="margin-top: 28px; color: rgba(247,245,238,0.78); max-width: 36ch;">
+        Out of every dollar that comes in, <span class="signal">thirteen cents</span>
+        survive to the bottom line, and twenty-three become operating profit.
+        Some go to dividends. Some buy back the stock. Some buy the next
+        tuck-in. The rest waits for Tuesday.
+      </p>
+
+      <div style="margin-top: 56px;" class="reveal">
+        <div style="font-family: var(--font-display); font-style: italic; font-size: 30px; line-height: 1.2; color: var(--starch); letter-spacing: -0.01em; max-width: 22ch;">
+          A million businesses.<br/>
+          One weekly visit.<br/>
+          <span class="signal">Ninety-six years</span><br/>
+          of compounding.
+        </div>
+      </div>
+
+      <div class="footer">
+        <span>CTAS · NASDAQ</span>
+        <span>FY '25 · figures from filings</span>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // ================== Scroll progress ==================
+    const progress = document.getElementById('progress');
+    const page = document.getElementById('page');
+    function updateProgress() {
+      const scrollTop = window.scrollY;
+      const max = document.body.scrollHeight - window.innerHeight;
+      const pct = Math.min(100, Math.max(0, (scrollTop / max) * 100));
+      progress.style.width = pct + '%';
+    }
+    document.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    // ================== Reveal-on-scroll ==================
+    const revealEls = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    revealEls.forEach(el => io.observe(el));
+
+    // ================== Footprint bar fills ==================
+    const barIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const pct = e.target.dataset.pct;
+          e.target.style.width = pct + '%';
+          barIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.footprint-bar, .comp-bar').forEach(b => barIO.observe(b));
+
+    // ================== Count-up: revenue ==================
+    function animateCount(el, from, to, duration, prefix='', suffix='', decimals=2) {
+      const start = performance.now();
+      function tick(now) {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const v = from + (to - from) * eased;
+        el.textContent = prefix + v.toFixed(decimals) + suffix;
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+    const revEl = document.getElementById('rev');
+    const revIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          animateCount(revEl, 0, 10.34, 1400, '$', '', 2);
+          revIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    revIO.observe(revEl);
+
+    // ================== Dividend ladder: 42 ascending bars ==================
+    const ladder = document.getElementById('ladder');
+    const years = 42;
+    for (let i = 0; i < years; i++) {
+      const r = document.createElement('div');
+      r.className = 'rung';
+      // ascending with subtle curve, starting low
+      const minH = 8;
+      const maxH = 100;
+      const t = i / (years - 1);
+      const curved = Math.pow(t, 0.85);
+      const h = minH + curved * (maxH - minH);
+      r.dataset.h = h;
+      if (i >= years - 5) r.classList.add('recent');
+      ladder.appendChild(r);
+    }
+    const ladderIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          [...ladder.children].forEach((r, i) => {
+            setTimeout(() => {
+              r.style.height = r.dataset.h + '%';
+            }, 30 * i);
+          });
+          ladderIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    ladderIO.observe(ladder);
+
+    // ================== Route truck: scroll-scrubbed ==================
+    const routeScene = document.getElementById('routeScene');
+    const truck = document.getElementById('truck');
+    const stopDots = document.querySelectorAll('.stop-dot');
+    const stopXs = [32, 104, 192, 279, 364];
+
+    function updateTruck() {
+      if (!routeScene) return;
+      const rect = routeScene.getBoundingClientRect();
+      const winH = window.innerHeight;
+      // Progress through the scene: 0 when scene's top reaches bottom of viewport,
+      // 1 when scene's bottom reaches top of viewport.
+      const total = winH + rect.height;
+      const passed = winH - rect.top;
+      const t = Math.max(0, Math.min(1, passed / total));
+
+      // Truck travels from x=-90 (off-screen left) to x=420 (off-screen right) over the scene
+      const truckX = -90 + t * 510;
+      truck.setAttribute('transform', `translate(${truckX},0)`);
+
+      // Light up stop dots as truck passes them
+      stopDots.forEach((dot, i) => {
+        const sx = stopXs[i];
+        if (truckX + 50 > sx) {
+          dot.setAttribute('fill', '#F25A37');
+          dot.setAttribute('fill-opacity', '1');
+          dot.setAttribute('r', '4');
+        } else {
+          dot.setAttribute('fill', '#0F2A44');
+          dot.setAttribute('fill-opacity', '0.18');
+          dot.setAttribute('r', '3');
+        }
+      });
+    }
+    document.addEventListener('scroll', updateTruck, { passive: true });
+    window.addEventListener('resize', updateTruck);
+    updateTruck();
+
+    // ================== Bill segments grow on view ==================
+    const bill = document.getElementById('bill');
+    const billIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          // The flex values are already correct; trigger a re-anim by
+          // momentarily collapsing then restoring.
+          const segs = bill.querySelectorAll('.bill-seg');
+          const final = ['50','27','5','4','1','13'];
+          segs.forEach((s, i) => {
+            s.style.flex = `0 0 0%`;
+            setTimeout(() => {
+              s.style.flex = `0 0 ${final[i]}%`;
+            }, 80 + i * 70);
+          });
+          billIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    billIO.observe(bill);
+  </script>
+</body>
+</html>
