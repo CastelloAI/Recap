@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -e
 
 cat <<'HEAD' > index.html
 <!DOCTYPE html>
@@ -59,16 +59,10 @@ cat <<'HEAD' > index.html
   <div class="grid">
 HEAD
 
-for dir in */; do
-  dir="${dir%/}"
-
-  [[ "$dir" == .* ]] && continue
-
-  # each folder must have an index.html
-  [ -f "$dir/index.html" ] || continue
-
-  echo "    <a class=\"card\" href=\"/$dir/\"><div class=\"ticker\">$dir</div></a>"
-done | sort >> index.html
+find . -maxdepth 2 -name "index.html" -not -path "./index.html" | sort | while read -r html_file; do
+  dir=$(dirname "$html_file" | sed 's|^\./||')
+  echo "    <a class=\"card\" href=\"/${dir}/\"><div class=\"ticker\">${dir}</div></a>"
+done >> index.html
 
 cat <<'TAIL' >> index.html
   </div>
@@ -76,4 +70,5 @@ cat <<'TAIL' >> index.html
 </html>
 TAIL
 
-echo "Built index.html with $(grep -c 'class="card"' index.html) links"
+count=$(grep -c 'class="card"' index.html || echo 0)
+echo "Built index.html with $count links"
