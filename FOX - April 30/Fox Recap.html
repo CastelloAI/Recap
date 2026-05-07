@@ -1,0 +1,1461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>FOX · Recap FY '25</title>
+<link rel="stylesheet" href="ds.css" />
+<style>
+  /* =========================================================
+     FOX CORP — Stock Recap
+     Aesthetic: broadcast newsroom — deep ink + signal red,
+     warm paper for the body, mono chyrons everywhere.
+     ========================================================= */
+
+  :root {
+    /* Override paper palette toward newsroom warmth */
+    --news-paper:   #F2EFE7;       /* warm broadcast paper */
+    --news-paper-2: #E8E4D8;
+    --news-ink:     #0D0C0B;       /* near-black studio */
+    --news-ink-2:   #2B2A27;
+    --news-ink-3:   #6B6A65;
+    --news-line:    #D8D3C5;
+    --signal:       #C8102E;       /* broadcast red — used for signal moments */
+    --signal-soft:  #F2D7DA;
+    --chrome:       rgba(13,12,11,0.82);
+    --score-glow:   #FFB23C;       /* stadium-light amber */
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    background: var(--news-paper);
+    color: var(--news-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  body { font-size: 17px; line-height: 1.5; }
+
+  /* The mobile artifact: standalone column, ~420px, black letterbox flanks on wider screens */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background: #050504;
+    z-index: -1;
+  }
+  .stage {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--news-paper);
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    box-shadow: 0 0 80px rgba(0,0,0,0.35);
+  }
+
+  /* ---------- Persistent chrome ---------- */
+  .chrome {
+    position: sticky;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    backdrop-filter: blur(20px) saturate(1.3);
+    -webkit-backdrop-filter: blur(20px) saturate(1.3);
+    background: rgba(242,239,231,0.78);
+    border-bottom: 1px solid rgba(13,12,11,0.08);
+  }
+  .chrome-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 20px 10px;
+  }
+  .ticker-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.08em;
+    background: var(--news-ink); color: var(--news-paper);
+    padding: 5px 9px 4px; border-radius: 3px;
+    font-weight: 500;
+  }
+  .ticker-pill .live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--signal);
+    box-shadow: 0 0 0 0 rgba(200,16,46,0.6);
+    animation: pulse 1.6s ease-out infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(200,16,46,0.55); }
+    70% { box-shadow: 0 0 0 6px rgba(200,16,46,0); }
+    100% { box-shadow: 0 0 0 0 rgba(200,16,46,0); }
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 13px; font-weight: 500;
+    letter-spacing: -0.005em;
+    color: var(--news-ink);
+  }
+  .chrome-recap {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--news-ink-3);
+  }
+  .chrome-progress {
+    height: 1.5px;
+    background: transparent;
+    position: relative;
+  }
+  .chrome-progress > i {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 0%;
+    background: var(--signal);
+    transition: width 80ms linear;
+  }
+
+  /* ---------- Section primitives ---------- */
+  .beat { position: relative; padding: 64px 24px; }
+  .beat--paper { background: var(--news-paper); }
+  .beat--paper-2 { background: var(--news-paper-2); }
+  .beat--ink { background: var(--news-ink); color: var(--news-paper); }
+  .beat--ink * { color: inherit; }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--news-ink-3);
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-bottom: 18px;
+  }
+  .eyebrow .dot {
+    width: 5px; height: 5px; border-radius: 50%; background: var(--signal);
+  }
+  .beat--ink .eyebrow { color: rgba(242,239,231,0.55); }
+  .beat--ink .eyebrow .dot { background: var(--signal); }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+  }
+  .ital { font-style: italic; }
+  .signal { color: var(--signal); }
+  .body-text {
+    font-family: var(--font-sans);
+    font-size: 16px; line-height: 1.55;
+    color: var(--news-ink-2);
+    text-wrap: pretty;
+  }
+  .meta-line {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.06em;
+    color: var(--news-ink-3);
+    text-transform: uppercase;
+  }
+
+  /* Reveal-on-scroll baseline */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
+  .reveal.in { opacity: 1; transform: none; }
+  .reveal[data-d="1"] { transition-delay: 80ms; }
+  .reveal[data-d="2"] { transition-delay: 160ms; }
+  .reveal[data-d="3"] { transition-delay: 240ms; }
+  .reveal[data-d="4"] { transition-delay: 320ms; }
+  .reveal[data-d="5"] { transition-delay: 400ms; }
+
+  /* =========================================================
+     1. HERO — "Live, by appointment."
+     ========================================================= */
+  .hero {
+    background: var(--news-paper);
+    padding: 28px 24px 56px;
+    overflow: hidden;
+    position: relative;
+  }
+  .hero-chyron {
+    display: flex; align-items: center; gap: 10px;
+    margin: 24px 0 28px;
+  }
+  .chyron-bar {
+    flex: 1; height: 1px; background: var(--news-ink); opacity: 0.85;
+  }
+  .chyron-square {
+    width: 7px; height: 7px; background: var(--signal);
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    margin: 0;
+    color: var(--news-ink);
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--signal);
+  }
+  .hero .stamp {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 16px;
+    border-top: 1px solid var(--news-line);
+    padding-top: 20px;
+  }
+  .stamp-cell .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--news-ink-3);
+    margin-bottom: 6px;
+  }
+  .stamp-cell .v {
+    font-family: var(--font-display);
+    font-size: 28px; line-height: 1;
+    letter-spacing: -0.015em;
+    color: var(--news-ink);
+  }
+  .stamp-cell .v small {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--news-ink-3);
+    letter-spacing: 0.04em;
+    margin-left: 4px;
+    vertical-align: 4px;
+  }
+
+  /* CRT-ish scanlines layer over the hero, very subtle */
+  .scanlines {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(13,12,11,0.025) 0,
+      rgba(13,12,11,0.025) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    mix-blend-mode: multiply;
+    opacity: 0.5;
+  }
+
+  /* The "ON AIR" tally light */
+  .on-air {
+    position: absolute;
+    top: 56px; right: 24px;
+    width: 72px; height: 38px;
+    background: var(--news-ink);
+    color: var(--signal);
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.18em;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 2px;
+    box-shadow: 0 0 0 2px var(--news-paper), 0 0 0 3px var(--news-ink);
+  }
+  .on-air::before {
+    content: "";
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--signal);
+    margin-right: 6px;
+    box-shadow: 0 0 8px var(--signal);
+    animation: pulse-air 1.2s ease-in-out infinite alternate;
+  }
+  @keyframes pulse-air { from { opacity: 0.4; } to { opacity: 1; } }
+
+  /* =========================================================
+     RESET BEAT (italic interlude)
+     ========================================================= */
+  .reset-beat {
+    background: var(--news-ink);
+    color: var(--news-paper);
+    padding: 56px 28px;
+    text-align: left;
+  }
+  .reset-beat .quote-mark {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 56px;
+    line-height: 0.5;
+    color: var(--signal);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .reset-beat p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    color: var(--news-paper);
+    margin: 0;
+  }
+  .reset-beat p .signal { color: var(--signal); }
+  .reset-beat .attrib {
+    margin-top: 20px;
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.18em;
+    color: rgba(242,239,231,0.5);
+    text-transform: uppercase;
+  }
+
+  /* =========================================================
+     2. TWO ENGINES — Cable vs Television (signal-bar scene)
+     ========================================================= */
+  .engines {
+    background: var(--news-paper-2);
+    padding: 64px 24px 80px;
+  }
+  .engines-headline {
+    font-family: var(--font-display);
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--news-ink);
+    margin: 8px 0 32px;
+  }
+  .engines-headline em { font-style: italic; }
+
+  .engine-card {
+    background: var(--news-paper);
+    border: 1px solid var(--news-line);
+    border-radius: 0;
+    padding: 22px 20px;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .engine-card .label {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--news-ink-3);
+    margin-bottom: 6px;
+  }
+  .engine-card .name {
+    font-family: var(--font-display);
+    font-size: 26px; line-height: 1;
+    color: var(--news-ink);
+    margin-bottom: 14px;
+  }
+  .engine-card .name em { font-style: italic; }
+  .engine-card .props {
+    font-size: 13px; line-height: 1.45;
+    color: var(--news-ink-2);
+    margin-bottom: 16px;
+  }
+
+  /* Signal-strength bar visualization */
+  .sig-bars {
+    display: flex; align-items: flex-end; gap: 4px; height: 44px;
+  }
+  .sig-bars i {
+    flex: 1;
+    background: var(--news-ink);
+    transform-origin: bottom;
+    transform: scaleY(0);
+    transition: transform 700ms var(--ease-out);
+  }
+  .engine-card.in .sig-bars i { transform: scaleY(var(--h, 0.6)); }
+  .engine-card.in .sig-bars i:nth-child(1) { transition-delay: 60ms; }
+  .engine-card.in .sig-bars i:nth-child(2) { transition-delay: 120ms; }
+  .engine-card.in .sig-bars i:nth-child(3) { transition-delay: 180ms; }
+  .engine-card.in .sig-bars i:nth-child(4) { transition-delay: 240ms; }
+  .engine-card.in .sig-bars i:nth-child(5) { transition-delay: 300ms; }
+  .engine-card.in .sig-bars i:nth-child(6) { transition-delay: 360ms; }
+  .engine-card.in .sig-bars i:nth-child(7) { transition-delay: 420ms; }
+  .engine-card.in .sig-bars i:nth-child(8) { transition-delay: 480ms; }
+  .engine-card .sig-bars i.hot { background: var(--signal); }
+
+  .engine-card .brands {
+    margin-top: 14px;
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .brand-chip {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.08em;
+    padding: 4px 8px;
+    border: 1px solid var(--news-line);
+    border-radius: 2px;
+    color: var(--news-ink-2);
+    text-transform: uppercase;
+  }
+  .brand-chip.hot { background: var(--news-ink); color: var(--news-paper); border-color: var(--news-ink); }
+
+  /* =========================================================
+     3. SCALE — Scoreboard
+     ========================================================= */
+  .scale {
+    background: var(--news-paper);
+    padding: 80px 24px;
+  }
+  .scoreboard {
+    background: var(--news-ink);
+    color: var(--news-paper);
+    padding: 22px 20px 24px;
+    margin: 24px -8px;
+    border-radius: 6px;
+    position: relative;
+    box-shadow: 0 12px 36px -16px rgba(0,0,0,0.4);
+  }
+  .scoreboard::before {
+    content: ""; position: absolute; inset: 4px;
+    border: 1px solid rgba(242,239,231,0.08);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+  .sb-row {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed rgba(242,239,231,0.12);
+  }
+  .sb-row:last-child { border-bottom: 0; }
+  .sb-row .lbl {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(242,239,231,0.55);
+  }
+  .sb-row .val {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1;
+    color: var(--score-glow);
+    font-feature-settings: "tnum" 1;
+    letter-spacing: -0.01em;
+  }
+  .sb-row .val small {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: rgba(242,239,231,0.55);
+    margin-left: 4px;
+  }
+  .sb-row .val.signal { color: var(--signal); }
+
+  .scale-callout {
+    margin-top: 18px;
+    padding: 14px 0 0;
+    font-family: var(--font-display);
+    font-size: 19px;
+    line-height: 1.3;
+    color: var(--news-ink-2);
+  }
+  .scale-callout em { font-style: italic; color: var(--signal); }
+
+  /* =========================================================
+     4. WHERE THE MONEY GOES — Ticket-stub stack
+     ========================================================= */
+  .costs {
+    background: var(--news-paper-2);
+    padding: 80px 24px;
+    overflow: hidden;
+  }
+  .ticket-stack {
+    margin: 28px 0 16px;
+    display: flex; flex-direction: column;
+    gap: 0;
+  }
+  .ticket {
+    position: relative;
+    padding: 16px 20px;
+    color: #fff;
+    font-family: var(--font-sans);
+    overflow: hidden;
+    /* serrated edges via masks */
+    --tear-size: 6px;
+    margin-top: -1px;
+    transform: translateX(-20px);
+    opacity: 0;
+    transition: transform 700ms var(--ease-out), opacity 700ms var(--ease-out);
+  }
+  .ticket.in { transform: none; opacity: 1; }
+  .ticket .stub-side {
+    position: absolute; top: 0; bottom: 0; left: 0;
+    width: 64px;
+    border-right: 2px dashed rgba(255,255,255,0.35);
+  }
+  .ticket .pct {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    width: 64px;
+    text-align: left;
+  }
+  .ticket .row {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .ticket .lbl {
+    flex: 1;
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    line-height: 1.25;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+  .ticket .lbl small {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    opacity: 0.75;
+    margin-top: 4px;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  /* serrated bottom edge */
+  .ticket::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: var(--tear-size);
+    background-image:
+      radial-gradient(circle at 4px 6px, var(--news-paper-2) 3px, transparent 3.4px);
+    background-size: 8px 8px;
+    background-repeat: repeat-x;
+  }
+  .ticket--first { padding-top: 22px; }
+  .ticket--last::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: -1px;
+    height: var(--tear-size);
+    background-image:
+      radial-gradient(circle at 4px 2px, var(--news-paper-2) 3px, transparent 3.4px);
+    background-size: 8px 8px;
+    background-repeat: repeat-x;
+  }
+
+  .ticket-cap {
+    margin-top: 14px;
+    border-top: 1px solid var(--news-line);
+    padding-top: 16px;
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--news-ink-3);
+  }
+  .ticket-cap b { color: var(--news-ink); font-weight: 500; }
+
+  .costs-aside {
+    margin-top: 24px;
+    font-family: var(--font-display);
+    font-size: 22px; line-height: 1.25;
+    color: var(--news-ink-2);
+  }
+  .costs-aside em { font-style: italic; color: var(--signal); }
+
+  /* =========================================================
+     5. FOOTPRINT — US-fill geographic
+     ========================================================= */
+  .footprint {
+    background: var(--news-paper);
+    padding: 88px 24px;
+    position: relative;
+  }
+  .map-wrap {
+    position: relative;
+    margin: 32px -10px 16px;
+  }
+  .us-svg {
+    width: 100%; height: auto;
+    display: block;
+  }
+  .us-svg .land { fill: var(--news-ink); transition: fill 600ms var(--ease-out); }
+  .us-svg .land.dim { fill: rgba(13,12,11,0.12); }
+  .us-svg .intl-arc {
+    fill: none; stroke: var(--signal);
+    stroke-width: 1.5; stroke-dasharray: 4 4;
+    stroke-dashoffset: 200;
+    transition: stroke-dashoffset 1500ms var(--ease-out) 400ms;
+  }
+  .footprint.in .us-svg .intl-arc { stroke-dashoffset: 0; }
+  .us-svg .intl-dot {
+    fill: var(--signal);
+    opacity: 0;
+    transition: opacity 400ms var(--ease-out) 1500ms;
+  }
+  .footprint.in .us-svg .intl-dot { opacity: 1; }
+
+  .geo-pcts {
+    display: flex; align-items: stretch; gap: 0;
+    margin-top: 12px;
+  }
+  .geo-bar {
+    height: 8px;
+    background: var(--news-ink);
+    transition: width 1100ms var(--ease-out) 200ms;
+  }
+  .geo-bar.intl { background: var(--signal); }
+  .footprint.in .geo-bar.us { width: 96%; }
+  .footprint.in .geo-bar.intl { width: 4%; }
+  .geo-labels {
+    display: flex; justify-content: space-between;
+    margin-top: 12px;
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--news-ink-3);
+  }
+  .geo-labels .b { color: var(--news-ink); font-weight: 500; }
+
+  .footprint-quote {
+    margin-top: 32px;
+    font-family: var(--font-display);
+    font-size: 24px;
+    line-height: 1.2;
+    color: var(--news-ink);
+  }
+  .footprint-quote em { font-style: italic; color: var(--signal); }
+
+  /* =========================================================
+     6. THE BET — Tubi / Fox One / buybacks
+     ========================================================= */
+  .bet {
+    background: var(--news-ink);
+    color: var(--news-paper);
+    padding: 96px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bet .eyebrow { color: rgba(242,239,231,0.55); }
+  .bet h2 {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 0.98;
+    margin: 4px 0 28px;
+    letter-spacing: -0.02em;
+  }
+  .bet h2 em { font-style: italic; color: var(--signal); }
+
+  .bet-stack {
+    display: flex; flex-direction: column; gap: 18px;
+    margin-top: 8px;
+  }
+  .bet-row {
+    border-top: 1px solid rgba(242,239,231,0.16);
+    padding: 16px 0 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: baseline;
+  }
+  .bet-row .nm {
+    font-family: var(--font-display);
+    font-size: 22px; line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+  .bet-row .nm em { font-style: italic; }
+  .bet-row .vl {
+    font-family: var(--font-display);
+    font-size: 30px; line-height: 1;
+    color: var(--score-glow);
+    letter-spacing: -0.015em;
+    text-align: right;
+  }
+  .bet-row .vl small {
+    font-family: var(--font-mono); font-size: 10px;
+    color: rgba(242,239,231,0.55);
+    margin-left: 4px; letter-spacing: 0.06em;
+  }
+  .bet-row .desc {
+    grid-column: 1 / -1;
+    font-family: var(--font-sans);
+    font-size: 13px; line-height: 1.5;
+    color: rgba(242,239,231,0.7);
+    margin-top: 4px;
+  }
+
+  /* Cash-flow doubling visual: two bars */
+  .cf-viz {
+    margin: 28px 0 8px;
+    background: rgba(242,239,231,0.04);
+    border: 1px solid rgba(242,239,231,0.1);
+    padding: 16px;
+  }
+  .cf-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .cf-row:last-child { margin-bottom: 0; }
+  .cf-row .yr {
+    width: 56px;
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.1em;
+    color: rgba(242,239,231,0.55);
+  }
+  .cf-row .bar {
+    height: 18px;
+    background: var(--signal);
+    width: 0;
+    transition: width 1100ms var(--ease-out);
+    position: relative;
+  }
+  .cf-row .bar.prev { background: rgba(242,239,231,0.22); }
+  .cf-row .num {
+    font-family: var(--font-display);
+    font-size: 17px; color: var(--news-paper);
+    margin-left: 6px;
+  }
+  .bet.in .cf-row .bar.prev { width: 38%; }
+  .bet.in .cf-row .bar.cur { width: 76%; }
+
+  /* =========================================================
+     7. COMPETITION
+     ========================================================= */
+  .compete {
+    background: var(--news-paper);
+    padding: 80px 24px;
+  }
+  .compete h2 {
+    font-family: var(--font-display);
+    font-size: 38px; line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 8px 0 26px;
+    color: var(--news-ink);
+  }
+  .compete h2 em { font-style: italic; }
+
+  .vs-grid { display: flex; flex-direction: column; gap: 22px; }
+  .vs {
+    border-top: 1px solid var(--news-ink);
+    padding-top: 16px;
+  }
+  .vs-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 12px;
+  }
+  .vs-head .nm {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--news-ink);
+    letter-spacing: -0.01em;
+  }
+  .vs-head .nm em { font-style: italic; }
+  .vs-head .ti {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.12em;
+    color: var(--news-ink-3); text-transform: uppercase;
+  }
+  /* Market-cap battle bar */
+  .vs-bars { display: flex; flex-direction: column; gap: 8px; }
+  .vs-bar-row {
+    display: grid;
+    grid-template-columns: 56px 1fr 70px;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--news-ink-3);
+  }
+  .vs-bar-row .who { text-transform: uppercase; }
+  .vs-bar-row .who.fox { color: var(--signal); font-weight: 500; }
+  .vs-bar-row .track {
+    height: 12px; background: var(--news-paper-2); position: relative;
+  }
+  .vs-bar-row .fill {
+    height: 100%; width: 0;
+    background: var(--news-ink-2);
+    transition: width 1200ms var(--ease-out);
+  }
+  .vs-bar-row .fill.fox { background: var(--signal); }
+  .vs-bar-row .num { font-family: var(--font-display); font-size: 16px; color: var(--news-ink); text-align: right; letter-spacing: -0.01em; }
+  .vs.in .vs-bar-row .fill { width: var(--w, 50%); }
+
+  .vs-desc {
+    margin-top: 12px;
+    font-size: 13.5px; line-height: 1.5;
+    color: var(--news-ink-2);
+  }
+  .vs-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 9.5px; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    background: var(--signal); color: var(--news-paper);
+    margin-left: 6px;
+    vertical-align: 2px;
+  }
+  .vs-tag.warn { background: var(--news-ink); }
+
+  /* =========================================================
+     8. CLOSE
+     ========================================================= */
+  .close-beat {
+    background: var(--news-paper);
+    padding: 96px 24px 120px;
+    position: relative;
+  }
+  .signoff-bar {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+  }
+  .signoff-bar .l { flex: 1; height: 1px; background: var(--news-ink); }
+  .signoff-bar .stamp {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.18em;
+    color: var(--news-ink); text-transform: uppercase;
+  }
+  .close-beat h2 {
+    font-family: var(--font-display);
+    font-size: 60px;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    color: var(--news-ink);
+    margin: 0 0 28px;
+  }
+  .close-beat h2 em { font-style: italic; color: var(--signal); }
+  .close-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 18px 14px;
+    margin: 28px 0;
+    border-top: 1px solid var(--news-line);
+    padding-top: 22px;
+  }
+  .close-grid .c .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--news-ink-3);
+    margin-bottom: 5px;
+  }
+  .close-grid .c .v {
+    font-family: var(--font-display);
+    font-size: 26px; line-height: 1;
+    color: var(--news-ink);
+    letter-spacing: -0.015em;
+  }
+  .close-grid .c .v small {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    color: var(--news-ink-3);
+    margin-left: 3px;
+    letter-spacing: 0.06em;
+  }
+
+  .colophon {
+    margin-top: 40px;
+    border-top: 1px solid var(--news-line);
+    padding-top: 18px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--news-ink-3);
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+  .colophon .row { display: flex; justify-content: space-between; }
+  .colophon b { color: var(--news-ink); font-weight: 500; }
+
+  /* =========================================================
+     COUNT-UP utility
+     ========================================================= */
+  .count[data-target] { font-variant-numeric: tabular-nums; }
+
+  /* Ad-break strip — divider ornament */
+  .ad-break {
+    background: var(--news-ink);
+    color: var(--news-paper);
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .ad-break .sq { width: 8px; height: 8px; background: var(--signal); }
+  .ad-break .ln { flex: 1; height: 1px; background: rgba(242,239,231,0.25); }
+
+  /* =========================================================
+     Tweaks panel placeholder positioning
+     ========================================================= */
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .pulse, .on-air::before { animation: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+
+    <!-- ============ PERSISTENT CHROME ============ -->
+    <header class="chrome">
+      <div class="chrome-row">
+        <span class="ticker-pill"><span class="live-dot"></span>FOXA</span>
+        <span class="chrome-name">Fox Corporation</span>
+        <span class="chrome-recap">Recap · FY '25</span>
+      </div>
+      <div class="chrome-progress"><i id="prog"></i></div>
+    </header>
+
+    <!-- ============ 1. HERO — Thesis ============ -->
+    <section class="hero" data-screen-label="01 Hero">
+      <span class="on-air">ON&nbsp;AIR</span>
+      <div class="scanlines"></div>
+
+      <div class="hero-chyron reveal" data-d="1">
+        <span class="chyron-square"></span>
+        <span class="chyron-bar"></span>
+        <span class="meta-line" style="font-size:10px">FY 2025 · NASDAQ</span>
+      </div>
+
+      <h1 class="reveal" data-d="2">
+        Live,<br/>
+        <em>by appointment.</em>
+      </h1>
+
+      <p class="body-text reveal" data-d="3" style="margin-top: 22px; font-size: 15.5px;">
+        A pure-play news, sports, and entertainment broadcaster — built on the one thing the internet still can't fake: <em class="ital">a moment everyone watches at once.</em>
+      </p>
+
+      <div class="stamp">
+        <div class="stamp-cell reveal" data-d="3">
+          <div class="k">Market cap</div>
+          <div class="v">$26.18<small>B</small></div>
+        </div>
+        <div class="stamp-cell reveal" data-d="3">
+          <div class="k">FY '25 revenue</div>
+          <div class="v">$16.30<small>B</small></div>
+        </div>
+        <div class="stamp-cell reveal" data-d="4">
+          <div class="k">Headcount</div>
+          <div class="v">~13,000</div>
+        </div>
+        <div class="stamp-cell reveal" data-d="4">
+          <div class="k">Spun out of</div>
+          <div class="v" style="font-size:18px;line-height:1.15">21st Century Fox<br/><span style="font-family:var(--font-mono);font-size:10px;color:var(--news-ink-3);letter-spacing:0.06em">Mar 19, 2019</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad break / divider -->
+    <div class="ad-break">
+      <span class="sq"></span>
+      <span>The story · in 8 beats</span>
+      <span class="ln"></span>
+      <span>Scroll →</span>
+    </div>
+
+    <!-- ============ 2. TWO ENGINES ============ -->
+    <section class="engines" data-screen-label="02 Two Engines">
+      <span class="eyebrow"><span class="dot"></span>The business · two channels</span>
+      <h2 class="engines-headline reveal">
+        One company,<br/>
+        <em>two transmitters.</em>
+      </h2>
+      <p class="body-text reveal" data-d="1" style="margin-bottom:24px; font-size:14.5px;">
+        Affiliate fees underneath, advertising on top. Cable and broadcast each paint the same picture in different proportions.
+      </p>
+
+      <div class="engine-card reveal" data-d="2" id="eng1">
+        <div class="label">Segment 01 · Cable</div>
+        <div class="name"><em>Cable Network Programming</em></div>
+        <p class="props">Affiliate fees + advertising from Fox News, Fox Business, and national sports networks distributed via cable and satellite.</p>
+        <div class="sig-bars" aria-hidden="true">
+          <i style="--h:0.45"></i>
+          <i style="--h:0.55"></i>
+          <i style="--h:0.65"></i>
+          <i style="--h:0.78"></i>
+          <i style="--h:0.85" class="hot"></i>
+          <i style="--h:0.92" class="hot"></i>
+          <i style="--h:0.97" class="hot"></i>
+          <i style="--h:1" class="hot"></i>
+        </div>
+        <div class="brands">
+          <span class="brand-chip hot">Fox News</span>
+          <span class="brand-chip">Fox Business</span>
+          <span class="brand-chip">FS1</span>
+          <span class="brand-chip">FS2</span>
+        </div>
+      </div>
+
+      <div class="engine-card reveal" data-d="3" id="eng2">
+        <div class="label">Segment 02 · Television</div>
+        <div class="name"><em>Television</em> + <em>Tubi</em></div>
+        <p class="props">Advertising and affiliate fees through the Fox broadcast network, Fox Television Stations, and the fast-growing Tubi AVOD service.</p>
+        <div class="sig-bars" aria-hidden="true">
+          <i style="--h:0.30"></i>
+          <i style="--h:0.42"></i>
+          <i style="--h:0.55"></i>
+          <i style="--h:0.62"></i>
+          <i style="--h:0.72"></i>
+          <i style="--h:0.85" class="hot"></i>
+          <i style="--h:0.92" class="hot"></i>
+          <i style="--h:0.98" class="hot"></i>
+        </div>
+        <div class="brands">
+          <span class="brand-chip">FOX network</span>
+          <span class="brand-chip">FOX Stations</span>
+          <span class="brand-chip hot">Tubi</span>
+          <span class="brand-chip">FOX Sports</span>
+          <span class="brand-chip">FOX Entertainment</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RESET BEAT 1 ============ -->
+    <aside class="reset-beat" data-screen-label="03 Reset · live">
+      <span class="quote-mark">"</span>
+      <p>The internet has more channels than ever. <span class="signal">Live</span> is still the one place everyone shows up at the same time.</p>
+      <div class="attrib">— The thesis, restated</div>
+    </aside>
+
+    <!-- ============ 3. SCALE — Scoreboard ============ -->
+    <section class="scale" data-screen-label="04 Scale">
+      <span class="eyebrow"><span class="dot"></span>The scale · FY '25 scoreboard</span>
+      <h2 class="display reveal" style="font-size:38px; margin-bottom:8px;">
+        A <em class="ital signal">26%</em><br/>ad surge,<br/>powered by<br/><em class="ital">Super Bowl LIX.</em>
+      </h2>
+
+      <div class="scoreboard reveal" data-d="2">
+        <div class="sb-row">
+          <span class="lbl">Revenue · FY '25</span>
+          <span class="val"><span class="count" data-target="16.30" data-decimals="2">0.00</span><small>B</small></span>
+        </div>
+        <div class="sb-row">
+          <span class="lbl">Ad revenue Δ</span>
+          <span class="val signal">+<span class="count" data-target="26">0</span>%</span>
+        </div>
+        <div class="sb-row">
+          <span class="lbl">Q1 '26 revenue</span>
+          <span class="val"><span class="count" data-target="3.74" data-decimals="2">0.00</span><small>B</small></span>
+        </div>
+        <div class="sb-row">
+          <span class="lbl">Q1 '26 EPS</span>
+          <span class="val">$<span class="count" data-target="1.51" data-decimals="2">0.00</span></span>
+        </div>
+        <div class="sb-row">
+          <span class="lbl">TTM rev growth</span>
+          <span class="val signal">+<span class="count" data-target="9.2" data-decimals="1">0.0</span>%</span>
+        </div>
+      </div>
+
+      <p class="scale-callout reveal" data-d="3">
+        Affiliate fees are the <em>recurring</em> floor. Advertising is event-driven — and FY '25 had the biggest event of all.
+      </p>
+    </section>
+
+    <!-- ============ RESET BEAT 2 ============ -->
+    <aside class="reset-beat" data-screen-label="05 Reset · cost">
+      <span class="quote-mark">"</span>
+      <p>You don't broadcast football for free. <span class="signal">Forty-two cents of every dollar</span> walks straight back out the door — to the leagues.</p>
+      <div class="attrib">— On the cost of live</div>
+    </aside>
+
+    <!-- ============ 4. WHERE THE MONEY GOES — Ticket stubs ============ -->
+    <section class="costs" data-screen-label="06 Costs">
+      <span class="eyebrow"><span class="dot"></span>Where the money goes · cost mix</span>
+      <h2 class="display reveal" style="font-size:38px; margin-bottom:8px;">
+        The bill for<br/><em class="ital">live attention.</em>
+      </h2>
+      <p class="body-text reveal" data-d="1" style="margin-bottom:8px; font-size:14.5px;">
+        Cost stack as a stack of <em class="ital">tickets</em> — the bigger the slice, the bigger the stub.
+      </p>
+
+      <div class="ticket-stack" id="ticket-stack">
+        <!-- Tickets injected/styled below -->
+        <div class="ticket ticket--first" style="background:#E8524A;">
+          <div class="row">
+            <div class="pct">42%</div>
+            <div class="lbl">Sports &amp; Entertainment Programming Rights<small>The cost of being live</small></div>
+          </div>
+        </div>
+        <div class="ticket" style="background:#4A90D9;">
+          <div class="row">
+            <div class="pct">14%</div>
+            <div class="lbl">Selling, General &amp; Administrative<small>Running the company</small></div>
+          </div>
+        </div>
+        <div class="ticket" style="background:#F5A623;">
+          <div class="row">
+            <div class="pct">10%</div>
+            <div class="lbl">Digital Content &amp; Marketing — Tubi<small>Free, ad-supported, growing</small></div>
+          </div>
+        </div>
+        <div class="ticket" style="background:#7B68EE;">
+          <div class="row">
+            <div class="pct">5%</div>
+            <div class="lbl">Depreciation &amp; Amortization<small>The studio's slow burn</small></div>
+          </div>
+        </div>
+        <div class="ticket ticket--last" style="background:#50C878;">
+          <div class="row">
+            <div class="pct">5%</div>
+            <div class="lbl">Production &amp; Studio Operations<small>Cameras, sets, crews</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ticket-cap">
+        <span>Stubs · Top 5</span>
+        <span><b>76%</b> of cost</span>
+      </div>
+
+      <p class="costs-aside reveal" data-d="3">
+        The other <em>24%</em> is everything else — taxes, interest, the long tail. The headline never moves: <em>rights cost rise.</em>
+      </p>
+    </section>
+
+    <!-- ============ 5. FOOTPRINT — US fill ============ -->
+    <section class="footprint" id="footprint" data-screen-label="07 Footprint">
+      <span class="eyebrow"><span class="dot"></span>Footprint · where it plays</span>
+      <h2 class="display reveal" style="font-size:38px; margin-bottom:14px;">
+        Almost entirely<br/><em class="ital signal">domestic.</em>
+      </h2>
+      <p class="body-text reveal" data-d="1" style="font-size:14.5px;">
+        Fox is American television, full stop — built for the U.S. ad market, the U.S. cable bundle, and the U.S. live-sports calendar.
+      </p>
+
+      <div class="map-wrap reveal" data-d="2">
+        <!-- Stylized US silhouette + a single dashed arc to "International" -->
+        <svg class="us-svg" viewBox="0 0 400 230" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- Stylized lower-48 silhouette via a hand-traced path -->
+          <path class="land" d="
+            M 30 95
+            C 45 78, 70 70, 95 72
+            L 130 60
+            C 150 56, 175 58, 195 62
+            L 235 56
+            C 260 52, 285 56, 305 64
+            L 340 70
+            C 360 74, 372 88, 370 100
+            L 360 110
+            L 365 122
+            L 358 132
+            L 350 130
+            L 340 138
+            L 330 138
+            L 320 152
+            L 305 158
+            L 290 168
+            L 275 172
+            L 260 168
+            L 245 175
+            L 235 175
+            L 222 168
+            L 210 175
+            L 195 172
+            L 178 168
+            L 165 175
+            L 150 172
+            L 138 178
+            L 122 175
+            L 108 172
+            L 95 168
+            L 82 162
+            L 72 158
+            L 60 150
+            L 50 138
+            L 42 125
+            L 36 112
+            Z
+          "/>
+          <!-- Florida nub -->
+          <path class="land" d="
+            M 290 168
+            L 295 178
+            L 300 188
+            L 305 195
+            L 308 188
+            L 305 178
+            L 302 170
+            Z
+          "/>
+          <!-- Texas hint (extra southern bump) -->
+          <path class="land" d="
+            M 195 172 L 198 180 L 205 188 L 210 180 Z
+          "/>
+
+          <!-- International dashed arc to a small dot in the corner -->
+          <path class="intl-arc" d="M 200 130 Q 350 40, 388 24" />
+          <circle class="intl-dot" cx="388" cy="24" r="4" />
+          <text x="368" y="42" font-family="Geist Mono,monospace" font-size="9" fill="#6B6A65" letter-spacing="1.4">INTL</text>
+        </svg>
+      </div>
+
+      <div style="display:flex; height:8px; align-items:stretch;">
+        <div class="geo-bar us" style="width:0;"></div>
+        <div class="geo-bar intl" style="width:0;"></div>
+      </div>
+      <div class="geo-labels">
+        <span><span class="b">96%</span> · United States</span>
+        <span><span class="b">4%</span> · International</span>
+      </div>
+
+      <p class="footprint-quote reveal" data-d="3">
+        96 of every 100 dollars come from American eyeballs. <em>The rest is rounding.</em>
+      </p>
+    </section>
+
+    <!-- ============ RESET BEAT 3 ============ -->
+    <aside class="reset-beat" data-screen-label="08 Reset · bet">
+      <span class="quote-mark">"</span>
+      <p>The cable bundle is shrinking. Fox is <span class="signal">building one streaming bet</span> and <span class="signal">buying back its own stock</span> while it does.</p>
+      <div class="attrib">— On capital, on patience</div>
+    </aside>
+
+    <!-- ============ 6. THE BET ============ -->
+    <section class="bet" id="bet" data-screen-label="09 The Bet">
+      <span class="eyebrow"><span class="dot"></span>The bet · capital allocation</span>
+      <h2>Cash in,<br/><em>cash out — twice.</em></h2>
+      <p class="body-text" style="color: rgba(242,239,231,0.7); font-size:14.5px; margin-bottom: 18px;">
+        Free cash flow roughly <em class="ital signal">doubled</em> in fiscal '25. Management spent it on the next decade — and the current shareholders.
+      </p>
+
+      <!-- Cash-flow doubling viz -->
+      <div class="cf-viz">
+        <div class="meta-line" style="color: rgba(242,239,231,0.55); margin-bottom: 10px;">FREE CASH FLOW · YOY</div>
+        <div class="cf-row">
+          <div class="yr">FY '24</div>
+          <div class="bar prev"></div>
+          <div class="num">~$1.5B</div>
+        </div>
+        <div class="cf-row">
+          <div class="yr">FY '25</div>
+          <div class="bar cur"></div>
+          <div class="num"><span class="signal">$3.0B</span></div>
+        </div>
+      </div>
+
+      <div class="bet-stack">
+        <div class="bet-row">
+          <div class="nm"><em>Buyback</em><br/>authorization ↑</div>
+          <div class="vl">+$5.0<small>B</small></div>
+          <div class="desc">Announced August 2025 — a $5 billion increase to the share repurchase authorization, on top of an existing program.</div>
+        </div>
+        <div class="bet-row">
+          <div class="nm">Returned to <em>shareholders</em></div>
+          <div class="vl">$1.25<small>B</small></div>
+          <div class="desc">Buybacks + a growing semi-annual dividend, paid out during fiscal '25.</div>
+        </div>
+        <div class="bet-row">
+          <div class="nm">Debt <em>retired</em></div>
+          <div class="vl">$600<small>M</small></div>
+          <div class="desc">Long-term debt paid down during the year — leverage trimmed alongside the return of capital.</div>
+        </div>
+        <div class="bet-row">
+          <div class="nm"><em>Fox One</em><br/>streaming launch</div>
+          <div class="vl">soon<small>™</small></div>
+          <div class="desc">The strategic digital investment management has been pointing capital toward — Fox's own answer to the streaming bundle.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 7. COMPETITION ============ -->
+    <section class="compete" data-screen-label="10 Competition">
+      <span class="eyebrow"><span class="dot"></span>The competition · who they fight</span>
+      <h2>Three rivals,<br/><em>three different fights.</em></h2>
+
+      <div class="vs-grid">
+
+        <!-- Comcast: market-cap David vs Goliath -->
+        <div class="vs" id="vs-cmcsa">
+          <div class="vs-head">
+            <span class="nm">Comcast <em>(NBCU)</em></span>
+            <span class="ti">CMCSA<span class="vs-tag">Direct</span></span>
+          </div>
+          <p class="vs-desc">NBC vs. Fox network. MSNBC vs. Fox News. NBC Sports/Peacock vs. Fox Sports. The most direct head-to-head.</p>
+          <div class="vs-bars" style="margin-top:14px;">
+            <div class="vs-bar-row" style="--w: 22.9%;">
+              <span class="who fox">FOX</span>
+              <span class="track"><span class="fill fox" style="--w: 22.9%; width: var(--w);"></span></span>
+              <span class="num">$26.2B</span>
+            </div>
+            <div class="vs-bar-row" style="--w: 100%;">
+              <span class="who">CMCSA</span>
+              <span class="track"><span class="fill" style="--w: 100%; width: var(--w);"></span></span>
+              <span class="num">$114B</span>
+            </div>
+          </div>
+          <div class="meta-line" style="margin-top:10px; font-size:10px;">MARKET CAP · LIVE</div>
+        </div>
+
+        <!-- Omnicom: ad-buyer pressure -->
+        <div class="vs" id="vs-omc">
+          <div class="vs-head">
+            <span class="nm">Omnicom Group</span>
+            <span class="ti">OMC<span class="vs-tag warn">Buyer</span></span>
+          </div>
+          <p class="vs-desc">Not a content rival — a <em class="ital">price-setter</em> on the other side of the table. As programmatic grows, Omnicom's leverage on Fox's linear-TV ad rates grows with it.</p>
+          <div class="vs-bars" style="margin-top:14px;">
+            <div class="vs-bar-row" style="--w: 100%;">
+              <span class="who fox">FOX</span>
+              <span class="track"><span class="fill fox" style="--w: 100%; width: var(--w);"></span></span>
+              <span class="num">$26.2B</span>
+            </div>
+            <div class="vs-bar-row" style="--w: 85.6%;">
+              <span class="who">OMC</span>
+              <span class="track"><span class="fill" style="--w: 85.6%; width: var(--w);"></span></span>
+              <span class="num">$22.4B</span>
+            </div>
+          </div>
+          <div class="meta-line" style="margin-top:10px; font-size:10px;">MARKET CAP · LIVE</div>
+        </div>
+
+        <!-- TKO: emerging threat -->
+        <div class="vs" id="vs-tko">
+          <div class="vs-head">
+            <span class="nm">TKO <em>(WWE + UFC)</em></span>
+            <span class="ti">TKO<span class="vs-tag">Threat</span></span>
+          </div>
+          <p class="vs-desc">Owns the marquee live properties. Growing direct-to-consumer ambitions could one day <em class="ital signal">disintermediate</em> Fox as a distribution partner for the very content Fox depends on.</p>
+          <div class="vs-bars" style="margin-top:14px;">
+            <div class="vs-bar-row" style="--w: 72.4%;">
+              <span class="who fox">FOX</span>
+              <span class="track"><span class="fill fox" style="--w: 72.4%; width: var(--w);"></span></span>
+              <span class="num">$26.2B</span>
+            </div>
+            <div class="vs-bar-row" style="--w: 100%;">
+              <span class="who">TKO</span>
+              <span class="track"><span class="fill" style="--w: 100%; width: var(--w);"></span></span>
+              <span class="num">$36.2B</span>
+            </div>
+          </div>
+          <div class="meta-line" style="margin-top:10px; font-size:10px;">MARKET CAP · LIVE</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Final reset beat -->
+    <aside class="reset-beat" data-screen-label="11 Reset · close">
+      <span class="quote-mark">"</span>
+      <p>What survives a shrinking bundle? <span class="signal">Cash flow,</span> a shorter debt stack, and the rights to the next big game.</p>
+      <div class="attrib">— Sign-off</div>
+    </aside>
+
+    <!-- ============ 8. CLOSE ============ -->
+    <section class="close-beat" data-screen-label="12 Close">
+      <div class="signoff-bar">
+        <span class="stamp">END · OF · BROADCAST</span>
+        <span class="l"></span>
+      </div>
+      <h2>$3.0B<br/>in <em>free cash.</em><br/>Doubled.</h2>
+      <p class="body-text" style="font-size:15px;">
+        The hero opened with the <em class="ital">market cap.</em> The close lands on what survives — the cash that runs through the company after the leagues are paid, the studios are kept lit, and the ads are sold.
+      </p>
+
+      <div class="close-grid">
+        <div class="c">
+          <div class="k">Free cash flow</div>
+          <div class="v">$3.0<small>B</small></div>
+        </div>
+        <div class="c">
+          <div class="k">YoY change</div>
+          <div class="v">~2×</div>
+        </div>
+        <div class="c">
+          <div class="k">Cash on hand</div>
+          <div class="v">$5.4<small>B</small></div>
+        </div>
+        <div class="c">
+          <div class="k">LT debt</div>
+          <div class="v">$6.6<small>B</small></div>
+        </div>
+        <div class="c">
+          <div class="k">Debt / equity</div>
+          <div class="v">~55%</div>
+        </div>
+        <div class="c">
+          <div class="k">Total assets</div>
+          <div class="v">$23.2<small>B</small></div>
+        </div>
+      </div>
+
+      <div class="colophon">
+        <div class="row"><span>Fiscal year ended</span><b>Jun 30, 2025</b></div>
+        <div class="row"><span>Headquarters</span><b>1211 Ave of the Americas, NY</b></div>
+        <div class="row"><span>Source</span><b>Company filings · FY '25 · Q1 '26</b></div>
+        <div class="row" style="margin-top:10px;"><span>Recap</span><b>FOXA · Apr 30, 2026</b></div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Tweaks panel container -->
+  <div id="tweaks-root"></div>
+
+<script>
+/* ===========================================================
+   Scroll progress + reveal-on-view
+   =========================================================== */
+(function () {
+  const stage = document.getElementById('stage');
+  const prog = document.getElementById('prog');
+
+  function onScroll() {
+    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const p = Math.min(1, Math.max(0, window.scrollY / max));
+    prog.style.width = (p * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  // Reveal-on-view via IntersectionObserver
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        en.target.classList.add('in');
+      }
+    });
+  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  document.querySelectorAll(
+    '.engine-card, .footprint, .bet, .ticket, .vs'
+  ).forEach(el => io.observe(el));
+})();
+
+/* ===========================================================
+   Count-up numerics
+   =========================================================== */
+(function () {
+  const els = document.querySelectorAll('.count[data-target]');
+  const seen = new WeakSet();
+
+  function animateCount(el) {
+    const target = parseFloat(el.dataset.target);
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    const dur = 1300;
+    const start = performance.now();
+    function tick(t) {
+      const k = Math.min(1, (t - start) / dur);
+      const eased = 1 - Math.pow(1 - k, 3); // easeOutCubic
+      const v = target * eased;
+      el.textContent = v.toFixed(decimals);
+      if (k < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting && !seen.has(en.target)) {
+        seen.add(en.target);
+        animateCount(en.target);
+      }
+    });
+  }, { threshold: 0.6 });
+
+  els.forEach(el => io.observe(el));
+})();
+
+/* ===========================================================
+   Speaker notes — none for this; postMessage slide-style
+   stubs the chrome. (No deck shell here.)
+   =========================================================== */
+</script>
+
+<!-- Tweaks: panel + controls -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="tweaks-app.jsx"></script>
+</body>
+</html>

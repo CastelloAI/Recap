@@ -1,0 +1,1348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>EA · Recap FY '25</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+  /* -----------------------------------------------------------
+     EA — Stock Recap
+     A long-form mobile editorial feature.
+     -----------------------------------------------------------
+     Design notes:
+       — Base palette: deep ink/charcoal "console" with a single
+         hotter orange-red signal (a hotter cousin of the system's
+         coral). Paper tones reserved for one tonal interlude.
+       — Type: Instrument Serif (display, italic-leaning),
+         Geist (body), Geist Mono (HUD/eyebrow/ticker).
+       — Spine: vertical scroll, ~420px artifact, no device chrome,
+         no carousels, no popovers. Sticky top bar + 1px progress.
+       — Metaphor: the game never ends. CRT scanline grain, a
+         loading bar that fills with each scene, life-bars for
+         franchises, a controller D-pad as the cost dial.
+  */
+
+  :root{
+    /* Page-level overrides — we lean dark for EA */
+    --bg-page:        #0B0B0E;     /* near-black with a blue-violet whisper */
+    --bg-page-2:      #131319;     /* raised */
+    --bg-page-3:      #1B1B22;     /* deeper raised */
+    --bg-paper:       #F4F2ED;     /* the one tonal interlude */
+    --ink-page:       #F2EFE7;     /* warm bone */
+    --ink-page-2:     #BDB9AE;     /* secondary */
+    --ink-page-3:     #7A766C;     /* meta */
+    --ink-page-4:     #4A463E;
+    --rule:           #25252D;     /* hairlines */
+    --rule-2:         #353540;
+    --signal:         #FF5A3C;     /* hotter coral / "EA red" register */
+    --signal-2:       #FF8B6A;
+    --signal-soft:    rgba(255, 90, 60, 0.14);
+    --ember:          #F4C430;     /* mustard, used sparingly */
+    --cool:           #4F86C6;     /* matches biggest_costs */
+    --leaf:           #6DBF82;
+    --plum:           #A97DC9;
+
+    /* Cost colors from JSON, kept exactly */
+    --c-cost: #4F86C6;   /* Cost of revenue */
+    --c-rd:   #E8734A;   /* R&D */
+    --c-sm:   #6DBF82;   /* Sales & Mktg */
+    --c-ga:   #A97DC9;   /* G&A */
+    --c-am:   #F2C94C;   /* Amort */
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg-page);
+    color: var(--ink-page);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  /* The artifact itself sits centered on any viewport, mobile-sized. */
+  .stage{
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+    background: var(--bg-page);
+    overflow: hidden;
+  }
+  /* very subtle CRT grain on dark background */
+  .stage::before{
+    content:"";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode: screen;
+    opacity: 0.45;
+  }
+
+  /* =========================
+     STICKY CHROME
+     ========================= */
+  .chrome{
+    position: sticky; top: 0; z-index: 50;
+    width: 100%;
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    background: rgba(11,11,14,0.72);
+    border-bottom: 1px solid var(--rule);
+  }
+  .chrome-row{
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 18px 10px;
+  }
+  .chrome-tick{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--signal);
+    background: var(--signal-soft);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,90,60,0.25);
+  }
+  .chrome-name{
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-page);
+    letter-spacing: -0.005em;
+  }
+  .chrome-name span{
+    color: var(--ink-page-3);
+    font-weight: 400;
+  }
+  .chrome-label{
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-page-3);
+  }
+  .chrome-progress{
+    height: 1.5px;
+    width: 100%;
+    background: transparent;
+    position: relative;
+  }
+  .chrome-progress::before{
+    content:"";
+    position:absolute;
+    inset: 0;
+    background: var(--rule);
+  }
+  .chrome-progress-fill{
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0%;
+    background: linear-gradient(90deg, var(--signal), var(--signal-2));
+    box-shadow: 0 0 8px rgba(255,90,60,0.6);
+    transition: width 80ms linear;
+  }
+  .chrome-pulse{
+    width: 6px; height: 6px;
+    background: var(--signal);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--signal);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ opacity: 0.4; transform: scale(1);}
+    50%{ opacity: 1; transform: scale(1.2);}
+  }
+
+  /* =========================
+     TYPOGRAPHY HELPERS
+     ========================= */
+  .display{
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+  }
+  .display-italic{
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+  }
+  .mono{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-page-3);
+  }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--signal);
+  }
+  .eyebrow .dot{
+    display: inline-block;
+    width: 4px; height: 4px;
+    background: var(--signal);
+    border-radius: 50%;
+    vertical-align: middle;
+    margin: 0 6px 2px;
+    box-shadow: 0 0 6px var(--signal);
+  }
+  .ital{ font-family: var(--font-display); font-style: italic; }
+  .signal{ color: var(--signal); }
+
+  /* =========================
+     SECTIONS
+     ========================= */
+  section{
+    position: relative;
+    padding: 64px 22px;
+  }
+  .scene-eyebrow{ margin-bottom: 18px; }
+  .scene-h{
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 44px;
+    line-height: 0.95;
+    letter-spacing: -0.022em;
+    color: var(--ink-page);
+  }
+  .scene-h em{ font-style: italic; color: var(--signal); }
+  .scene-body{
+    margin-top: 18px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-page-2);
+    max-width: 36ch;
+  }
+  .scene-body em{ font-family: var(--font-display); font-style: italic; color: var(--signal); }
+  .scene-body b{ color: var(--ink-page); font-weight: 500; }
+
+  /* Reset beat — italic-serif interlude on contrasting band. */
+  .reset{
+    padding: 56px 26px;
+    background: var(--bg-page-2);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    text-align: left;
+  }
+  .reset p{
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1.18;
+    color: var(--ink-page);
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .reset p .signal{ color: var(--signal); }
+  .reset .mono{ display: block; margin-bottom: 14px; color: var(--ink-page-3); }
+
+  .reset.paper{
+    background: var(--bg-paper);
+    color: #1a1a1a;
+  }
+  .reset.paper p{ color: #14110D; }
+  .reset.paper .mono{ color: #6B6A65; }
+  .reset.paper p .signal{ color: var(--signal); }
+
+  /* =========================
+     HERO
+     ========================= */
+  .hero{
+    padding: 32px 22px 80px;
+    position: relative;
+    min-height: 720px;
+    overflow: hidden;
+  }
+  .hero-eyebrow{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-page-3);
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 14px; margin-bottom: 30px;
+  }
+  .hero-eyebrow .pulse{
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--signal);
+    box-shadow: 0 0 8px var(--signal);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .hero-h{
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 70px;
+    line-height: 0.88;
+    letter-spacing: -0.03em;
+    color: var(--ink-page);
+  }
+  .hero-h .l1{ display:block; }
+  .hero-h .l2{ display:block; font-style: italic; color: var(--signal); }
+  .hero-h .l3{ display:block; }
+  .hero-sub{
+    margin-top: 24px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-page-2);
+    max-width: 33ch;
+  }
+  .hero-sub em{ font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+  /* CRT scanlines layered in hero */
+  .scanlines{
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.02) 0px,
+      rgba(255,255,255,0.02) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    mix-blend-mode: overlay;
+    opacity: 0.6;
+  }
+  /* "Continue?" arcade prompt */
+  .continue{
+    margin-top: 36px;
+    display: flex; align-items: baseline; gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-page-3);
+  }
+  .continue .num{
+    color: var(--signal);
+    font-size: 14px;
+  }
+  .blink{ animation: blink 1.1s steps(2) infinite; }
+  @keyframes blink{ 50%{ opacity: 0;} }
+
+  .hero-stack{
+    position: absolute;
+    right: -30px;
+    top: 100px;
+    width: 280px;
+    height: 360px;
+    opacity: 0.85;
+    pointer-events: none;
+  }
+
+  .hero-marquee{
+    margin-top: 56px;
+    display: flex; gap: 22px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-page-3);
+    border-top: 1px solid var(--rule);
+    padding-top: 14px;
+  }
+  .hero-marquee span{ color: var(--ink-page); }
+
+  /* =========================
+     SCALE — bar tower
+     ========================= */
+  .scale-figs{
+    margin-top: 28px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 28px 16px;
+    border-top: 1px solid var(--rule);
+    padding-top: 24px;
+  }
+  .scale-figs .fig .num{
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 0.95;
+    color: var(--ink-page);
+    letter-spacing: -0.02em;
+  }
+  .scale-figs .fig .num em{ font-style: italic; color: var(--signal); }
+  .scale-figs .fig .lab{
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-page-3);
+  }
+
+  /* live-services vs full-game stack */
+  .stack{
+    margin-top: 36px;
+    border-top: 1px solid var(--rule);
+    padding-top: 28px;
+  }
+  .stack-row{
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 14px;
+  }
+  .stack-row .label{
+    flex: 0 0 110px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-page-2);
+  }
+  .stack-bar{
+    flex: 1; height: 28px;
+    background: var(--bg-page-2);
+    border: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .stack-bar .fill{
+    height: 100%;
+    width: 0%;
+    background: var(--signal);
+    transition: width 1.2s var(--ease-out);
+  }
+  .stack-bar.b2 .fill{ background: var(--ink-page-2); }
+  .stack-bar.b3 .fill{ background: var(--ink-page-3); }
+  .stack-bar .val{
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-page);
+    letter-spacing: 0.04em;
+  }
+
+  /* =========================
+     COSTS — D-pad rosette
+     ========================= */
+  .costs-wrap{
+    margin-top: 30px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .costs-svg{ width: 320px; height: 320px; }
+  .costs-legend{
+    margin-top: 20px;
+    display: grid; gap: 10px;
+    width: 100%;
+  }
+  .costs-legend .row{
+    display: grid; grid-template-columns: 14px 1fr auto;
+    align-items: center; gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-page);
+  }
+  .costs-legend .row:last-child{ border-bottom: 1px solid var(--rule); }
+  .costs-legend .swatch{ width: 12px; height: 12px; border-radius: 2px; }
+  .costs-legend .lbl{ text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-page-2); }
+  .costs-legend .pct{ color: var(--ink-page); font-weight: 500; }
+  .costs-legend .row.spotlight .lbl{ color: var(--signal); }
+  .costs-legend .row.spotlight .pct{ color: var(--signal); font-size: 13px; }
+
+  /* =========================
+     GEOGRAPHY — meridian rings
+     ========================= */
+  .geo{ margin-top: 24px; position: relative; }
+  .geo svg{ display:block; width: 100%; height: auto; }
+  .geo-list{
+    margin-top: 18px;
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .geo-list .row{
+    display: flex; align-items: baseline; gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .geo-list .row:first-child{ border-top: 1px dashed var(--rule); }
+  .geo-list .reg{
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--ink-page);
+    flex: 1;
+  }
+  .geo-list .pct{
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1;
+    color: var(--ink-page);
+    letter-spacing: -0.01em;
+  }
+  .geo-list .row.lead .pct{ color: var(--signal); font-style: italic; }
+  .geo-list .meta{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-page-3);
+    margin-left: 8px;
+  }
+
+  /* =========================
+     CAPITAL — bar plot
+     ========================= */
+  .capital{
+    margin-top: 26px;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 24px 0;
+  }
+  .cap-num{
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.95;
+    color: var(--signal);
+    font-style: italic;
+    letter-spacing: -0.02em;
+  }
+  .cap-cap{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-page-3);
+    margin-top: 6px;
+  }
+  .cap-split{
+    display: flex; align-items: stretch; height: 60px;
+    margin-top: 22px; border: 1px solid var(--rule);
+  }
+  .cap-split .seg{
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 8px 10px;
+    color: var(--ink-page);
+  }
+  .cap-split .seg.a{
+    background: var(--signal);
+    color: #0B0B0E;
+    flex: 92.6;
+  }
+  .cap-split .seg.b{
+    background: var(--bg-page-2);
+    flex: 7.4;
+    border-left: 1px solid var(--rule);
+  }
+  .cap-split .seg .v{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .cap-split .seg .l{
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-top: 4px;
+    opacity: 0.85;
+  }
+  .cap-split .seg.b .v{ color: var(--ink-page); }
+
+  /* =========================
+     COMPETITORS — gauntlet rows
+     ========================= */
+  .comp-row{
+    padding: 22px 0;
+    border-top: 1px solid var(--rule);
+    position: relative;
+  }
+  .comp-row.last{ border-bottom: 1px solid var(--rule); }
+  .comp-head{
+    display: flex; align-items: baseline; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .comp-head .tk{
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.06em; color: var(--signal);
+    background: var(--signal-soft);
+    padding: 2px 6px;
+  }
+  .comp-head .nm{
+    font-family: var(--font-display); font-size: 22px;
+    line-height: 1; color: var(--ink-page);
+    letter-spacing: -0.01em;
+  }
+  .comp-head .nm em{ font-style: italic; }
+  .comp-head .ar{
+    margin-left: auto;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-page-3);
+  }
+  .comp-row.win .comp-head .ar{ color: var(--signal); }
+  .comp-mc{
+    display: grid; grid-template-columns: 90px 1fr 70px;
+    align-items: center; gap: 10px;
+    padding: 8px 0;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--ink-page-2);
+  }
+  .comp-mc .key{ text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-page-3); }
+  .comp-mc .num{ color: var(--ink-page); text-align: right; font-size: 11px; }
+  .comp-bar{
+    height: 6px;
+    background: var(--bg-page-2);
+    border: 1px solid var(--rule);
+    position: relative;
+  }
+  .comp-bar .f{ position:absolute; left:0; top:0; bottom:0; background: var(--ink-page-2); }
+  .comp-bar.us .f{ background: var(--signal); }
+  .comp-blurb{
+    margin-top: 12px;
+    font-size: 13px; line-height: 1.55;
+    color: var(--ink-page-2);
+  }
+  .comp-blurb em{ font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+  /* =========================
+     CLOSING
+     ========================= */
+  .close{
+    padding: 88px 22px 96px;
+    text-align: left;
+    position: relative;
+  }
+  .close-h{
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    color: var(--ink-page);
+  }
+  .close-h em{ font-style: italic; color: var(--signal); }
+  .close-sub{
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--ink-page-2);
+    line-height: 1.6;
+    max-width: 32ch;
+  }
+  .close-sub em{ font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+  .end-card{
+    margin-top: 64px;
+    padding: 22px;
+    border: 1px solid var(--rule);
+    background: var(--bg-page-2);
+  }
+  .end-card .row{
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+  .end-card .row:last-child{ border-bottom: none; }
+  .end-card .k{ color: var(--ink-page-3); text-transform: uppercase; letter-spacing: 0.14em; font-size: 10px; }
+  .end-card .v{ color: var(--ink-page); }
+  .end-card .v.s{ color: var(--signal); }
+
+  .footer{
+    padding: 32px 22px 60px;
+    text-align: left;
+    color: var(--ink-page-3);
+    border-top: 1px solid var(--rule);
+  }
+  .footer .mono{ display: block; margin-bottom: 6px; }
+  .footer p{ font-size: 12px; line-height: 1.5; color: var(--ink-page-3); margin: 0; }
+
+  /* HUD ticker strip */
+  .hud-ticker{
+    overflow: hidden;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 0;
+    background: var(--bg-page);
+    margin-top: 0;
+  }
+  .hud-ticker .track{
+    display: inline-flex; gap: 28px;
+    white-space: nowrap;
+    animation: tick 28s linear infinite;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-page-3);
+  }
+  .hud-ticker .track span{ color: var(--ink-page); }
+  .hud-ticker .track em{ color: var(--signal); font-style: normal; font-family: var(--font-mono); }
+  @keyframes tick{
+    0%{ transform: translateX(0%);}
+    100%{ transform: translateX(-50%);}
+  }
+
+  /* utility transitions */
+  .reveal{ opacity: 0; transform: translateY(14px); transition: opacity .9s var(--ease-out), transform .9s var(--ease-out); }
+  .reveal.in{ opacity: 1; transform: none; }
+
+  /* franchises bricks (hero overlay) */
+  .bricks{
+    margin-top: 40px;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .brick{
+    aspect-ratio: 1;
+    border: 1px solid var(--rule);
+    background: var(--bg-page-2);
+    padding: 10px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .brick .name{
+    font-family: var(--font-display);
+    font-size: 17px;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    color: var(--ink-page);
+  }
+  .brick .name em{ font-style: italic; color: var(--signal); }
+  .brick .meta{
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-page-3);
+  }
+  .brick .lifebar{
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .brick .lifebar i{
+    display: block; height: 100%;
+    background: var(--signal);
+    width: 86%;
+  }
+  .brick.glow{
+    background: linear-gradient(180deg, rgba(255,90,60,0.12), rgba(255,90,60,0));
+    border-color: rgba(255,90,60,0.4);
+  }
+
+  /* Quarter strip */
+  .qstrip{
+    margin-top: 34px;
+    display: flex; justify-content: space-between;
+    border-top: 1px solid var(--rule);
+    padding-top: 14px;
+  }
+  .qstrip .col{
+    flex: 1;
+  }
+  .qstrip .v{
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+    color: var(--ink-page);
+    letter-spacing: -0.02em;
+  }
+  .qstrip .v em{ font-style: italic; color: var(--signal); }
+  .qstrip .l{
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-page-3);
+  }
+
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- ============= STICKY CHROME ============= -->
+  <header class="chrome">
+    <div class="chrome-row">
+      <span class="chrome-tick">EA</span>
+      <span class="chrome-name">Electronic Arts <span>· NASDAQ</span></span>
+      <span class="chrome-pulse" aria-hidden="true"></span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="chrome-progress" aria-hidden="true">
+      <div class="chrome-progress-fill" id="progressFill"></div>
+    </div>
+  </header>
+
+  <!-- ============= HERO / THESIS ============= -->
+  <section class="hero">
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <div class="hero-eyebrow">
+      <span class="pulse"></span>
+      <span>Player 1 · Press start</span>
+      <span style="margin-left:auto;color:var(--ink-page-4);">FY 2025 / Q3 '26</span>
+    </div>
+
+    <h1 class="hero-h">
+      <span class="l1">The game</span>
+      <span class="l2">never</span>
+      <span class="l3">ends.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Electronic Arts spent forty years learning that the <em>final boss</em> wasn't a
+      villain — it was the <em>credits screen</em>. So they removed it. Today, <b>73%</b>
+      of EA's revenue arrives <em>after</em> you finish the game.
+    </p>
+
+    <div class="continue">
+      <span class="num">$7.46B</span>
+      <span>FY '25 net revenue</span>
+      <span class="blink" style="margin-left:auto;color:var(--signal)">▶</span>
+    </div>
+
+    <!-- Franchise bricks: visualised as save-slots -->
+    <div class="bricks" aria-label="Franchise stack">
+      <div class="brick glow">
+        <div class="name"><em>EA</em> Sports FC</div>
+        <div>
+          <div class="lifebar"><i style="width:96%"></i></div>
+          <div class="meta">Live · global</div>
+        </div>
+      </div>
+      <div class="brick">
+        <div class="name">Madden NFL</div>
+        <div>
+          <div class="lifebar"><i style="width:88%"></i></div>
+          <div class="meta">Live · NA</div>
+        </div>
+      </div>
+      <div class="brick">
+        <div class="name">Apex <em>Legends</em></div>
+        <div>
+          <div class="lifebar"><i style="width:74%"></i></div>
+          <div class="meta">F2P · live</div>
+        </div>
+      </div>
+      <div class="brick">
+        <div class="name">Battlefield</div>
+        <div>
+          <div class="lifebar"><i style="width:62%"></i></div>
+          <div class="meta">Premium</div>
+        </div>
+      </div>
+      <div class="brick">
+        <div class="name">The <em>Sims</em></div>
+        <div>
+          <div class="lifebar"><i style="width:78%"></i></div>
+          <div class="meta">Evergreen</div>
+        </div>
+      </div>
+      <div class="brick">
+        <div class="name">Need <em>for</em> Speed</div>
+        <div>
+          <div class="lifebar"><i style="width:54%"></i></div>
+          <div class="meta">Premium</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qstrip">
+      <div class="col">
+        <div class="v">$<em>51.0</em>B</div>
+        <div class="l">Market cap</div>
+      </div>
+      <div class="col">
+        <div class="v">13.7K</div>
+        <div class="l">Employees</div>
+      </div>
+      <div class="col">
+        <div class="v">1982</div>
+        <div class="l">Founded</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= RESET BEAT 1 ============= -->
+  <section class="reset">
+    <span class="mono">Interlude · I</span>
+    <p>Forty years ago you bought a <span class="signal">cartridge</span>. Today, you rent your favourite franchise — <em>by the season,</em> <em>by the pack,</em> <em>by the player.</em></p>
+  </section>
+
+  <!-- ============= HOW IT MAKES MONEY ============= -->
+  <section>
+    <div class="eyebrow scene-eyebrow">The model<span class="dot"></span>$7.46B in</div>
+    <h2 class="scene-h">A <em>cartridge</em><br>is no longer<br>a transaction.</h2>
+    <p class="scene-body">
+      Two streams enter EA's books. <b>One pays once.</b> <b>One pays forever.</b>
+      In FY '25, <em>live services</em> — Ultimate Team packs, season passes,
+      microtransactions, subscriptions — outweighed every box and download
+      EA shipped <em>more than three to one.</em>
+    </p>
+
+    <!-- Stacked bars -->
+    <div class="stack">
+      <div class="stack-row">
+        <div class="label">Live services</div>
+        <div class="stack-bar b1" data-fill="92"><div class="fill"></div><span class="val">$5.46B · 73%</span></div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Digital DL</div>
+        <div class="stack-bar b2" data-fill="25"><div class="fill"></div><span class="val">$1.48B · 20%</span></div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Packaged</div>
+        <div class="stack-bar b3" data-fill="9"><div class="fill"></div><span class="val">$524M · 7%</span></div>
+      </div>
+    </div>
+
+    <!-- Margin spotlight -->
+    <div class="qstrip">
+      <div class="col">
+        <div class="v"><em>79.3%</em></div>
+        <div class="l">Gross margin</div>
+      </div>
+      <div class="col">
+        <div class="v">20.4%</div>
+        <div class="l">Operating margin</div>
+      </div>
+      <div class="col">
+        <div class="v">78%</div>
+        <div class="l">Units digital</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= HUD TICKER ============= -->
+  <div class="hud-ticker" aria-hidden="true">
+    <div class="track">
+      <span>$EA</span> <em>+ Q3 '26</em> <span>EPS</span> <em>$4.82</em>
+      <span>REV</span> <em>$3.05B</em> <span>FY '25 NET</span> <em>$7.46B</em>
+      <span>LIVE SVC</span> <em>73%</em> <span>DIGITAL UNITS</span> <em>78%</em>
+      <span>OP MGN</span> <em>20.4%</em> <span>GROSS MGN</span> <em>79.3%</em>
+      <span>$EA</span> <em>+ Q3 '26</em> <span>EPS</span> <em>$4.82</em>
+      <span>REV</span> <em>$3.05B</em> <span>FY '25 NET</span> <em>$7.46B</em>
+      <span>LIVE SVC</span> <em>73%</em> <span>DIGITAL UNITS</span> <em>78%</em>
+      <span>OP MGN</span> <em>20.4%</em> <span>GROSS MGN</span> <em>79.3%</em>
+    </div>
+  </div>
+
+  <!-- ============= COSTS ============= -->
+  <section>
+    <div class="eyebrow scene-eyebrow">The bill<span class="dot"></span>$5.94B out</div>
+    <h2 class="scene-h">A third of every<br>dollar EA earns is<br>spent <em>making the<br>next game.</em></h2>
+    <p class="scene-body">
+      EA isn't a media company that sometimes builds software.
+      It's a software company that <em>always builds the next thing.</em>
+      <b>R&amp;D</b> is the single biggest line on the income statement —
+      bigger than cost of revenue, sales &amp; marketing, and admin combined
+      <em>doesn't quite catch it.</em>
+    </p>
+
+    <!-- D-pad / dial visual -->
+    <div class="costs-wrap">
+      <svg class="costs-svg" viewBox="0 0 320 320" aria-label="Cost breakdown">
+        <defs>
+          <filter id="rdGlow">
+            <feGaussianBlur stdDeviation="6" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- background ring -->
+        <circle cx="160" cy="160" r="120" fill="none" stroke="#25252D" stroke-width="1"/>
+        <circle cx="160" cy="160" r="92" fill="none" stroke="#25252D" stroke-width="1" stroke-dasharray="2 4"/>
+        <!-- arcs (donut). Total = 75; remaining 25% is operating margin = "what survives". We'll render the 75% as 5 arcs in the colors from JSON, plus a 25% void. -->
+        <!-- pre-calc: full circumference 2*pi*r, r=110 -->
+        <g transform="translate(160 160) rotate(-90)" fill="none" stroke-width="40">
+          <!-- order: cost(21) rd(33) sm(12) ga(6) am(3)  + survives(25) -->
+          <!-- circumference for r=100 = 628.32 -->
+          <circle r="100" stroke="#4F86C6" stroke-dasharray="131.94 628.32" stroke-dashoffset="0"/>
+          <circle r="100" stroke="#E8734A" stroke-dasharray="207.34 628.32" stroke-dashoffset="-131.94" filter="url(#rdGlow)"/>
+          <circle r="100" stroke="#6DBF82" stroke-dasharray="75.40 628.32" stroke-dashoffset="-339.28"/>
+          <circle r="100" stroke="#A97DC9" stroke-dasharray="37.70 628.32" stroke-dashoffset="-414.68"/>
+          <circle r="100" stroke="#F2C94C" stroke-dasharray="18.85 628.32" stroke-dashoffset="-452.38"/>
+          <!-- the 25% that survives — operating margin -->
+          <circle r="100" stroke="#0B0B0E" stroke-dasharray="157.08 628.32" stroke-dashoffset="-471.23"/>
+        </g>
+        <!-- center label -->
+        <g transform="translate(160 160)" text-anchor="middle">
+          <text y="-8" font-family="Geist Mono" font-size="10" fill="#7A766C" letter-spacing="2">R &amp; D</text>
+          <text y="22" font-family="Instrument Serif" font-style="italic" font-size="48" fill="#FF5A3C">33%</text>
+          <text y="44" font-family="Geist Mono" font-size="9" fill="#7A766C" letter-spacing="2">$1.95B</text>
+        </g>
+      </svg>
+
+      <!-- legend -->
+      <div class="costs-legend">
+        <div class="row">
+          <div class="swatch" style="background:#4F86C6"></div>
+          <div class="lbl">Cost of revenue</div>
+          <div class="pct">21%</div>
+        </div>
+        <div class="row spotlight">
+          <div class="swatch" style="background:#E8734A"></div>
+          <div class="lbl">Research &amp; development</div>
+          <div class="pct">33%</div>
+        </div>
+        <div class="row">
+          <div class="swatch" style="background:#6DBF82"></div>
+          <div class="lbl">Sales &amp; marketing</div>
+          <div class="pct">12%</div>
+        </div>
+        <div class="row">
+          <div class="swatch" style="background:#A97DC9"></div>
+          <div class="lbl">General &amp; admin</div>
+          <div class="pct">6%</div>
+        </div>
+        <div class="row">
+          <div class="swatch" style="background:#F2C94C"></div>
+          <div class="lbl">Amortisation</div>
+          <div class="pct">3%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= RESET BEAT 2 ============= -->
+  <section class="reset">
+    <span class="mono">Interlude · II</span>
+    <p>EA does not have <em>users.</em> It has <span class="signal">player bases</span> — communities that wake up, log in, and pay rent on the franchise <em>they love.</em></p>
+  </section>
+
+  <!-- ============= GEOGRAPHY ============= -->
+  <section>
+    <div class="eyebrow scene-eyebrow">The map<span class="dot"></span>4 regions</div>
+    <h2 class="scene-h">The console<br>is plugged in<br><em>everywhere.</em></h2>
+    <p class="scene-body">
+      Headquartered in <b>Redwood City</b>, but only forty-one cents of every dollar
+      come home to North America. Europe, the spiritual home of football,
+      contributes nearly as much. <em>The rest of the world plays, too.</em>
+    </p>
+
+    <!-- Geo / meridian visual -->
+    <div class="geo">
+      <svg viewBox="0 0 380 240" aria-label="Geographic mix">
+        <defs>
+          <radialGradient id="globeG" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#1B1B22"/>
+            <stop offset="100%" stop-color="#0B0B0E"/>
+          </radialGradient>
+        </defs>
+        <!-- meridian rings stacked -->
+        <g transform="translate(190 130)" fill="none" stroke-linecap="round">
+          <ellipse cx="0" cy="0" rx="160" ry="92" stroke="#25252D" stroke-width="1"/>
+          <ellipse cx="0" cy="0" rx="130" ry="74" stroke="#25252D" stroke-width="1"/>
+          <ellipse cx="0" cy="0" rx="100" ry="56" stroke="#25252D" stroke-width="1"/>
+          <ellipse cx="0" cy="0" rx="70"  cy="0"  ry="38" stroke="#25252D" stroke-width="1"/>
+          <line x1="-170" y1="0" x2="170" y2="0" stroke="#25252D" stroke-width="1"/>
+          <!-- region arcs: arc length proportional to pct -->
+          <!-- N America 41% : top-left arc -->
+          <path d="M-160 0 A 160 92 0 0 1 -36 -90"
+                stroke="#FF5A3C" stroke-width="3" />
+          <!-- Europe 38% : top-right arc -->
+          <path d="M -36 -90 A 160 92 0 0 1 110 -67"
+                stroke="#FF8B6A" stroke-width="3" />
+          <!-- APAC 15% : right arc continuing -->
+          <path d="M 110 -67 A 160 92 0 0 1 160 0"
+                stroke="#7B71F5" stroke-width="3" />
+          <!-- ROW 6% : tiny tail -->
+          <path d="M 160 0 A 160 92 0 0 1 150 18"
+                stroke="#6DBF82" stroke-width="3" />
+
+          <!-- pinpoint dots -->
+          <circle cx="-80" cy="-58" r="4" fill="#FF5A3C"/>
+          <circle cx="40"  cy="-66" r="4" fill="#FF8B6A"/>
+          <circle cx="118" cy="-30" r="3" fill="#7B71F5"/>
+          <circle cx="135" cy="22"  r="2.5" fill="#6DBF82"/>
+        </g>
+        <!-- label: HQ -->
+        <g font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#7A766C">
+          <text x="22" y="40" text-transform="uppercase">HQ · Redwood City, CA</text>
+        </g>
+      </svg>
+
+      <div class="geo-list">
+        <div class="row lead">
+          <div class="reg">North America <span class="meta">— Madden country</span></div>
+          <div class="pct">41%</div>
+        </div>
+        <div class="row">
+          <div class="reg">Europe <span class="meta">— EA Sports FC</span></div>
+          <div class="pct">38%</div>
+        </div>
+        <div class="row">
+          <div class="reg">Asia-Pacific <span class="meta">— mobile-first</span></div>
+          <div class="pct">15%</div>
+        </div>
+        <div class="row">
+          <div class="reg">Rest of world</div>
+          <div class="pct">6%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= RESET BEAT 3 — paper interlude (the one tonal departure) ============= -->
+  <section class="reset paper">
+    <span class="mono">Interlude · III · the ledger</span>
+    <p>Off the screen, in the <em>quiet of the balance sheet,</em> EA paid its shareholders <span class="signal">$2.70 billion</span> — and still ended the year <em>with cash to spare.</em></p>
+  </section>
+
+  <!-- ============= CAPITAL ALLOCATION ============= -->
+  <section>
+    <div class="eyebrow scene-eyebrow">The dividend<span class="dot"></span>$2.70B returned</div>
+    <h2 class="scene-h">A loot box,<br>but the loot<br>is <em>shareholders'.</em></h2>
+    <p class="scene-body">
+      EA generated <b>$2.08B</b> of operating cash flow in FY '25 and returned <em>more than that</em> to shareholders. <b>17.6 million shares</b> were repurchased — a buyback the size of a small studio acquisition. The rest came back as a dividend.
+    </p>
+
+    <div class="capital">
+      <div class="cap-num">$2.70<em>B</em></div>
+      <div class="cap-cap">Returned to shareholders · FY '25</div>
+
+      <div class="cap-split" role="img" aria-label="Capital return split">
+        <div class="seg a">
+          <div class="v">$2.50B</div>
+          <div class="l">Buybacks · 17.6M shares</div>
+        </div>
+        <div class="seg b">
+          <div class="v">$199M</div>
+          <div class="l">Div</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- balance sheet row -->
+    <div class="qstrip">
+      <div class="col">
+        <div class="v">$<em>2.1</em>B</div>
+        <div class="l">Cash &amp; equiv</div>
+      </div>
+      <div class="col">
+        <div class="v">$1.88B</div>
+        <div class="l">Total debt</div>
+      </div>
+      <div class="col">
+        <div class="v">$6.39B</div>
+        <div class="l">Total equity</div>
+      </div>
+    </div>
+    <p class="scene-body" style="margin-top:18px;">
+      A <em>$500M revolver</em> sits untapped. <b>Net cash positive.</b> Asset-light by design — EA's vault isn't warehouses, it's <em>$5.6B of intangibles</em> earned across forty years of acquisitions.
+    </p>
+  </section>
+
+  <!-- ============= RESET BEAT 4 ============= -->
+  <section class="reset">
+    <span class="mono">Interlude · IV</span>
+    <p>But you are not the <em>only</em> one with a controller in your hand. <span class="signal">Three challengers</span> are queued up — <em>and one is already growing faster.</em></p>
+  </section>
+
+  <!-- ============= COMPETITORS ============= -->
+  <section>
+    <div class="eyebrow scene-eyebrow">The lobby<span class="dot"></span>3 challengers</div>
+    <h2 class="scene-h">Three rivals<br>are already in<br>the <em>matchmaking<br>queue.</em></h2>
+    <p class="scene-body">
+      EA leads on market cap. But by <em>revenue growth</em> — the metric that decides who owns the next decade — two of three challengers are <em>moving faster.</em>
+    </p>
+
+    <!-- header -->
+    <div class="comp-row" style="border-top:none; padding-top:30px;">
+      <div class="comp-head">
+        <span class="tk">EA</span>
+        <span class="nm">Electronic <em>Arts</em></span>
+        <span class="ar">Incumbent</span>
+      </div>
+      <div class="comp-mc">
+        <span class="key">Market cap</span>
+        <div class="comp-bar us"><div class="f" style="width:69.7%"></div></div>
+        <span class="num">$51.0B</span>
+      </div>
+      <div class="comp-mc">
+        <span class="key">Revenue</span>
+        <div class="comp-bar us"><div class="f" style="width:100%"></div></div>
+        <span class="num">$7.46B</span>
+      </div>
+      <div class="comp-mc">
+        <span class="key">YoY growth</span>
+        <div class="comp-bar us"><div class="f" style="width:14%"></div></div>
+        <span class="num">~5%*</span>
+      </div>
+      <div class="comp-blurb" style="font-size:11px; color:var(--ink-page-3); margin-top:8px;">
+        * implied baseline; growth not in JSON.
+      </div>
+    </div>
+
+    <div class="comp-row">
+      <div class="comp-head">
+        <span class="tk">TTWO</span>
+        <span class="nm">Take-<em>Two</em></span>
+        <span class="ar">↑ Faster</span>
+      </div>
+      <div class="comp-mc">
+        <span class="key">Market cap</span>
+        <div class="comp-bar"><div class="f" style="width:53.7%"></div></div>
+        <span class="num">$39.3B</span>
+      </div>
+      <div class="comp-mc">
+        <span class="key">Revenue</span>
+        <div class="comp-bar"><div class="f" style="width:75.5%"></div></div>
+        <span class="num">$5.63B</span>
+      </div>
+      <div class="comp-mc">
+        <span class="key">YoY growth</span>
+        <div class="comp-bar"><div class="f" style="width:57%"></div></div>
+        <span class="num">20.3%</span>
+      </div>
+      <p class="comp-blurb"><b>NBA 2K. Grand Theft Auto.</b> Take-Two is the rival that fights EA <em>on its own pitch</em> — sports and open-world AAA — and is <em>growing four times faster.</em></p>
+    </div>
+
+    <div class="comp-row win">
+      <div class="comp-head">
+        <span class="tk">RBLX</span>
+        <span class="nm">Roblox</span>
+        <span class="ar">↑ +35.8%</span>
+      </div>
+      <div class="comp-mc">
+        <span class="key">Market cap</span>
+        <div class="comp-bar"><div class="f" style="width:58.4%"></div></div>
+        <span class="num">$42.8B</span>
+      </div>
+      <div class="comp-mc">
+        <span class="key">Revenue</span>
+        <div class="comp-bar"><div class="f" style="width:65.5%"></div></div>
+        <span class="num">$4.89B</span>
+      </div>
+      <div class="comp-mc">
+        <span class="key">YoY growth</span>
+        <div class="comp-bar"><div class="f" style="width:99%"></div></div>
+        <span class="num">35.8%</span>
+      </div>
+      <p class="comp-blurb">Not a publisher — <em>a platform.</em> Roblox doesn't make games for kids; it lets <b>kids make games for each other.</b> The threat isn't a title — it's the <em>time</em> EA is no longer collecting.</p>
+    </div>
+
+    <div class="comp-row last">
+      <div class="comp-head">
+        <span class="tk">NTES</span>
+        <span class="nm">NetEase</span>
+        <span class="ar">↗ Global</span>
+      </div>
+      <div class="comp-mc">
+        <span class="key">Market cap</span>
+        <div class="comp-bar"><div class="f" style="width:100%"></div></div>
+        <span class="num">$73.2B</span>
+      </div>
+      <div class="comp-mc">
+        <span class="key">P/E (TTM)</span>
+        <div class="comp-bar"><div class="f" style="width:30%"></div></div>
+        <span class="num">14.78</span>
+      </div>
+      <div class="comp-mc">
+        <span class="key">YoY growth</span>
+        <div class="comp-bar"><div class="f" style="width:20%"></div></div>
+        <span class="num">7.0%</span>
+      </div>
+      <p class="comp-blurb">The largest of the three by market cap, and <em>the closest to EA's own playbook</em> — sports, shooters, live services. NetEase's quiet expansion into <b>Western publishing</b> means international live-service revenue is <em>contested ground.</em></p>
+    </div>
+  </section>
+
+  <!-- ============= CLOSE / INVERSION ============= -->
+  <section class="close">
+    <div class="eyebrow scene-eyebrow">The save point<span class="dot"></span>Recap close</div>
+
+    <h2 class="close-h">
+      The game<br>doesn't end.<br><em>It re-loads.</em>
+    </h2>
+
+    <p class="close-sub">
+      EA opens the year with <b>$7.46B inbound</b> — and closes it
+      <em>net cash positive,</em> with <b>seventy-three cents on every dollar</b>
+      arriving <em>after</em> the disc has stopped spinning. The credits roll.
+      The save file <em>does not.</em>
+    </p>
+
+    <div class="end-card">
+      <div class="row"><span class="k">Net revenue · FY '25</span><span class="v">$7.46B</span></div>
+      <div class="row"><span class="k">Live services share</span><span class="v s">73%</span></div>
+      <div class="row"><span class="k">Operating margin</span><span class="v">20.4%</span></div>
+      <div class="row"><span class="k">Returned to holders</span><span class="v">$2.70B</span></div>
+      <div class="row"><span class="k">Q3 '26 EPS</span><span class="v s">$4.82</span></div>
+      <div class="row"><span class="k">Market cap</span><span class="v">$51.01B</span></div>
+    </div>
+
+    <div class="continue" style="margin-top:40px;">
+      <span class="num">▶</span>
+      <span>Continue?</span>
+      <span class="blink" style="margin-left:auto;color:var(--ink-page-3)">_</span>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span class="mono">EA · Recap · FY '25</span>
+    <p>Figures: company filings &amp; FY '25 / Q3 '26 commentary. Market data shown as reported. Not investment advice.</p>
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================
+   Scroll behaviour:
+     - progress hairline in chrome
+     - reveal animations
+     - bar fills timed when in view
+   ============================================================ */
+(function(){
+  const fill = document.getElementById('progressFill');
+
+  function onScroll(){
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const p = h > 0 ? (window.scrollY / h) * 100 : 0;
+    fill.style.width = Math.min(100, Math.max(0, p)) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Fill the live-services stack bars when they enter view
+  const bars = document.querySelectorAll('.stack-bar');
+  const widths = ['92%','25%','9%']; // proportional within max
+  // Actually compute proportional widths: max 73% maps to ~92% of bar.
+  const proportional = (pct) => Math.max(2, (pct / 73) * 95) + '%';
+  const targets = [73, 20, 7];
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        if(en.target.classList.contains('stack-bar')){
+          const idx = [...bars].indexOf(en.target);
+          en.target.querySelector('.fill').style.width = proportional(targets[idx]);
+          io.unobserve(en.target);
+        } else if(en.target.classList.contains('reveal')){
+          en.target.classList.add('in');
+          io.unobserve(en.target);
+        }
+      }
+    });
+  }, { threshold: 0.25 });
+
+  bars.forEach(b => io.observe(b));
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+})();
+</script>
+
+</body>
+</html>

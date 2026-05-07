@@ -1,0 +1,1289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>IP · FY '25 Recap</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" />
+<style>
+  /* ───────────────────────────  TOKENS  ─────────────────────────── */
+  :root{
+    /* Kraft palette — warm browns, ink, off-white */
+    --kraft-50:  #F6EFE2;   /* lightest paper edge */
+    --kraft-100: #EADBBE;   /* page background */
+    --kraft-200: #D9BF8F;   /* corrugated medium */
+    --kraft-300: #BE9A60;   /* shadowed flute */
+    --kraft-400: #8C6A3A;   /* deep kraft */
+    --kraft-500: #5C4523;   /* ink-on-kraft */
+    --kraft-600: #2E2316;   /* near-black brown */
+
+    --paper:     #FBFAF7;
+    --paper-2:   #F4F2ED;
+    --ink:       #141414;
+    --ink-2:     #3B3A37;
+    --ink-3:     #6B6A65;
+    --ink-4:     #A4A29C;
+    --line:      #E4E1D9;
+
+    /* Signal accents — cost-chart hexes from JSON */
+    --c-cor:  #2563EB;  /* cost of revenue (blue) */
+    --c-da:   #16A34A;  /* depreciation (green) */
+    --c-sga:  #DC2626;  /* SG&A (red) */
+    --c-imp:  #D97706;  /* impairments (amber) */
+    --c-rest: #7C3AED;  /* restructuring (violet) */
+
+    /* Editorial signal — the one warm tone allowed for emphasis */
+    --signal: #C84A1F;  /* burnt-sienna ink, fits kraft */
+
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono:    'Geist Mono', ui-monospace, Menlo, monospace;
+  }
+
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family: var(--font-sans);
+    color: var(--kraft-600);
+    background: var(--kraft-100);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* Subtle paper grain — adds material to flat kraft */
+  body::before{
+    content:"";
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 1;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18  0 0 0 0 0.14  0 0 0 0 0.08  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/></svg>");
+    opacity: .35;
+    mix-blend-mode: multiply;
+  }
+
+  /* ──────────  PAGE  ────────── */
+  .page{
+    max-width: 440px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    background: var(--kraft-100);
+  }
+
+  /* ──────────  STICKY CHROME  ────────── */
+  .chrome{
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    background: color-mix(in oklab, var(--kraft-100) 78%, transparent);
+    border-bottom: 1px solid color-mix(in oklab, var(--kraft-400) 18%, transparent);
+  }
+  .chrome-row{
+    display:flex; align-items:center; gap: 10px;
+    padding: 12px 18px 10px;
+  }
+  .chrome-ticker{
+    font-family: var(--font-mono);
+    font-size: 12px; font-weight: 500;
+    letter-spacing: .08em;
+    color: var(--kraft-600);
+    background: color-mix(in oklab, var(--kraft-50) 80%, transparent);
+    border: 1px solid color-mix(in oklab, var(--kraft-400) 25%, transparent);
+    padding: 4px 8px; border-radius: 4px;
+  }
+  .chrome-name{
+    font-family: var(--font-sans);
+    font-size: 13px; font-weight: 500;
+    color: var(--kraft-600);
+    letter-spacing: -0.01em;
+  }
+  .chrome-label{
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10.5px; letter-spacing: .14em;
+    color: var(--kraft-400);
+    text-transform: uppercase;
+  }
+  .chrome-bar{
+    height: 1.5px;
+    background: color-mix(in oklab, var(--kraft-400) 14%, transparent);
+    position: relative;
+  }
+  .chrome-bar i{
+    position:absolute; left:0; top:0; bottom:0; width: 0%;
+    background: var(--signal);
+    transition: width .08s linear;
+  }
+
+  /* ──────────  TYPE  ────────── */
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--kraft-400);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .eyebrow .dot{
+    width: 5px; height: 5px; background: var(--signal); border-radius: 999px;
+    flex: 0 0 auto;
+  }
+  .eyebrow .num{
+    color: var(--kraft-300);
+  }
+
+  .display{
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    color: var(--kraft-600);
+  }
+  .display .it{ font-style: italic; }
+  .display .sig{ color: var(--signal); font-style: italic; }
+
+  .body{
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--kraft-500);
+    text-wrap: pretty;
+  }
+  .body em{ font-family: var(--font-display); font-style: italic; font-size: 1.08em; color: var(--kraft-600); }
+  .body .sig{ font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+  .meta{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--kraft-400);
+  }
+
+  /* ──────────  SECTIONS  ────────── */
+  section{
+    position: relative;
+    padding: 56px 22px;
+  }
+  section.tight{ padding: 36px 22px; }
+
+  /* Reset beat — italic interlude on contrasting band */
+  .reset{
+    background: var(--kraft-600);
+    color: var(--kraft-50);
+    padding: 44px 26px;
+    position: relative;
+    overflow: hidden;
+  }
+  .reset .display{ color: var(--kraft-50); font-size: 28px; line-height: 1.18; }
+  .reset .sig{ color: #FFB388; }
+  .reset::before{
+    content:""; position:absolute; inset:auto 0 0 0; height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--signal) 70%, transparent), transparent);
+  }
+
+  /* ──────────  HERO  ────────── */
+  .hero{
+    padding: 28px 22px 56px;
+  }
+  .hero h1{
+    font-family: var(--font-display);
+    font-size: 62px;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    margin: 18px 0 0;
+    color: var(--kraft-600);
+  }
+  .hero h1 .it{ font-style: italic; }
+  .hero h1 .sig{ color: var(--signal); font-style: italic; }
+  .hero .sub{
+    margin-top: 22px;
+    font-size: 16px;
+    color: var(--kraft-500);
+    line-height: 1.5;
+    max-width: 32ch;
+  }
+  .hero .sub em{
+    font-family: var(--font-display); font-style: italic; font-size: 1.08em; color: var(--kraft-600);
+  }
+
+  /* corrugated flutes — animates with scroll */
+  .flutes-hero{
+    height: 130px; width: 100%;
+    margin: 28px 0 0;
+    position: relative;
+  }
+
+  /* ──────────  THESIS NUMBER  ────────── */
+  .thesis-stack{
+    display: flex; flex-direction: column; gap: 4px;
+    margin-top: 28px;
+  }
+  .thesis-stack .row{
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  .thesis-stack .num{
+    font-family: var(--font-display);
+    font-size: 56px; line-height: .9;
+    color: var(--kraft-600);
+    letter-spacing: -0.02em;
+  }
+  .thesis-stack .num.it{ font-style: italic; color: var(--signal); }
+  .thesis-stack .lbl{
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--kraft-400);
+  }
+
+  /* ──────────  BUSINESS — mill→box flow  ────────── */
+  .biz-h2{
+    font-family: var(--font-display);
+    font-size: 40px; line-height: 1.0;
+    color: var(--kraft-600);
+    letter-spacing: -0.02em;
+    margin: 14px 0 22px;
+  }
+  .biz-h2 .it{ font-style: italic; }
+  .biz-h2 .sig{ color: var(--signal); font-style: italic; }
+
+  .flow-scene{
+    margin-top: 24px;
+    position: relative;
+    width: 100%;
+  }
+  .flow-stat{
+    display:flex; gap: 14px; align-items: baseline;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed color-mix(in oklab, var(--kraft-400) 35%, transparent);
+  }
+  .flow-stat .big{
+    font-family: var(--font-display);
+    font-size: 38px; line-height: .95; letter-spacing: -.02em;
+    color: var(--kraft-600);
+    font-style: italic;
+  }
+  .flow-stat .lbl{
+    font-family: var(--font-mono);
+    font-size: 10.5px; letter-spacing: .12em;
+    color: var(--kraft-400); text-transform: uppercase;
+  }
+
+  /* ──────────  SCALE — paper stack  ────────── */
+  .scale{
+    background: var(--kraft-50);
+  }
+  .scale-grid{
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 18px 22px;
+    margin-top: 26px;
+  }
+  .scale-grid .cell{
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .scale-grid .v{
+    font-family: var(--font-display);
+    font-size: 36px; line-height: .95;
+    letter-spacing: -.02em;
+    color: var(--kraft-600);
+  }
+  .scale-grid .v.it{ font-style: italic; color: var(--signal); }
+  .scale-grid .l{
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: .12em;
+    color: var(--kraft-400); text-transform: uppercase;
+  }
+  .scale-stack{
+    margin-top: 32px;
+    height: 220px;
+    position: relative;
+  }
+
+  /* ──────────  COSTS — flutes as bar  ────────── */
+  .costs{ background: var(--kraft-100); }
+  .costs-bar{
+    margin-top: 26px;
+    width: 100%;
+    height: 90px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--kraft-400) 24%, transparent);
+    display: flex;
+    background: var(--kraft-50);
+  }
+  .costs-bar > div{
+    height: 100%;
+    position: relative;
+    transition: flex .9s var(--ease, cubic-bezier(.22,1,.36,1));
+  }
+  .costs-legend{
+    margin-top: 22px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .costs-legend .row{
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    align-items: center;
+    gap: 12px;
+  }
+  .costs-legend .swatch{
+    width: 14px; height: 14px; border-radius: 3px;
+  }
+  .costs-legend .lbl{
+    font-family: var(--font-sans); font-size: 13.5px;
+    color: var(--kraft-600);
+  }
+  .costs-legend .pct{
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--kraft-400);
+    letter-spacing: .04em;
+  }
+
+  /* the impairment beat */
+  .impair-band{
+    margin-top: 36px;
+    padding: 22px 20px;
+    background: color-mix(in oklab, #D97706 18%, var(--kraft-50));
+    border-left: 3px solid var(--c-imp);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .impair-band .v{
+    font-family: var(--font-display);
+    font-size: 44px; line-height: .92;
+    color: var(--kraft-600);
+    font-style: italic;
+    letter-spacing: -.02em;
+  }
+  .impair-band .l{
+    margin-top: 6px;
+    font-family: var(--font-sans); font-size: 14px;
+    color: var(--kraft-500);
+    line-height: 1.45;
+  }
+  .impair-band .l em{ font-family: var(--font-display); font-style: italic; color: var(--c-imp); font-size: 1.06em; }
+
+  /* ──────────  FOOTPRINT — globe split  ────────── */
+  .geo{ background: var(--kraft-50); }
+  .geo-scene{
+    margin-top: 24px;
+    height: 280px;
+    position: relative;
+  }
+  .geo-rows{
+    margin-top: 8px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .geo-rows .r{
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: baseline;
+    padding: 10px 0;
+    border-top: 1px solid color-mix(in oklab, var(--kraft-400) 24%, transparent);
+  }
+  .geo-rows .r:first-child{ border-top: none; }
+  .geo-rows .name{
+    font-family: var(--font-sans); font-size: 14.5px;
+    color: var(--kraft-600);
+  }
+  .geo-rows .pct{
+    font-family: var(--font-display); font-style: italic;
+    font-size: 30px; color: var(--kraft-600);
+  }
+  .geo-rows .pct .sig{ color: var(--signal); }
+
+  /* ──────────  THE BET — capex  ────────── */
+  .bet{ background: var(--kraft-100); }
+  .capex-scene{
+    margin-top: 24px;
+    height: 200px;
+    position: relative;
+  }
+  .bet-fcf{
+    margin-top: 22px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    border-top: 1px dashed color-mix(in oklab, var(--kraft-400) 35%, transparent);
+    padding-top: 18px;
+  }
+  .bet-fcf .cell .v{
+    font-family: var(--font-display); font-size: 26px; line-height: .95;
+    color: var(--kraft-600); letter-spacing: -.02em;
+  }
+  .bet-fcf .cell .v.neg{ color: var(--signal); font-style: italic; }
+  .bet-fcf .cell .l{ font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; color: var(--kraft-400); text-transform: uppercase; margin-top: 4px; }
+
+  /* ──────────  COMPETITION  ────────── */
+  .comp{ background: var(--kraft-50); }
+  .comp-list{ margin-top: 26px; display:flex; flex-direction:column; gap: 20px; }
+  .comp-row{
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 14px;
+    align-items: stretch;
+    cursor: pointer;
+  }
+  .comp-row .ticker{
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: .08em;
+    color: var(--kraft-500);
+    background: color-mix(in oklab, var(--kraft-200) 60%, transparent);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 6px 4px;
+    align-self: start;
+  }
+  .comp-row .body-c{
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .comp-row .name{
+    font-family: var(--font-sans); font-size: 15px; font-weight: 500;
+    color: var(--kraft-600);
+  }
+  .comp-row .scale-bar{
+    height: 8px;
+    background: color-mix(in oklab, var(--kraft-200) 60%, transparent);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+  }
+  .comp-row .scale-bar i{
+    position: absolute; left:0; top:0; bottom:0;
+    background: var(--kraft-400);
+    border-radius: 999px;
+    width: 0;
+    transition: width 1s var(--ease, cubic-bezier(.22,1,.36,1));
+  }
+  .comp-row.us .scale-bar i{ background: var(--signal); }
+  .comp-row .meta-row{
+    display: flex; gap: 10px; flex-wrap: wrap;
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--kraft-400); letter-spacing: .06em;
+  }
+  .comp-row .meta-row b{ color: var(--kraft-600); font-weight: 500; }
+  .comp-row .desc{
+    font-family: var(--font-sans); font-size: 13.5px;
+    color: var(--kraft-500); line-height: 1.5;
+    max-height: 0; overflow: hidden;
+    transition: max-height .35s var(--ease, cubic-bezier(.22,1,.36,1)), margin .35s;
+  }
+  .comp-row.open .desc{ max-height: 320px; margin-top: 4px; }
+  .comp-row.open .name::after{ content: " ↑"; color: var(--signal); font-family: var(--font-mono); font-size: 11px; vertical-align: middle; }
+  .comp-row .name::after{ content: " ↓"; color: var(--kraft-300); font-family: var(--font-mono); font-size: 11px; vertical-align: middle; }
+
+  /* ──────────  CLOSE — split into two  ────────── */
+  .close{
+    background: var(--kraft-600);
+    color: var(--kraft-50);
+    padding: 64px 22px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .close .eyebrow{ color: #FFB388; }
+  .close .eyebrow .dot{ background: #FFB388; }
+  .close .display{ color: var(--kraft-50); font-size: 48px; line-height: .98; margin-top: 14px; }
+  .close .display .sig{ color: #FFB388; }
+  .close .scene{
+    height: 240px;
+    margin-top: 30px;
+    position: relative;
+  }
+  .close .closing-stat{
+    margin-top: 32px;
+    border-top: 1px solid color-mix(in oklab, var(--kraft-50) 14%, transparent);
+    padding-top: 24px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .close .closing-stat .v{
+    font-family: var(--font-display); font-style: italic;
+    font-size: 38px; color: #FFB388; line-height: .92;
+  }
+  .close .closing-stat .l{
+    font-family: var(--font-mono); font-size: 10.5px;
+    color: color-mix(in oklab, var(--kraft-50) 65%, transparent);
+    letter-spacing: .12em; text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .close .colophon{
+    margin-top: 36px;
+    font-family: var(--font-mono); font-size: 10.5px;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: color-mix(in oklab, var(--kraft-50) 50%, transparent);
+    line-height: 1.7;
+  }
+  .close .colophon b{ color: var(--kraft-50); font-weight: 500; }
+
+  /* utility */
+  .stack-2 > * + *{ margin-top: 14px; }
+  .stack-3 > * + *{ margin-top: 22px; }
+
+  /* in-view reveal */
+  .reveal{
+    opacity: 0; transform: translateY(14px);
+    transition: opacity .6s var(--ease, cubic-bezier(.22,1,.36,1)), transform .6s var(--ease, cubic-bezier(.22,1,.36,1));
+  }
+  .reveal.in{ opacity: 1; transform: none; }
+
+  /* count-up neat */
+  .cu{ font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ─────────  STICKY CHROME  ───────── -->
+  <header class="chrome">
+    <div class="chrome-row">
+      <span class="chrome-ticker">NYSE · IP</span>
+      <span class="chrome-name">International Paper</span>
+      <span class="chrome-label">RECAP · FY '25</span>
+    </div>
+    <div class="chrome-bar"><i id="progress"></i></div>
+  </header>
+
+  <!-- ─────────  HERO  ───────── -->
+  <section class="hero">
+    <div class="eyebrow"><span class="dot"></span><span>Thesis</span><span class="num">· I</span></div>
+    <h1>
+      America's <span class="it">box</span> company.<br>
+      <span class="sig">Now Europe's,</span><br>
+      too.
+    </h1>
+    <p class="sub">
+      Founded <em>1898</em> from seventeen pulp mills in the Northeast. One hundred and twenty-seven years and one $9.9B acquisition later, International Paper is a pure-play corrugated packaging business — and about to split itself in two.
+    </p>
+
+    <div class="flutes-hero">
+      <svg id="hero-flutes" viewBox="0 0 440 130" preserveAspectRatio="none" width="100%" height="100%" aria-hidden="true">
+        <!-- corrugated medium between two liners -->
+        <rect x="0" y="6" width="440" height="14" fill="#BE9A60" opacity=".7"/>
+        <rect x="0" y="110" width="440" height="14" fill="#BE9A60" opacity=".7"/>
+        <g id="flute-group" stroke="#8C6A3A" stroke-width="1.5" fill="none" opacity=".95">
+          <!-- generated by JS -->
+        </g>
+        <!-- shadows under flutes -->
+        <g id="flute-shadows" fill="#5C4523" opacity=".15"></g>
+      </svg>
+    </div>
+
+    <div class="thesis-stack">
+      <div class="row"><span class="num cu" data-cu="62602" data-suffix="">0</span><span class="lbl">people · worldwide</span></div>
+      <div class="row"><span class="num it cu" data-cu="23.63" data-prefix="$" data-suffix="B" data-decimals="2">0</span><span class="lbl">FY '25 revenue</span></div>
+      <div class="row"><span class="num cu" data-cu="19.66" data-prefix="$" data-suffix="B" data-decimals="2">0</span><span class="lbl">market cap</span></div>
+    </div>
+  </section>
+
+  <!-- ─────────  RESET 1  ───────── -->
+  <aside class="reset reveal">
+    <p class="display">
+      Every box on every doorstep starts somewhere. <span class="sig">For one in three Americans,</span> it starts at a mill with this company's name on it.
+    </p>
+  </aside>
+
+  <!-- ─────────  THE BUSINESS  ───────── -->
+  <section class="biz">
+    <div class="eyebrow"><span class="dot"></span><span>The business</span><span class="num">· II</span></div>
+    <h2 class="biz-h2">
+      Mill makes <span class="it">paper.</span><br>
+      Plant folds <span class="sig">box.</span><br>
+      Box ships <span class="it">everything.</span>
+    </h2>
+    <p class="body">
+      An integrated mill-to-box-plant model: large paper mills produce <em>linerboard</em> and <em>corrugated medium</em>; hundreds of regional plants convert them into the boxes serving e-commerce, food, and industry.
+    </p>
+
+    <div class="flow-scene">
+      <svg id="flow-svg" viewBox="0 0 400 220" width="100%" height="220" aria-hidden="true">
+        <!-- mill -->
+        <g id="mill" transform="translate(20,40)">
+          <rect x="0" y="40" width="80" height="80" fill="#8C6A3A"/>
+          <polygon points="0,40 40,10 80,40" fill="#5C4523"/>
+          <rect x="32" y="0" width="14" height="20" fill="#5C4523"/>
+          <rect x="50" y="0" width="14" height="20" fill="#5C4523"/>
+          <!-- smoke -->
+          <g id="smoke" fill="#D9BF8F" opacity=".7">
+            <circle cx="39" cy="-2" r="6"/>
+            <circle cx="57" cy="-6" r="5"/>
+            <circle cx="48" cy="-14" r="7"/>
+          </g>
+          <text x="40" y="100" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#F6EFE2" letter-spacing="1.4">MILL</text>
+        </g>
+
+        <!-- conveyor belt path -->
+        <path id="conveyor" d="M 100 100 C 150 100, 170 100, 200 130 C 230 160, 270 160, 310 130"
+              fill="none" stroke="#8C6A3A" stroke-width="2" stroke-dasharray="4 4" opacity=".55"/>
+
+        <!-- traveling rolls of liner -->
+        <g id="rolls">
+          <g class="roll" data-offset="0">
+            <circle r="10" fill="#D9BF8F" stroke="#8C6A3A" stroke-width="1.2"/>
+            <circle r="3" fill="#5C4523"/>
+          </g>
+          <g class="roll" data-offset="0.33">
+            <circle r="10" fill="#D9BF8F" stroke="#8C6A3A" stroke-width="1.2"/>
+            <circle r="3" fill="#5C4523"/>
+          </g>
+          <g class="roll" data-offset="0.66">
+            <circle r="10" fill="#D9BF8F" stroke="#8C6A3A" stroke-width="1.2"/>
+            <circle r="3" fill="#5C4523"/>
+          </g>
+        </g>
+
+        <!-- box plant -->
+        <g id="plant" transform="translate(295,60)">
+          <rect x="0" y="20" width="80" height="80" fill="#5C4523"/>
+          <rect x="6" y="30" width="14" height="14" fill="#BE9A60"/>
+          <rect x="26" y="30" width="14" height="14" fill="#BE9A60"/>
+          <rect x="46" y="30" width="14" height="14" fill="#BE9A60"/>
+          <text x="40" y="80" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#F6EFE2" letter-spacing="1.4">PLANT</text>
+        </g>
+
+        <!-- folded boxes leaving plant -->
+        <g id="boxes-out" transform="translate(295,170)">
+          <g transform="translate(0,0)">
+            <rect x="0" y="0" width="22" height="18" fill="#BE9A60" stroke="#5C4523"/>
+            <line x1="0" y1="6" x2="22" y2="6" stroke="#5C4523" stroke-width=".8"/>
+          </g>
+          <g transform="translate(28,-2)">
+            <rect x="0" y="0" width="22" height="18" fill="#BE9A60" stroke="#5C4523"/>
+            <line x1="0" y1="6" x2="22" y2="6" stroke="#5C4523" stroke-width=".8"/>
+          </g>
+          <g transform="translate(56,2)">
+            <rect x="0" y="0" width="22" height="18" fill="#BE9A60" stroke="#5C4523"/>
+            <line x1="0" y1="6" x2="22" y2="6" stroke="#5C4523" stroke-width=".8"/>
+          </g>
+        </g>
+
+        <!-- segment labels under -->
+        <text x="60" y="200" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#8C6A3A" letter-spacing="1.2">PS · NORTH AMERICA</text>
+        <text x="335" y="200" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#8C6A3A" letter-spacing="1.2">PS · EMEA</text>
+      </svg>
+    </div>
+
+    <div class="flow-stat">
+      <span class="big cu" data-cu="15.2" data-prefix="$" data-suffix="B" data-decimals="1">0</span>
+      <span class="lbl">PS NA · FY '25</span>
+    </div>
+    <div class="flow-stat">
+      <span class="big cu" data-cu="8.5" data-prefix="$" data-suffix="B" data-decimals="1">0</span>
+      <span class="lbl">PS EMEA · FY '25</span>
+    </div>
+  </section>
+
+  <!-- ─────────  SCALE  ───────── -->
+  <section class="scale">
+    <div class="eyebrow"><span class="dot"></span><span>The scale</span><span class="num">· III</span></div>
+    <h2 class="display" style="font-size:40px; margin: 14px 0 8px;">
+      A <span class="it">paper company</span><br>
+      sized like a country.
+    </h2>
+    <p class="body" style="margin-top: 14px;">
+      Twenty-three billion in revenue, sixty-two thousand people, two continents. The numbers grew <em>0.30%</em> on a comparable basis — the floor under a transformation year.
+    </p>
+
+    <div class="scale-grid">
+      <div class="cell">
+        <span class="v cu" data-cu="23.63" data-prefix="$" data-suffix="B" data-decimals="2">0</span>
+        <span class="l">Revenue</span>
+      </div>
+      <div class="cell">
+        <span class="v cu it" data-cu="0.30" data-suffix="%" data-decimals="2">0</span>
+        <span class="l">YoY · comparable</span>
+      </div>
+      <div class="cell">
+        <span class="v cu" data-cu="6.01" data-prefix="$" data-suffix="B" data-decimals="2">0</span>
+        <span class="l">Q4 '25 revenue</span>
+      </div>
+      <div class="cell">
+        <span class="v cu" data-cu="62602" data-suffix="">0</span>
+        <span class="l">Employees</span>
+      </div>
+    </div>
+
+    <div class="scale-stack">
+      <svg id="paper-stack" viewBox="0 0 400 220" width="100%" height="220" preserveAspectRatio="none">
+        <!-- a stack of paper sheets, the topmost slightly torn -->
+        <g id="stack-group"></g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ─────────  RESET 2  ───────── -->
+  <aside class="reset reveal">
+    <p class="display">
+      You don't fold twenty-three billion dollars of corrugated by accident. <span class="sig">Most of it</span> goes back into the mill.
+    </p>
+  </aside>
+
+  <!-- ─────────  COSTS  ───────── -->
+  <section class="costs">
+    <div class="eyebrow"><span class="dot"></span><span>Where the dollar goes</span><span class="num">· IV</span></div>
+    <h2 class="display" style="font-size:40px; margin: 14px 0 14px;">
+      Of every <span class="it">dollar</span> in,<br>
+      <span class="sig">seventy cents</span><br>
+      goes back to <span class="it">make</span> the next box.
+    </h2>
+
+    <div class="costs-bar" id="costs-bar" aria-label="Cost breakdown">
+      <div data-pct="70" data-color="#2563EB" style="background:#2563EB; flex: 0 0 0%"></div>
+      <div data-pct="10" data-color="#D97706" style="background:#D97706; flex: 0 0 0%"></div>
+      <div data-pct="8"  data-color="#16A34A" style="background:#16A34A; flex: 0 0 0%"></div>
+      <div data-pct="5"  data-color="#DC2626" style="background:#DC2626; flex: 0 0 0%"></div>
+      <div data-pct="2"  data-color="#7C3AED" style="background:#7C3AED; flex: 0 0 0%"></div>
+    </div>
+
+    <div class="costs-legend">
+      <div class="row"><span class="swatch" style="background:#2563EB"></span><span class="lbl">Cost of revenue</span><span class="pct">70%</span></div>
+      <div class="row"><span class="swatch" style="background:#D97706"></span><span class="lbl">Goodwill &amp; impairments</span><span class="pct">10%</span></div>
+      <div class="row"><span class="swatch" style="background:#16A34A"></span><span class="lbl">Depreciation &amp; amortization</span><span class="pct">8%</span></div>
+      <div class="row"><span class="swatch" style="background:#DC2626"></span><span class="lbl">SG&amp;A</span><span class="pct">5%</span></div>
+      <div class="row"><span class="swatch" style="background:#7C3AED"></span><span class="lbl">Restructuring &amp; other</span><span class="pct">2%</span></div>
+    </div>
+
+    <!-- Impairment beat — the orange cost gets its own moment -->
+    <div class="impair-band">
+      <div class="meta" style="color: #B45309; margin-bottom: 4px;">The amber stripe · 10%</div>
+      <div class="v">−$2.47B</div>
+      <p class="l">Non-cash <em>goodwill impairment</em> on the PS EMEA reporting unit, plus $958M in accelerated depreciation. The Q4 line: EPS of <em>−$0.08</em>; the full-year line: a $3.52B loss on paper.</p>
+    </div>
+  </section>
+
+  <!-- ─────────  RESET 3  ───────── -->
+  <aside class="reset reveal">
+    <p class="display">
+      Sixty-four cents come from <span class="sig">North America.</span> Thirty-six come from a continent IP didn't really sell into eighteen months ago.
+    </p>
+  </aside>
+
+  <!-- ─────────  GEO  ───────── -->
+  <section class="geo">
+    <div class="eyebrow"><span class="dot"></span><span>Footprint</span><span class="num">· V</span></div>
+    <h2 class="display" style="font-size: 40px; margin: 14px 0 8px;">
+      Two continents,<br>
+      <span class="it sig">one</span> integrated network.
+    </h2>
+
+    <div class="geo-scene">
+      <svg id="geo-svg" viewBox="0 0 400 280" width="100%" height="280">
+        <!-- abstract two-disc world: NA on left, EMEA on right, sized to pct -->
+        <defs>
+          <pattern id="dots-na" width="10" height="10" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1.4" fill="#5C4523"/>
+          </pattern>
+          <pattern id="dots-eu" width="10" height="10" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1.4" fill="#C84A1F"/>
+          </pattern>
+        </defs>
+
+        <!-- equator line connecting the two -->
+        <line x1="20" y1="140" x2="380" y2="140" stroke="#8C6A3A" stroke-width="1" stroke-dasharray="3 5" opacity=".5"/>
+
+        <!-- NA disc (64%) -->
+        <g id="na-disc">
+          <circle cx="115" cy="140" r="78" fill="#D9BF8F"/>
+          <circle cx="115" cy="140" r="78" fill="url(#dots-na)" opacity=".8"/>
+          <circle cx="115" cy="140" r="78" fill="none" stroke="#5C4523" stroke-width="1.5"/>
+          <text x="115" y="138" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="44" fill="#2E2316">64<tspan font-size="22">%</tspan></text>
+          <text x="115" y="160" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#5C4523" letter-spacing="1.4">NORTH AMERICA</text>
+        </g>
+
+        <!-- EMEA disc (36%) — smaller, signal-toned -->
+        <g id="eu-disc">
+          <circle cx="290" cy="140" r="58" fill="#F6EFE2"/>
+          <circle cx="290" cy="140" r="58" fill="url(#dots-eu)" opacity=".75"/>
+          <circle cx="290" cy="140" r="58" fill="none" stroke="#C84A1F" stroke-width="1.5"/>
+          <text x="290" y="138" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="34" fill="#C84A1F">36<tspan font-size="18">%</tspan></text>
+          <text x="290" y="158" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#5C4523" letter-spacing="1.4">EMEA</text>
+        </g>
+
+        <!-- DS Smith arrow -->
+        <g opacity=".75">
+          <path d="M 200 230 Q 245 215 280 200" fill="none" stroke="#C84A1F" stroke-width="1.2" stroke-dasharray="2 4"/>
+          <text x="200" y="248" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#C84A1F" letter-spacing="1.4">via DS SMITH · $9.9B · 2025</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="geo-rows">
+      <div class="r"><span class="name">North America</span><span class="pct">64<span style="font-size:.55em">%</span></span></div>
+      <div class="r"><span class="name">Europe, Middle East &amp; Africa</span><span class="pct"><span class="sig">36</span><span style="font-size:.55em">%</span></span></div>
+    </div>
+  </section>
+
+  <!-- ─────────  THE BET  ───────── -->
+  <section class="bet">
+    <div class="eyebrow"><span class="dot"></span><span>The bet · mill modernization</span><span class="num">· VI</span></div>
+    <h2 class="display" style="font-size: 40px; margin: 14px 0 14px;">
+      Spend now to <span class="it sig">cash flow</span> later.<br>
+      <span class="it">Free cash:</span> negative.
+    </h2>
+    <p class="body">
+      Operating cash <em>$1.70B</em> in. Capex <em>$1.86B</em> out. The result is a peak-investment cycle that pulls free cash flow underwater on purpose — with <span class="sig">$2.0–$2.1B</span> of capex queued for 2026.
+    </p>
+
+    <div class="capex-scene">
+      <svg id="capex-svg" viewBox="0 0 400 200" width="100%" height="200">
+        <!-- waterfall: opCF bar up, capex bar down, FCF residual -->
+        <g font-family="Geist Mono" font-size="10" fill="#5C4523" letter-spacing="1.2">
+          <text x="50" y="195" text-anchor="middle">OP CF</text>
+          <text x="170" y="195" text-anchor="middle">CAPEX</text>
+          <text x="290" y="195" text-anchor="middle">FCF</text>
+          <text x="370" y="195" text-anchor="middle">2026E</text>
+        </g>
+        <!-- baseline -->
+        <line x1="20" y1="160" x2="380" y2="160" stroke="#8C6A3A" stroke-width="1"/>
+
+        <!-- bars (animate) -->
+        <g id="capex-bars">
+          <!-- positive op cf -->
+          <rect data-bar="opcf" x="20" y="160" width="60" height="0" fill="#8C6A3A"/>
+          <!-- negative capex -->
+          <rect data-bar="capex" x="140" y="160" width="60" height="0" fill="#C84A1F"/>
+          <!-- net FCF (slightly negative) -->
+          <rect data-bar="fcf" x="260" y="160" width="60" height="0" fill="#5C4523"/>
+          <!-- 2026E (largest, signal) -->
+          <rect data-bar="cap26" x="340" y="160" width="40" height="0" fill="#D97706" opacity=".95"/>
+        </g>
+
+        <!-- value labels -->
+        <g font-family="Instrument Serif" font-style="italic" font-size="14" fill="#2E2316">
+          <text x="50"  y="60"  text-anchor="middle" data-lbl="opcf">$1.70B</text>
+          <text x="170" y="60"  text-anchor="middle" data-lbl="capex" fill="#C84A1F">−$1.86B</text>
+          <text x="290" y="60"  text-anchor="middle" data-lbl="fcf">−$159M</text>
+          <text x="370" y="60"  text-anchor="middle" data-lbl="cap26" fill="#D97706">$2.1B</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="bet-fcf">
+      <div class="cell"><div class="v">$977M</div><div class="l">FY '25 dividend</div></div>
+      <div class="cell"><div class="v">$0</div><div class="l">Buybacks</div></div>
+      <div class="cell"><div class="v neg">−$159M</div><div class="l">Free cash flow</div></div>
+    </div>
+  </section>
+
+  <!-- ─────────  COMPETITION  ───────── -->
+  <section class="comp">
+    <div class="eyebrow"><span class="dot"></span><span>The competition · sized by revenue</span><span class="num">· VII</span></div>
+    <h2 class="display" style="font-size:40px; margin: 14px 0 12px;">
+      The <span class="it">peer set</span> isn't just <span class="sig">paper.</span>
+    </h2>
+    <p class="body">It's anything that wraps a thing for shipping. Tap any name to read why.</p>
+
+    <div class="comp-list" id="comp-list">
+
+      <div class="comp-row us">
+        <div class="ticker">IP</div>
+        <div class="body-c">
+          <div class="name">International Paper</div>
+          <div class="scale-bar"><i data-w="76"></i></div>
+          <div class="meta-row">
+            <span>REV <b>$23.6B</b></span><span>MCAP <b>$19.7B</b></span><span>YOY <b>+0.3%</b></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-row" data-toggle>
+        <div class="ticker">SW</div>
+        <div class="body-c">
+          <div class="name">Smurfit WestRock</div>
+          <div class="scale-bar"><i data-w="100"></i></div>
+          <div class="meta-row">
+            <span>REV <b>$31.2B</b></span><span>MCAP <b>$22.1B</b></span><span>YOY <b>−1.8%</b></span>
+          </div>
+          <p class="desc">IP's most direct global competitor in corrugated containerboard and box manufacturing — a nearly identical integrated mill-to-box-plant model competing head-to-head for the same North American and European industrial and e-commerce customers.</p>
+        </div>
+      </div>
+
+      <div class="comp-row" data-toggle>
+        <div class="ticker">AMCR</div>
+        <div class="body-c">
+          <div class="name">Amcor</div>
+          <div class="scale-bar"><i data-w="48"></i></div>
+          <div class="meta-row">
+            <span>REV <b>$15.0B</b></span><span>MCAP <b>$19.4B</b></span><span>YOY <b>+44.8%</b></span>
+          </div>
+          <p class="desc">Flexible and rigid consumer packaging for food, beverage, and healthcare — increasingly converging on the sustainable fiber-based segment where IP is investing heavily post-DS Smith.</p>
+        </div>
+      </div>
+
+      <div class="comp-row" data-toggle>
+        <div class="ticker">BALL</div>
+        <div class="body-c">
+          <div class="name">Ball Corp</div>
+          <div class="scale-bar"><i data-w="42"></i></div>
+          <div class="meta-row">
+            <span>REV <b>$13.2B</b></span><span>MCAP <b>$17.2B</b></span><span>YOY <b>+11.6%</b></span>
+          </div>
+          <p class="desc">Aluminum cans as alternative sustainable packaging — increasingly displacing corrugated and fiber-based secondary packaging in e-commerce and retail channels where IP holds significant share.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─────────  CLOSE — the split  ───────── -->
+  <section class="close">
+    <div class="eyebrow"><span class="dot"></span><span>The takeaway</span><span class="num">· VIII</span></div>
+    <p class="display">
+      One <span class="it">box company,</span><br>
+      <span class="sig">about to become two.</span>
+    </p>
+
+    <div class="scene">
+      <svg id="split-svg" viewBox="0 0 400 240" width="100%" height="240">
+        <!-- single box on left, splitting into two -->
+        <!-- left half (NA) -->
+        <g id="box-left">
+          <polygon data-shape="box-left"
+            points="40,80 130,60 130,180 40,200"
+            fill="#D9BF8F" stroke="#FBFAF7" stroke-width="1.5"/>
+          <polygon data-shape="box-left-top"
+            points="40,80 130,60 220,80 130,100"
+            fill="#BE9A60" stroke="#FBFAF7" stroke-width="1.5"/>
+          <polygon data-shape="box-left-right"
+            points="130,60 220,80 220,200 130,180"
+            fill="#8C6A3A" stroke="#FBFAF7" stroke-width="1.5"/>
+          <text data-shape="box-left-label" x="130" y="135" text-anchor="middle" font-family="Geist Mono" font-size="10" fill="#FBFAF7" letter-spacing="1.4">PS · NORTH AMERICA</text>
+          <text data-shape="box-left-rev"   x="130" y="155" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#FBFAF7">$15.2B</text>
+        </g>
+
+        <!-- right half (EMEA) — sits flush at start, slides right -->
+        <g id="box-right">
+          <polygon data-shape="box-right"
+            points="220,80 310,60 310,180 220,200"
+            fill="#D9BF8F" stroke="#FBFAF7" stroke-width="1.5"/>
+          <polygon data-shape="box-right-top"
+            points="220,80 310,60 360,76 280,96"
+            fill="#BE9A60" stroke="#FBFAF7" stroke-width="1.5"/>
+          <polygon data-shape="box-right-right"
+            points="310,60 360,76 360,196 310,180"
+            fill="#8C6A3A" stroke="#FBFAF7" stroke-width="1.5"/>
+          <text data-shape="box-right-label" x="265" y="135" text-anchor="middle" font-family="Geist Mono" font-size="10" fill="#FBFAF7" letter-spacing="1.4">PS · EMEA</text>
+          <text data-shape="box-right-rev"   x="265" y="155" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#FBFAF7">$8.5B</text>
+        </g>
+
+        <!-- the cut line, drawn through -->
+        <line id="cut-line" x1="220" y1="40" x2="220" y2="220" stroke="#FFB388" stroke-width="1.2" stroke-dasharray="3 4" opacity="0"/>
+
+        <!-- timeline label -->
+        <text x="200" y="232" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#FFB388" letter-spacing="1.4">EXPECTED · LATE 2026 / EARLY 2027</text>
+      </svg>
+    </div>
+
+    <div class="closing-stat">
+      <div class="cell">
+        <div class="v">$9.9B</div>
+        <div class="l">DS Smith · 2025</div>
+      </div>
+      <div class="cell">
+        <div class="v">2027</div>
+        <div class="l">Two public companies</div>
+      </div>
+    </div>
+
+    <p class="colophon">
+      <b>NYSE · IP</b> · International Paper Co. · HQ Memphis, TN<br>
+      Recap fiscal year ended <b>Dec 31 2025</b><br>
+      Source figures: company filings and prose disclosure
+    </p>
+  </section>
+
+</div>
+
+<script>
+/* ─────────────────────  HELPERS  ───────────────────── */
+const $  = (s, p=document) => p.querySelector(s);
+const $$ = (s, p=document) => Array.from(p.querySelectorAll(s));
+
+/* ─────────────────────  HERO FLUTES  ─────────────────────
+   Build a row of corrugated flutes between two liners.
+   They breathe with scroll: amplitude rises, then settles. */
+(function buildFlutes(){
+  const g = $('#flute-group');
+  const sh = $('#flute-shadows');
+  if(!g) return;
+  const W = 440, top = 20, bot = 110;
+  const period = 22;
+  const count = Math.ceil(W / period) + 1;
+  let path = '';
+  for(let i = 0; i < count; i++){
+    const x = i * period;
+    // half-circle up
+    path += (i===0 ? 'M ' : 'M ') + x + ' ' + bot + ' ';
+    path += `Q ${x + period/4} ${top} ${x + period/2} ${bot} `;
+    // and a little tick down
+    path += `Q ${x + 3*period/4} ${bot+8} ${x + period} ${bot}`;
+  }
+  g.innerHTML = `<path d="${path}" />`;
+
+  // shadows under each flute
+  let shadow = '';
+  for(let i = 0; i < count; i++){
+    shadow += `<ellipse cx="${i*period + period/2}" cy="115" rx="${period/2.4}" ry="3" />`;
+  }
+  sh.innerHTML = shadow;
+})();
+
+/* ─────────────────────  SCROLL PROGRESS  ───────────────────── */
+const progressEl = $('#progress');
+function onScroll(){
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const pct = max > 0 ? (h.scrollTop || document.body.scrollTop) / max : 0;
+  if(progressEl) progressEl.style.width = (pct * 100).toFixed(2) + '%';
+
+  /* Hero flutes — scale amplitude with hero scroll */
+  const flutes = $('#flute-group');
+  if(flutes){
+    const heroH = 700;
+    const t = Math.min(1, Math.max(0, (h.scrollTop) / heroH));
+    const sy = 1 - t * 0.5; // compresses as you scroll
+    flutes.setAttribute('transform', `translate(0,${t*8}) scale(1, ${sy})`);
+    flutes.style.transformOrigin = '50% 65px';
+  }
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+
+/* ─────────────────────  REVEAL ON VIEW  ───────────────────── */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      // Fire any data-onview hooks
+      if(e.target.dataset.onview) window[e.target.dataset.onview](e.target);
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+
+/* Mark every section + reset for reveal — but the HERO is in immediately */
+$$('section, .reset').forEach(el => {
+  if(el.classList.contains('hero')){
+    el.classList.add('reveal','in');
+    return;
+  }
+  el.classList.add('reveal');
+  io.observe(el);
+});
+
+/* Belt + suspenders: anything still off-screen-revealed after 1.2s gets shown
+   if it is currently within the viewport. Guards against IO not firing in
+   some iframe environments. */
+setTimeout(() => {
+  $$('.reveal:not(.in)').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if(r.top < window.innerHeight && r.bottom > 0){
+      el.classList.add('in');
+    }
+  });
+}, 800);
+window.addEventListener('scroll', () => {
+  $$('.reveal:not(.in)').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if(r.top < window.innerHeight * 0.9 && r.bottom > 0){
+      el.classList.add('in');
+    }
+  });
+}, { passive: true });
+
+/* ─────────────────────  COUNT-UPS  ───────────────────── */
+function countUp(el){
+  const target = parseFloat(el.dataset.cu);
+  const dec = parseInt(el.dataset.decimals || '0', 10);
+  const pre = el.dataset.prefix || '';
+  const suf = el.dataset.suffix || '';
+  const dur = 1100;
+  const t0 = performance.now();
+  const isInt = dec === 0;
+  function frame(t){
+    const k = Math.min(1, (t - t0) / dur);
+    const eased = 1 - Math.pow(1 - k, 3);
+    const v = target * eased;
+    el.textContent = pre + (isInt
+      ? Math.round(v).toLocaleString()
+      : v.toFixed(dec)) + suf;
+    if(k < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+const cuIO = new IntersectionObserver((ents)=>{
+  ents.forEach(e => {
+    if(e.isIntersecting){ countUp(e.target); cuIO.unobserve(e.target); }
+  });
+},{ threshold: 0.6 });
+$$('.cu').forEach(el => cuIO.observe(el));
+
+/* ─────────────────────  FLOW · rolls travel  ───────────────────── */
+const flowSvg = $('#flow-svg');
+function flowTick(t){
+  if(!flowSvg) return;
+  const rolls = $$('.roll', flowSvg);
+  rolls.forEach(r => {
+    const off = parseFloat(r.dataset.offset);
+    const u = ((t/2400) + off) % 1;
+    // sample our conveyor cubic with cheap parametric approx
+    const x = 100 + (310 - 100) * u;
+    const y = 100 + Math.sin(u * Math.PI) * 30;
+    r.setAttribute('transform', `translate(${x},${y})`);
+  });
+  requestAnimationFrame(flowTick);
+}
+requestAnimationFrame(flowTick);
+
+/* mill smoke drift */
+let smokeStart = performance.now();
+function smokeTick(){
+  const g = $('#smoke');
+  if(g){
+    const t = (performance.now() - smokeStart) / 1000;
+    g.querySelectorAll('circle').forEach((c, i) => {
+      const cy = -2 - ((t*8 + i*5) % 22);
+      c.setAttribute('cy', cy);
+      c.setAttribute('opacity', Math.max(0, 0.7 - ((t*0.4 + i*0.3)%1) * 0.7));
+    });
+  }
+  requestAnimationFrame(smokeTick);
+}
+requestAnimationFrame(smokeTick);
+
+/* ─────────────────────  PAPER STACK · scroll-driven  ───────────────────── */
+(function buildStack(){
+  const g = $('#stack-group');
+  if(!g) return;
+  // 18 sheets stacked, slight skew per sheet
+  const N = 18;
+  let html = '';
+  for(let i = 0; i < N; i++){
+    const y = 200 - i * 8;
+    const skew = (Math.random() - 0.5) * 4;
+    const x = 30 + (Math.random() - 0.5) * 6;
+    const w = 320 + (Math.random() - 0.5) * 10;
+    const tone = i === N-1 ? '#F6EFE2' : (i % 2 ? '#EADBBE' : '#F6EFE2');
+    html += `<g data-sheet="${i}" transform="translate(${x},${y}) rotate(${skew} 160 6)"><rect width="${w}" height="14" fill="${tone}" stroke="#8C6A3A" stroke-width=".6"/></g>`;
+  }
+  // sheet count label
+  html += `<text x="200" y="40" text-anchor="middle" font-family="Geist Mono" font-size="10" fill="#8C6A3A" letter-spacing="1.4">~62,602 EMPLOYEES · ONE STACK</text>`;
+  g.innerHTML = html;
+})();
+
+/* As paper-stack section scrolls, sheets fan out */
+function stackOnScroll(){
+  const sec = $('.scale-stack');
+  if(!sec) return;
+  const r = sec.getBoundingClientRect();
+  const vh = window.innerHeight;
+  // 0 when stack hasn't entered, 1 when centered
+  const t = Math.max(0, Math.min(1, 1 - (r.top - vh*0.2) / (vh*0.8)));
+  $$('#stack-group [data-sheet]').forEach((s, i) => {
+    const skewBase = (i - 8) * 0.6 * t;
+    const dx = (i - 8) * 1.2 * t;
+    const cur = s.getAttribute('transform') || '';
+    // recompute roughly
+    const m = cur.match(/translate\(([\d.\-]+),([\d.\-]+)\)/);
+    if(m){
+      const x = parseFloat(m[1]);
+      const y = parseFloat(m[2]);
+      s.setAttribute('transform', `translate(${x+dx},${y}) rotate(${skewBase} 160 6)`);
+    }
+  });
+}
+window.addEventListener('scroll', stackOnScroll, { passive: true });
+
+/* ─────────────────────  COSTS BAR · animate on view  ───────────────────── */
+const costsBar = $('#costs-bar');
+const costsIO = new IntersectionObserver((ents)=>{
+  ents.forEach(e => {
+    if(e.isIntersecting){
+      $$('div', costsBar).forEach(d => {
+        d.style.flex = `0 0 ${d.dataset.pct}%`;
+      });
+      costsIO.unobserve(e.target);
+    }
+  });
+},{ threshold: 0.4 });
+if(costsBar) costsIO.observe(costsBar);
+
+/* ─────────────────────  CAPEX BARS · animate on view  ───────────────────── */
+const capexSvg = $('#capex-svg');
+const capexIO = new IntersectionObserver((ents)=>{
+  ents.forEach(e => {
+    if(!e.isIntersecting) return;
+    const set = (sel, height, y) => {
+      const r = $(`[data-bar="${sel}"]`, capexSvg);
+      if(!r) return;
+      r.animate(
+        [{ height: 0, y: 160 }, { height, y }],
+        { duration: 900, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'forwards' }
+      );
+    };
+    // values normalized to a max ~$2.1B
+    const max = 2.1;
+    const px = v => (v / max) * 80;
+    // OP CF $1.7B → up
+    set('opcf',  px(1.70), 160 - px(1.70));
+    // CAPEX $1.86B → down
+    set('capex', px(1.86), 160);
+    // FCF -$0.159B → down small
+    set('fcf',   px(0.159), 160);
+    // 2026E $2.1B → up max, signal
+    set('cap26', px(2.1),  160 - px(2.1));
+    capexIO.unobserve(e.target);
+  });
+},{ threshold: 0.3 });
+if(capexSvg) capexIO.observe(capexSvg);
+
+/* ─────────────────────  COMPETITION · scale bars + tap to expand  ───────────────────── */
+const compIO = new IntersectionObserver((ents)=>{
+  ents.forEach(e => {
+    if(e.isIntersecting){
+      $$('.scale-bar i', e.target).forEach(i => {
+        i.style.width = i.dataset.w + '%';
+      });
+      compIO.unobserve(e.target);
+    }
+  });
+},{ threshold: 0.3 });
+const compList = $('#comp-list');
+if(compList) compIO.observe(compList);
+
+$$('[data-toggle]').forEach(row => {
+  row.addEventListener('click', () => row.classList.toggle('open'));
+});
+
+/* ─────────────────────  CLOSE · split scrub  ───────────────────── */
+const splitScene = $('.close .scene');
+const splitSvg   = $('#split-svg');
+const cutLine    = $('#cut-line');
+
+function splitOnScroll(){
+  if(!splitScene || !splitSvg) return;
+  const r = splitScene.getBoundingClientRect();
+  const vh = window.innerHeight;
+  // Scrub from when scene top hits 80% viewport to when it hits 20%
+  const t = Math.max(0, Math.min(1, (vh*0.8 - r.top) / (vh*0.6)));
+
+  const right = $('#box-right', splitSvg);
+  if(right){
+    const dx = t * 50;
+    right.setAttribute('transform', `translate(${dx},0)`);
+    right.style.opacity = 0.5 + t*0.5;
+  }
+  if(cutLine){
+    cutLine.setAttribute('opacity', t.toFixed(2));
+  }
+}
+window.addEventListener('scroll', splitOnScroll, { passive: true });
+
+/* initial paint */
+onScroll();
+splitOnScroll();
+stackOnScroll();
+</script>
+</body>
+</html>

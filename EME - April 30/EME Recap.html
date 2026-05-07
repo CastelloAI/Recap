@@ -1,0 +1,1311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>EME · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   EME RECAP — schematic / blueprint / structural register
+   ============================================================ */
+:root {
+  /* Palette derived for EMCOR — paper + steel + ink + signal amber */
+  --paper:        #F4F1EA;     /* warm blueprint paper */
+  --paper-2:      #ECE8DE;
+  --paper-3:      #E2DCCD;
+  --ink:          #15171A;     /* near-black ink */
+  --ink-2:        #2C2F35;
+  --ink-3:        #5A5E66;
+  --ink-4:        #8E9098;
+  --line:         #C9C2B0;
+  --line-strong:  #9B9479;
+
+  /* Steel / structural */
+  --steel:        #2B3036;
+  --steel-2:      #1A1D21;
+
+  /* Blueprint accents */
+  --blueprint:    #16324A;     /* deep, used in dark sections */
+  --blueprint-2:  #0E2236;
+  --schematic:    #3A6E8F;     /* blueprint line color */
+  --schematic-2:  #76A2BE;
+
+  /* Signal — the earned amber, used SPARINGLY for "the bet" + emphasis */
+  --signal:       #E07A1F;     /* warm orange/amber — current */
+  --signal-2:     #F4A03A;
+  --signal-glow:  rgba(224,122,31,0.35);
+
+  /* Cost colors (from JSON, must honor) */
+  --c-cor: #2563EB;
+  --c-sga: #16A34A;
+  --c-da:  #D97706;
+
+  /* Type */
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, monospace;
+
+  --pad: 22px;             /* mobile gutter */
+  --max-w: 440px;
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); font-family: var(--font-sans); }
+body {
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* The page itself is the mobile artifact, capped at ~440px */
+.page {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  position: relative;
+  background: var(--paper);
+  overflow: hidden;
+}
+
+/* ----- CHROME ------------------------------------------------ */
+.chrome {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(244,241,234,0.78);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  border-bottom: 1px solid rgba(201,194,176,0.5);
+}
+.chrome-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px var(--pad) 10px;
+}
+.chrome-tick {
+  font-family: var(--font-mono); font-weight: 600;
+  font-size: 13px; letter-spacing: 0.04em;
+  color: var(--ink);
+}
+.chrome-name {
+  font-family: var(--font-sans); font-size: 13px;
+  color: var(--ink-3); flex: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.chrome-label {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.chrome-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 0 4px rgba(224,122,31,0.15);
+  animation: pulse 2s var(--ease-out, ease-in-out) infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 4px rgba(224,122,31,0.15); }
+  50%     { box-shadow: 0 0 0 8px rgba(224,122,31,0.02); }
+}
+.progress {
+  height: 1.5px; background: transparent; position: relative;
+}
+.progress > span {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0; background: var(--signal);
+  transition: width 60ms linear;
+}
+
+/* ----- TYPE PRIMITIVES -------------------------------------- */
+.eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 500;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.eyebrow .tick { width: 14px; height: 1px; background: var(--ink-3); display: inline-block; }
+.eyebrow.signal { color: var(--signal); }
+.eyebrow.signal .tick { background: var(--signal); }
+.eyebrow.invert { color: rgba(244,241,234,0.55); }
+.eyebrow.invert .tick { background: rgba(244,241,234,0.45); }
+
+.display {
+  font-family: var(--font-display); font-weight: 400;
+  line-height: 0.96; letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.it { font-style: italic; }
+.signal-text { color: var(--signal); }
+
+.body-copy {
+  font-family: var(--font-sans); font-size: 15.5px;
+  line-height: 1.55; color: var(--ink-2);
+  text-wrap: pretty;
+}
+.body-copy em { font-family: var(--font-display); font-style: italic; font-size: 1.06em; color: var(--signal); font-weight: 400; }
+.mono { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--ink-3); text-transform: uppercase; }
+
+/* ----- SECTION SCAFFOLD ------------------------------------- */
+section { padding: 56px var(--pad); position: relative; }
+section.tight { padding-top: 36px; padding-bottom: 36px; }
+.section-head { margin-bottom: 28px; }
+.section-head h2 {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: 38px; line-height: 1.02; letter-spacing: -0.018em;
+  margin: 12px 0 0; color: var(--ink);
+}
+.section-head h2 .it { color: var(--ink); }
+
+/* Reset beat — italic-serif interlude */
+.reset {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 44px var(--pad);
+  position: relative;
+}
+.reset.paper {
+  background: var(--paper-3);
+  color: var(--ink-2);
+}
+.reset .interlude {
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: 26px; line-height: 1.18; letter-spacing: -0.01em;
+  color: inherit;
+  text-wrap: balance;
+}
+.reset.paper .interlude { color: var(--ink); }
+.reset .interlude .signal-text { color: var(--signal-2); }
+.reset.paper .interlude .signal-text { color: var(--signal); }
+.reset .crossbar {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 18px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(244,241,234,0.5);
+}
+.reset.paper .crossbar { color: var(--ink-3); }
+.reset .crossbar .tick { flex: 1; height: 1px; background: currentColor; opacity: 0.4; }
+
+/* ============================================================
+   HERO — current threading through schematic
+   ============================================================ */
+.hero {
+  padding: 32px var(--pad) 64px;
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+}
+.hero-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 24px;
+}
+.hero-stage {
+  position: relative;
+  height: 360px;
+  margin: 0 calc(var(--pad) * -1);
+  overflow: hidden;
+}
+.hero-stage svg { width: 100%; height: 100%; display: block; }
+.hero-headline {
+  margin-top: 26px;
+}
+.hero-headline .display {
+  font-size: 56px;
+  line-height: 0.94;
+  letter-spacing: -0.025em;
+}
+.hero-sub {
+  margin-top: 18px;
+  font-family: var(--font-sans);
+  font-size: 15px; line-height: 1.55; color: var(--ink-2);
+  max-width: 30ch;
+}
+.hero-stat-row {
+  display: flex; gap: 24px; margin-top: 28px;
+  padding-top: 18px; border-top: 1px solid var(--line);
+}
+.hero-stat .num {
+  font-family: var(--font-display); font-size: 34px; line-height: 1;
+  letter-spacing: -0.01em;
+}
+.hero-stat .lbl {
+  font-family: var(--font-mono); font-size: 9.5px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-3); margin-top: 6px;
+}
+
+/* ============================================================
+   BUSINESS — conduit / pipe metaphor (revenue mix)
+   ============================================================ */
+.conduit-stack {
+  margin-top: 28px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.conduit {
+  position: relative;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 4px;
+  padding: 16px 16px 14px;
+  overflow: hidden;
+}
+.conduit .corner {
+  position: absolute; width: 8px; height: 8px;
+  border: 1px solid var(--ink-3);
+}
+.conduit .corner.tl { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.conduit .corner.tr { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
+.conduit .corner.bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
+.conduit .corner.br { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+.conduit-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.conduit-name {
+  font-family: var(--font-sans); font-size: 14px; font-weight: 500;
+  color: var(--ink);
+}
+.conduit-pct {
+  font-family: var(--font-display); font-size: 30px; line-height: 1;
+  letter-spacing: -0.01em; color: var(--ink);
+}
+.conduit-pct .pcent { font-size: 18px; color: var(--ink-3); margin-left: 2px; }
+.conduit-meta {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--ink-3); margin-top: 6px;
+}
+.conduit-bar {
+  margin-top: 12px; height: 4px; background: var(--paper-3); border-radius: 2px;
+  position: relative; overflow: hidden;
+}
+.conduit-bar > span {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: var(--ink); border-radius: 2px;
+  transition: width 1s var(--ease-out, cubic-bezier(0.22,1,0.36,1));
+}
+.conduit.signal .conduit-bar > span { background: var(--signal); }
+.conduit-svg {
+  margin-top: 12px;
+  width: 100%; height: 22px; display: block;
+}
+
+/* ============================================================
+   SCALE — count-up monoliths
+   ============================================================ */
+.scale-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  margin: 28px calc(var(--pad) * -1) 0;
+  border-top: 1px solid var(--ink);
+}
+.scale-cell {
+  padding: 22px var(--pad);
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  position: relative;
+}
+.scale-cell:nth-child(2n) { border-right: 0; }
+.scale-cell .num {
+  font-family: var(--font-display); font-size: 52px; line-height: 0.92;
+  letter-spacing: -0.025em; color: var(--ink);
+}
+.scale-cell .num .small { font-size: 26px; color: var(--ink-2); }
+.scale-cell .num .pcent { font-size: 22px; color: var(--ink-3); }
+.scale-cell .lbl {
+  margin-top: 8px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
+  line-height: 1.4;
+}
+.scale-cell .corner-mark {
+  position: absolute; top: 8px; right: 10px;
+  font-family: var(--font-mono); font-size: 9px; color: var(--ink-4);
+}
+
+/* Comparative bar — Q4 vs FY */
+.compare {
+  margin-top: 28px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  border-radius: 4px;
+  position: relative;
+}
+.compare .row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.compare .v {
+  font-family: var(--font-display); font-size: 22px; color: var(--ink);
+  letter-spacing: -0.01em; line-height: 1;
+}
+.compare-bar { height: 28px; margin-top: 14px; display: flex; gap: 4px; }
+.compare-seg {
+  background: var(--ink); flex: 1;
+  display: flex; align-items: flex-end; justify-content: flex-start;
+  padding: 4px;
+  font-family: var(--font-mono); font-size: 9px; color: var(--paper);
+  letter-spacing: 0.08em;
+}
+.compare-seg.q { background: var(--signal); flex: 0.265; } /* 4.51 / 16.99 */
+
+/* ============================================================
+   COSTS — 100-grid
+   ============================================================ */
+.cost-grid-wrap { margin-top: 24px; }
+.cost-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 3px;
+  aspect-ratio: 1 / 1;
+  margin-bottom: 18px;
+}
+.cost-cell {
+  background: var(--paper-3);
+  border-radius: 1.5px;
+  position: relative;
+}
+.cost-cell.cor { background: var(--c-cor); }
+.cost-cell.sga { background: var(--c-sga); }
+.cost-cell.da  { background: var(--c-da); }
+.cost-cell.surplus {
+  background: var(--paper);
+  border: 1px solid var(--ink);
+}
+.cost-legend { display: flex; flex-direction: column; gap: 10px; }
+.cost-leg {
+  display: grid; grid-template-columns: 22px 1fr auto; align-items: center;
+  gap: 12px; padding: 10px 0; border-top: 1px solid var(--line);
+}
+.cost-leg:last-child { border-bottom: 1px solid var(--line); }
+.cost-leg .swatch { width: 22px; height: 22px; border-radius: 2px; }
+.cost-leg .swatch.surplus { background: var(--paper); border: 1px solid var(--ink); position: relative; }
+.cost-leg .swatch.surplus::before {
+  content: ''; position: absolute; inset: 4px;
+  background: repeating-linear-gradient(45deg, var(--ink) 0 1px, transparent 1px 4px);
+}
+.cost-leg .name { font-family: var(--font-sans); font-size: 14px; color: var(--ink); font-weight: 500; }
+.cost-leg .name .sub { display: block; font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 3px; }
+.cost-leg .pct { font-family: var(--font-display); font-size: 26px; color: var(--ink); letter-spacing: -0.01em; }
+
+/* Margin pull — 15¢ */
+.margin-pull {
+  margin-top: 28px; padding: 22px 18px;
+  background: var(--paper-2);
+  border-radius: 4px;
+  border-left: 2px solid var(--signal);
+}
+.margin-pull .display {
+  font-size: 64px; line-height: 0.95;
+  letter-spacing: -0.025em;
+}
+.margin-pull .display .it { color: var(--ink); }
+.margin-pull .cap {
+  margin-top: 10px; font-family: var(--font-sans); font-size: 14px;
+  line-height: 1.5; color: var(--ink-2); max-width: 28ch;
+}
+.margin-pull .cap em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+/* ============================================================
+   FOOTPRINT — 97/3 schematic
+   ============================================================ */
+.footprint-stage {
+  margin-top: 24px;
+  position: relative;
+  background: var(--blueprint);
+  color: var(--paper);
+  border-radius: 4px;
+  padding: 24px 18px;
+  overflow: hidden;
+}
+.footprint-stage::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(118,162,190,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(118,162,190,0.07) 1px, transparent 1px);
+  background-size: 16px 16px;
+  pointer-events: none;
+}
+.footprint-stage > * { position: relative; }
+.footprint-stage .eyebrow { color: rgba(244,241,234,0.6); }
+.footprint-stage .eyebrow .tick { background: rgba(244,241,234,0.45); }
+.footprint-rows {
+  margin-top: 14px;
+  display: flex; flex-direction: column; gap: 18px;
+}
+.footprint-row .top {
+  display: flex; align-items: baseline; justify-content: space-between;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: rgba(244,241,234,0.7);
+}
+.footprint-row .v { font-family: var(--font-display); font-size: 38px; line-height: 1; color: var(--paper); letter-spacing: -0.015em; }
+.footprint-row .v .pcent { font-size: 22px; color: rgba(244,241,234,0.55); }
+.footprint-row .bar { margin-top: 8px; height: 6px; background: rgba(244,241,234,0.1); border-radius: 1px; position: relative; overflow: hidden; }
+.footprint-row .bar > span { position: absolute; inset: 0; width: 0; background: var(--schematic-2); transition: width 1.2s cubic-bezier(0.22,1,0.36,1); }
+.footprint-row.us .bar > span { background: var(--paper); }
+.footprint-locations {
+  margin-top: 22px; padding-top: 18px;
+  border-top: 1px solid rgba(118,162,190,0.25);
+  display: flex; gap: 22px;
+}
+.footprint-locations .num {
+  font-family: var(--font-display); font-size: 30px; line-height: 1; color: var(--paper); letter-spacing: -0.01em;
+}
+.footprint-locations .lbl {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(244,241,234,0.55); margin-top: 4px;
+}
+
+/* ============================================================
+   THE BET — dark interlude, Miller Electric + AI
+   ============================================================ */
+.bet-section {
+  background: var(--steel-2);
+  color: var(--paper);
+  padding: 64px var(--pad) 56px;
+  position: relative;
+  overflow: hidden;
+}
+.bet-section::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(244,241,234,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244,241,234,0.04) 1px, transparent 1px);
+  background-size: 22px 22px;
+  pointer-events: none;
+}
+.bet-section > * { position: relative; }
+.bet-section .eyebrow { color: var(--signal); }
+.bet-section .eyebrow .tick { background: var(--signal); }
+.bet-section h2 {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: 42px; line-height: 1.0; letter-spacing: -0.02em;
+  color: var(--paper); margin: 12px 0 22px;
+}
+.bet-section h2 .signal-text { color: var(--signal-2); }
+
+.bet-allocation {
+  margin-top: 28px;
+}
+.bet-bar {
+  height: 56px; display: flex; gap: 2px; margin-bottom: 12px;
+  position: relative;
+}
+.bet-bar .seg {
+  background: var(--signal);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 8px 8px;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--steel-2);
+  letter-spacing: 0.04em;
+  position: relative;
+  overflow: hidden;
+}
+.bet-bar .seg.acq    { flex: 900;  background: var(--signal); }
+.bet-bar .seg.buyback { flex: 430; background: var(--signal-2); color: var(--steel-2); }
+.bet-bar .seg.div    { flex: 45;   background: rgba(244,241,234,0.75); color: var(--steel-2); }
+
+.bet-legend { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
+.bet-leg {
+  display: grid; grid-template-columns: 14px 1fr auto;
+  gap: 14px; align-items: baseline; padding-bottom: 12px;
+  border-bottom: 1px solid rgba(244,241,234,0.1);
+}
+.bet-leg .dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  align-self: center;
+}
+.bet-leg .dot.acq    { background: var(--signal); box-shadow: 0 0 12px var(--signal-glow); }
+.bet-leg .dot.buyback { background: var(--signal-2); }
+.bet-leg .dot.div    { background: rgba(244,241,234,0.75); }
+.bet-leg .label {
+  font-family: var(--font-sans); color: var(--paper); font-size: 14px; font-weight: 500;
+}
+.bet-leg .label .sub {
+  display: block; font-family: var(--font-mono); font-size: 10px;
+  color: rgba(244,241,234,0.5); margin-top: 3px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 400;
+}
+.bet-leg .v {
+  font-family: var(--font-display); font-size: 22px; color: var(--paper); letter-spacing: -0.005em; line-height: 1;
+}
+
+.miller-card {
+  margin-top: 28px;
+  padding: 22px 20px;
+  border: 1px solid var(--signal);
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(224,122,31,0.06), rgba(224,122,31,0.02));
+}
+.miller-card .top {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 12px;
+}
+.miller-card .when {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--signal);
+}
+.miller-card h3 {
+  font-family: var(--font-display); font-size: 32px; line-height: 1; letter-spacing: -0.015em; color: var(--paper);
+  margin: 0;
+}
+.miller-card .price {
+  margin-top: 10px;
+  font-family: var(--font-display); font-size: 56px; line-height: 0.95;
+  color: var(--signal-2); letter-spacing: -0.025em;
+}
+.miller-card .price .small { font-size: 26px; color: rgba(244,241,234,0.7); }
+.miller-card p {
+  margin-top: 12px; font-family: var(--font-sans); font-size: 14px;
+  line-height: 1.55; color: rgba(244,241,234,0.78);
+}
+.miller-card p em { font-family: var(--font-display); font-style: italic; color: var(--signal-2); font-size: 1.05em; }
+
+.bet-trio {
+  margin-top: 22px; padding-top: 18px;
+  border-top: 1px solid rgba(244,241,234,0.1);
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+}
+.bet-trio .cell .num {
+  font-family: var(--font-display); font-size: 24px; line-height: 1; color: var(--signal-2); letter-spacing: -0.01em;
+}
+.bet-trio .cell .lbl {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(244,241,234,0.55); margin-top: 6px; line-height: 1.35;
+}
+
+/* ============================================================
+   COMPETITION — sized rivals
+   ============================================================ */
+.rivals {
+  margin-top: 24px;
+  display: flex; flex-direction: column;
+}
+.rival-row {
+  padding: 22px 0;
+  border-top: 1px solid var(--line);
+  position: relative;
+}
+.rival-row:last-child { border-bottom: 1px solid var(--line); }
+.rival-row.is-self { background: linear-gradient(90deg, rgba(224,122,31,0.06), transparent); padding-left: 14px; margin-left: -14px; padding-right: 14px; margin-right: -14px; border-left: 2px solid var(--signal); }
+.rival-top {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 12px; margin-bottom: 10px;
+}
+.rival-name {
+  font-family: var(--font-sans); font-size: 16px; font-weight: 500; color: var(--ink);
+  display: flex; align-items: baseline; gap: 8px;
+}
+.rival-name .ticker {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--ink-3); letter-spacing: 0.06em; font-weight: 500;
+  border: 1px solid var(--line); padding: 2px 6px; border-radius: 2px;
+}
+.rival-row.is-self .rival-name .ticker { color: var(--signal); border-color: var(--signal); }
+.rival-mcap {
+  font-family: var(--font-display); font-size: 28px; line-height: 1; color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.rival-mcap .small { font-size: 16px; color: var(--ink-3); }
+.rival-bar {
+  height: 4px; background: var(--paper-3); border-radius: 1px; margin: 6px 0 10px;
+  position: relative; overflow: hidden;
+}
+.rival-bar > span {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--ink); width: 0;
+  transition: width 1s cubic-bezier(0.22,1,0.36,1);
+}
+.rival-row.is-self .rival-bar > span { background: var(--signal); }
+.rival-stats {
+  display: flex; gap: 14px;
+  font-family: var(--font-mono); font-size: 10px; color: var(--ink-3);
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.rival-stats .x { color: var(--ink); font-weight: 500; }
+.rival-desc {
+  margin-top: 12px;
+  font-family: var(--font-sans); font-size: 13.5px; line-height: 1.5;
+  color: var(--ink-2); max-width: 38ch;
+}
+.rival-desc em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+/* ============================================================
+   CLOSE — inverts the open
+   ============================================================ */
+.close {
+  background: var(--paper);
+  padding: 80px var(--pad) 96px;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+.close .eyebrow { color: var(--signal); }
+.close .eyebrow .tick { background: var(--signal); }
+.close h2 {
+  margin-top: 18px;
+  font-family: var(--font-display); font-weight: 400;
+  font-size: 56px; line-height: 0.96; letter-spacing: -0.025em;
+  color: var(--ink);
+}
+.close .price {
+  margin-top: 36px;
+  font-family: var(--font-display); font-size: 92px; line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.close .price .small { font-size: 36px; color: var(--ink-3); }
+.close .price-lbl {
+  margin-top: 6px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.close .signature {
+  margin-top: 60px; padding-top: 22px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
+}
+
+/* Reveal animations */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 600ms cubic-bezier(0.22,1,0.36,1), transform 600ms cubic-bezier(0.22,1,0.36,1); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal.d1 { transition-delay: 60ms; }
+.reveal.d2 { transition-delay: 120ms; }
+.reveal.d3 { transition-delay: 180ms; }
+.reveal.d4 { transition-delay: 240ms; }
+
+/* Hero current animation */
+@keyframes flow {
+  to { stroke-dashoffset: -100; }
+}
+.flow-line { animation: flow 4s linear infinite; }
+
+/* iOS feel — selection */
+::selection { background: var(--signal); color: var(--paper); }
+
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ============== CHROME ============== -->
+  <header class="chrome">
+    <div class="chrome-row">
+      <div class="chrome-dot" aria-hidden="true"></div>
+      <div class="chrome-tick">EME</div>
+      <div class="chrome-name">EMCOR Group</div>
+      <div class="chrome-label">Recap · FY '25</div>
+    </div>
+    <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+  </header>
+
+  <!-- ============== HERO ============== -->
+  <section class="hero">
+    <div class="hero-meta">
+      <span class="eyebrow signal"><span class="tick"></span>Chapter 01 · The Thesis</span>
+      <span class="mono">NYSE</span>
+    </div>
+
+    <div class="hero-stage" aria-hidden="true">
+      <!-- Schematic conduit + current -->
+      <svg viewBox="0 0 440 360" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="sparkGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#E07A1F" stop-opacity="0"/>
+            <stop offset="50%" stop-color="#F4A03A" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#E07A1F" stop-opacity="0"/>
+          </linearGradient>
+          <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#F4A03A" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#F4A03A" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Faint blueprint grid -->
+        <g opacity="0.45">
+          <path d="M0 60 H440 M0 120 H440 M0 180 H440 M0 240 H440 M0 300 H440" stroke="#C9C2B0" stroke-width="0.5"/>
+          <path d="M60 0 V360 M120 0 V360 M180 0 V360 M240 0 V360 M300 0 V360 M360 0 V360" stroke="#C9C2B0" stroke-width="0.5"/>
+        </g>
+
+        <!-- Schematic structure: conduit network -->
+        <g fill="none" stroke="#15171A" stroke-width="1.25" stroke-linecap="square">
+          <!-- Outer rectangle (the building) -->
+          <rect x="40" y="40" width="360" height="280" stroke-dasharray="2 4" opacity="0.35"/>
+
+          <!-- Main horizontal trunk -->
+          <path d="M40 180 L160 180 L160 90 L320 90 L320 220 L400 220" stroke-width="1.5"/>
+
+          <!-- Drops -->
+          <path d="M100 180 L100 240 L150 240" />
+          <path d="M260 90 L260 60" />
+          <path d="M260 90 L260 130 L210 130" />
+          <path d="M320 160 L380 160" />
+
+          <!-- Junction boxes (rectangles) -->
+          <rect x="55" y="173" width="14" height="14" fill="#F4F1EA" />
+          <rect x="153" y="83"  width="14" height="14" fill="#F4F1EA" />
+          <rect x="313" y="83"  width="14" height="14" fill="#F4F1EA" />
+          <rect x="313" y="213" width="14" height="14" fill="#F4F1EA" />
+          <rect x="143" y="233" width="14" height="14" fill="#F4F1EA" />
+          <rect x="203" y="123" width="14" height="14" fill="#F4F1EA" />
+          <rect x="373" y="153" width="14" height="14" fill="#F4F1EA" />
+          <rect x="253" y="53"  width="14" height="14" fill="#F4F1EA" />
+          <rect x="393" y="213" width="14" height="14" fill="#F4F1EA" />
+
+          <!-- Inner crosshatch on a few boxes (transformer marks) -->
+          <line x1="55" y1="173" x2="69" y2="187" stroke-width="0.6"/>
+          <line x1="313" y1="83" x2="327" y2="97" stroke-width="0.6"/>
+          <line x1="313" y1="213" x2="327" y2="227" stroke-width="0.6"/>
+        </g>
+
+        <!-- Annotations (mono labels) -->
+        <g font-family="Geist Mono, monospace" font-size="8.5" fill="#5A5E66" letter-spacing="1.2">
+          <text x="78" y="170">DATA</text>
+          <text x="180" y="80">FAB</text>
+          <text x="335" y="80">HOSP</text>
+          <text x="335" y="240">SUB</text>
+          <text x="118" y="258">SVC</text>
+        </g>
+
+        <!-- Live current animation - this path mirrors the trunk -->
+        <path id="currentPath" d="M40 180 L160 180 L160 90 L320 90 L320 220 L400 220"
+              fill="none" stroke="url(#sparkGrad)" stroke-width="3" stroke-linecap="round"
+              stroke-dasharray="22 78" class="flow-line"/>
+
+        <!-- Pulsing nodes -->
+        <g>
+          <circle cx="160" cy="90" r="14" fill="url(#nodeGlow)"/>
+          <circle cx="160" cy="90" r="3.5" fill="#E07A1F"/>
+          <circle cx="320" cy="90" r="14" fill="url(#nodeGlow)"/>
+          <circle cx="320" cy="90" r="3.5" fill="#E07A1F"/>
+          <circle cx="320" cy="220" r="14" fill="url(#nodeGlow)"/>
+          <circle cx="320" cy="220" r="3.5" fill="#E07A1F"/>
+        </g>
+
+        <!-- Top-left meta block -->
+        <g font-family="Geist Mono, monospace" fill="#5A5E66">
+          <text x="40" y="22" font-size="9" letter-spacing="1.5">SHEET</text>
+          <text x="80" y="22" font-size="9" letter-spacing="1.5">E-01</text>
+          <text x="40" y="34" font-size="8" letter-spacing="1.0" fill="#8E9098">ELECTRICAL · MECHANICAL</text>
+          <text x="320" y="22" font-size="9" letter-spacing="1.5">SCALE</text>
+          <text x="360" y="22" font-size="9" letter-spacing="1.5" fill="#15171A">1:∞</text>
+        </g>
+
+        <!-- Bottom-right corner: "by EMCOR" -->
+        <g font-family="Geist Mono, monospace" font-size="8" fill="#8E9098" letter-spacing="1">
+          <text x="40" y="350">A. NORWALK, CT · EST. 1994</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-headline">
+      <h1 class="display">
+        Inside every<br/>
+        data center,<br/>
+        <span class="it signal-text">wiring</span> nobody sees.
+      </h1>
+    </div>
+    <p class="hero-sub">EMCOR is the country's largest specialty contractor — the electrical, mechanical, and structural circulatory system of America's most critical buildings.</p>
+
+    <div class="hero-stat-row">
+      <div class="hero-stat">
+        <div class="num" data-count="16.99" data-prefix="$" data-suffix="B" data-decimals="2">$0.00B</div>
+        <div class="lbl">FY'25 Revenue</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num" data-count="35.90" data-prefix="$" data-suffix="B" data-decimals="2">$0.00B</div>
+        <div class="lbl">Market Cap</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== RESET 01 ============== -->
+  <aside class="reset paper">
+    <div class="crossbar"><span>§</span><span class="tick"></span><span>02</span></div>
+    <p class="interlude">
+      You won't find their name on the building. <span class="signal-text">You'll find it</span> behind the drywall, under the floor, threaded through every conduit.
+    </p>
+  </aside>
+
+  <!-- ============== BUSINESS — REVENUE MIX ============== -->
+  <section>
+    <div class="section-head">
+      <span class="eyebrow"><span class="tick"></span>Chapter 02 · The Mix · $16.99B</span>
+      <h2>Three trades, <span class="display it">one trunk line.</span></h2>
+    </div>
+
+    <p class="body-copy">Revenue threads through four U.S. segments. Construction is the trunk; <em>building services</em> is the steady draw; industrial is the specialist branch.</p>
+
+    <div class="conduit-stack">
+
+      <div class="conduit signal" data-pct="72">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="conduit-row">
+          <div>
+            <div class="conduit-name">Electrical + Mechanical Construction</div>
+            <div class="conduit-meta">$12.23B · TRUNK</div>
+          </div>
+          <div class="conduit-pct">72<span class="pcent">%</span></div>
+        </div>
+        <div class="conduit-bar"><span style="--w:72%"></span></div>
+        <svg class="conduit-svg" viewBox="0 0 400 22" preserveAspectRatio="none">
+          <path d="M0 11 H400" stroke="#E07A1F" stroke-width="2" stroke-dasharray="4 3"/>
+          <circle cx="40" cy="11" r="3" fill="#E07A1F"/>
+          <circle cx="160" cy="11" r="3" fill="#E07A1F"/>
+          <circle cx="280" cy="11" r="3" fill="#E07A1F"/>
+          <circle cx="380" cy="11" r="3" fill="#E07A1F"/>
+        </svg>
+      </div>
+
+      <div class="conduit" data-pct="21">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="conduit-row">
+          <div>
+            <div class="conduit-name">Building Services</div>
+            <div class="conduit-meta">$3.57B · RECURRING</div>
+          </div>
+          <div class="conduit-pct">21<span class="pcent">%</span></div>
+        </div>
+        <div class="conduit-bar"><span style="--w:21%"></span></div>
+        <svg class="conduit-svg" viewBox="0 0 400 22" preserveAspectRatio="none">
+          <path d="M0 11 H400" stroke="#15171A" stroke-width="1.5"/>
+          <path d="M0 5 V17 M40 5 V17 M80 5 V17 M120 5 V17 M160 5 V17 M200 5 V17 M240 5 V17 M280 5 V17 M320 5 V17 M360 5 V17 M400 5 V17" stroke="#15171A" stroke-width="0.6"/>
+        </svg>
+      </div>
+
+      <div class="conduit" data-pct="7">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="conduit-row">
+          <div>
+            <div class="conduit-name">Industrial Services</div>
+            <div class="conduit-meta">$1.19B · SPECIALIST</div>
+          </div>
+          <div class="conduit-pct">7<span class="pcent">%</span></div>
+        </div>
+        <div class="conduit-bar"><span style="--w:7%"></span></div>
+        <svg class="conduit-svg" viewBox="0 0 400 22" preserveAspectRatio="none">
+          <path d="M0 11 H400" stroke="#5A5E66" stroke-width="1" stroke-dasharray="2 6"/>
+        </svg>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============== SCALE ============== -->
+  <section class="tight" style="padding-top: 24px;">
+    <div class="section-head">
+      <span class="eyebrow"><span class="tick"></span>Chapter 03 · The Footings</span>
+      <h2>Scale, <span class="display it">in plain numbers.</span></h2>
+    </div>
+
+    <div class="scale-grid">
+      <div class="scale-cell">
+        <div class="corner-mark">01</div>
+        <div class="num"><span data-count="44" data-suffix="K" data-decimals="0">0</span></div>
+        <div class="lbl">Employees<br/>~62% Union</div>
+      </div>
+      <div class="scale-cell">
+        <div class="corner-mark">02</div>
+        <div class="num"><span data-count="420" data-decimals="0">0</span></div>
+        <div class="lbl">Locations<br/>U.S. + U.K.</div>
+      </div>
+      <div class="scale-cell">
+        <div class="corner-mark">03</div>
+        <div class="num"><span data-count="100" data-decimals="0">0</span></div>
+        <div class="lbl">Subsidiaries<br/>under one roof</div>
+      </div>
+      <div class="scale-cell">
+        <div class="corner-mark">04</div>
+        <div class="num"><span class="small">Est.</span> <span data-count="1994" data-decimals="0">0</span></div>
+        <div class="lbl">Norwalk, CT<br/>Fortune 500</div>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="row"><span>Q4'25 vs FY'25</span><span class="v" data-count="9.68" data-prefix="$" data-decimals="2">$0.00</span></div>
+      <div class="compare-bar">
+        <div class="compare-seg q">Q4 · $4.51B</div>
+        <div class="compare-seg">FY balance · $12.48B</div>
+      </div>
+      <div class="row" style="margin-top:8px;"><span>Q4 EPS</span><span style="font-family:var(--font-mono);color:var(--ink-3);">19.3% gross · 10.1% op</span></div>
+    </div>
+  </section>
+
+  <!-- ============== RESET 02 ============== -->
+  <aside class="reset">
+    <div class="crossbar"><span>§</span><span class="tick"></span><span>03</span></div>
+    <p class="interlude">
+      Of every dollar that comes in, <span class="signal-text">most goes back out</span> — into labor, into materials, into the trades that make the work possible.
+    </p>
+  </aside>
+
+  <!-- ============== COSTS — 100¢ grid ============== -->
+  <section>
+    <div class="section-head">
+      <span class="eyebrow"><span class="tick"></span>Chapter 04 · A Hundred Cents</span>
+      <h2>Where the dollar <span class="display it">goes.</span></h2>
+    </div>
+
+    <div class="cost-grid-wrap">
+      <div class="cost-grid" id="costGrid"></div>
+      <div class="cost-legend">
+        <div class="cost-leg">
+          <div class="swatch" style="background:#2563EB;"></div>
+          <div class="name">Cost of Revenue<span class="sub">Labor · materials · subs</span></div>
+          <div class="pct">81%</div>
+        </div>
+        <div class="cost-leg">
+          <div class="swatch" style="background:#16A34A;"></div>
+          <div class="name">SG&amp;A<span class="sub">Sell · general · admin</span></div>
+          <div class="pct">10%</div>
+        </div>
+        <div class="cost-leg">
+          <div class="swatch" style="background:#D97706;"></div>
+          <div class="name">D&amp;A<span class="sub">Depreciation + amortization</span></div>
+          <div class="pct">1%</div>
+        </div>
+        <div class="cost-leg">
+          <div class="swatch surplus"></div>
+          <div class="name">What survives<span class="sub">Operating margin · FY'25</span></div>
+          <div class="pct">10.1%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="margin-pull">
+      <div class="display">15<span class="it">¢</span></div>
+      <div class="cap">make it to the <em>gross line</em>. About ten survive to operating. The job is built on volume, not markup.</div>
+    </div>
+  </section>
+
+  <!-- ============== FOOTPRINT ============== -->
+  <section style="padding-bottom: 24px;">
+    <div class="section-head">
+      <span class="eyebrow"><span class="tick"></span>Chapter 05 · The Footprint</span>
+      <h2>One <span class="display it">country,</span> mostly.</h2>
+    </div>
+
+    <div class="footprint-stage">
+      <span class="eyebrow"><span class="tick"></span>Geographic Distribution</span>
+      <div class="footprint-rows">
+
+        <div class="footprint-row us" data-pct="97">
+          <div class="top">
+            <span>United States</span>
+            <span>FY'25</span>
+          </div>
+          <div class="v">97<span class="pcent">%</span></div>
+          <div class="bar"><span style="--w:97%"></span></div>
+        </div>
+
+        <div class="footprint-row uk" data-pct="3">
+          <div class="top">
+            <span>United Kingdom</span>
+            <span>FY'25</span>
+          </div>
+          <div class="v">3<span class="pcent">%</span></div>
+          <div class="bar"><span style="--w:3%"></span></div>
+        </div>
+
+      </div>
+
+      <div class="footprint-locations">
+        <div>
+          <div class="num">~420</div>
+          <div class="lbl">Locations</div>
+        </div>
+        <div>
+          <div class="num">~100</div>
+          <div class="lbl">Subsidiaries</div>
+        </div>
+        <div>
+          <div class="num">HQ</div>
+          <div class="lbl">Norwalk, CT</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== THE BET — DARK INTERLUDE ============== -->
+  <section class="bet-section">
+    <span class="eyebrow"><span class="tick"></span>Chapter 06 · The Bet · 9M '25</span>
+    <h2>Capital out, <span class="signal-text it">aimed forward.</span></h2>
+
+    <p class="body-copy" style="color: rgba(244,241,234,0.78); max-width: 32ch;">
+      In the first nine months of 2025, EMCOR shipped roughly <em>$1.4 billion</em> back out the door — most of it into things they don't yet own.
+    </p>
+
+    <div class="bet-allocation">
+      <div class="bet-bar">
+        <div class="seg acq">~$900M</div>
+        <div class="seg buyback">$430M</div>
+        <div class="seg div">$45M</div>
+      </div>
+
+      <div class="bet-legend">
+        <div class="bet-leg">
+          <div class="dot acq"></div>
+          <div class="label">Acquisitions<span class="sub">Miller Electric · John W. Danforth</span></div>
+          <div class="v">~$900M</div>
+        </div>
+        <div class="bet-leg">
+          <div class="dot buyback"></div>
+          <div class="label">Share Repurchases<span class="sub">Returning the trust</span></div>
+          <div class="v">$430M+</div>
+        </div>
+        <div class="bet-leg" style="border-bottom:0;">
+          <div class="dot div"></div>
+          <div class="label">Dividends<span class="sub">Modest · disciplined</span></div>
+          <div class="v">$45.0M</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="miller-card">
+      <div class="top">
+        <div class="when">Feb 2025 · The Headline Buy</div>
+      </div>
+      <h3>Miller Electric.</h3>
+      <div class="price">$865<span class="small">M</span></div>
+      <p>
+        Acquired in cash — adding <em>~$257M of debt</em> and lifting goodwill to ~$1.34B. EMCOR carried <em>essentially zero long-term debt</em> into 2025; this is the first real chip on the table.
+      </p>
+    </div>
+
+    <div class="bet-trio">
+      <div class="cell">
+        <div class="num">$1.30B</div>
+        <div class="lbl">Operating<br/>Cash Flow</div>
+      </div>
+      <div class="cell">
+        <div class="num">$1.19B</div>
+        <div class="lbl">Free<br/>Cash Flow</div>
+      </div>
+      <div class="cell">
+        <div class="num">$112.7M</div>
+        <div class="lbl">Capex<br/>(modest)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== RESET 03 ============== -->
+  <aside class="reset paper">
+    <div class="crossbar"><span>§</span><span class="tick"></span><span>04</span></div>
+    <p class="interlude">
+      You don't win this trade <span class="signal-text">on a single bid.</span> You win it on the next thousand — and on the firms you can afford to absorb.
+    </p>
+  </aside>
+
+  <!-- ============== COMPETITION ============== -->
+  <section>
+    <div class="section-head">
+      <span class="eyebrow"><span class="tick"></span>Chapter 07 · The Field</span>
+      <h2>Four contractors, <span class="display it">one tailwind.</span></h2>
+    </div>
+
+    <p class="body-copy">All four chase the same hyperscale buildout — AI clusters, semiconductor fabs, life-science campuses. The market doesn't price them all the same.</p>
+
+    <div class="rivals">
+
+      <div class="rival-row is-self" data-mcap="35.9">
+        <div class="rival-top">
+          <div class="rival-name">EMCOR Group <span class="ticker">EME</span></div>
+          <div class="rival-mcap">$35.9<span class="small">B</span></div>
+        </div>
+        <div class="rival-bar"><span style="--w:39.9%"></span></div>
+        <div class="rival-stats">
+          <span>Rev <span class="x">$16.99B</span></span>
+          <span>Margin <span class="x">10.1%</span></span>
+        </div>
+        <div class="rival-desc">The integrator. Construction, services, and industrial under <em>one roof</em>.</div>
+      </div>
+
+      <div class="rival-row" data-mcap="29.26">
+        <div class="rival-top">
+          <div class="rival-name">MasTec <span class="ticker">MTZ</span></div>
+          <div class="rival-mcap">$29.3<span class="small">B</span></div>
+        </div>
+        <div class="rival-bar"><span style="--w:32.5%"></span></div>
+        <div class="rival-stats">
+          <span>Rev <span class="x">$14.30B</span></span>
+          <span>Growth <span class="x">+16.2%</span></span>
+          <span>P/E <span class="x">73x</span></span>
+        </div>
+        <div class="rival-desc">Direct rival on <em>data-center, communications,</em> and energy-transition contracts.</div>
+      </div>
+
+      <div class="rival-row" data-mcap="61.90">
+        <div class="rival-top">
+          <div class="rival-name">Comfort Systems USA <span class="ticker">FIX</span></div>
+          <div class="rival-mcap">$61.9<span class="small">B</span></div>
+        </div>
+        <div class="rival-bar"><span style="--w:68.7%"></span></div>
+        <div class="rival-stats">
+          <span>Rev <span class="x">$9.10B</span></span>
+          <span>Growth <span class="x">+29.5%</span></span>
+          <span>P/E <span class="x">61x</span></span>
+        </div>
+        <div class="rival-desc">Bidding head-to-head on the same <em>integrated cooling and electrical</em> work for AI infrastructure.</div>
+      </div>
+
+      <div class="rival-row" data-mcap="90.05">
+        <div class="rival-top">
+          <div class="rival-name">Quanta Services <span class="ticker">PWR</span></div>
+          <div class="rival-mcap">$90.1<span class="small">B</span></div>
+        </div>
+        <div class="rival-bar"><span style="--w:100%"></span></div>
+        <div class="rival-stats">
+          <span>Rev <span class="x">$28.48B</span></span>
+          <span>Growth <span class="x">+20.3%</span></span>
+          <span>P/E <span class="x">88x</span></span>
+        </div>
+        <div class="rival-desc">Expanding from <em>utility roots</em> into liquid-cooled AI data centers — converging on EMCOR's lane.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============== CLOSE — INVERT THE OPEN ============== -->
+  <section class="close">
+    <span class="eyebrow"><span class="tick"></span>Chapter 08 · The Close</span>
+    <h2>
+      The <span class="display it">wiring</span><br/>
+      nobody saw —<br/>
+      <span class="display it" style="color: var(--signal);">priced in.</span>
+    </h2>
+
+    <div class="price">$35.9<span class="small">B</span></div>
+    <div class="price-lbl">Market Cap · NYSE: EME</div>
+
+    <p class="body-copy" style="margin-top: 28px; max-width: 30ch;">
+      14 ¢ became 15 ¢ became <em>~10 ¢ on the operating line</em>. Compounded across four hundred locations and 44,000 hands, it's enough.
+    </p>
+
+    <div class="signature">
+      <span>EMCOR · NYSE: EME</span>
+      <span>END · §08</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   Scroll progress + count-up + reveal
+   ============================================================ */
+
+// Progress bar tracks page-level scroll.
+const progress = document.getElementById('progressBar');
+function updateProgress() {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const p = max > 0 ? (h.scrollTop / max) : 0;
+  progress.style.width = (p * 100).toFixed(2) + '%';
+}
+window.addEventListener('scroll', updateProgress, { passive: true });
+window.addEventListener('resize', updateProgress);
+updateProgress();
+
+// Count-up: ease values when they enter view, once.
+function countEase(el) {
+  if (el._counted) return; el._counted = true;
+  const target  = parseFloat(el.dataset.count);
+  const prefix  = el.dataset.prefix || '';
+  const suffix  = el.dataset.suffix || '';
+  const dec     = parseInt(el.dataset.decimals || '0', 10);
+  const dur     = 1100 + Math.random() * 350;
+  const start   = performance.now();
+  function frame(t) {
+    const k = Math.min(1, (t - start) / dur);
+    // ease out cubic
+    const eased = 1 - Math.pow(1 - k, 3);
+    const v = target * eased;
+    el.textContent = prefix + v.toFixed(dec) + suffix;
+    if (k < 1) requestAnimationFrame(frame);
+    else      el.textContent = prefix + target.toFixed(dec) + suffix;
+  }
+  requestAnimationFrame(frame);
+}
+
+// Bar fills: read --w custom prop and apply width.
+function fillBar(el) {
+  if (el._filled) return; el._filled = true;
+  const w = el.style.getPropertyValue('--w') || '0%';
+  requestAnimationFrame(() => { el.style.width = w; });
+}
+
+// IntersectionObserver — counts, bars, reveals
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    if (el.matches('[data-count]'))                          countEase(el);
+    if (el.matches('.conduit-bar > span, .footprint-row .bar > span, .rival-bar > span')) fillBar(el);
+    if (el.matches('.reveal'))                               el.classList.add('in');
+    io.unobserve(el);
+  });
+}, { threshold: 0.4 });
+
+document.querySelectorAll('[data-count]').forEach(el => io.observe(el));
+document.querySelectorAll('.conduit-bar > span, .footprint-row .bar > span, .rival-bar > span').forEach(el => io.observe(el));
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// Build the 100-cent grid
+(function buildCostGrid() {
+  const grid = document.getElementById('costGrid');
+  if (!grid) return;
+  // Layout philosophy: cents are read row by row, top-left to bottom-right.
+  // 81 COR (blue), then 10 SGA (green), then 1 D&A (amber), then 8 surplus.
+  // (81 + 10 + 1 = 92; 8 are "surplus" / what the company keeps)
+  const order = [];
+  for (let i = 0; i < 81; i++) order.push('cor');
+  for (let i = 0; i < 10; i++) order.push('sga');
+  for (let i = 0; i < 1;  i++) order.push('da');
+  for (let i = 0; i < 8;  i++) order.push('surplus');
+
+  order.forEach((kind, idx) => {
+    const c = document.createElement('div');
+    c.className = 'cost-cell ' + kind;
+    c.style.opacity = '0';
+    c.style.transform = 'scale(0.85)';
+    c.style.transition = 'opacity 320ms cubic-bezier(0.22,1,0.36,1), transform 320ms cubic-bezier(0.22,1,0.36,1)';
+    c.style.transitionDelay = (idx * 6) + 'ms';
+    grid.appendChild(c);
+  });
+
+  const gridIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      grid.querySelectorAll('.cost-cell').forEach(cell => {
+        cell.style.opacity = '1';
+        cell.style.transform = 'scale(1)';
+      });
+      gridIO.disconnect();
+    });
+  }, { threshold: 0.3 });
+  gridIO.observe(grid);
+})();
+
+// Tap-to-deepen: surplus cents pulse on tap (additive, optional)
+(function surplusTap() {
+  document.querySelectorAll('.cost-cell.surplus').forEach(c => {
+    c.addEventListener('click', () => {
+      c.style.background = '#E07A1F';
+      c.style.transition = 'background 220ms ease';
+      setTimeout(() => { c.style.background = ''; c.style.border = '1px solid var(--ink)'; }, 600);
+    });
+  });
+})();
+
+// Tap-to-deepen on rival rows: brief flash
+(function rivalTap() {
+  document.querySelectorAll('.rival-row').forEach(r => {
+    r.addEventListener('click', () => {
+      r.style.transition = 'background 180ms ease';
+      const orig = r.style.background;
+      r.style.background = 'rgba(224,122,31,0.06)';
+      setTimeout(() => r.style.background = orig, 360);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

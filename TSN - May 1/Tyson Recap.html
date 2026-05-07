@@ -1,0 +1,1322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>TSN · Recap</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* ---------- Tokens (Tyson dialect of the Naqvi system) ---------- */
+  :root {
+    --paper:    #F4EFE6;   /* butcher paper, warmer + drier than the system paper */
+    --paper-2:  #ECE5D6;
+    --paper-3:  #E1D8C4;
+    --ink:      #15110D;
+    --ink-2:    #3A332A;
+    --ink-3:    #6E6557;
+    --ink-4:    #9A917F;
+    --line:     #D8CFB9;
+    --line-2:   #C5BAA0;
+
+    /* signal palette — butcher-block red, mustard, bone */
+    --red:      #A8321F;   /* primary signal */
+    --red-deep: #7A2010;
+    --red-soft: #C5604B;
+    --red-wash: #EFD7CE;
+    --bone:     #F8F2E4;
+    --mustard:  #C49A2D;
+    --olive:    #5C5A2A;
+
+    --font-display: 'Instrument Serif','Times New Roman',serif;
+    --font-sans:    'Geist',-apple-system,system-ui,sans-serif;
+    --font-mono:    'Geist Mono','SF Mono',ui-monospace,monospace;
+
+    /* hex from the JSON — used only on the cost chart */
+    --c-cor: #D94F3D;
+    --c-sga: #4A90D9;
+    --c-da:  #F5A623;
+    --c-int: #7B68EE;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html{ scroll-behavior:smooth; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility }
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-sans);
+    font-size:16px;
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+
+  /* paper grain — site-wide, faint */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:1;
+    opacity:.5;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3'/><feColorMatrix values='0 0 0 0 0.08  0 0 0 0 0.07  0 0 0 0 0.05  0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  /* ---------- Page width ---------- */
+  .page{
+    width:100%;
+    max-width:430px;
+    margin:0 auto;
+    position:relative;
+    z-index:2;
+  }
+
+  /* ---------- Persistent chrome ---------- */
+  .chrome{
+    position:sticky;
+    top:0; left:0; right:0;
+    z-index:50;
+    backdrop-filter:blur(14px) saturate(1.05);
+    -webkit-backdrop-filter:blur(14px) saturate(1.05);
+    background:rgba(244,239,230,0.78);
+    border-bottom:1px solid var(--line);
+  }
+  .chrome-row{
+    display:flex; align-items:center; gap:10px;
+    padding:14px 20px 10px;
+  }
+  .ticker{
+    font-family:var(--font-mono);
+    font-size:13px;
+    font-weight:500;
+    letter-spacing:0.05em;
+    background:var(--ink);
+    color:var(--paper);
+    padding:3px 7px;
+    border-radius:3px;
+  }
+  .co-name{
+    font-size:14px;
+    font-weight:500;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+  .co-name .dot{ color:var(--red); }
+  .recap-label{
+    margin-left:auto;
+    font-family:var(--font-mono);
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+  }
+  .progress{
+    height:1.5px;
+    background:transparent;
+    position:relative;
+  }
+  .progress-fill{
+    position:absolute;
+    inset:0 100% 0 0;
+    background:var(--red);
+    transition:right 80ms linear;
+  }
+
+  /* ---------- Section primitives ---------- */
+  section{ position:relative; }
+
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--red);
+    font-weight:500;
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow .num{ color:var(--ink-3); }
+  .eyebrow .rule{ flex:1; height:1px; background:var(--line-2); }
+
+  .ds{ /* display serif */
+    font-family:var(--font-display);
+    font-weight:400;
+    line-height:0.92;
+    letter-spacing:-0.025em;
+    color:var(--ink);
+  }
+  .ds em, .ds i{ font-style:italic; color:var(--red); }
+
+  .body-copy{
+    font-family:var(--font-sans);
+    font-size:15.5px;
+    line-height:1.55;
+    color:var(--ink-2);
+    text-wrap:pretty;
+  }
+  .body-copy em{ font-family:var(--font-display); font-style:italic; color:var(--red); font-size:1.1em; }
+  .body-copy strong{ color:var(--ink); font-weight:500; }
+
+  .cap{
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+  }
+
+  /* Reset beat — italic interlude */
+  .reset{
+    padding:48px 28px;
+    background:var(--paper-2);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    text-align:left;
+    position:relative;
+  }
+  .reset::before{
+    content:"§";
+    position:absolute;
+    top:14px; left:28px;
+    font-family:var(--font-display);
+    font-style:italic;
+    color:var(--red);
+    font-size:18px;
+    opacity:0.6;
+  }
+  .reset p{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-size:24px;
+    line-height:1.2;
+    color:var(--ink);
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .reset p .hi{ color:var(--red); }
+
+  /* ---------- 1 · HERO ---------- */
+  .hero{
+    padding:72px 24px 56px;
+    position:relative;
+    min-height:560px;
+    overflow:hidden;
+  }
+  .hero .eye{ margin-bottom:36px; }
+  .hero .thesis{
+    font-size:62px;
+    line-height:0.92;
+  }
+  .hero .thesis .accent{ color:var(--red); font-style:italic; }
+  .hero .sub{
+    margin-top:26px;
+    font-size:15px;
+    color:var(--ink-2);
+    max-width:340px;
+    line-height:1.55;
+  }
+  .hero .sub em{ font-family:var(--font-display); font-style:italic; color:var(--red); font-size:1.15em; }
+
+  .hero-figure{
+    margin-top:44px;
+    position:relative;
+  }
+  .figbox{
+    border-top:1px solid var(--line-2);
+    padding-top:14px;
+    display:flex; align-items:baseline; gap:12px;
+  }
+  .figbox .big{
+    font-family:var(--font-display);
+    font-size:64px;
+    line-height:0.9;
+    color:var(--ink);
+    letter-spacing:-0.03em;
+  }
+  .figbox .big em{ font-style:italic; color:var(--red); }
+  .figbox .lab{
+    font-family:var(--font-mono);
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+    max-width:120px;
+    line-height:1.4;
+  }
+
+  /* falling dollar marks behind the hero */
+  .rain{
+    position:absolute; inset:0;
+    pointer-events:none;
+    z-index:-1;
+  }
+  .rain svg{ position:absolute; }
+
+  /* ---------- 2 · THE BUSINESS · four lanes ---------- */
+  .lanes{
+    padding:64px 24px 72px;
+    background:var(--paper);
+  }
+  .lanes h2{ font-size:42px; margin-top:18px; max-width:340px; }
+  .lanes h2 em{ font-style:italic; color:var(--red); }
+  .lanes .copy{ margin-top:18px; max-width:360px; }
+
+  .lane-stack{
+    margin-top:36px;
+    display:flex; flex-direction:column;
+    gap:0;
+  }
+  .lane{
+    position:relative;
+    padding:18px 0;
+    border-top:1px solid var(--line);
+    display:grid;
+    grid-template-columns: 110px 1fr auto;
+    gap:14px;
+    align-items:center;
+  }
+  .lane:last-child{ border-bottom:1px solid var(--line); }
+  .lane .name{
+    font-family:var(--font-display);
+    font-size:24px;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+  .lane .name em{ font-style:italic; color:var(--red); }
+  .lane .bar{
+    height:10px;
+    background:var(--paper-2);
+    border-radius:0;
+    position:relative;
+    overflow:hidden;
+  }
+  .lane .bar .fill{
+    position:absolute;
+    inset:0 100% 0 0;
+    background:var(--red);
+    transition:right 1.2s cubic-bezier(0.22,1,0.36,1);
+  }
+  .lane.is-in .bar .fill{ right: var(--target, 100%); }
+  .lane .pct{
+    font-family:var(--font-mono);
+    font-size:14px;
+    color:var(--ink);
+    min-width:34px;
+    text-align:right;
+    font-variant-numeric: tabular-nums;
+  }
+  .lane .meta{
+    grid-column:1 / -1;
+    font-family:var(--font-mono);
+    font-size:10px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+    margin-top:4px;
+  }
+  .lane.beef .fill{ background: #8C2516; }
+  .lane.chicken .fill{ background: #B8593B; }
+  .lane.prepared .fill{ background: #C49A2D; }
+  .lane.pork .fill{ background: #D4836E; }
+  .lane.intl .fill{ background: #6E5A3F; }
+
+  /* ---------- 3 · SCALE ---------- */
+  .scale{
+    padding:72px 24px 80px;
+    background:var(--paper-2);
+    position:relative;
+  }
+  .scale h2{ font-size:44px; max-width:340px; }
+  .scale h2 em{ font-style:italic; color:var(--red); }
+  .scale-grid{
+    margin-top:40px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:28px 18px;
+  }
+  .stat{
+    border-top:1px solid var(--line-2);
+    padding-top:10px;
+  }
+  .stat .num{
+    font-family:var(--font-display);
+    font-size:38px;
+    line-height:0.95;
+    color:var(--ink);
+    letter-spacing:-0.02em;
+  }
+  .stat .num em{ font-style:italic; color:var(--red); }
+  .stat .lab{
+    margin-top:6px;
+    font-family:var(--font-mono);
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+    line-height:1.4;
+  }
+  .stat.span2{ grid-column:1 / -1; }
+  .stat.span2 .num{ font-size:54px; }
+
+  /* ---------- 4 · DOLLAR GRID — where the money goes ---------- */
+  .dollar{
+    padding:80px 24px 80px;
+    background:var(--paper);
+    position:relative;
+  }
+  .dollar h2{ font-size:46px; max-width:340px; }
+  .dollar h2 em{ font-style:italic; color:var(--red); }
+  .dollar .lede{ margin-top:18px; max-width:360px; }
+
+  .grid-100{
+    margin:36px auto 0;
+    display:grid;
+    grid-template-columns:repeat(10, 1fr);
+    gap:3px;
+    width:100%;
+    max-width:340px;
+    aspect-ratio:1/1;
+  }
+  .cent{
+    border-radius:1px;
+    background:var(--paper-3);
+    transition: background-color 200ms ease;
+  }
+  .cent.cor{ background:var(--c-cor); }
+  .cent.sga{ background:var(--c-sga); }
+  .cent.da { background:var(--c-da);  }
+  .cent.int{ background:var(--c-int); }
+  .cent.survive{
+    background:var(--ink);
+    box-shadow: 0 0 0 1.5px var(--ink), 0 0 12px rgba(168,50,31,0.4);
+  }
+
+  .legend{
+    margin-top:32px;
+    display:flex; flex-direction:column; gap:0;
+  }
+  .leg-row{
+    display:grid;
+    grid-template-columns:14px 1fr auto;
+    gap:12px; align-items:center;
+    padding:12px 0;
+    border-top:1px solid var(--line);
+  }
+  .leg-row:last-child{ border-bottom:1px solid var(--line); }
+  .swatch{ width:14px; height:14px; border-radius:2px; }
+  .leg-name{ font-size:14px; color:var(--ink); }
+  .leg-pct{
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ---------- 5 · THE SURVIVOR (dark interlude) ---------- */
+  .survivor{
+    background:var(--ink);
+    color:var(--paper);
+    padding:88px 28px 96px;
+    position:relative;
+    overflow:hidden;
+  }
+  .survivor .eye{ color:#E08C75; }
+  .survivor h2{
+    color:var(--paper);
+    font-size:48px;
+    margin-top:24px;
+    max-width:340px;
+  }
+  .survivor h2 em{ font-style:italic; color:#E08C75; }
+  .survivor .copy{
+    margin-top:22px;
+    color:#BFB6A4;
+    font-size:15px;
+    line-height:1.55;
+    max-width:360px;
+  }
+  .survivor .copy em{ font-family:var(--font-display); font-style:italic; color:#FFB59A; }
+
+  .funnel{
+    margin:48px auto 0;
+    width:100%;
+    max-width:340px;
+    display:block;
+  }
+  .funnel text{ font-family:var(--font-mono); fill:#BFB6A4; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; }
+  .funnel .num{ font-family:var(--font-display); font-style:italic; fill:#FFB59A; font-size:14px; }
+  .funnel .big{ font-family:var(--font-display); font-style:normal; fill:var(--paper); font-size:11px; letter-spacing:0; text-transform:none;}
+
+  .survivor .closer{
+    margin-top:42px;
+    border-top:1px solid #2B2620;
+    padding-top:20px;
+    display:flex; align-items:baseline; justify-content:space-between;
+    gap:12px;
+  }
+  .survivor .closer .big{
+    font-family:var(--font-display);
+    font-size:48px;
+    line-height:0.95;
+  }
+  .survivor .closer .big em{ font-style:italic; color:#FFB59A; }
+  .survivor .closer .lab{
+    font-family:var(--font-mono);
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#7E7568;
+    text-align:right;
+    max-width:120px;
+    line-height:1.4;
+  }
+
+  /* ---------- 6 · GEOGRAPHY ---------- */
+  .geo{
+    padding:80px 24px 88px;
+    background:var(--paper);
+  }
+  .geo h2{ font-size:44px; max-width:360px; }
+  .geo h2 em{ font-style:italic; color:var(--red); }
+  .geo .copy{ margin-top:18px; max-width:360px; }
+
+  .map-wrap{
+    margin-top:36px;
+    width:100%;
+    aspect-ratio: 1.3 / 1;
+    position:relative;
+  }
+  .map-wrap svg{ width:100%; height:100%; display:block; }
+
+  .geo-list{
+    margin-top:28px;
+  }
+  .geo-row{
+    display:grid;
+    grid-template-columns: 32px 1fr auto;
+    gap:14px;
+    align-items:baseline;
+    padding:12px 0;
+    border-top:1px solid var(--line);
+  }
+  .geo-row:last-child{ border-bottom:1px solid var(--line); }
+  .geo-row .pct{
+    font-family:var(--font-display);
+    font-size:22px;
+    color:var(--ink);
+    line-height:1;
+    letter-spacing:-0.01em;
+  }
+  .geo-row.major .pct{ color:var(--red); font-style:italic; }
+  .geo-row .lab{ font-size:14px; color:var(--ink-2); }
+  .geo-row .bar{
+    width:84px; height:6px;
+    background:var(--paper-2);
+    position:relative;
+    overflow:hidden;
+  }
+  .geo-row .bar i{
+    position:absolute; inset:0 100% 0 0;
+    background:var(--ink-2);
+    transition:right 1s ease;
+  }
+  .geo-row.major .bar i{ background:var(--red); }
+  .geo-row.is-in .bar i{ right: var(--gtarget, 100%); }
+
+  /* ---------- 7 · THE BET ---------- */
+  .bet{
+    padding:80px 24px 88px;
+    background:var(--paper-2);
+  }
+  .bet h2{ font-size:44px; max-width:340px; }
+  .bet h2 em{ font-style:italic; color:var(--red); }
+  .bet .copy{ margin-top:18px; max-width:360px; }
+
+  .allocation{
+    margin-top:40px;
+    display:flex; flex-direction:column; gap:0;
+  }
+  .alloc{
+    border-top:1px solid var(--line);
+    padding:18px 0;
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:6px 14px;
+    align-items:baseline;
+  }
+  .alloc:last-child{ border-bottom:1px solid var(--line); }
+  .alloc .label{
+    font-family:var(--font-mono);
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+  }
+  .alloc .val{
+    font-family:var(--font-display);
+    font-size:32px;
+    line-height:1;
+    color:var(--ink);
+    letter-spacing:-0.02em;
+  }
+  .alloc .val em{ font-style:italic; color:var(--red); }
+  .alloc .det{
+    grid-column:1 / -1;
+    font-size:14px;
+    color:var(--ink-2);
+    margin-top:2px;
+    line-height:1.5;
+  }
+
+  /* expandable rows */
+  .alloc .det{ display:none; }
+  .alloc.open .det{ display:block; }
+  .alloc{ cursor:pointer; }
+  .alloc .toggle{
+    font-family:var(--font-mono); font-size:11px;
+    color:var(--ink-3);
+    grid-column:2;
+    grid-row:1;
+    align-self:start;
+    margin-top:8px;
+  }
+
+  /* ---------- 8 · COMPETITION ---------- */
+  .compete{
+    padding:80px 24px 96px;
+    background:var(--paper);
+  }
+  .compete h2{ font-size:44px; max-width:340px; }
+  .compete h2 em{ font-style:italic; color:var(--red); }
+  .compete .copy{ margin-top:18px; max-width:360px; }
+
+  .ring{
+    margin-top:40px;
+    width:100%;
+    aspect-ratio:1/1;
+    max-width:380px;
+  }
+  .ring text{ font-family:var(--font-sans); font-size:11px; fill:var(--ink); }
+  .ring .ticker{
+    background:none;
+    color:var(--ink);
+    padding:0;
+    border-radius:0;
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.06em;
+  }
+
+  .rivals{
+    margin-top:36px;
+  }
+  .rival{
+    border-top:1px solid var(--line);
+    padding:18px 0;
+  }
+  .rival:last-child{ border-bottom:1px solid var(--line); }
+  .rival .row{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:10px; align-items:baseline;
+  }
+  .rival .name{
+    font-family:var(--font-display);
+    font-size:26px;
+    line-height:1;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+  .rival .tk{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--ink-3);
+    letter-spacing:0.06em;
+  }
+  .rival .mc{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--ink-2);
+    font-variant-numeric:tabular-nums;
+  }
+  .rival .mc .v{ color:var(--ink); }
+  .rival .desc{
+    margin-top:8px;
+    font-size:13.5px;
+    line-height:1.55;
+    color:var(--ink-2);
+  }
+  .rival .stats{
+    margin-top:12px;
+    display:flex; gap:16px; flex-wrap:wrap;
+  }
+  .rival .stats .s{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--ink-3);
+    letter-spacing:0.04em;
+  }
+  .rival .stats .s b{
+    color:var(--ink);
+    font-weight:500;
+  }
+  .rival.tsn{
+    background:var(--bone);
+    margin:0 -24px;
+    padding:18px 24px;
+  }
+  .rival.tsn .name em{ font-style:italic; color:var(--red); }
+
+  /* ---------- 9 · CLOSE ---------- */
+  .close{
+    padding:96px 24px 110px;
+    background:var(--paper);
+    position:relative;
+    border-top:1px solid var(--line);
+  }
+  .close .eye{ color:var(--red); }
+  .close h2{
+    font-size:64px;
+    margin-top:30px;
+    line-height:0.92;
+  }
+  .close h2 em{ font-style:italic; color:var(--red); }
+  .close .ledger{
+    margin-top:48px;
+    display:flex; flex-direction:column; gap:0;
+  }
+  .ledger-row{
+    display:grid;
+    grid-template-columns:1fr auto;
+    align-items:baseline;
+    padding:18px 0;
+    border-top:1px solid var(--line);
+    gap:14px;
+  }
+  .ledger-row:last-child{
+    border-top:2px solid var(--ink);
+    border-bottom:none;
+    padding-top:22px;
+  }
+  .ledger-row .lab{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+  }
+  .ledger-row.in .lab{ color:var(--ink); }
+  .ledger-row .v{
+    font-family:var(--font-display);
+    font-size:32px;
+    line-height:1;
+    color:var(--ink);
+    letter-spacing:-0.02em;
+  }
+  .ledger-row.out .v em{ font-style:italic; color:var(--red); }
+  .ledger-row.fcf .v{ font-size:48px; font-style:italic; color:var(--red); }
+
+  .close .kicker{
+    margin-top:48px;
+    font-family:var(--font-display);
+    font-style:italic;
+    font-size:26px;
+    line-height:1.25;
+    color:var(--ink);
+    max-width:360px;
+  }
+  .close .kicker .hi{ color:var(--red); }
+
+  .footer{
+    margin-top:64px;
+    padding:24px 0 12px;
+    border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:var(--font-mono);
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+  }
+
+  /* ---------- Reveal helpers ---------- */
+  .rv{ opacity:0; transform:translateY(14px); transition:opacity 600ms ease, transform 600ms cubic-bezier(0.22,1,0.36,1); }
+  .rv.is-in{ opacity:1; transform:none; }
+  .rv.d1{ transition-delay:60ms; }
+  .rv.d2{ transition-delay:120ms; }
+  .rv.d3{ transition-delay:180ms; }
+  .rv.d4{ transition-delay:240ms; }
+
+  .count{ font-variant-numeric: tabular-nums; }
+
+  /* tiny hairline divider used between sections instead of cards */
+  .hair{ height:1px; background:var(--line); margin:0 24px; }
+
+  /* eyebrow row in section */
+  .eye-row{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .eye-row .num{ color:var(--ink-3); font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em; }
+  .eye-row .label{ color:var(--red); font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em; text-transform:uppercase; font-weight:500; }
+  .eye-row .rule{ flex:1; height:1px; background:var(--line-2); }
+
+  @media (max-width: 380px){
+    .hero .thesis{ font-size:54px; }
+    .lanes h2, .scale h2, .dollar h2, .survivor h2, .geo h2, .bet h2, .compete h2{ font-size:38px; }
+    .close h2{ font-size:54px; }
+    .lane{ grid-template-columns: 90px 1fr auto; }
+    .lane .name{ font-size:20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Persistent chrome -->
+<header class="chrome" data-screen-label="00 Chrome">
+  <div class="page">
+    <div class="chrome-row">
+      <span class="ticker">TSN</span>
+      <span class="co-name">Tyson Foods<span class="dot">.</span></span>
+      <span class="recap-label">RECAP · FY '25</span>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- 1 · HERO -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="rain" id="rain" aria-hidden="true"></div>
+    <div class="eye eye-row rv">
+      <span class="num">01</span>
+      <span class="label">The thesis</span>
+      <span class="rule"></span>
+    </div>
+    <h1 class="ds thesis rv d1">
+      Fifty‑four billion <em>dollars</em> walk in the door.
+    </h1>
+    <p class="sub rv d2">
+      America's <em>largest meat company</em> moves protein at a scale most retailers can't fathom — and keeps <em>almost none</em> of the dollar that funds it.
+    </p>
+
+    <div class="hero-figure rv d3">
+      <div class="figbox">
+        <div class="big">$<span class="count" data-to="54.44" data-decimals="2">0.00</span><em>B</em></div>
+        <div class="lab">FY2025 net sales · 140 countries · 133,000 team members</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="hair"></div>
+
+  <!-- Reset beat 1 -->
+  <div class="reset" data-screen-label="02 Reset">
+    <p class="rv">A meat company is a <span class="hi">river of dollars</span> — wide at the source, narrow by the mouth.</p>
+  </div>
+
+  <!-- 2 · THE BUSINESS — four lanes -->
+  <section class="lanes" data-screen-label="03 Four lanes">
+    <div class="eye-row rv"><span class="num">02</span><span class="label">Four proteins, four lanes</span><span class="rule"></span></div>
+    <h2 class="ds rv d1">Beef, chicken, pork, prepared. <em>In that order.</em></h2>
+    <p class="body-copy copy rv d2">
+      Four segments share the floor. <strong>Beef</strong> is the loudest line — the largest by revenue, the hardest to make money in. <em>Chicken and prepared foods</em> carry the profit. Pork rides the cycle. International, a sliver.
+    </p>
+
+    <div class="lane-stack">
+      <div class="lane beef" style="--target:62%" data-pct="38">
+        <div class="name ds">Beef</div>
+        <div class="bar"><div class="fill"></div></div>
+        <div class="pct">38%</div>
+        <div class="meta">Largest by revenue · structurally pressured by tight U.S. cattle supply</div>
+      </div>
+      <div class="lane chicken" style="--target:70%" data-pct="30">
+        <div class="name ds">Chicken</div>
+        <div class="bar"><div class="fill"></div></div>
+        <div class="pct">30%</div>
+        <div class="meta">Primary profit driver in Q1'26 · branded + commodity</div>
+      </div>
+      <div class="lane prepared" style="--target:82%" data-pct="18">
+        <div class="name ds"><em>Prepared</em></div>
+        <div class="bar"><div class="fill"></div></div>
+        <div class="pct">18%</div>
+        <div class="meta">Jimmy Dean · Hillshire Farm · Ball Park · Wright · Aidells · State Fair</div>
+      </div>
+      <div class="lane pork" style="--target:89%" data-pct="11">
+        <div class="name ds">Pork</div>
+        <div class="bar"><div class="fill"></div></div>
+        <div class="pct">11%</div>
+        <div class="meta">Cyclical · commodity-driven margins</div>
+      </div>
+      <div class="lane intl" style="--target:96%" data-pct="4">
+        <div class="name ds">International</div>
+        <div class="bar"><div class="fill"></div></div>
+        <div class="pct">4%</div>
+        <div class="meta">Bolt-on M&amp;A focus · foodservice + export</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · SCALE -->
+  <section class="scale" data-screen-label="04 Scale">
+    <div class="eye-row rv"><span class="num">03</span><span class="label">A hundred and forty countries</span><span class="rule"></span></div>
+    <h2 class="ds rv d1">Big enough to <em>set the price</em>.</h2>
+
+    <div class="scale-grid">
+      <div class="stat rv">
+        <div class="num">$<span class="count" data-to="22.37" data-decimals="2">0</span><em>B</em></div>
+        <div class="lab">Market cap</div>
+      </div>
+      <div class="stat rv d1">
+        <div class="num">#<span class="count" data-to="85" data-decimals="0">0</span></div>
+        <div class="lab">Fortune 500 · 2025</div>
+      </div>
+      <div class="stat rv d2">
+        <div class="num"><span class="count" data-to="133" data-decimals="0">0</span>K</div>
+        <div class="lab">Team members</div>
+      </div>
+      <div class="stat rv d3">
+        <div class="num"><span class="count" data-to="140" data-decimals="0">0</span></div>
+        <div class="lab">Countries &amp; regions</div>
+      </div>
+      <div class="stat rv d4">
+        <div class="num">$<span class="count" data-to="14.31" data-decimals="2">0</span><em>B</em></div>
+        <div class="lab">Q1 FY26 revenue</div>
+      </div>
+      <div class="stat rv d4">
+        <div class="num">$<span class="count" data-to="0.97" data-decimals="2">0</span></div>
+        <div class="lab">Q1 FY26 EPS</div>
+      </div>
+      <div class="stat span2 rv d4">
+        <div class="num"><em>1935</em></div>
+        <div class="lab">Founded by John W. Tyson · Springdale, Arkansas</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="hair"></div>
+
+  <!-- Reset beat 2 -->
+  <div class="reset" data-screen-label="05 Reset">
+    <p class="rv">For every <span class="hi">dollar</span> in, ninety-four cents are already <span class="hi">spoken for</span>.</p>
+  </div>
+
+  <!-- 4 · DOLLAR GRID -->
+  <section class="dollar" data-screen-label="06 Dollar">
+    <div class="eye-row rv"><span class="num">04</span><span class="label">A hundred cents in</span><span class="rule"></span></div>
+    <h2 class="ds rv d1">Where the <em>dollar</em> goes.</h2>
+    <p class="body-copy lede rv d2">
+      Protein processing is a <em>commodity</em> business with a <strong>6.5% gross margin</strong>. Live animals come in. Cuts and patties go out. The middle is razor-thin — and ninety-four cents of every revenue dollar are spent before management touches a single line.
+    </p>
+
+    <div class="grid-100" id="grid100" aria-label="Cost breakdown grid"></div>
+
+    <div class="legend rv d2">
+      <div class="leg-row"><span class="swatch" style="background:var(--c-cor)"></span><span class="leg-name">Cost of revenue</span><span class="leg-pct">94%</span></div>
+      <div class="leg-row"><span class="swatch" style="background:var(--c-sga)"></span><span class="leg-name">SG&amp;A</span><span class="leg-pct">3%</span></div>
+      <div class="leg-row"><span class="swatch" style="background:var(--c-da)"></span><span class="leg-name">Depreciation &amp; amortization</span><span class="leg-pct">2%</span></div>
+      <div class="leg-row"><span class="swatch" style="background:var(--c-int)"></span><span class="leg-name">Interest expense</span><span class="leg-pct">1%</span></div>
+      <div class="leg-row"><span class="swatch" style="background:var(--ink)"></span><span class="leg-name"><em style="font-family:var(--font-display);font-style:italic;color:var(--red)">What survives</em></span><span class="leg-pct">~2¢</span></div>
+    </div>
+  </section>
+
+  <!-- 5 · SURVIVOR — dark interlude -->
+  <section class="survivor" data-screen-label="07 Survivor">
+    <div class="eye-row rv"><span class="num" style="color:#7E7568">05</span><span class="label" style="color:#E08C75">The bill, the bones, the bottom line</span><span class="rule" style="background:#2B2620"></span></div>
+    <h2 class="ds rv d1">The thin <em>survivor</em>.</h2>
+    <p class="copy rv d2">
+      $54.44B funnels through the plants. <em>Six and a half percent</em> survives the slaughter floor. <em>Two percent</em> survives the back office. <em>Free cash flow</em> — what the company actually gets to spend — is one one‑hundredth of the top line.
+    </p>
+
+    <svg class="funnel rv d3" viewBox="0 0 340 360" aria-hidden="true">
+      <!-- Stage 1: revenue -->
+      <rect x="20" y="20" width="300" height="40" fill="#2B2620"/>
+      <rect x="20" y="20" width="300" height="40" fill="#A8321F" opacity="0.95"/>
+      <text x="28" y="44" fill="#F4EFE6" style="font-family:'Geist Mono';font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">Revenue</text>
+      <text x="312" y="44" text-anchor="end" class="big">$54.44B</text>
+
+      <!-- funnel down -->
+      <path d="M20 60 L320 60 L240 110 L100 110 Z" fill="#1F1B17"/>
+
+      <!-- Stage 2: gross profit -->
+      <rect x="100" y="110" width="140" height="36" fill="#7A2010"/>
+      <text x="108" y="132" fill="#F4EFE6" style="font-family:'Geist Mono';font-size:10px;letter-spacing:0.08em;text-transform:uppercase;">Gross</text>
+      <text x="232" y="132" text-anchor="end" class="big" style="font-size:11px">$3.54B · 6.5%</text>
+
+      <path d="M100 146 L240 146 L200 188 L140 188 Z" fill="#1F1B17"/>
+
+      <!-- Stage 3: operating profit -->
+      <rect x="140" y="188" width="60" height="32" fill="#5C1408"/>
+      <text x="170" y="208" text-anchor="middle" fill="#F4EFE6" style="font-family:'Geist Mono';font-size:10px;letter-spacing:0.08em;text-transform:uppercase;">OpInc</text>
+      <text x="170" y="232" text-anchor="middle" class="big" style="font-size:11px">$1.09B · 2.0%</text>
+
+      <path d="M140 240 L200 240 L182 280 L158 280 Z" fill="#1F1B17"/>
+
+      <!-- Stage 4: free cash flow -->
+      <rect x="158" y="280" width="24" height="22" fill="#FFB59A"/>
+      <text x="170" y="320" text-anchor="middle" class="num" style="font-size:18px;">$1.18B</text>
+      <text x="170" y="340" text-anchor="middle" fill="#7E7568" style="font-family:'Geist Mono';font-size:9px;letter-spacing:0.12em;text-transform:uppercase;">Free cash flow</text>
+    </svg>
+
+    <div class="closer rv d4">
+      <div class="big ds">$<em>2.15</em><span style="font-size:0.5em;">B</span></div>
+      <div class="lab">Operating cash flow · before $978M capex</div>
+    </div>
+  </section>
+
+  <!-- Reset beat 3 -->
+  <div class="reset" data-screen-label="08 Reset">
+    <p class="rv">Ninety‑two cents of the company live <span class="hi">inside one country</span>.</p>
+  </div>
+
+  <!-- 6 · GEOGRAPHY -->
+  <section class="geo" data-screen-label="09 Geography">
+    <div class="eye-row rv"><span class="num">06</span><span class="label">Footprint</span><span class="rule"></span></div>
+    <h2 class="ds rv d1">A global brand, an <em>American</em> company.</h2>
+    <p class="body-copy copy rv d2">
+      Tyson sells in 140 countries. It earns in <em>one</em>. Ninety-two cents of every revenue dollar is born within U.S. borders.
+    </p>
+
+    <div class="map-wrap rv d2">
+      <svg viewBox="0 0 400 280" aria-hidden="true">
+        <defs>
+          <pattern id="dots" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.7" fill="#C5BAA0"/>
+          </pattern>
+          <pattern id="dots-us" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.9" fill="#A8321F"/>
+          </pattern>
+        </defs>
+        <!-- World shapes (very abstract) -->
+        <g opacity="0.85">
+          <!-- N America (non-US) -->
+          <path d="M30,80 Q50,40 110,50 L160,55 L150,90 L130,110 L80,120 L40,110 Z" fill="url(#dots)"/>
+          <!-- S America -->
+          <path d="M120,150 L150,140 L160,170 L150,220 L130,240 L120,220 L115,180 Z" fill="url(#dots)"/>
+          <!-- Europe -->
+          <path d="M200,55 L240,50 L260,70 L255,95 L220,100 L200,85 Z" fill="url(#dots)"/>
+          <!-- Africa -->
+          <path d="M210,110 L255,110 L265,150 L240,200 L215,200 L205,150 Z" fill="url(#dots)"/>
+          <!-- ME -->
+          <path d="M260,90 L295,90 L298,120 L275,128 L260,115 Z" fill="url(#dots)"/>
+          <!-- Asia -->
+          <path d="M280,55 L370,50 L380,90 L350,110 L300,105 L275,85 Z" fill="url(#dots)"/>
+          <!-- Asia-Pacific (south + Aus) -->
+          <path d="M320,130 L370,135 L380,170 L355,180 L320,170 Z" fill="url(#dots)"/>
+          <path d="M325,200 L375,200 L375,230 L335,235 Z" fill="url(#dots)"/>
+        </g>
+
+        <!-- USA highlight -->
+        <path id="usa" d="M40,80 Q60,55 110,55 L150,60 L155,90 L140,108 L100,118 L60,110 Z" fill="url(#dots-us)" stroke="#A8321F" stroke-width="0.8"/>
+        
+        <!-- Pulses on key markets -->
+        <g class="pulse-group">
+          <circle cx="95" cy="85" r="3" fill="#A8321F"/>
+          <circle cx="350" cy="85" r="2" fill="#15110D" opacity="0.6"/>
+          <circle cx="225" cy="80" r="2" fill="#15110D" opacity="0.6"/>
+          <circle cx="135" cy="180" r="2" fill="#15110D" opacity="0.6"/>
+        </g>
+
+        <!-- Labels -->
+        <text x="95" y="138" text-anchor="middle" style="font-family:'Geist Mono';font-size:9px;letter-spacing:0.1em;fill:#A8321F;font-weight:500;">UNITED STATES · 92%</text>
+        <text x="350" y="120" text-anchor="middle" style="font-family:'Geist Mono';font-size:8px;letter-spacing:0.1em;fill:#6E6557;">ASIA · 4%</text>
+        <text x="135" y="260" text-anchor="middle" style="font-family:'Geist Mono';font-size:8px;letter-spacing:0.1em;fill:#6E6557;">AMERICAS · 2%</text>
+        <text x="225" y="48" text-anchor="middle" style="font-family:'Geist Mono';font-size:8px;letter-spacing:0.1em;fill:#6E6557;">EUR/ME · 2%</text>
+      </svg>
+    </div>
+
+    <div class="geo-list">
+      <div class="geo-row major" style="--gtarget:8%" data-gp="92">
+        <span class="pct">92<small style="font-size:0.5em">%</small></span>
+        <span class="lab">United States</span>
+        <span class="bar"><i></i></span>
+      </div>
+      <div class="geo-row" style="--gtarget:96%" data-gp="4">
+        <span class="pct">4<small style="font-size:0.5em">%</small></span>
+        <span class="lab">Asia‑Pacific</span>
+        <span class="bar"><i></i></span>
+      </div>
+      <div class="geo-row" style="--gtarget:98%" data-gp="2">
+        <span class="pct">2<small style="font-size:0.5em">%</small></span>
+        <span class="lab">Americas (ex‑US)</span>
+        <span class="bar"><i></i></span>
+      </div>
+      <div class="geo-row" style="--gtarget:98%" data-gp="2">
+        <span class="pct">2<small style="font-size:0.5em">%</small></span>
+        <span class="lab">Europe &amp; Middle East</span>
+        <span class="bar"><i></i></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · THE BET -->
+  <section class="bet" data-screen-label="10 Bet">
+    <div class="eye-row rv"><span class="num">07</span><span class="label">Capital allocation</span><span class="rule"></span></div>
+    <h2 class="ds rv d1">A <em>conservative</em> balance sheet, on a knife‑edge income statement.</h2>
+    <p class="body-copy copy rv d2">
+      The 2025 priorities: keep the dividend, lighten the load, and buy back stock. Tap to expand each line.
+    </p>
+
+    <div class="allocation">
+      <div class="alloc rv">
+        <div>
+          <div class="label">Dividend paid · FY25</div>
+          <div class="val">$<em>697</em>M</div>
+        </div>
+        <div class="toggle">＋</div>
+        <div class="det">Quarterly cadence maintained. The payout ratio is elevated relative to GAAP earnings — a signal management treats the dividend as a near-fixed obligation, not a discretionary lever.</div>
+      </div>
+      <div class="alloc rv d1">
+        <div>
+          <div class="label">Capex · FY25</div>
+          <div class="val">$<em>978</em>M</div>
+        </div>
+        <div class="toggle">＋</div>
+        <div class="det">Plant network optimization continues — selective additions, asset divestitures, and bolt-on M&amp;A in foodservice and international markets, replacing the larger acquisitions of the past decade.</div>
+      </div>
+      <div class="alloc rv d2">
+        <div>
+          <div class="label">Buyback authorization · Aug 2025</div>
+          <div class="val"><em>+43</em>M sh</div>
+        </div>
+        <div class="toggle">＋</div>
+        <div class="det">Repurchase program expanded by 43 million shares in August 2025 — a visible signal that management views the equity as cheap relative to the long-run cash generation of the asset base.</div>
+      </div>
+      <div class="alloc rv d3">
+        <div>
+          <div class="label">Total debt · equity</div>
+          <div class="val">$909M <span style="color:var(--ink-3);font-size:0.6em;">/</span> $<em>18.09</em>B</div>
+        </div>
+        <div class="toggle">＋</div>
+        <div class="det">An unusually low leverage profile for a company at this scale. $1.23B in cash backs $909M in debt — net debt is effectively zero. The balance sheet's weight is in goodwill ($10.5B) and intangibles ($5.8B), accumulated through decades of acquisitions.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reset beat 4 -->
+  <div class="reset" data-screen-label="11 Reset">
+    <p class="rv">Three rivals share the floor. <span class="hi">Two of them outweigh us.</span></p>
+  </div>
+
+  <!-- 8 · COMPETITION -->
+  <section class="compete" data-screen-label="12 Competition">
+    <div class="eye-row rv"><span class="num">08</span><span class="label">The rivals</span><span class="rule"></span></div>
+    <h2 class="ds rv d1">Three names share the <em>cold case</em>.</h2>
+    <p class="body-copy copy rv d2">
+      Sized by market cap below — Bunge edges past Tyson, JBS sits just under, and Pilgrim's holds a third of Tyson's heft but defines the chicken aisle.
+    </p>
+
+    <div class="rivals">
+      <div class="rival tsn rv">
+        <div class="row">
+          <div class="name ds"><em>Tyson</em></div>
+          <div class="tk">TSN</div>
+          <div class="mc">MCAP <span class="v">$22.37B</span></div>
+        </div>
+        <div class="desc">Largest meat company in America. World's #2 processor of chicken, beef &amp; pork. Brand house: Jimmy Dean, Hillshire Farm, Ball Park, Wright, Aidells, State Fair.</div>
+        <div class="stats">
+          <div class="s">REV <b>$54.44B</b></div>
+          <div class="s">GM <b>6.5%</b></div>
+          <div class="s">OM <b>2.0%</b></div>
+        </div>
+      </div>
+
+      <div class="rival rv d1">
+        <div class="row">
+          <div class="name ds">Bunge Global</div>
+          <div class="tk">BG</div>
+          <div class="mc">MCAP <span class="v">$23.11B</span></div>
+        </div>
+        <div class="desc">Feed grains and agricultural commodities — the <em style="font-family:var(--font-display);font-style:italic;color:var(--red)">inputs</em> Tyson has to buy. Increasingly converging strategically in global protein supply chains.</div>
+        <div class="stats">
+          <div class="s">REV <b>$70.33B</b></div>
+          <div class="s">P/E <b>28.33</b></div>
+          <div class="s">YOY <b>+32.4%</b></div>
+        </div>
+      </div>
+
+      <div class="rival rv d2">
+        <div class="row">
+          <div class="name ds">JBS</div>
+          <div class="tk">JBS</div>
+          <div class="mc">MCAP <span class="v">$18.92B</span></div>
+        </div>
+        <div class="desc">The most direct global rival. <em style="font-family:var(--font-display);font-style:italic;color:var(--red)">Head‑to‑head</em> across beef, pork, and chicken. World's largest meat processor — competes for the same retail and foodservice customers.</div>
+        <div class="stats">
+          <div class="s">QREV <b>$23.06B</b></div>
+          <div class="s">P/E <b>9.35</b></div>
+          <div class="s">YOY <b>+48.9%</b></div>
+        </div>
+      </div>
+
+      <div class="rival rv d3">
+        <div class="row">
+          <div class="name ds">Pilgrim's Pride</div>
+          <div class="tk">PPC</div>
+          <div class="mc">MCAP <span class="v">$8.07B</span></div>
+        </div>
+        <div class="desc">Pure-play chicken. Direct threat to Tyson's <em style="font-family:var(--font-display);font-style:italic;color:var(--red)">most profitable</em> segment — fresh, frozen, and value-added poultry across U.S. retail and foodservice.</div>
+        <div class="stats">
+          <div class="s">REV <b>$18.50B</b></div>
+          <div class="s">P/E <b>7.45</b></div>
+          <div class="s">YOY <b>+3.5%</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · CLOSE -->
+  <section class="close" data-screen-label="13 Close">
+    <div class="eye-row rv"><span class="num">09</span><span class="label">The takeaway</span><span class="rule"></span></div>
+    <h2 class="ds rv d1">Fifty‑four billion in.<br/><em>One‑point‑two billion</em> out.</h2>
+
+    <div class="ledger rv d2">
+      <div class="ledger-row in">
+        <div class="lab">Revenue · top line</div>
+        <div class="v">$54.44B</div>
+      </div>
+      <div class="ledger-row">
+        <div class="lab">— Cost of revenue (94%)</div>
+        <div class="v" style="color:var(--ink-3);">($51.17B)</div>
+      </div>
+      <div class="ledger-row">
+        <div class="lab">— SG&amp;A, D&amp;A, interest</div>
+        <div class="v" style="color:var(--ink-3);">($2.18B)</div>
+      </div>
+      <div class="ledger-row">
+        <div class="lab">— Capital expenditures</div>
+        <div class="v" style="color:var(--ink-3);">($978M)</div>
+      </div>
+      <div class="ledger-row fcf">
+        <div class="lab">Free cash flow · what survives</div>
+        <div class="v"><em>$1.18B</em></div>
+      </div>
+    </div>
+
+    <p class="kicker rv d3">
+      A river of <span class="hi">fifty‑four billion dollars</span>. By the time it reaches the sea, <span class="hi">two cents on the dollar</span> remain — and the dividend, the buyback, and the next plant all drink from that.
+    </p>
+
+    <div class="footer">
+      <span>TSN · NYSE</span>
+      <span>FY '25 · APR '26</span>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ---------- Reveals ---------- */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); } });
+},{ threshold:0.18, rootMargin:"0px 0px -40px 0px" });
+document.querySelectorAll('.rv,.lane,.geo-row').forEach(n=>io.observe(n));
+
+/* ---------- Count-ups ---------- */
+const cio = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const el = e.target;
+    const to = parseFloat(el.dataset.to);
+    const dec = parseInt(el.dataset.decimals || "0");
+    const dur = 1400;
+    const start = performance.now();
+    function step(t){
+      const k = Math.min(1, (t-start)/dur);
+      const e2 = 1 - Math.pow(1-k, 3);
+      const v = to*e2;
+      el.textContent = v.toFixed(dec);
+      if(k<1) requestAnimationFrame(step);
+      else el.textContent = to.toFixed(dec);
+    }
+    requestAnimationFrame(step);
+    cio.unobserve(el);
+  });
+},{ threshold:0.5 });
+document.querySelectorAll('.count').forEach(n=>cio.observe(n));
+
+/* ---------- Progress hairline ---------- */
+const fill = document.getElementById('progress-fill');
+function onScroll(){
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const p = max>0 ? (h.scrollTop / max) : 0;
+  fill.style.right = ((1-p)*100)+'%';
+}
+document.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+
+/* ---------- 100¢ grid ---------- */
+(function(){
+  const grid = document.getElementById('grid100');
+  if(!grid) return;
+  // 94 cor, 3 sga, 2 da, 1 int = 100
+  // We want 'survive' visible too — recompute: 94 cor, 3 sga, 2 da, 1 int leaves no room.
+  // The 'what survives' cents come out of cor's 94% via op margin (~2%). Visualize: 92 cor, 3 sga, 2 da, 1 int, 2 survive.
+  const layout = [];
+  for(let i=0;i<92;i++) layout.push('cor');
+  for(let i=0;i<3;i++)  layout.push('sga');
+  for(let i=0;i<2;i++)  layout.push('da');
+  for(let i=0;i<1;i++)  layout.push('int');
+  for(let i=0;i<2;i++)  layout.push('survive');
+  // Place in a 10x10 grid in a way that keeps survive in the bottom-right corner for narrative weight
+  // Simpler: render in order, but put survive last (will land in bottom-right by grid flow).
+  layout.forEach((cls,i)=>{
+    const c = document.createElement('div');
+    c.className = 'cent ' + cls;
+    c.style.opacity = 0;
+    grid.appendChild(c);
+  });
+  // animate in
+  const gio = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting) return;
+      const cells = grid.querySelectorAll('.cent');
+      cells.forEach((c, i)=>{
+        setTimeout(()=>{
+          c.style.transition = 'opacity 280ms ease';
+          c.style.opacity = 1;
+        }, 6 + i*7);
+      });
+      gio.unobserve(grid);
+    });
+  },{ threshold:0.25 });
+  gio.observe(grid);
+})();
+
+/* ---------- Hero rain (subtle dollar marks parallaxing) ---------- */
+(function(){
+  const rain = document.getElementById('rain');
+  if(!rain) return;
+  const N = 14;
+  for(let i=0;i<N;i++){
+    const s = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    s.setAttribute('viewBox','0 0 24 32');
+    s.setAttribute('width', 8 + Math.random()*14);
+    s.setAttribute('height', 12 + Math.random()*22);
+    s.style.left = (Math.random()*100)+'%';
+    s.style.top = (Math.random()*100)+'%';
+    s.style.opacity = 0.06 + Math.random()*0.10;
+    s.style.transform = `rotate(${(Math.random()*30-15)}deg)`;
+    s.innerHTML = `<text x="0" y="26" font-family="Instrument Serif" font-size="28" font-style="italic" fill="${Math.random()<0.5 ? '#A8321F' : '#15110D'}">$</text>`;
+    s.dataset.depth = (Math.random()*0.4 + 0.05).toFixed(2);
+    rain.appendChild(s);
+  }
+  document.addEventListener('scroll', ()=>{
+    const y = window.scrollY;
+    if(y > 700) return;
+    rain.querySelectorAll('svg').forEach(s=>{
+      const d = parseFloat(s.dataset.depth);
+      s.style.transform = `translateY(${y*d}px) rotate(${(parseFloat(s.dataset.r||0))}deg)`;
+    });
+  }, {passive:true});
+})();
+
+/* ---------- Tap-to-deepen on capital allocation rows ---------- */
+document.querySelectorAll('.alloc').forEach(row=>{
+  row.addEventListener('click', ()=>{
+    row.classList.toggle('open');
+    const t = row.querySelector('.toggle');
+    if(t) t.textContent = row.classList.contains('open') ? '−' : '＋';
+  });
+});
+
+</script>
+</body>
+</html>

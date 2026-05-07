@@ -1,0 +1,1047 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>VRSK · Recap FY '25</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* ---------- TOKENS (lifted from Zair Naqvi DS, retuned for Verisk) ---------- */
+:root{
+  --paper:#FBFAF7;
+  --paper-2:#F4F2ED;
+  --paper-3:#ECEAE3;
+  --paper-warm:#F7F2E9;        /* ledger paper */
+  --ink:#141414;
+  --ink-2:#3B3A37;
+  --ink-3:#6B6A65;
+  --ink-4:#A4A29C;
+  --line:#E4E1D9;
+  --line-strong:#CFCBC0;
+  --rule:#1d1c1a;
+
+  /* Verisk-tuned palette: iris is the signal, coral reserved for one moment */
+  --iris-50:#F1F0FF;
+  --iris-100:#E2E0FF;
+  --iris-300:#9E97FF;
+  --iris-400:#7B71F5;
+  --iris-500:#5C50D9;
+  --iris-deep:#2E2A7A;
+  --coral-400:#FF7A57;
+
+  /* Cost colors (from JSON, do not change) */
+  --c-cor:#4F86C6;
+  --c-sga:#F4A261;
+  --c-da:#2A9D8F;
+  --c-rd:#E76F51;
+  --c-int:#9B5DE5;
+
+  --night:#0F0E0D;
+  --night-2:#1A1917;
+  --night-rule:#2A2826;
+
+  --font-display:'Instrument Serif','Times New Roman',serif;
+  --font-sans:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --font-mono:'Geist Mono','SF Mono',ui-monospace,Menlo,monospace;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--paper-warm);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{max-width:430px;margin:0 auto;background:var(--paper-warm);position:relative;overflow-x:clip}
+
+/* ---------- PERSISTENT CHROME ---------- */
+.chrome{
+  position:sticky;top:0;left:0;right:0;z-index:50;
+  background:rgba(247,242,233,0.78);
+  backdrop-filter:blur(20px) saturate(1.3);
+  -webkit-backdrop-filter:blur(20px) saturate(1.3);
+  border-bottom:1px solid rgba(20,20,20,0.06);
+}
+.chrome-row{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;gap:12px}
+.chrome-l{display:flex;align-items:center;gap:10px;min-width:0}
+.tk{font-family:var(--font-mono);font-size:13px;font-weight:500;letter-spacing:0.04em;color:var(--ink);background:var(--ink);color:var(--paper-warm);padding:3px 7px;border-radius:4px}
+.cn{font-family:var(--font-sans);font-size:14px;font-weight:500;color:var(--ink);letter-spacing:-0.005em}
+.cn span{color:var(--ink-3);font-weight:400}
+.recap{font-family:var(--font-mono);font-size:10px;letter-spacing:0.16em;color:var(--ink-3);text-transform:uppercase;text-align:right;line-height:1.2;flex-shrink:0}
+.recap small{display:block;color:var(--iris-500);font-size:9px;margin-top:2px}
+.progress{height:1.5px;background:transparent;width:100%}
+.progress-fill{height:100%;width:0%;background:var(--iris-400);transition:width .08s linear}
+
+/* ---------- TYPE ---------- */
+h1,h2,h3,p{margin:0}
+.eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+.eyebrow .num{color:var(--iris-500);font-weight:500}
+.display{font-family:var(--font-display);font-weight:400;line-height:0.95;letter-spacing:-0.02em;color:var(--ink)}
+.italic{font-style:italic}
+.iris{color:var(--iris-500)}
+.coral{color:var(--coral-400)}
+.body{font-family:var(--font-sans);font-size:15.5px;line-height:1.55;color:var(--ink-2)}
+.body .em{font-family:var(--font-display);font-style:italic;color:var(--iris-500);font-size:1.06em;letter-spacing:0}
+.mono{font-family:var(--font-mono);font-size:11px;letter-spacing:0.06em;color:var(--ink-3)}
+.mono-tab{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+/* ---------- SECTION SCAFFOLD ---------- */
+section{position:relative;padding:0 24px}
+.beat{padding:96px 24px}
+.beat-tight{padding:64px 24px}
+.section-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.section-eyebrow::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* ---------- RESET BEATS ---------- */
+.reset{
+  padding:64px 28px;
+  background:var(--paper-2);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  position:relative;
+}
+.reset p{
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:24px;
+  line-height:1.25;
+  color:var(--ink-2);
+  letter-spacing:-0.005em;
+  text-wrap:pretty;
+}
+.reset .hit{color:var(--iris-500)}
+.reset .ord{font-family:var(--font-mono);font-style:normal;font-size:9px;letter-spacing:0.2em;color:var(--ink-4);display:block;margin-bottom:14px;text-transform:uppercase}
+
+/* ---------- HERO ---------- */
+.hero{
+  padding:48px 24px 80px;
+  background:
+    radial-gradient(ellipse at 80% 0%,rgba(123,113,245,0.08),transparent 60%),
+    var(--paper-warm);
+  position:relative;
+  min-height:92vh;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  overflow:hidden;
+}
+.hero-eyebrow{margin-bottom:32px}
+.hero h1{
+  font-family:var(--font-display);
+  font-weight:400;
+  font-size:64px;
+  line-height:0.96;
+  letter-spacing:-0.025em;
+  color:var(--ink);
+}
+.hero h1 .l2{display:block;font-style:italic;color:var(--iris-500)}
+.hero h1 .dot{color:var(--coral-400)}
+.hero-sub{margin-top:28px;font-family:var(--font-sans);font-size:15px;line-height:1.55;color:var(--ink-2);max-width:30ch}
+.hero-meta{
+  margin-top:48px;display:flex;align-items:flex-end;gap:20px;
+  padding-top:18px;border-top:1px solid var(--line);
+  font-family:var(--font-mono);font-size:11px;letter-spacing:0.06em;color:var(--ink-3);text-transform:uppercase;
+}
+.hero-meta div{flex:1}
+.hero-meta b{display:block;font-family:var(--font-display);font-style:normal;font-weight:400;font-size:22px;color:var(--ink);letter-spacing:-0.01em;margin-bottom:2px;text-transform:none}
+
+/* meter scene */
+.meter-scene{position:absolute;top:0;right:-40px;width:300px;height:340px;pointer-events:none;opacity:0.95}
+.meter-scene svg{width:100%;height:100%;overflow:visible}
+
+/* ---------- BUSINESS / PIPES ---------- */
+.pipes-wrap{margin-top:32px;background:var(--paper);border:1px solid var(--line);border-radius:0;padding:0}
+.pipes-svg{width:100%;display:block}
+.pipe-legend{display:flex;justify-content:space-between;padding:14px 18px;border-top:1px solid var(--line);font-family:var(--font-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-3)}
+.pipe-legend strong{color:var(--ink);font-weight:500;display:block;font-family:var(--font-sans);font-size:14px;text-transform:none;letter-spacing:0;margin-bottom:2px}
+.pipe-legend .iris-dot{color:var(--iris-500)}
+.pipe-legend .ink-dot{color:var(--ink)}
+
+.sub-bar{
+  margin-top:24px;display:flex;align-items:center;gap:0;
+  background:var(--paper);border:1px solid var(--line);
+  height:48px;overflow:hidden;
+}
+.sub-bar .sub{background:var(--iris-400);height:100%;display:flex;align-items:center;padding:0 12px;color:#fff;font-family:var(--font-mono);font-size:11px;letter-spacing:0.08em;font-weight:500}
+.sub-bar .txn{flex:1;height:100%;display:flex;align-items:center;justify-content:flex-end;padding:0 12px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.08em;color:var(--ink-3)}
+
+/* ---------- SCALE / COUNTUPS ---------- */
+.scale-grid{display:grid;grid-template-columns:1fr;gap:0;margin-top:24px;border-top:1px solid var(--rule)}
+.scale-row{display:grid;grid-template-columns:1fr auto;align-items:baseline;padding:24px 0 18px;border-bottom:1px solid var(--line);gap:16px}
+.scale-row .lbl{font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3)}
+.scale-row .lbl small{display:block;text-transform:none;letter-spacing:0;font-size:11px;color:var(--ink-4);margin-top:4px;font-family:var(--font-sans)}
+.scale-row .val{font-family:var(--font-display);font-size:48px;line-height:0.95;color:var(--ink);font-weight:400;letter-spacing:-0.02em;text-align:right}
+.scale-row .val sub{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);letter-spacing:0.06em;vertical-align:baseline;margin-left:2px;font-weight:500}
+.scale-row.hero-stat .val{color:var(--iris-500);font-style:italic}
+
+/* tickline scene */
+.tickline{height:64px;margin:32px 0 8px;position:relative;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:repeating-linear-gradient(90deg,transparent 0,transparent 23px,rgba(20,20,20,0.04) 23px,rgba(20,20,20,0.04) 24px)}
+.tickline svg{width:100%;height:100%;display:block;overflow:visible}
+
+/* ---------- DOLLAR GRID (cost) ---------- */
+.cost-wrap{margin-top:8px}
+.cost-frame{
+  position:relative;background:var(--paper);
+  border:1px solid var(--line);padding:24px 22px 22px;
+}
+.cost-frame::before{
+  content:'';position:absolute;inset:8px;
+  background-image:
+    repeating-linear-gradient(0deg,transparent 0,transparent 18px,rgba(20,20,20,0.03) 18px,rgba(20,20,20,0.03) 19px);
+  pointer-events:none;
+}
+.cost-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;position:relative}
+.cost-head .ttl{font-family:var(--font-mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3)}
+.cost-head .total{font-family:var(--font-display);font-size:32px;color:var(--ink);letter-spacing:-0.01em}
+.cost-head .total small{font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;color:var(--ink-3);margin-left:4px}
+
+.cents{
+  position:relative;
+  display:grid;grid-template-columns:repeat(10,1fr);gap:3px;
+  margin-bottom:18px;
+}
+.cent{
+  aspect-ratio:1;border-radius:50%;
+  background:var(--paper-2);border:1px solid var(--line);
+  transition:background-color 600ms var(--ease-out,cubic-bezier(0.22,1,0.36,1)),border-color 600ms;
+  position:relative;
+}
+.cent.lit-survive{background:var(--ink);border-color:var(--ink)}
+.cent.lit-cor{background:var(--c-cor);border-color:var(--c-cor)}
+.cent.lit-sga{background:var(--c-sga);border-color:var(--c-sga)}
+.cent.lit-da{background:var(--c-da);border-color:var(--c-da)}
+.cent.lit-rd{background:var(--c-rd);border-color:var(--c-rd)}
+.cent.lit-int{background:var(--c-int);border-color:var(--c-int)}
+
+.cost-legend{display:grid;grid-template-columns:1fr;gap:10px;margin-top:18px;position:relative}
+.cost-leg{display:grid;grid-template-columns:14px 1fr auto;gap:12px;align-items:baseline;padding:8px 0;border-bottom:1px dotted var(--line)}
+.cost-leg:last-child{border-bottom:0}
+.cost-leg .sw{width:10px;height:10px;border-radius:50%;align-self:center;transform:translateY(2px)}
+.cost-leg .lb{font-family:var(--font-sans);font-size:14px;color:var(--ink);line-height:1.3}
+.cost-leg .pc{font-family:var(--font-mono);font-size:13px;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:0.02em}
+.cost-leg.survives .lb{font-style:italic;font-family:var(--font-display);font-size:18px;color:var(--ink)}
+.cost-leg.survives .pc{color:var(--ink);font-weight:500}
+
+.cost-margin{
+  margin-top:18px;padding:14px 16px;
+  background:var(--paper-warm);
+  border-left:2px solid var(--ink);
+  font-family:var(--font-display);font-style:italic;font-size:18px;color:var(--ink-2);line-height:1.35
+}
+.cost-margin b{font-style:normal;font-family:var(--font-sans);font-size:13px;font-weight:500;color:var(--ink);display:block;margin-top:6px;letter-spacing:0.02em}
+
+/* ---------- FOOTPRINT ---------- */
+.foot-svg-wrap{margin:8px 0 24px;background:var(--paper);border:1px solid var(--line);padding:18px}
+.foot-svg{width:100%;height:auto;display:block;overflow:visible}
+.foot-bars{display:grid;gap:14px;margin-top:8px}
+.foot-bar{display:grid;grid-template-columns:80px 1fr 50px;gap:12px;align-items:center}
+.foot-bar .nm{font-family:var(--font-sans);font-size:13px;color:var(--ink);font-weight:500}
+.foot-bar .tr{height:6px;background:var(--paper-3);position:relative;border-radius:0;overflow:hidden}
+.foot-bar .fl{position:absolute;left:0;top:0;height:100%;background:var(--iris-400);width:0%;transition:width 1.4s var(--ease-out,cubic-bezier(0.22,1,0.36,1))}
+.foot-bar.us .fl{background:var(--ink)}
+.foot-bar .pc{font-family:var(--font-mono);font-size:12px;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+
+/* ---------- DARK INTERLUDE (THE WEIGHT) ---------- */
+.weight{
+  background:var(--night);
+  color:#F4F2ED;
+  padding:96px 24px 96px;
+  margin:0 -24px;
+  position:relative;
+  overflow:hidden;
+}
+.weight .section-eyebrow::after{background:var(--night-rule)}
+.weight .eyebrow{color:rgba(244,242,237,0.55)}
+.weight .eyebrow .num{color:var(--iris-300)}
+.weight h2{
+  font-family:var(--font-display);font-weight:400;
+  font-size:48px;line-height:1;letter-spacing:-0.02em;color:#F4F2ED;
+}
+.weight h2 .it{font-style:italic;color:var(--iris-300)}
+.weight .body{color:#C9C6BF}
+.weight .body .em{color:var(--iris-300)}
+
+.scale-vis{margin:36px 0 32px;position:relative}
+.scale-vis svg{width:100%;height:auto;display:block;overflow:visible}
+
+.weight-list{margin-top:36px;display:grid;gap:0;border-top:1px solid var(--night-rule)}
+.weight-row{display:grid;grid-template-columns:1fr auto;gap:14px;padding:18px 0;border-bottom:1px solid var(--night-rule);align-items:baseline}
+.weight-row .k{font-family:var(--font-mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(244,242,237,0.55);line-height:1.3}
+.weight-row .k small{display:block;font-family:var(--font-sans);font-size:12px;letter-spacing:0;text-transform:none;color:rgba(244,242,237,0.45);margin-top:6px;line-height:1.4;max-width:24ch}
+.weight-row .v{font-family:var(--font-display);font-size:34px;color:#F4F2ED;line-height:1;letter-spacing:-0.01em;text-align:right;font-style:italic}
+.weight-row .v small{font-family:var(--font-mono);font-style:normal;font-size:10px;letter-spacing:0.08em;color:rgba(244,242,237,0.5);display:block;margin-top:6px;text-transform:uppercase}
+
+.cash-flow{
+  margin-top:8px;padding:18px 0 0;border-top:1px solid var(--night-rule);
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;
+}
+.cash-flow .cf{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(244,242,237,0.5)}
+.cash-flow .cf b{display:block;font-family:var(--font-display);font-style:normal;font-weight:400;font-size:26px;color:#F4F2ED;letter-spacing:-0.01em;margin-top:8px;text-transform:none}
+
+/* ---------- COMPETITION ---------- */
+.comp-board{margin-top:8px;background:var(--paper);border:1px solid var(--line);padding:20px}
+.comp-axis{position:relative;height:340px;margin:8px 0 24px}
+.comp-axis .ax-y,.comp-axis .ax-x{position:absolute;font-family:var(--font-mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-4)}
+.comp-axis .ax-y{left:0;top:6px;writing-mode:vertical-rl;transform:rotate(180deg)}
+.comp-axis .ax-x{bottom:0;right:0}
+.comp-axis svg{width:100%;height:100%;overflow:visible;position:absolute;inset:0}
+
+.comp-card{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:flex-start;
+  gap:14px;padding:18px 0;border-top:1px solid var(--line);
+  cursor:pointer;
+}
+.comp-card:last-child{border-bottom:1px solid var(--line)}
+.comp-card .cdot{width:10px;height:10px;border-radius:50%;background:var(--iris-400);margin-top:8px}
+.comp-card.vrsk .cdot{background:var(--ink)}
+.comp-card .cmid{min-width:0}
+.comp-card .nm{font-family:var(--font-sans);font-size:15px;font-weight:500;color:var(--ink);letter-spacing:-0.005em}
+.comp-card .nm .tk{font-family:var(--font-mono);font-size:10px;background:transparent;color:var(--ink-3);padding:0;letter-spacing:0.08em;font-weight:500;margin-left:6px}
+.comp-card .stats{display:flex;gap:16px;margin-top:6px;font-family:var(--font-mono);font-size:11px;color:var(--ink-3);letter-spacing:0.04em;flex-wrap:wrap}
+.comp-card .stats span b{color:var(--ink);font-weight:500}
+.comp-card .desc{margin-top:10px;font-size:13.5px;line-height:1.5;color:var(--ink-2);max-height:0;overflow:hidden;transition:max-height .35s ease,margin-top .35s ease}
+.comp-card.open .desc{max-height:300px;margin-top:10px}
+.comp-card .chev{font-family:var(--font-mono);font-size:18px;color:var(--ink-3);transition:transform .25s;align-self:flex-start;margin-top:2px;line-height:1}
+.comp-card.open .chev{transform:rotate(45deg);color:var(--iris-500)}
+
+/* ---------- CLOSE ---------- */
+.close{
+  padding:120px 24px 96px;
+  background:
+    radial-gradient(ellipse at 50% 100%,rgba(123,113,245,0.10),transparent 70%),
+    var(--paper-warm);
+  text-align:left;
+  position:relative;overflow:hidden;
+}
+.close h2{font-family:var(--font-display);font-weight:400;font-size:64px;line-height:0.95;letter-spacing:-0.025em;color:var(--ink)}
+.close h2 .it{font-style:italic;color:var(--iris-500)}
+.close h2 .dot{color:var(--coral-400)}
+.close-arc{display:flex;justify-content:space-between;margin:48px 0 36px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);align-items:flex-end;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.close-arc div{text-align:left}
+.close-arc .yr{font-family:var(--font-display);font-style:italic;font-size:34px;color:var(--ink);display:block;letter-spacing:-0.01em;line-height:1;margin-bottom:6px;text-transform:none;font-weight:400}
+.close-arc .arrow{flex:1;text-align:center;color:var(--ink-4);align-self:center;padding:0 8px}
+.close-arc div.r{text-align:right}
+
+.colophon{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-4);line-height:1.6}
+.colophon b{color:var(--ink-3);font-weight:500}
+
+/* ---------- ANIM CLASSES ---------- */
+.fade{opacity:0;transform:translateY(14px);transition:opacity .7s var(--ease-out,cubic-bezier(0.22,1,0.36,1)),transform .7s var(--ease-out,cubic-bezier(0.22,1,0.36,1))}
+.fade.in{opacity:1;transform:none}
+.fade-1{transition-delay:.05s}.fade-2{transition-delay:.15s}.fade-3{transition-delay:.25s}.fade-4{transition-delay:.35s}.fade-5{transition-delay:.45s}
+
+.draw path,.draw line,.draw circle,.draw rect,.draw polyline{stroke-dashoffset:var(--len,1000)}
+.draw.in path,.draw.in line,.draw.in circle,.draw.in rect,.draw.in polyline{stroke-dashoffset:0;transition:stroke-dashoffset 1.6s var(--ease-out,cubic-bezier(0.22,1,0.36,1))}
+
+@media (max-width:380px){
+  .hero h1{font-size:54px}
+  .close h2{font-size:54px}
+  .scale-row .val{font-size:40px}
+  .reset p{font-size:21px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PERSISTENT CHROME ============ -->
+<header class="chrome" id="chrome">
+  <div class="chrome-row">
+    <div class="chrome-l">
+      <span class="tk">VRSK</span>
+      <span class="cn">Verisk Analytics <span>· NASDAQ</span></span>
+    </div>
+    <div class="recap">Recap<small>FY '25</small></div>
+  </div>
+  <div class="progress"><div class="progress-fill" id="pf"></div></div>
+</header>
+
+<!-- ============ 1 · THESIS / HERO ============ -->
+<section class="hero" data-screen-label="01 Hero · Thesis">
+  <div class="meter-scene" aria-hidden="true">
+    <svg viewBox="0 0 300 340" class="draw" id="meter">
+      <!-- concentric meter dial -->
+      <defs>
+        <radialGradient id="dialGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#7B71F5" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#7B71F5" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <circle cx="220" cy="120" r="160" fill="url(#dialGlow)"/>
+      <!-- outer ring -->
+      <circle cx="220" cy="120" r="118" fill="none" stroke="#1d1c1a" stroke-width="0.75" opacity="0.85"/>
+      <circle cx="220" cy="120" r="96" fill="none" stroke="#1d1c1a" stroke-width="0.5" opacity="0.4"/>
+      <circle cx="220" cy="120" r="74" fill="none" stroke="#1d1c1a" stroke-width="0.5" opacity="0.3"/>
+      <!-- tick marks: 60 around 270deg -->
+      <g id="ticks" stroke="#1d1c1a"></g>
+      <!-- subscription pulse arc (~83%) -->
+      <path id="pulseArc" d="M 220 120 m -118 0 a 118 118 0 1 1 236 0 a 118 118 0 1 1 -236 0" fill="none" stroke="#7B71F5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0 999" opacity="0.92"/>
+      <!-- needle -->
+      <line id="needle" x1="220" y1="120" x2="220" y2="14" stroke="#141414" stroke-width="1.2" stroke-linecap="round"/>
+      <circle cx="220" cy="120" r="5" fill="#141414"/>
+      <circle cx="220" cy="120" r="2" fill="#FF7A57"/>
+      <!-- mono labels -->
+      <text x="220" y="156" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#6B6A65" letter-spacing="1.5">SUBSCRIPTION</text>
+      <text x="220" y="170" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#5C50D9" letter-spacing="1">&gt;80% OF REVENUE</text>
+    </svg>
+  </div>
+
+  <div class="hero-eyebrow eyebrow">VRSK · Recap FY '25 · <span class="num">v.02</span></div>
+  <h1>The meter under<br>every <span class="l2 italic">policy<span class="dot">.</span></span></h1>
+  <p class="hero-sub">Verisk doesn't write insurance. It writes the numbers that insurers write onto policies — quietly, by subscription, since 1971.</p>
+  <div class="hero-meta">
+    <div><b>$24.56B</b>Market cap</div>
+    <div><b>$3.07B</b>FY '25 revenue</div>
+    <div><b>20+</b>Countries</div>
+  </div>
+</section>
+
+<!-- ============ RESET BEAT 1 ============ -->
+<aside class="reset" data-screen-label="Reset 01">
+  <span class="ord">— I —</span>
+  <p>Insurers don't price risk. <span class="hit italic">They price Verisk's numbers</span> — and pass them through to you.</p>
+</aside>
+
+<!-- ============ 2 · THE BUSINESS ============ -->
+<section class="beat" data-screen-label="02 The business">
+  <div class="section-eyebrow eyebrow">The business · <span class="num">two streams</span></div>
+  <h2 class="display" style="font-size:42px;line-height:1.0">
+    Two pipes into <span class="italic iris">every<br>insurer</span>, billed by the year.
+  </h2>
+  <p class="body" style="margin-top:20px;max-width:34ch">
+    A single Insurance segment, split in workflow: <span class="em">underwriting</span> — forms, rules, loss costs, catastrophe modeling — and <span class="em">claims</span> — property estimating, anti-fraud, claims networks. Both deeply embedded in insurer software.
+  </p>
+
+  <div class="pipes-wrap">
+    <svg class="pipes-svg" viewBox="0 0 360 220" preserveAspectRatio="none">
+      <defs>
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1d1c1a" stroke-width="0.4" opacity="0.06"/>
+        </pattern>
+        <linearGradient id="pipeIris" x1="0" x2="1">
+          <stop offset="0" stop-color="#7B71F5" stop-opacity="0.15"/>
+          <stop offset="1" stop-color="#7B71F5" stop-opacity="0.85"/>
+        </linearGradient>
+        <linearGradient id="pipeInk" x1="0" x2="1">
+          <stop offset="0" stop-color="#141414" stop-opacity="0.15"/>
+          <stop offset="1" stop-color="#141414" stop-opacity="0.85"/>
+        </linearGradient>
+      </defs>
+      <rect width="360" height="220" fill="url(#grid)"/>
+
+      <!-- left labels -->
+      <text x="18" y="58" font-family="Geist Mono" font-size="9" fill="#6B6A65" letter-spacing="1.2">UNDERWRITING</text>
+      <text x="18" y="172" font-family="Geist Mono" font-size="9" fill="#6B6A65" letter-spacing="1.2">CLAIMS</text>
+
+      <!-- top pipe (underwriting / iris) -->
+      <path d="M 18 70 C 110 70, 150 70, 220 110 L 332 110" fill="none" stroke="url(#pipeIris)" stroke-width="14" stroke-linecap="round" opacity="0.95"/>
+      <!-- bottom pipe (claims / ink) -->
+      <path d="M 18 184 C 110 184, 150 184, 220 130 L 332 130" fill="none" stroke="url(#pipeInk)" stroke-width="14" stroke-linecap="round" opacity="0.92"/>
+
+      <!-- flow particles -->
+      <g id="pipeFlow"></g>
+
+      <!-- insurer terminal -->
+      <rect x="328" y="92" width="22" height="56" fill="#FBFAF7" stroke="#141414" stroke-width="1"/>
+      <text x="339" y="110" font-family="Geist Mono" font-size="7" fill="#141414" text-anchor="middle" letter-spacing="0.6">P&amp;C</text>
+      <text x="339" y="122" font-family="Geist Mono" font-size="7" fill="#141414" text-anchor="middle" letter-spacing="0.6">INS</text>
+      <text x="339" y="138" font-family="Geist Mono" font-size="6" fill="#5C50D9" text-anchor="middle">●</text>
+
+      <!-- annotations -->
+      <text x="168" y="60" font-family="Instrument Serif" font-style="italic" font-size="13" fill="#5C50D9">forms · rules · cat models</text>
+      <text x="168" y="200" font-family="Instrument Serif" font-style="italic" font-size="13" fill="#3B3A37">estimates · anti-fraud</text>
+    </svg>
+    <div class="pipe-legend">
+      <div><strong class="iris-dot">● Underwriting</strong>Pre-bind decision support</div>
+      <div style="text-align:right"><strong class="ink-dot">● Claims</strong>Post-loss workflow</div>
+    </div>
+  </div>
+
+  <!-- subscription dominance bar -->
+  <div class="sub-bar" aria-label="Subscription vs transactional revenue">
+    <div class="sub" id="subBar" style="width:0%">SUBSCRIPTION · 80%+</div>
+    <div class="txn">TXN</div>
+  </div>
+  <p class="mono" style="margin-top:8px;text-align:right">growing at double-digit rates · q-over-q</p>
+</section>
+
+<!-- ============ 3 · THE SCALE ============ -->
+<section class="beat-tight" data-screen-label="03 The scale" style="background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="section-eyebrow eyebrow">The scale · <span class="num">FY '25</span></div>
+  <h2 class="display" style="font-size:38px">
+    A <span class="italic iris">single segment</span><br>punching at index weight.
+  </h2>
+
+  <!-- scrubbed seismograph tickline visualizing revenue rhythm -->
+  <div class="tickline">
+    <svg viewBox="0 0 360 64" preserveAspectRatio="none">
+      <polyline id="seismo" fill="none" stroke="#7B71F5" stroke-width="1.2" stroke-linecap="round"
+                points="0,32 12,30 24,33 36,28 48,34 60,26 72,32 84,22 96,30 108,24 120,28 132,18 144,26 156,20 168,24 180,16 192,22 204,14 216,20 228,12 240,16 252,8 264,14 276,10 288,12 300,6 312,10 324,8 336,12 348,4 360,8"/>
+    </svg>
+  </div>
+
+  <div class="scale-grid">
+    <div class="scale-row hero-stat">
+      <div class="lbl">Revenue<small>FY '25 · single Insurance segment</small></div>
+      <div class="val" data-count="3.07" data-suffix="B" data-prefix="$">$0.00<sub>B</sub></div>
+    </div>
+    <div class="scale-row">
+      <div class="lbl">Operating margin<small>69.9% gross</small></div>
+      <div class="val" data-count="43.7" data-suffix="%">0.0<sub>%</sub></div>
+    </div>
+    <div class="scale-row">
+      <div class="lbl">Q4 EPS<small>on $778.80M revenue</small></div>
+      <div class="val" data-count="1.82" data-prefix="$">$0.00</div>
+    </div>
+    <div class="scale-row">
+      <div class="lbl">Employees<small>across 20+ countries</small></div>
+      <div class="val" data-count="7800" data-int="1">0<sub>HEADS</sub></div>
+    </div>
+    <div class="scale-row" style="border-bottom:0">
+      <div class="lbl">Founded<small>as ISO, a P&amp;C insurer consortium</small></div>
+      <div class="val">1971<sub>NJ</sub></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESET BEAT 2 ============ -->
+<aside class="reset" data-screen-label="Reset 02">
+  <span class="ord">— II —</span>
+  <p>You don't need a household name <span class="hit italic">to take a toll</span> on every household policy in America.</p>
+</aside>
+
+<!-- ============ 4 · WHERE THE MONEY GOES (DOLLAR GRID) ============ -->
+<section class="beat" data-screen-label="04 The dollar">
+  <div class="section-eyebrow eyebrow">A hundred cents in · <span class="num">cost ledger</span></div>
+  <h2 class="display" style="font-size:38px">
+    For every dollar in,<br><span class="italic iris">thirty-nine cents go out the door</span> first.
+  </h2>
+  <p class="body" style="margin-top:18px;max-width:34ch">
+    Cost of revenue is the largest line — the data, the engineers, the modeling. After SG&amp;A, D&amp;A, R&amp;D and interest, what's left is <span class="em">operating margin</span>.
+  </p>
+
+  <div class="cost-wrap">
+    <div class="cost-frame">
+      <div class="cost-head">
+        <span class="ttl">Per dollar of revenue</span>
+        <span class="total">$1.00<small>= 100¢</small></span>
+      </div>
+      <!-- 100 cents grid; 10x10 -->
+      <div class="cents" id="cents" aria-hidden="true"></div>
+
+      <div class="cost-legend">
+        <div class="cost-leg"><span class="sw" style="background:var(--c-cor)"></span><span class="lb">Cost of revenue</span><span class="pc">30¢</span></div>
+        <div class="cost-leg"><span class="sw" style="background:var(--c-sga)"></span><span class="lb">SG&amp;A</span><span class="pc">14¢</span></div>
+        <div class="cost-leg"><span class="sw" style="background:var(--c-da)"></span><span class="lb">Depreciation &amp; amortization</span><span class="pc">8¢</span></div>
+        <div class="cost-leg"><span class="sw" style="background:var(--c-rd)"></span><span class="lb">R&amp;D · technology</span><span class="pc">5¢</span></div>
+        <div class="cost-leg"><span class="sw" style="background:var(--c-int)"></span><span class="lb">Interest expense</span><span class="pc">4¢</span></div>
+        <div class="cost-leg survives"><span class="sw" style="background:var(--ink)"></span><span class="lb">survives</span><span class="pc">39¢</span></div>
+      </div>
+
+      <div class="cost-margin">
+        69.9% gross margin. 43.7% operating margin.
+        <b>Asset-light data, sold by subscription.</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5 · FOOTPRINT ============ -->
+<section class="beat-tight" data-screen-label="05 Footprint" style="background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="section-eyebrow eyebrow">Footprint · <span class="num">where revenue lives</span></div>
+  <h2 class="display" style="font-size:36px">
+    An American company<br>with a <span class="italic iris">passport to spare</span>.
+  </h2>
+  <p class="body" style="margin-top:18px;max-width:34ch">
+    Built on U.S. P&amp;C insurer data since '71. Europe and APAC follow the product, not the other way around.
+  </p>
+
+  <div class="foot-svg-wrap">
+    <svg class="foot-svg" viewBox="0 0 360 200" id="footSvg">
+      <defs>
+        <pattern id="dotgrid" width="6" height="6" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="0.5" fill="#1d1c1a" opacity="0.18"/>
+        </pattern>
+      </defs>
+      <!-- contour-style continents in dots -->
+      <!-- North America -->
+      <path d="M 30 60 C 40 40, 90 30, 110 50 C 125 65, 130 90, 115 110 C 100 130, 60 130, 45 115 C 30 100, 25 80, 30 60 Z" fill="url(#dotgrid)" stroke="#141414" stroke-width="1.4"/>
+      <!-- Europe -->
+      <path d="M 175 50 C 195 42, 220 50, 222 70 C 220 88, 200 92, 188 86 C 178 80, 170 65, 175 50 Z" fill="url(#dotgrid)" stroke="#141414" stroke-width="0.8" opacity="0.55"/>
+      <!-- Asia-Pacific -->
+      <path d="M 250 70 C 280 60, 320 65, 330 90 C 332 115, 305 130, 280 122 C 260 116, 245 95, 250 70 Z" fill="url(#dotgrid)" stroke="#141414" stroke-width="0.6" opacity="0.32"/>
+      <!-- Rest -->
+      <ellipse cx="200" cy="150" rx="14" ry="6" fill="url(#dotgrid)" stroke="#141414" stroke-width="0.4" opacity="0.22"/>
+
+      <!-- pulse markers -->
+      <circle cx="70" cy="85" r="6" fill="#141414"/>
+      <circle cx="70" cy="85" r="14" fill="none" stroke="#141414" stroke-width="0.6" opacity="0.4"/>
+      <text x="70" y="80" font-family="Geist Mono" font-size="9" fill="#141414" text-anchor="middle" font-weight="500" dy="-10">83%</text>
+      <text x="70" y="100" font-family="Geist Mono" font-size="7" fill="#3B3A37" text-anchor="middle" letter-spacing="1" dy="14">UNITED STATES</text>
+
+      <circle cx="200" cy="68" r="3.5" fill="#7B71F5"/>
+      <text x="200" y="63" font-family="Geist Mono" font-size="8" fill="#5C50D9" text-anchor="middle">10%</text>
+
+      <circle cx="290" cy="92" r="2.5" fill="#7B71F5" opacity="0.6"/>
+      <text x="290" y="86" font-family="Geist Mono" font-size="7" fill="#3B3A37" text-anchor="middle">4%</text>
+
+      <circle cx="200" cy="150" r="1.8" fill="#7B71F5" opacity="0.4"/>
+      <text x="200" y="166" font-family="Geist Mono" font-size="7" fill="#A4A29C" text-anchor="middle">3%</text>
+
+      <!-- HQ pin -->
+      <line x1="60" y1="86" x2="92" y2="78" stroke="#FF7A57" stroke-width="0.7"/>
+      <text x="98" y="80" font-family="Geist Mono" font-size="7" fill="#FF7A57" letter-spacing="0.5">HQ · JERSEY CITY, NJ</text>
+    </svg>
+  </div>
+
+  <div class="foot-bars">
+    <div class="foot-bar us"><span class="nm">United States</span><div class="tr"><div class="fl" data-fl="83"></div></div><span class="pc">83%</span></div>
+    <div class="foot-bar"><span class="nm">Europe</span><div class="tr"><div class="fl" data-fl="10"></div></div><span class="pc">10%</span></div>
+    <div class="foot-bar"><span class="nm">Asia-Pacific</span><div class="tr"><div class="fl" data-fl="4"></div></div><span class="pc">4%</span></div>
+    <div class="foot-bar"><span class="nm">Rest of world</span><div class="tr"><div class="fl" data-fl="3"></div></div><span class="pc">3%</span></div>
+  </div>
+</section>
+
+<!-- ============ RESET BEAT 3 ============ -->
+<aside class="reset" data-screen-label="Reset 03">
+  <span class="ord">— III —</span>
+  <p>A balance sheet built <span class="hit italic">to return cash</span>, not to hoard it. The bill, paid forward.</p>
+</aside>
+
+<!-- ============ 6 · THE WEIGHT (DARK INTERLUDE) ============ -->
+<section class="weight" data-screen-label="06 The weight">
+  <div class="section-eyebrow eyebrow">The weight · <span class="num">debt &amp; capital return</span></div>
+  <h2>
+    Five times <span class="it">more debt</span><br>than book equity.
+  </h2>
+  <p class="body" style="margin-top:20px;max-width:34ch">
+    A balance sheet that runs <span class="em">leveraged on purpose</span> — because acquired data sits in goodwill, and the cash comes out of customer subscriptions every month.
+  </p>
+
+  <div class="scale-vis">
+    <svg viewBox="0 0 360 220" id="scaleSvg" aria-label="debt vs equity balance">
+      <defs>
+        <linearGradient id="darkGrid" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#7B71F5" stop-opacity="0.14"/>
+          <stop offset="1" stop-color="#7B71F5" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- baseline -->
+      <line x1="20" y1="180" x2="340" y2="180" stroke="#3B3A37" stroke-width="0.8"/>
+      <!-- fulcrum -->
+      <polygon points="180,180 168,196 192,196" fill="#9E97FF"/>
+      <line x1="180" y1="195" x2="180" y2="210" stroke="#3B3A37" stroke-width="0.6"/>
+
+      <!-- beam (tilted toward debt) -->
+      <g transform="rotate(-7 180 90)">
+        <line x1="50" y1="90" x2="310" y2="90" stroke="#F4F2ED" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- debt block (left, heavy) -->
+        <rect x="58" y="40" width="100" height="50" fill="#7B71F5" opacity="0.92"/>
+        <text x="108" y="60" font-family="Instrument Serif" font-style="italic" font-size="20" fill="#F4F2ED" text-anchor="middle">$1.51B</text>
+        <text x="108" y="78" font-family="Geist Mono" font-size="8" fill="#0F0E0D" text-anchor="middle" letter-spacing="1.2">TOTAL DEBT</text>
+        <!-- equity block (right, tiny) -->
+        <rect x="248" y="68" width="44" height="22" fill="#F4F2ED" opacity="0.95"/>
+        <text x="270" y="84" font-family="Instrument Serif" font-style="italic" font-size="13" fill="#0F0E0D" text-anchor="middle">$309M</text>
+        <text x="270" y="60" font-family="Geist Mono" font-size="8" fill="#C9C6BF" text-anchor="middle" letter-spacing="1.2">EQUITY</text>
+        <!-- ropes -->
+        <line x1="108" y1="90" x2="108" y2="40" stroke="#F4F2ED" stroke-width="0.4" opacity="0.5"/>
+        <line x1="270" y1="90" x2="270" y2="68" stroke="#F4F2ED" stroke-width="0.4" opacity="0.5"/>
+      </g>
+      <!-- annotations -->
+      <text x="20" y="22" font-family="Geist Mono" font-size="9" fill="#9E97FF" letter-spacing="1.2">▼ HEAVIER</text>
+      <text x="340" y="22" font-family="Geist Mono" font-size="9" fill="#C9C6BF" letter-spacing="1.2" text-anchor="end">LIGHTER ▼</text>
+    </svg>
+  </div>
+
+  <div class="weight-list">
+    <div class="weight-row">
+      <div class="k">Cash &amp; equivalents<small>comfortably exceeds total debt</small></div>
+      <div class="v">$2.18B<small>net cash positive</small></div>
+    </div>
+    <div class="weight-row">
+      <div class="k">New buyback authorization<small>February 2026</small></div>
+      <div class="v">$2.50B<small>share repurchase program</small></div>
+    </div>
+    <div class="weight-row">
+      <div class="k">Accelerated repurchase<small>HSBC + Wells Fargo · Feb '26</small></div>
+      <div class="v">$1.50B<small>ASR initiated</small></div>
+    </div>
+    <div class="weight-row">
+      <div class="k">Senior notes refinancing<small>fixed-rate, extending maturity</small></div>
+      <div class="v">$1.00B<small>February 2026</small></div>
+    </div>
+    <div class="weight-row" style="border-bottom:0">
+      <div class="k">Dividend<small>raised 11% to $0.50/quarter, early '26</small></div>
+      <div class="v">$251.1M<small>FY paid</small></div>
+    </div>
+  </div>
+
+  <div class="cash-flow">
+    <div class="cf">Operating cash flow<b>$1.44B</b></div>
+    <div class="cf" style="text-align:right">Free cash flow<b>$1.19B</b></div>
+  </div>
+  <p class="mono" style="margin-top:14px;color:rgba(244,242,237,0.5);text-align:right">after $244.1M capex</p>
+</section>
+
+<!-- ============ RESET BEAT 4 ============ -->
+<aside class="reset" data-screen-label="Reset 04">
+  <span class="ord">— IV —</span>
+  <p>Three rivals reach for the same insurer wallet. <span class="hit italic">None of them sit where Verisk sits</span>.</p>
+</aside>
+
+<!-- ============ 7 · COMPETITION ============ -->
+<section class="beat" data-screen-label="07 Competition">
+  <div class="section-eyebrow eyebrow">The room · <span class="num">named competitors</span></div>
+  <h2 class="display" style="font-size:38px">
+    Tap any rival<br>to <span class="italic iris">read the angle</span>.
+  </h2>
+
+  <div class="comp-board">
+    <!-- competitive plot -->
+    <div class="comp-axis">
+      <span class="ax-y">← REVENUE GROWTH ▲</span>
+      <span class="ax-x">MARKET CAP ($B) →</span>
+      <svg viewBox="0 0 320 320">
+        <!-- axes -->
+        <line x1="30" y1="290" x2="310" y2="290" stroke="#CFCBC0" stroke-width="0.6"/>
+        <line x1="30" y1="20" x2="30" y2="290" stroke="#CFCBC0" stroke-width="0.6"/>
+        <!-- gridlines -->
+        <line x1="30" y1="200" x2="310" y2="200" stroke="#E4E1D9" stroke-width="0.4" stroke-dasharray="2 3"/>
+        <line x1="30" y1="120" x2="310" y2="120" stroke="#E4E1D9" stroke-width="0.4" stroke-dasharray="2 3"/>
+        <line x1="120" y1="20" x2="120" y2="290" stroke="#E4E1D9" stroke-width="0.4" stroke-dasharray="2 3"/>
+        <line x1="220" y1="20" x2="220" y2="290" stroke="#E4E1D9" stroke-width="0.4" stroke-dasharray="2 3"/>
+
+        <!-- VRSK: $24.56B, ~6% growth (using subscription-driven double-digit subscription growth as character) — derived only from JSON; market cap 24.56B -->
+        <!-- Coords: x scaled $0-$30B (30..310), y growth -10..+15% (290..20) -->
+        <!-- VRSK 24.56 / x≈260; revenue not given growth, plot at center top echo -->
+        <circle cx="260" cy="80" r="36" fill="#141414" opacity="0.95"/>
+        <text x="260" y="78" font-family="Geist Mono" font-size="10" fill="#FBFAF7" text-anchor="middle" font-weight="500" letter-spacing="0.8">VRSK</text>
+        <text x="260" y="94" font-family="Geist Mono" font-size="8" fill="#FBFAF7" text-anchor="middle" letter-spacing="0.8" opacity="0.7">$24.56B</text>
+
+        <!-- EFX: $23.31B, 6.92% growth -->
+        <circle cx="247" cy="138" r="30" fill="#7B71F5" opacity="0.85"/>
+        <text x="247" y="136" font-family="Geist Mono" font-size="9" fill="#FBFAF7" text-anchor="middle" font-weight="500">EFX</text>
+        <text x="247" y="150" font-family="Geist Mono" font-size="7" fill="#FBFAF7" text-anchor="middle" opacity="0.75">+6.9%</text>
+
+        <!-- RBA: $26.29B, 7.15% growth -->
+        <circle cx="278" cy="132" r="32" fill="#7B71F5" opacity="0.55"/>
+        <text x="278" y="130" font-family="Geist Mono" font-size="9" fill="#FBFAF7" text-anchor="middle" font-weight="500">RBA</text>
+        <text x="278" y="144" font-family="Geist Mono" font-size="7" fill="#FBFAF7" text-anchor="middle" opacity="0.75">+7.2%</text>
+
+        <!-- ROL/MSCI proxy — financials not in JSON, plot as small ghost at unknown growth -->
+        <circle cx="180" cy="180" r="14" fill="none" stroke="#7B71F5" stroke-width="1" stroke-dasharray="2 3" opacity="0.6"/>
+        <text x="180" y="183" font-family="Geist Mono" font-size="8" fill="#5C50D9" text-anchor="middle">ROL</text>
+
+        <!-- arrows showing collision -->
+        <path d="M 247 110 Q 252 95, 258 90" fill="none" stroke="#FF7A57" stroke-width="1" stroke-dasharray="2 2" opacity="0.7"/>
+        <path d="M 278 102 Q 272 92, 268 87" fill="none" stroke="#FF7A57" stroke-width="1" stroke-dasharray="2 2" opacity="0.7"/>
+      </svg>
+    </div>
+
+    <!-- competitor cards: tap to expand -->
+    <div class="comp-card vrsk">
+      <div class="cdot"></div>
+      <div class="cmid">
+        <div class="nm">Verisk Analytics<span class="tk">VRSK</span></div>
+        <div class="stats"><span><b>$24.56B</b> mcap</span><span><b>$3.07B</b> rev</span><span><b>43.7%</b> op mgn</span></div>
+      </div>
+      <div class="chev">·</div>
+    </div>
+    <div class="comp-card" data-toggle>
+      <div class="cdot"></div>
+      <div class="cmid">
+        <div class="nm">Equifax Inc<span class="tk">EFX</span></div>
+        <div class="stats"><span><b>$23.31B</b> mcap</span><span><b>$6.07B</b> rev</span><span><b>+6.92%</b> YoY</span><span><b>35.3</b> P/E</span></div>
+        <div class="desc">Competes directly with Verisk in insurance data and analytics — property and auto underwriting data, identity verification, and fraud detection — overlapping Verisk's core underwriting and claims product lines.</div>
+      </div>
+      <div class="chev">+</div>
+    </div>
+    <div class="comp-card" data-toggle>
+      <div class="cdot"></div>
+      <div class="cmid">
+        <div class="nm">Rollins / MSCI angle<span class="tk">ROL</span></div>
+        <div class="stats"><span>sector peer</span><span>strategic comp: <b>MSCI</b></span></div>
+        <div class="desc">Rollins is a sector peer; the more strategically relevant rival is MSCI Inc. — its insurance risk &amp; climate analytics, catastrophe modeling indices, and ESG risk frameworks are converging with Verisk's underwriting and extreme-event solutions, competing for the same insurer analytics budgets.</div>
+      </div>
+      <div class="chev">+</div>
+    </div>
+    <div class="comp-card" data-toggle>
+      <div class="cdot"></div>
+      <div class="cmid">
+        <div class="nm">RB Global Inc<span class="tk">RBA</span></div>
+        <div class="stats"><span><b>$26.29B</b> mcap</span><span><b>$4.59B</b> rev</span><span><b>+7.15%</b> YoY</span><span><b>44.8</b> P/E</span></div>
+        <div class="desc">Competes in commercial vehicle and equipment data and valuation analytics — auction-derived transaction data and total-loss vehicle pricing tools that increasingly overlap with Verisk's auto underwriting and claims estimating.</div>
+      </div>
+      <div class="chev">+</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8 · CLOSE / TAKEAWAY ============ -->
+<section class="close" data-screen-label="08 Close">
+  <div class="eyebrow" style="margin-bottom:24px">The takeaway · <span class="iris">v.02</span></div>
+  <h2>
+    Started as a <span class="it">consortium</span>.<br>
+    Still the meter<span class="dot">.</span>
+  </h2>
+  <p class="body" style="margin-top:24px;max-width:34ch;font-size:16px">
+    Founded in '71 as a nonprofit risk-data co-op for U.S. P&amp;C insurers. Public since 2009. The product hasn't changed shape: <span class="em">measurement, sold by subscription, embedded in workflow</span>. Everything else — the leverage, the buybacks, the senior notes — is just the cash returning to shareholders.
+  </p>
+
+  <div class="close-arc">
+    <div>
+      <span class="yr italic">'71</span>
+      ISO consortium founded
+    </div>
+    <div class="arrow">— · — · —</div>
+    <div class="r">
+      <span class="yr italic">'26</span>
+      $24.56B · NASDAQ
+    </div>
+  </div>
+
+  <h2 style="font-size:48px;margin-top:24px">
+    <span class="it">Eighty-three percent</span><br>of revenue still comes<br>from <span class="iris">one country.</span>
+  </h2>
+
+  <p class="body" style="margin-top:20px;max-width:32ch">
+    The next 17% — Europe, APAC, the rest — is the page that hasn't been written yet.
+  </p>
+
+  <div class="colophon">
+    <b>VRSK · Recap FY '25 · v.02</b><br>
+    Headquartered 545 Washington Blvd, Jersey City, NJ · ~7,800 employees · 20+ countries.<br>
+    Figures sourced from filing-period data. Subscription-driven, asset-light, leveraged on purpose.<br>
+    <span style="color:var(--coral-400)">●</span> end of recap
+  </div>
+</section>
+
+<script>
+/* ---------- Persistent scroll progress ---------- */
+const pf = document.getElementById('pf');
+function onScroll(){
+  const h = document.documentElement;
+  const sc = h.scrollTop || document.body.scrollTop;
+  const max = (h.scrollHeight - h.clientHeight) || 1;
+  pf.style.width = Math.max(0,Math.min(100, (sc/max)*100)) + '%';
+}
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+
+/* ---------- IntersectionObserver: reveal + count-up ---------- */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      if(e.target.dataset.count) startCount(e.target);
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:0.18, rootMargin:'0px 0px -8% 0px'});
+
+document.querySelectorAll('.fade, [data-count], .draw').forEach(el=>io.observe(el));
+
+/* ---------- Count-up animation ---------- */
+function startCount(el){
+  const target = parseFloat(el.dataset.count);
+  const isInt = el.dataset.int === '1';
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '';
+  const suffixHtml = suffix ? `<sub>${suffix}</sub>` : '';
+  const start = performance.now();
+  const dur = 1400;
+  function frame(t){
+    const k = Math.min(1, (t-start)/dur);
+    const eased = 1 - Math.pow(1-k, 3);
+    const v = target * eased;
+    let display;
+    if(isInt){
+      display = Math.round(v).toLocaleString();
+    } else if (target >= 100){
+      display = Math.round(v).toLocaleString();
+    } else if (target >= 10){
+      display = v.toFixed(1);
+    } else {
+      display = v.toFixed(2);
+    }
+    el.innerHTML = prefix + display + suffixHtml;
+    if(k<1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* mark counts as observable */
+document.querySelectorAll('[data-count]').forEach(el=>{
+  el.classList.add('fade');
+});
+
+/* ---------- HERO meter: ticks + needle on load ---------- */
+(function(){
+  const ticks = document.getElementById('ticks');
+  if(!ticks) return;
+  const cx=220, cy=120;
+  const startAng=-225, endAng=45; // 270deg sweep, top opening
+  for(let i=0;i<=60;i++){
+    const a = (startAng + (endAng-startAng)*(i/60)) * Math.PI/180;
+    const r1 = i%5===0 ? 108 : 113;
+    const r2 = 118;
+    const x1=cx+Math.cos(a)*r1, y1=cy+Math.sin(a)*r1;
+    const x2=cx+Math.cos(a)*r2, y2=cy+Math.sin(a)*r2;
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',x1);ln.setAttribute('y1',y1);
+    ln.setAttribute('x2',x2);ln.setAttribute('y2',y2);
+    ln.setAttribute('stroke-width', i%5===0 ? 0.9 : 0.45);
+    ln.setAttribute('opacity', i%5===0 ? 0.85 : 0.5);
+    ticks.appendChild(ln);
+  }
+  // animate pulse arc to ~83% of the 270deg sweep
+  const arc = document.getElementById('pulseArc');
+  const C = 2*Math.PI*118;
+  arc.style.strokeDasharray = `${C*0.83*0.75} ${C}`;  // rough portion
+  // animate needle to ~80% position
+  const needle = document.getElementById('needle');
+  setTimeout(()=>{
+    const target = startAng + (endAng-startAng)*0.83;
+    needle.style.transition = 'transform 1.6s cubic-bezier(0.22,1,0.36,1)';
+    needle.style.transformOrigin = '220px 120px';
+    needle.style.transform = `rotate(${target+90}deg)`;
+  }, 250);
+})();
+
+/* ---------- Pipe flow particles ---------- */
+(function(){
+  const flow = document.getElementById('pipeFlow');
+  if(!flow) return;
+  // top path: M 18 70 C 110 70, 150 70, 220 110 L 332 110
+  // bottom: M 18 184 C 110 184, 150 184, 220 130 L 332 130
+  const NS='http://www.w3.org/2000/svg';
+  const top = document.createElementNS(NS,'path');
+  top.setAttribute('d','M 18 70 C 110 70, 150 70, 220 110 L 332 110');
+  top.setAttribute('id','flowTop');
+  top.setAttribute('fill','none');top.setAttribute('stroke','none');
+  flow.appendChild(top);
+  const bot = document.createElementNS(NS,'path');
+  bot.setAttribute('d','M 18 184 C 110 184, 150 184, 220 130 L 332 130');
+  bot.setAttribute('id','flowBot');
+  bot.setAttribute('fill','none');bot.setAttribute('stroke','none');
+  flow.appendChild(bot);
+
+  for(let i=0;i<5;i++){
+    const c = document.createElementNS(NS,'circle');
+    c.setAttribute('r','2.2');c.setAttribute('fill','#FBFAF7');
+    flow.appendChild(c);
+    const m = document.createElementNS(NS,'animateMotion');
+    m.setAttribute('dur',(2.6+i*0.3)+'s');
+    m.setAttribute('repeatCount','indefinite');
+    m.setAttribute('begin', (i*0.5)+'s');
+    const mp = document.createElementNS(NS,'mpath');
+    mp.setAttributeNS('http://www.w3.org/1999/xlink','href','#flowTop');
+    m.appendChild(mp);
+    c.appendChild(m);
+  }
+  for(let i=0;i<5;i++){
+    const c = document.createElementNS(NS,'circle');
+    c.setAttribute('r','2.2');c.setAttribute('fill','#FBFAF7');
+    flow.appendChild(c);
+    const m = document.createElementNS(NS,'animateMotion');
+    m.setAttribute('dur',(2.8+i*0.3)+'s');
+    m.setAttribute('repeatCount','indefinite');
+    m.setAttribute('begin', (i*0.5+0.3)+'s');
+    const mp = document.createElementNS(NS,'mpath');
+    mp.setAttributeNS('http://www.w3.org/1999/xlink','href','#flowBot');
+    m.appendChild(mp);
+    c.appendChild(m);
+  }
+})();
+
+/* ---------- Subscription bar fill on scroll-in ---------- */
+(function(){
+  const sb = document.getElementById('subBar');
+  if(!sb) return;
+  const ob = new IntersectionObserver((es)=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        sb.style.transition='width 1.4s cubic-bezier(0.22,1,0.36,1)';
+        sb.style.width='82%';
+        ob.disconnect();
+      }
+    });
+  },{threshold:0.4});
+  ob.observe(sb);
+})();
+
+/* ---------- Build 100-cent dollar grid ---------- */
+(function(){
+  const cents = document.getElementById('cents');
+  if(!cents) return;
+  // Order in row-major; allocate by category in a deliberate, ordered fashion (top-to-bottom = expense first, then survives)
+  // 30 cor (top rows), 14 sga, 8 da, 5 rd, 4 int, 39 survives
+  const allocation = [];
+  const fill = (n, cls) => { for(let i=0;i<n;i++) allocation.push(cls); };
+  fill(30,'lit-cor');
+  fill(14,'lit-sga');
+  fill(8,'lit-da');
+  fill(5,'lit-rd');
+  fill(4,'lit-int');
+  fill(39,'lit-survive');
+
+  for(let i=0;i<100;i++){
+    const d = document.createElement('div');
+    d.className = 'cent';
+    cents.appendChild(d);
+  }
+  // observe + light up sequentially
+  const ob = new IntersectionObserver((es)=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        const nodes = cents.querySelectorAll('.cent');
+        allocation.forEach((cls, idx)=>{
+          setTimeout(()=>{
+            nodes[idx].classList.add(cls);
+          }, 14*idx + 120);
+        });
+        ob.disconnect();
+      }
+    });
+  },{threshold:0.3});
+  ob.observe(cents);
+})();
+
+/* ---------- Footprint bars fill ---------- */
+(function(){
+  const wrap = document.querySelector('.foot-bars');
+  if(!wrap) return;
+  const ob = new IntersectionObserver((es)=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        wrap.querySelectorAll('.fl').forEach((el,i)=>{
+          setTimeout(()=>{ el.style.width = el.dataset.fl+'%'; }, i*120);
+        });
+        ob.disconnect();
+      }
+    });
+  },{threshold:0.4});
+  ob.observe(wrap);
+})();
+
+/* ---------- Seismograph reveal ---------- */
+(function(){
+  const seis = document.getElementById('seismo');
+  if(!seis) return;
+  const len = 2000;
+  seis.style.strokeDasharray = len;
+  seis.style.strokeDashoffset = len;
+  const ob = new IntersectionObserver((es)=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        seis.style.transition='stroke-dashoffset 1.8s cubic-bezier(0.22,1,0.36,1)';
+        seis.style.strokeDashoffset='0';
+        ob.disconnect();
+      }
+    });
+  },{threshold:0.4});
+  ob.observe(seis);
+})();
+
+/* ---------- Competitor tap-to-expand ---------- */
+document.querySelectorAll('.comp-card[data-toggle]').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    card.classList.toggle('open');
+  });
+});
+
+</script>
+</body>
+</html>

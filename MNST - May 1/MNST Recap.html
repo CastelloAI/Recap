@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>MNST · Recap FY '25</title>
+<link rel="stylesheet" href="/projects/cb231650-8bc9-48e7-b3b8-075767d61fa8/colors_and_type.css" />
+<style>
+  /* =========================================================
+     MNST RECAP — FY '25
+     A scroll-driven editorial mobile artifact.
+     Palette: paper + ink (DS), with Monster's iconic acid green
+     reserved as the signal color. Coral retired — the company
+     dictates the bet.
+     ========================================================= */
+  :root {
+    /* Override accent for this page only — Monster's green is
+       the brand's punctuation, not coral. Used as signal color
+       in the same role coral plays elsewhere. */
+    --signal: #1FE05A;          /* Monster acid green */
+    --signal-dim: #14A744;
+    --signal-glow: 0 0 24px rgba(31,224,90,0.55);
+    --ink-deep: #0A0907;
+    --ink-deeper: #050403;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #2A2826;       /* letterbox so the mobile column reads as a column */
+    color: var(--fg);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* The mobile column. Sized like an iPhone Pro width; grows in height. */
+  .stage {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 80px rgba(0,0,0,0.35);
+  }
+
+  /* ---------- Persistent chrome ---------- */
+  .chrome {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(251,250,247,0.78);
+    backdrop-filter: saturate(1.4) blur(18px);
+    -webkit-backdrop-filter: saturate(1.4) blur(18px);
+    border-bottom: 1px solid rgba(228,225,217,0.6);
+  }
+  .chrome-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 10px;
+  }
+  .chrome-left { display: flex; align-items: center; gap: 10px; }
+  .ticker {
+    font-family: var(--font-mono);
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .ticker .dot {
+    display: inline-block; width: 7px; height: 7px;
+    border-radius: 50%; background: var(--signal);
+    margin-right: 7px; vertical-align: middle;
+    box-shadow: var(--signal-glow);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+  }
+  .co-name {
+    font-family: var(--font-sans);
+    font-size: 13px; color: var(--ink-2);
+    font-weight: 400;
+  }
+  .recap-label {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .progress-rail {
+    height: 1.5px; background: transparent;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: var(--signal);
+    box-shadow: var(--signal-glow);
+    transition: width 60ms linear;
+  }
+
+  /* Beat-aware chrome: when in dark beats, invert */
+  .chrome.dark {
+    background: rgba(10,9,7,0.78);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .chrome.dark .ticker, .chrome.dark .co-name { color: var(--paper); }
+  .chrome.dark .recap-label { color: var(--ink-4); }
+
+  /* ---------- Section primitives ---------- */
+  section { position: relative; }
+  .eyebrow-label {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-3);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .eyebrow-label::before {
+    content: ''; display: inline-block;
+    width: 6px; height: 6px; background: var(--signal);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(31,224,90,0.6);
+  }
+
+  /* Reset beats — italic-serif interludes between major sections */
+  .reset-beat {
+    padding: 56px 28px;
+    background: var(--paper-2);
+    text-align: left;
+  }
+  .reset-beat p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 24px; line-height: 1.25;
+    color: var(--ink-2);
+    letter-spacing: -0.01em;
+  }
+  .reset-beat .signal { color: var(--signal-dim); font-style: italic; }
+  .reset-beat .ink { color: var(--ink); font-style: italic; }
+
+  /* Big-number display type */
+  .display-num {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .display-num em { font-style: italic; color: var(--signal-dim); }
+
+  /* Body text used in this artifact */
+  .lede {
+    font-family: var(--font-sans);
+    font-size: 16px; line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .lede em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--signal-dim);
+    font-size: 1.05em;
+  }
+
+  /* ===== HERO — claw mark + "fourteen ounces of america" ===== */
+  .hero {
+    padding: 24px 28px 40px;
+    min-height: 92vh;
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--ink-3);
+    margin-top: 8px;
+  }
+  .hero-h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 64px; line-height: 0.92;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    margin: 18px 0 0;
+  }
+  .hero-h1 .cup {
+    font-style: italic;
+    color: var(--signal-dim);
+    display: inline-block;
+    position: relative;
+  }
+  .hero-h1 .cup::after {
+    content: ''; position: absolute;
+    right: -10px; bottom: 12px;
+    width: 8px; height: 8px;
+    background: var(--signal);
+    border-radius: 50%;
+    box-shadow: var(--signal-glow);
+  }
+  .hero-sub {
+    font-family: var(--font-sans);
+    font-size: 15px; line-height: 1.55;
+    color: var(--ink-2);
+    margin-top: 18px;
+    max-width: 32ch;
+  }
+  .hero-sub em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--signal-dim);
+    font-size: 17px;
+  }
+
+  /* The claw mark — three diagonal slashes, scroll-reactive */
+  .claw {
+    position: absolute;
+    right: -40px; top: 32%;
+    width: 340px; height: 320px;
+    pointer-events: none;
+    transform: rotate(-12deg);
+  }
+  .claw svg { width: 100%; height: 100%; overflow: visible; }
+  .claw-stroke {
+    fill: none;
+    stroke: var(--signal);
+    stroke-width: 22;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 18px rgba(31,224,90,0.6));
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+    animation: clawDraw 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+  }
+  .claw-stroke:nth-child(2) { animation-delay: 0.5s; }
+  .claw-stroke:nth-child(3) { animation-delay: 0.7s; }
+  @keyframes clawDraw {
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* Hero footer stats */
+  .hero-stats {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+    margin-top: 24px;
+    z-index: 2;
+    position: relative;
+  }
+  .hero-stat {
+    padding: 0 4px;
+    border-right: 1px solid var(--line);
+  }
+  .hero-stat:last-child { border-right: none; }
+  .hero-stat .num {
+    font-family: var(--font-display);
+    font-size: 28px; line-height: 1; color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .hero-stat .num em {
+    font-style: italic; color: var(--signal-dim);
+  }
+  .hero-stat .lbl {
+    font-family: var(--font-mono);
+    font-size: 9.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3);
+    margin-top: 6px; line-height: 1.3;
+  }
+
+  /* ===== BUSINESS — the can, in layers ===== */
+  .business {
+    padding: 72px 28px 64px;
+    background: var(--paper);
+  }
+  .business-h2 {
+    font-family: var(--font-display);
+    font-size: 38px; line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin: 14px 0 18px;
+    color: var(--ink);
+    font-weight: 400;
+  }
+  .business-h2 em { font-style: italic; color: var(--signal-dim); }
+
+  .can-wrap {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 18px;
+    margin-top: 32px;
+    align-items: stretch;
+  }
+  .can {
+    position: relative;
+    width: 130px; height: 320px;
+  }
+  .can-svg { width: 100%; height: 100%; display: block; }
+
+  .seg-list {
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    padding: 4px 0;
+  }
+  .seg {
+    display: flex; flex-direction: column;
+    gap: 2px;
+    padding: 8px 0;
+    border-top: 1px solid var(--line);
+  }
+  .seg:first-child { border-top: none; padding-top: 4px; }
+  .seg .seg-pct {
+    font-family: var(--font-display);
+    font-size: 32px; line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    display: flex; align-items: baseline; gap: 6px;
+  }
+  .seg .seg-pct em { font-style: italic; color: var(--signal-dim); }
+  .seg .seg-pct .pct { font-size: 16px; color: var(--ink-3); font-family: var(--font-sans); font-style: normal; }
+  .seg .seg-name {
+    font-family: var(--font-mono);
+    font-size: 10.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-2);
+  }
+  .seg .seg-detail {
+    font-size: 12px; color: var(--ink-3);
+    line-height: 1.4; margin-top: 2px;
+  }
+
+  /* ===== SCALE — counter section ===== */
+  .scale {
+    padding: 80px 28px 72px;
+    background: var(--paper);
+    position: relative;
+  }
+  .scale-h2 {
+    font-family: var(--font-display);
+    font-size: 56px; line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin: 16px 0 0;
+    color: var(--ink);
+  }
+  .scale-h2 em { font-style: italic; color: var(--signal-dim); }
+  .scale-lede {
+    margin-top: 24px;
+    font-size: 15px; line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 34ch;
+  }
+  .scale-lede em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--signal-dim);
+    font-size: 17px;
+  }
+
+  /* The 100-cup grid: 100 cans, 37 lit. */
+  .can-grid {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    gap: 3px;
+  }
+  .mini-can {
+    width: 100%; aspect-ratio: 0.5;
+    background: var(--line);
+    border-radius: 1.5px;
+    transition: background 280ms var(--ease-out);
+  }
+  .mini-can.lit {
+    background: var(--signal);
+    box-shadow: 0 0 4px rgba(31,224,90,0.6);
+  }
+  .can-grid-label {
+    margin-top: 14px;
+    display: flex; justify-content: space-between;
+    align-items: baseline;
+  }
+  .can-grid-label .stat {
+    font-family: var(--font-display);
+    font-size: 22px; color: var(--ink);
+  }
+  .can-grid-label .stat em { font-style: italic; color: var(--signal-dim); }
+  .can-grid-label .meta {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+
+  .scale-tiles {
+    margin-top: 48px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 28px 18px;
+  }
+  .scale-tile .num {
+    font-family: var(--font-display);
+    font-size: 44px; line-height: 0.95;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .scale-tile .num em { font-style: italic; color: var(--signal-dim); }
+  .scale-tile .lbl {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3);
+    margin-top: 6px;
+  }
+  .scale-tile .sub {
+    font-size: 12px; color: var(--ink-2);
+    margin-top: 4px; line-height: 1.4;
+  }
+
+  /* ===== COSTS — cross-section of a dollar ===== */
+  .costs {
+    padding: 80px 28px 64px;
+    background: var(--paper);
+  }
+  .costs-h2 {
+    font-family: var(--font-display);
+    font-size: 44px; line-height: 0.96;
+    letter-spacing: -0.025em;
+    margin: 14px 0 0;
+    color: var(--ink);
+  }
+  .costs-h2 em { font-style: italic; color: var(--signal-dim); }
+  .costs-lede {
+    margin-top: 18px; font-size: 14.5px;
+    color: var(--ink-2); line-height: 1.55;
+    max-width: 34ch;
+  }
+  .costs-lede em {
+    font-family: var(--font-display);
+    font-style: italic; color: var(--signal-dim);
+    font-size: 16px;
+  }
+
+  /* The dollar bar — vertical column rendered as a single can cross-section */
+  .dollar-stack {
+    margin-top: 36px;
+    display: grid; grid-template-columns: 70px 1fr;
+    gap: 18px;
+    align-items: stretch;
+  }
+  .dollar-bar {
+    position: relative;
+    width: 70px; min-height: 360px;
+    background: var(--paper-2);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .dollar-fill {
+    position: absolute; left: 0; right: 0;
+    transition: opacity 480ms var(--ease-out);
+    opacity: 0;
+  }
+  .dollar-fill.in { opacity: 1; }
+  /* The bottom remainder — what survives */
+  .dollar-survives {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        var(--ink) 0px, var(--ink) 1px,
+        transparent 1px, transparent 6px
+      ),
+      var(--paper);
+    color: var(--ink);
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 6px;
+  }
+  .dollar-survives .label {
+    font-family: var(--font-mono);
+    font-size: 9px; letter-spacing: 0.1em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+    background: var(--paper);
+    padding: 2px 4px; border-radius: 3px;
+  }
+
+  .cost-rows { display: flex; flex-direction: column; gap: 0; }
+  .cost-row {
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    gap: 6px;
+  }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-row .name {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-sans);
+    font-size: 13px; color: var(--ink-2);
+    font-weight: 500;
+  }
+  .cost-row .swatch {
+    display: inline-block; width: 8px; height: 14px;
+    border-radius: 1px;
+  }
+  .cost-row .pct {
+    font-family: var(--font-display);
+    font-size: 26px; color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .cost-row.survives .pct {
+    color: var(--ink); font-style: italic;
+  }
+  .cost-row.survives .name {
+    color: var(--ink); font-weight: 600;
+  }
+  .cost-row.survives .swatch {
+    background:
+      repeating-linear-gradient(
+        45deg,
+        var(--ink) 0px, var(--ink) 1px,
+        transparent 1px, transparent 4px
+      );
+  }
+
+  /* ===== FOOTPRINT — geographic flow ===== */
+  .footprint {
+    padding: 80px 28px 72px;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .footprint-h2 {
+    font-family: var(--font-display);
+    font-size: 44px; line-height: 0.96;
+    letter-spacing: -0.025em;
+    margin: 14px 0 0;
+    color: var(--ink);
+  }
+  .footprint-h2 em { font-style: italic; color: var(--signal-dim); }
+  .footprint-lede {
+    margin-top: 18px; font-size: 14.5px;
+    color: var(--ink-2); line-height: 1.55;
+    max-width: 34ch;
+  }
+  .footprint-lede em {
+    font-family: var(--font-display);
+    font-style: italic; color: var(--signal-dim);
+    font-size: 16px;
+  }
+
+  .geo-list {
+    margin-top: 32px;
+    display: flex; flex-direction: column;
+    gap: 0;
+  }
+  .geo-row {
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: end; gap: 14px;
+  }
+  .geo-row:first-child { border-top: none; }
+  .geo-row .region {
+    font-family: var(--font-sans);
+    font-size: 14px; color: var(--ink);
+    font-weight: 500;
+  }
+  .geo-row .region .meta {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-3);
+    margin-bottom: 4px;
+    font-weight: 400;
+  }
+  .geo-row .pct {
+    font-family: var(--font-display);
+    font-size: 36px; line-height: 0.95;
+    color: var(--ink); letter-spacing: -0.02em;
+  }
+  .geo-row .pct em { font-style: italic; color: var(--signal-dim); }
+  .geo-bar {
+    grid-column: 1 / -1;
+    height: 4px; background: var(--paper-2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .geo-bar-fill {
+    height: 100%; width: 0%;
+    background: var(--ink);
+    transition: width 800ms var(--ease-out);
+  }
+  .geo-row[data-primary="1"] .geo-bar-fill { background: var(--signal); box-shadow: var(--signal-glow); }
+
+  /* ===== BALANCE SHEET — dark interlude ===== */
+  .balance {
+    padding: 84px 28px 80px;
+    background: var(--ink-deeper);
+    color: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .balance::before {
+    content: ''; position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 70% 20%, rgba(31,224,90,0.12), transparent 55%),
+      radial-gradient(ellipse at 20% 80%, rgba(31,224,90,0.06), transparent 60%);
+    pointer-events: none;
+  }
+  .balance > * { position: relative; z-index: 2; }
+  .balance .eyebrow-label { color: var(--ink-4); }
+  .balance .eyebrow-label::before { background: var(--signal); }
+  .balance-h2 {
+    font-family: var(--font-display);
+    font-size: 56px; line-height: 0.94;
+    letter-spacing: -0.03em;
+    margin: 14px 0 0;
+    color: var(--paper);
+  }
+  .balance-h2 em { font-style: italic; color: var(--signal); }
+  .balance-lede {
+    margin-top: 22px; font-size: 15px;
+    color: rgba(244,242,237,0.75); line-height: 1.55;
+    max-width: 34ch;
+  }
+  .balance-lede em {
+    font-family: var(--font-display);
+    font-style: italic; color: var(--signal);
+    font-size: 17px;
+  }
+
+  /* The seesaw — equity vs debt */
+  .seesaw {
+    margin: 44px auto 12px;
+    height: 220px;
+    width: 100%;
+    position: relative;
+  }
+  .seesaw svg { width: 100%; height: 100%; overflow: visible; }
+  .seesaw-bar { stroke: var(--paper); stroke-width: 2; }
+  .seesaw-pillar { stroke: var(--paper); stroke-width: 2; }
+  .seesaw-pan-l, .seesaw-pan-r { fill: rgba(244,242,237,0.06); stroke: var(--paper); stroke-width: 1.5; }
+
+  .seesaw-labels {
+    display: grid; grid-template-columns: 1fr 1fr;
+    margin-top: 8px;
+    gap: 16px;
+    text-align: center;
+  }
+  .seesaw-labels .l-num {
+    font-family: var(--font-display);
+    font-size: 32px; color: var(--paper);
+    letter-spacing: -0.02em;
+  }
+  .seesaw-labels .l-num.signal { color: var(--signal); font-style: italic; }
+  .seesaw-labels .l-lbl {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-4);
+    margin-top: 4px;
+  }
+
+  /* Capital allocation — buyback ledger */
+  .ledger {
+    margin-top: 48px;
+    border-top: 1px solid rgba(244,242,237,0.18);
+  }
+  .ledger-row {
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(244,242,237,0.12);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .ledger-row .yr {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+  .ledger-row .label {
+    font-size: 13px; color: rgba(244,242,237,0.78);
+    line-height: 1.3;
+  }
+  .ledger-row .label .em {
+    color: var(--signal);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 14px;
+  }
+  .ledger-row .amt {
+    font-family: var(--font-display);
+    font-size: 26px; color: var(--paper);
+    letter-spacing: -0.015em;
+  }
+  .ledger-row .amt em { font-style: italic; color: var(--signal); }
+
+  .ledger-foot {
+    margin-top: 18px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px; line-height: 1.4;
+    color: rgba(244,242,237,0.7);
+  }
+  .ledger-foot .em { color: var(--signal); }
+
+  /* ===== COMPETITION ===== */
+  .competition {
+    padding: 80px 28px 64px;
+    background: var(--paper);
+  }
+  .competition-h2 {
+    font-family: var(--font-display);
+    font-size: 44px; line-height: 0.96;
+    letter-spacing: -0.025em;
+    margin: 14px 0 0;
+    color: var(--ink);
+  }
+  .competition-h2 em { font-style: italic; color: var(--signal-dim); }
+  .competition-lede {
+    margin-top: 18px; font-size: 14.5px;
+    color: var(--ink-2); line-height: 1.55;
+    max-width: 34ch;
+  }
+  .competition-lede em {
+    font-family: var(--font-display);
+    font-style: italic; color: var(--signal-dim);
+    font-size: 16px;
+  }
+
+  .comp-stack {
+    margin-top: 40px;
+    display: flex; flex-direction: column;
+    gap: 28px;
+  }
+  .comp {
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+    cursor: pointer;
+  }
+  .comp-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 12px;
+  }
+  .comp-name {
+    font-family: var(--font-display);
+    font-size: 26px; color: var(--ink);
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+  }
+  .comp-name em { font-style: italic; }
+  .comp-tk {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.14em;
+    color: var(--ink-3);
+  }
+  .comp-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 9.5px; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--paper-2);
+    padding: 3px 8px;
+    border-radius: var(--r-pill);
+    margin-top: 8px;
+    border: 1px solid var(--line);
+  }
+  .comp-tag.threat {
+    color: #fff;
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .comp-tag.frenemy {
+    color: var(--signal-dim);
+    background: rgba(31,224,90,0.08);
+    border-color: rgba(31,224,90,0.3);
+  }
+
+  /* Comp viz — relative size circles */
+  .comp-viz {
+    margin-top: 18px;
+    display: flex; align-items: flex-end; gap: 14px;
+    height: 90px;
+  }
+  .comp-circle {
+    border-radius: 50%;
+    background: var(--ink);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .comp-circle.us {
+    background: var(--signal);
+    box-shadow: var(--signal-glow);
+  }
+  .comp-circle.them {
+    background: var(--ink);
+  }
+  .comp-axis {
+    flex: 1;
+    border-bottom: 1px dashed var(--line);
+    margin-bottom: 8px;
+    height: 1px;
+    align-self: flex-end;
+  }
+  .comp-pair {
+    display: flex; align-items: baseline; gap: 12px;
+    margin-top: 14px;
+  }
+  .comp-stat {
+    font-family: var(--font-display);
+    font-size: 18px; color: var(--ink);
+  }
+  .comp-stat em { font-style: italic; color: var(--signal-dim); }
+  .comp-stat .lbl {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 9px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-3);
+    margin-top: 2px;
+  }
+  .comp-desc {
+    margin-top: 14px;
+    font-size: 13px; color: var(--ink-2);
+    line-height: 1.5;
+    max-height: 0; overflow: hidden;
+    transition: max-height 380ms var(--ease-out), margin-top 380ms var(--ease-out);
+  }
+  .comp.open .comp-desc {
+    max-height: 240px; margin-top: 14px;
+  }
+  .comp-toggle {
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--signal-dim);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .comp-toggle .arrow { transition: transform 220ms var(--ease-out); display: inline-block; }
+  .comp.open .comp-toggle .arrow { transform: rotate(90deg); }
+  .comp.open .comp-toggle .verb::after { content: ' less'; }
+  .comp:not(.open) .comp-toggle .verb::after { content: ' more'; }
+
+  /* ===== TAKEAWAY — close that inverts the open ===== */
+  .takeaway {
+    padding: 96px 28px 80px;
+    background: var(--paper);
+    position: relative;
+  }
+  .takeaway-h2 {
+    font-family: var(--font-display);
+    font-size: 70px; line-height: 0.92;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    margin: 24px 0 0;
+  }
+  .takeaway-h2 em { font-style: italic; color: var(--signal-dim); }
+  .takeaway-lede {
+    margin-top: 28px;
+    font-size: 16px; line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 34ch;
+  }
+  .takeaway-lede em {
+    font-family: var(--font-display);
+    font-style: italic; color: var(--signal-dim);
+    font-size: 18px;
+  }
+
+  /* The 100¢ grid: 100 dots, 29 lit. Restates the open. */
+  .penny-grid {
+    margin-top: 44px;
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    gap: 4px;
+  }
+  .penny {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    transition: background 320ms var(--ease-out), border-color 320ms var(--ease-out);
+  }
+  .penny.lit {
+    background: var(--signal);
+    border-color: var(--signal);
+    box-shadow: 0 0 4px rgba(31,224,90,0.45);
+  }
+
+  .penny-caption {
+    margin-top: 18px;
+    display: flex; justify-content: space-between;
+    align-items: baseline;
+  }
+  .penny-caption .stat {
+    font-family: var(--font-display);
+    font-size: 26px; color: var(--ink);
+  }
+  .penny-caption .stat em { font-style: italic; color: var(--signal-dim); }
+  .penny-caption .meta {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+
+  /* Footer */
+  .colophon {
+    padding: 48px 28px 64px;
+    background: var(--paper-2);
+    border-top: 1px solid var(--line);
+  }
+  .colophon .co-line {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3);
+    line-height: 1.7;
+  }
+  .colophon .co-line + .co-line { margin-top: 4px; }
+  .colophon .seal {
+    margin-top: 24px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-pill);
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-2);
+  }
+  .colophon .seal .pip {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--signal);
+    box-shadow: var(--signal-glow);
+  }
+
+  /* ---------- Reveal helpers ---------- */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
+  .reveal.in { opacity: 1; transform: none; }
+  .reveal.d1 { transition-delay: 80ms; }
+  .reveal.d2 { transition-delay: 160ms; }
+  .reveal.d3 { transition-delay: 240ms; }
+  .reveal.d4 { transition-delay: 320ms; }
+
+</style>
+</head>
+<body data-screen-label="MNST Recap">
+
+<div class="stage" id="stage" data-screen-label="01 Recap">
+
+  <!-- ============== PERSISTENT CHROME ============== -->
+  <header class="chrome" id="chrome">
+    <div class="chrome-row">
+      <div class="chrome-left">
+        <span class="ticker"><span class="dot"></span>MNST</span>
+        <span class="co-name">Monster Beverage</span>
+      </div>
+      <span class="recap-label">Recap · FY '25</span>
+    </div>
+    <div class="progress-rail"><div class="progress-fill" id="progress"></div></div>
+  </header>
+
+  <!-- ============== HERO ============== -->
+  <section class="hero" data-beat="hero" data-screen-label="01 Hero">
+    <div>
+      <div class="hero-eyebrow">The thesis · 16oz</div>
+      <h1 class="hero-h1">
+        Thirty&#8209;seven<br/>
+        cents of <span class="cup">every</span><br/>
+        American<br/>
+        energy buy.
+      </h1>
+      <p class="hero-sub">
+        Monster Beverage runs the U.S. energy aisle on a single playbook: <em>own the brand,</em> rent the bottlers, pour the can. <em>$8.29B</em> in FY '25 sales, 6,558 employees, one recipe.
+      </p>
+    </div>
+
+    <!-- Animated claw mark -->
+    <div class="claw" aria-hidden="true">
+      <svg viewBox="0 0 320 320">
+        <path class="claw-stroke" d="M 40 280 L 220 60" />
+        <path class="claw-stroke" d="M 90 290 L 270 70" />
+        <path class="claw-stroke" d="M 140 300 L 300 100" />
+      </svg>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">$<em>8.29</em>B</div>
+        <div class="lbl">FY '25 Revenue</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num"><em>37</em>%</div>
+        <div class="lbl">U.S. Category Share</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">$<em>75</em>B</div>
+        <div class="lbl">Market Cap</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== RESET BEAT 1 ============== -->
+  <aside class="reset-beat" data-screen-label="02 Reset 1">
+    <p>
+      <span class="ink">Hansen's juice, 1935.</span> Monster Energy, <span class="signal">2002.</span> Same company &mdash; rewritten from the can outward.
+    </p>
+  </aside>
+
+  <!-- ============== THE BUSINESS — CAN IN LAYERS ============== -->
+  <section class="business" data-beat="business" data-screen-label="03 Business">
+    <div class="eyebrow-label reveal">Four segments · one can</div>
+    <h2 class="business-h2 reveal d1">How the <em>can</em> pays for itself.</h2>
+    <p class="lede reveal d2" style="margin-top:14px; max-width:34ch;">
+      Ninety-two cents of every dollar arrives in a Monster green can. The rest &mdash; <em>strategic brands,</em> craft beer, the long tail &mdash; rounds the recipe out.
+    </p>
+
+    <div class="can-wrap">
+      <!-- The can: liquid layers fill bottom-up -->
+      <div class="can">
+        <svg class="can-svg" viewBox="0 0 130 320" preserveAspectRatio="none">
+          <defs>
+            <clipPath id="canClip">
+              <path d="M 12 18 Q 12 6 24 6 L 106 6 Q 118 6 118 18 L 118 302 Q 118 314 106 314 L 24 314 Q 12 314 12 302 Z" />
+            </clipPath>
+          </defs>
+          <!-- Can body shadow -->
+          <path d="M 12 18 Q 12 6 24 6 L 106 6 Q 118 6 118 18 L 118 302 Q 118 314 106 314 L 24 314 Q 12 314 12 302 Z"
+                fill="var(--paper-2)" stroke="var(--line-strong)" stroke-width="1"/>
+
+          <!-- Liquid layers — bottom up, scroll-driven heights -->
+          <g clip-path="url(#canClip)">
+            <!-- Other (~0%, hairline) -->
+            <rect class="layer-other" x="0" y="320" width="130" height="0" fill="#A4A29C"/>
+            <!-- Alcohol 2% -->
+            <rect class="layer-alc" x="0" y="320" width="130" height="0" fill="#6B6A65"/>
+            <!-- Strategic 6% -->
+            <rect class="layer-str" x="0" y="320" width="130" height="0" fill="#3B3A37"/>
+            <!-- Monster Energy 92% — the dominant signal layer -->
+            <rect class="layer-mon" x="0" y="320" width="130" height="0" fill="#1FE05A"/>
+          </g>
+          <!-- Top rim -->
+          <ellipse cx="65" cy="10" rx="46" ry="6" fill="none" stroke="var(--line-strong)" stroke-width="1"/>
+          <!-- Pull-tab -->
+          <rect x="56" y="3" width="18" height="6" rx="2" fill="none" stroke="var(--ink-3)" stroke-width="1"/>
+          <!-- Glow on top edge of monster layer -->
+          <line class="layer-mon-line" x1="0" y1="320" x2="130" y2="320" stroke="#1FE05A" stroke-width="2" style="filter:drop-shadow(0 0 6px #1FE05A);"/>
+        </svg>
+      </div>
+
+      <!-- Segment list, top to bottom = largest to smallest -->
+      <div class="seg-list">
+        <div class="seg">
+          <div class="seg-pct"><em>92</em><span class="pct">%</span></div>
+          <div class="seg-name">Monster Energy Drinks</div>
+          <div class="seg-detail">Core green can, Reign, Bang, Burn, Java Monster.</div>
+        </div>
+        <div class="seg">
+          <div class="seg-pct">6<span class="pct">%</span></div>
+          <div class="seg-name">Strategic Brands</div>
+          <div class="seg-detail">Concentrates and affordable energy lines, acquired from Coca-Cola.</div>
+        </div>
+        <div class="seg">
+          <div class="seg-pct">2<span class="pct">%</span></div>
+          <div class="seg-name">Alcohol Brands</div>
+          <div class="seg-detail">Craft beer and hard seltzers.</div>
+        </div>
+        <div class="seg">
+          <div class="seg-pct">&lt;1<span class="pct">%</span></div>
+          <div class="seg-name">Other</div>
+          <div class="seg-detail">Tail revenue.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== SCALE — 37 OF 100 ============== -->
+  <section class="scale" data-beat="scale" data-screen-label="04 Scale">
+    <div class="eyebrow-label reveal">The scale · One in three</div>
+    <h2 class="scale-h2 reveal d1">A hundred cans on the shelf.<br/><em>Thirty&#8209;seven</em> are Monster.</h2>
+    <p class="scale-lede reveal d2">
+      In every U.S. convenience-store cooler, more than a third of the energy drinks belong to one company. <em>Coca-Cola owns the trucks.</em> Monster owns the can.
+    </p>
+
+    <div class="can-grid" id="canGrid"></div>
+    <div class="can-grid-label">
+      <span class="stat"><em>37</em> of 100</span>
+      <span class="meta">U.S. category share</span>
+    </div>
+
+    <div class="scale-tiles">
+      <div class="scale-tile reveal">
+        <div class="num">$<em>2.13</em>B</div>
+        <div class="lbl">Q4 '25 Revenue</div>
+        <div class="sub">EPS of $0.51 in the most recent quarter.</div>
+      </div>
+      <div class="scale-tile reveal d1">
+        <div class="num"><em>55.8</em>%</div>
+        <div class="lbl">Gross Margin</div>
+        <div class="sub">Asset-light: third-party co-packers do the bottling.</div>
+      </div>
+      <div class="scale-tile reveal d2">
+        <div class="num"><em>29.2</em>%</div>
+        <div class="lbl">Operating Margin</div>
+        <div class="sub">Brand owners keep the surplus.</div>
+      </div>
+      <div class="scale-tile reveal d3">
+        <div class="num"><em>6,558</em></div>
+        <div class="lbl">Full-time employees</div>
+        <div class="sub">Headquartered in Corona, CA.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== RESET BEAT 2 ============== -->
+  <aside class="reset-beat" data-screen-label="05 Reset 2">
+    <p>
+      <span class="ink">Where the dollar goes.</span> A can leaves the shelf for $2&mdash;ish. <span class="signal">Most of it pays for the can to be there at all.</span>
+    </p>
+  </aside>
+
+  <!-- ============== COSTS — DOLLAR CROSS-SECTION ============== -->
+  <section class="costs" data-beat="costs" data-screen-label="06 Costs">
+    <div class="eyebrow-label reveal">A hundred cents in</div>
+    <h2 class="costs-h2 reveal d1">Where each dollar of revenue <em>actually</em> goes.</h2>
+    <p class="costs-lede reveal d2">
+      Cost of revenue takes the largest pour. Marketing &mdash; the Supercross sponsorships, the pro athletes, the green logos &mdash; <em>takes the next largest.</em>
+    </p>
+
+    <div class="dollar-stack">
+      <div class="dollar-bar" id="dollarBar">
+        <!-- Layers fill from the top: COR (44%) → S&M (14%) → G&A (12%) → D&L (5%) → SBC (3%) → survives (~22%) -->
+        <!-- (44 + 14 + 12 + 5 + 3 = 78; 22 survives — close to op-margin band) -->
+        <!-- Heights set in JS proportional to the bar -->
+      </div>
+
+      <div class="cost-rows">
+        <div class="cost-row">
+          <div class="name"><span class="swatch" style="background:#E05C5C"></span>Cost of revenue</div>
+          <div class="pct">44¢</div>
+        </div>
+        <div class="cost-row">
+          <div class="name"><span class="swatch" style="background:#F4A261"></span>Selling &amp; marketing</div>
+          <div class="pct">14¢</div>
+        </div>
+        <div class="cost-row">
+          <div class="name"><span class="swatch" style="background:#2A9D8F"></span>General &amp; admin</div>
+          <div class="pct">12¢</div>
+        </div>
+        <div class="cost-row">
+          <div class="name"><span class="swatch" style="background:#457B9D"></span>Distribution &amp; logistics</div>
+          <div class="pct">5¢</div>
+        </div>
+        <div class="cost-row">
+          <div class="name"><span class="swatch" style="background:#9B5DE5"></span>Stock-based comp</div>
+          <div class="pct">3¢</div>
+        </div>
+        <div class="cost-row survives">
+          <div class="name"><span class="swatch"></span>Survives to operations</div>
+          <div class="pct">22¢</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== FOOTPRINT ============== -->
+  <section class="footprint" data-beat="footprint" data-screen-label="07 Footprint">
+    <div class="eyebrow-label reveal">The footprint · Coca-Cola's pipes</div>
+    <h2 class="footprint-h2 reveal d1">Sold in <em>every market</em> Coke is.</h2>
+    <p class="footprint-lede reveal d2">
+      Two-thirds of the can lands in North America. The rest moves through the same global plumbing that delivers Coke &mdash; <em>which means Monster goes where Coke already does.</em>
+    </p>
+
+    <div class="geo-list" id="geoList">
+      <div class="geo-row" data-pct="63" data-primary="1">
+        <div class="region"><span class="meta">Home base</span>United States &amp; Canada</div>
+        <div class="pct"><em>63</em>%</div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="100"></div></div>
+      </div>
+      <div class="geo-row" data-pct="21">
+        <div class="region"><span class="meta">EMEA · CCEP territory</span>Europe, Middle East &amp; Africa</div>
+        <div class="pct"><em>21</em>%</div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="33"></div></div>
+      </div>
+      <div class="geo-row" data-pct="9">
+        <div class="region"><span class="meta">LATAM</span>Latin America &amp; Caribbean</div>
+        <div class="pct"><em>9</em>%</div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="14"></div></div>
+      </div>
+      <div class="geo-row" data-pct="7">
+        <div class="region"><span class="meta">APAC · Growth lane</span>Asia&#8209;Pacific</div>
+        <div class="pct"><em>7</em>%</div>
+        <div class="geo-bar"><div class="geo-bar-fill" data-w="11"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== RESET BEAT 3 ============== -->
+  <aside class="reset-beat" data-screen-label="08 Reset 3">
+    <p>
+      <span class="ink">No dividend. No leverage.</span> <span class="signal">A balance sheet built like a vault</span> &mdash; and run like one too.
+    </p>
+  </aside>
+
+  <!-- ============== BALANCE SHEET — DARK INTERLUDE ============== -->
+  <section class="balance" data-beat="balance" data-chrome-dark data-screen-label="09 Balance">
+    <div class="eyebrow-label">The vault · Equity vs. debt</div>
+    <h2 class="balance-h2">$<em>8.25</em>B in equity.<br/>$<em>199</em>M in debt.</h2>
+    <p class="balance-lede">
+      The ratio is the story. <em>Forty-one to one.</em> Monster has roughly $2 billion in cash on hand and a debt load that would barely register at a regional bottler.
+    </p>
+
+    <!-- Seesaw — visual scale, equity dwarfs debt -->
+    <div class="seesaw" aria-hidden="true">
+      <svg viewBox="0 0 360 220" preserveAspectRatio="xMidYMid meet">
+        <!-- Pillar -->
+        <line x1="180" y1="40" x2="180" y2="190" class="seesaw-pillar"/>
+        <polygon points="180,40 165,70 195,70" fill="rgba(244,242,237,0.08)" stroke="rgb(244,242,237)" stroke-width="1.5"/>
+        <!-- Tilted bar -->
+        <line x1="50" y1="60" x2="310" y2="180" class="seesaw-bar" stroke-linecap="round"/>
+        <!-- Equity pan (left, heavy, big) -->
+        <g>
+          <line x1="55" y1="60" x2="55" y2="78" stroke="rgb(244,242,237)" stroke-width="1.5"/>
+          <ellipse cx="55" cy="84" rx="50" ry="8" fill="rgba(31,224,90,0.12)" stroke="rgb(31,224,90)" stroke-width="1.5"/>
+          <rect x="14" y="20" width="82" height="50" rx="3"
+                fill="rgba(31,224,90,0.18)" stroke="rgb(31,224,90)" stroke-width="2"
+                style="filter:drop-shadow(0 0 12px rgba(31,224,90,0.5));"/>
+          <text x="55" y="50" text-anchor="middle" fill="rgb(31,224,90)"
+                font-family="Instrument Serif" font-style="italic" font-size="22">$8.25B</text>
+        </g>
+        <!-- Debt pan (right, light, tiny) -->
+        <g>
+          <line x1="305" y1="180" x2="305" y2="172" stroke="rgb(244,242,237)" stroke-width="1.5"/>
+          <ellipse cx="305" cy="166" rx="22" ry="4" fill="rgba(244,242,237,0.08)" stroke="rgba(244,242,237,0.5)" stroke-width="1"/>
+          <rect x="295" y="156" width="20" height="10" rx="1.5"
+                fill="rgba(244,242,237,0.1)" stroke="rgba(244,242,237,0.6)" stroke-width="1"/>
+          <text x="305" y="148" text-anchor="middle" fill="rgba(244,242,237,0.7)"
+                font-family="Geist Mono" font-size="9" letter-spacing="0.1em">$199M</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Capital allocation ledger -->
+    <div class="ledger">
+      <div class="ledger-row">
+        <div class="yr">2024</div>
+        <div class="label">Tender offer + open-market <span class="em">repurchases</span></div>
+        <div class="amt">$<em>3.8</em>B</div>
+      </div>
+      <div class="ledger-row">
+        <div class="yr">FY '25</div>
+        <div class="label">Continued <span class="em">buybacks</span></div>
+        <div class="amt">$<em>104</em>M</div>
+      </div>
+      <div class="ledger-row">
+        <div class="yr">FY '25</div>
+        <div class="label">Operating <span class="em">cash flow</span></div>
+        <div class="amt">$<em>2.10</em>B</div>
+      </div>
+      <div class="ledger-row">
+        <div class="yr">FY '25</div>
+        <div class="label">Free <span class="em">cash flow</span></div>
+        <div class="amt">$<em>1.97</em>B</div>
+      </div>
+      <div class="ledger-row">
+        <div class="yr">FY '25</div>
+        <div class="label">Capital expenditures</div>
+        <div class="amt">$132M</div>
+      </div>
+      <div class="ledger-row">
+        <div class="yr">2026</div>
+        <div class="label">Repurchase <span class="em">authorization left</span></div>
+        <div class="amt">$<em>500</em>M</div>
+      </div>
+    </div>
+
+    <p class="ledger-foot">
+      No dividend. <span class="em">Every buyback shrinks the float.</span> The cash gets returned by removing seats at the table.
+    </p>
+  </section>
+
+  <!-- ============== COMPETITION ============== -->
+  <section class="competition" data-beat="competition" data-screen-label="10 Competition">
+    <div class="eyebrow-label reveal">The rivals · Three orbits</div>
+    <h2 class="competition-h2 reveal d1">One <em>green</em> sun. Three orbits around it.</h2>
+    <p class="competition-lede reveal d2">
+      Each rival plays a different angle. <em>One distributes for Monster,</em> one fights it on shelves, one fights it on growth.
+    </p>
+
+    <div class="comp-stack">
+
+      <!-- CELH — the threat -->
+      <article class="comp" data-comp="CELH">
+        <div class="comp-head">
+          <div>
+            <div class="comp-name"><em>Celsius</em> Holdings</div>
+            <span class="comp-tag threat">The threat</span>
+          </div>
+          <div class="comp-tk">CELH</div>
+        </div>
+
+        <div class="comp-viz">
+          <div class="comp-circle us" style="width:78px; height:78px;" title="Monster"></div>
+          <div class="comp-axis"></div>
+          <div class="comp-circle them" style="width:30px; height:30px;" title="CELH"></div>
+        </div>
+
+        <div class="comp-pair">
+          <div class="comp-stat">$<em>9.1</em>B<span class="lbl">Market cap</span></div>
+          <div class="comp-stat">+<em>85.5</em>%<span class="lbl">YoY revenue growth</span></div>
+          <div class="comp-stat"><em>83.9</em>×<span class="lbl">P/E TTM</span></div>
+        </div>
+
+        <div class="comp-toggle"><span class="arrow">›</span> Read <span class="verb"></span></div>
+        <div class="comp-desc">
+          The most direct domestic rival. Celsius is the fitness-oriented energy drink &mdash; gym chains, health-conscious shoppers, the same convenience-store cooler &mdash; and at <em>+85.5% YoY,</em> it is taking real shelf away from Monster's core line. Smaller in absolute size ($2.52B revenue), but priced for hyper-growth.
+        </div>
+      </article>
+
+      <!-- KDP — the rival distributor -->
+      <article class="comp" data-comp="KDP">
+        <div class="comp-head">
+          <div>
+            <div class="comp-name"><em>Keurig</em> Dr Pepper</div>
+            <span class="comp-tag">The rival</span>
+          </div>
+          <div class="comp-tk">KDP</div>
+        </div>
+
+        <div class="comp-viz">
+          <div class="comp-circle us" style="width:78px; height:78px;"></div>
+          <div class="comp-axis"></div>
+          <div class="comp-circle them" style="width:60px; height:60px;"></div>
+        </div>
+
+        <div class="comp-pair">
+          <div class="comp-stat">$<em>36.1</em>B<span class="lbl">Market cap</span></div>
+          <div class="comp-stat">$<em>16.6</em>B<span class="lbl">Annual revenue</span></div>
+          <div class="comp-stat">+<em>8.2</em>%<span class="lbl">YoY revenue growth</span></div>
+        </div>
+
+        <div class="comp-toggle"><span class="arrow">›</span> Read <span class="verb"></span></div>
+        <div class="comp-desc">
+          KDP fights for the same convenience-channel placement through its <em>C4 Energy</em> brand and other functional drinks. Twice the topline of Monster, but its energy line is one of many lines.
+        </div>
+      </article>
+
+      <!-- CCEP — the frenemy -->
+      <article class="comp" data-comp="CCEP">
+        <div class="comp-head">
+          <div>
+            <div class="comp-name"><em>Coca&#8209;Cola</em> Europacific</div>
+            <span class="comp-tag frenemy">The frenemy</span>
+          </div>
+          <div class="comp-tk">CCEP</div>
+        </div>
+
+        <div class="comp-viz">
+          <div class="comp-circle us" style="width:78px; height:78px;"></div>
+          <div class="comp-axis"></div>
+          <div class="comp-circle them" style="width:66px; height:66px;"></div>
+        </div>
+
+        <div class="comp-pair">
+          <div class="comp-stat">$<em>44.3</em>B<span class="lbl">Market cap</span></div>
+          <div class="comp-stat">+<em>11.7</em>%<span class="lbl">YoY revenue growth</span></div>
+          <div class="comp-stat"><em>19.4</em>×<span class="lbl">P/E TTM</span></div>
+        </div>
+
+        <div class="comp-toggle"><span class="arrow">›</span> Read <span class="verb"></span></div>
+        <div class="comp-desc">
+          CCEP <em>bottles Monster</em> in EMEA and APAC under the Coke partnership &mdash; and competes with its own functional drinks at the same time. The relationship is the leverage and the risk: every can CCEP delivers builds Monster, every shelf CCEP fills with its own brand subtracts from it.
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============== RESET BEAT 4 ============== -->
+  <aside class="reset-beat" data-screen-label="11 Reset 4">
+    <p>
+      <span class="ink">A dollar in,</span> a hundred cents priced. <span class="signal">Twenty-nine make it back out.</span>
+    </p>
+  </aside>
+
+  <!-- ============== TAKEAWAY — INVERTS THE OPEN ============== -->
+  <section class="takeaway" data-beat="takeaway" data-screen-label="12 Takeaway">
+    <div class="eyebrow-label reveal">The takeaway · 100¢</div>
+    <h2 class="takeaway-h2 reveal d1">Twenty&#8209;nine cents<br/>survive <em>per dollar.</em></h2>
+    <p class="takeaway-lede reveal d2">
+      We opened on <em>thirty-seven cents of every American energy buy.</em> We close on what survives the journey through the cost stack. The hero number was a share. The closing number is what's kept.
+    </p>
+
+    <div class="penny-grid" id="pennyGrid"></div>
+
+    <div class="penny-caption">
+      <span class="stat"><em>29.2</em>¢ kept · 70.8¢ spent</span>
+      <span class="meta">Operating margin · FY '25</span>
+    </div>
+
+    <p class="takeaway-lede" style="margin-top:42px;">
+      The energy aisle isn't won by the fastest grower. It's won by the company that <em>keeps the most</em> of every can it sells &mdash; and uses that surplus to buy back the seats around its own table.
+    </p>
+  </section>
+
+  <!-- ============== COLOPHON ============== -->
+  <footer class="colophon" data-screen-label="13 Colophon">
+    <div class="co-line">MNST · Monster Beverage Corp · NASDAQ</div>
+    <div class="co-line">Recap · Fiscal year 2025 · As of April 2026</div>
+    <div class="co-line">Figures sourced from company filings &amp; market data.</div>
+    <div class="seal"><span class="pip"></span>End of recap</div>
+  </footer>
+
+</div>
+
+<script>
+  // ===========================================================
+  //  Scroll engine
+  // ===========================================================
+  const stage = document.getElementById('stage');
+  const progress = document.getElementById('progress');
+  const chrome = document.getElementById('chrome');
+
+  function updateProgress() {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const scrolled = window.scrollY;
+    const pct = total > 0 ? Math.min(100, Math.max(0, (scrolled / total) * 100)) : 0;
+    progress.style.width = pct + '%';
+  }
+
+  // Chrome-aware dark mode (when over balance section)
+  const darkBeat = document.querySelector('[data-chrome-dark]');
+  function updateChromeMode() {
+    if (!darkBeat) return;
+    const r = darkBeat.getBoundingClientRect();
+    const headerH = chrome.getBoundingClientRect().height;
+    if (r.top < headerH && r.bottom > headerH) {
+      chrome.classList.add('dark');
+    } else {
+      chrome.classList.remove('dark');
+    }
+  }
+
+  window.addEventListener('scroll', () => {
+    updateProgress();
+    updateChromeMode();
+    updateCanFill();
+    updateDollarFill();
+  }, { passive: true });
+
+  // ===========================================================
+  //  Reveal-on-scroll
+  // ===========================================================
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ===========================================================
+  //  37-of-100 can grid
+  // ===========================================================
+  const canGrid = document.getElementById('canGrid');
+  // Pseudo-random arrangement, but always exactly 37 lit. Use a
+  // deterministic shuffle so the design is consistent across loads.
+  function buildCanGrid() {
+    const arr = Array.from({length: 100}, (_, i) => i);
+    // seeded shuffle
+    let seed = 17;
+    for (let i = arr.length - 1; i > 0; i--) {
+      seed = (seed * 9301 + 49297) % 233280;
+      const j = Math.floor((seed / 233280) * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    const lit = new Set(arr.slice(0, 37));
+    for (let i = 0; i < 100; i++) {
+      const d = document.createElement('div');
+      d.className = 'mini-can';
+      if (lit.has(i)) d.classList.add('lit');
+      canGrid.appendChild(d);
+    }
+  }
+  buildCanGrid();
+
+  // Stagger lighting up the lit cells when in view
+  const canGridIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const lits = canGrid.querySelectorAll('.lit');
+        // remove and re-add for stagger effect
+        lits.forEach(el => el.classList.remove('lit'));
+        lits.forEach((el, i) => {
+          setTimeout(() => el.classList.add('lit'), 8 * i);
+        });
+        canGridIO.unobserve(canGrid);
+      }
+    });
+  }, { threshold: 0.3 });
+  canGridIO.observe(canGrid);
+
+  // ===========================================================
+  //  Penny grid — 29 of 100, similar treatment
+  // ===========================================================
+  const pennyGrid = document.getElementById('pennyGrid');
+  function buildPennyGrid() {
+    const arr = Array.from({length: 100}, (_, i) => i);
+    let seed = 92;
+    for (let i = arr.length - 1; i > 0; i--) {
+      seed = (seed * 9301 + 49297) % 233280;
+      const j = Math.floor((seed / 233280) * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    const lit = new Set(arr.slice(0, 29));
+    for (let i = 0; i < 100; i++) {
+      const d = document.createElement('div');
+      d.className = 'penny';
+      if (lit.has(i)) d.classList.add('lit');
+      pennyGrid.appendChild(d);
+    }
+  }
+  buildPennyGrid();
+
+  const pennyIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const lits = pennyGrid.querySelectorAll('.lit');
+        lits.forEach(el => el.classList.remove('lit'));
+        lits.forEach((el, i) => {
+          setTimeout(() => el.classList.add('lit'), 14 * i);
+        });
+        pennyIO.unobserve(pennyGrid);
+      }
+    });
+  }, { threshold: 0.3 });
+  pennyIO.observe(pennyGrid);
+
+  // ===========================================================
+  //  Geo bars — fill on intersection
+  // ===========================================================
+  const geoIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.geo-bar-fill').forEach(b => {
+          const w = b.getAttribute('data-w');
+          setTimeout(() => { b.style.width = w + '%'; }, 80);
+        });
+        geoIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.25 });
+  document.querySelectorAll('.geo-list').forEach(g => geoIO.observe(g));
+
+  // ===========================================================
+  //  Can liquid layers — scroll-driven fill
+  // ===========================================================
+  const businessSection = document.querySelector('[data-beat="business"]');
+  const layerMon  = document.querySelector('.layer-mon');
+  const layerStr  = document.querySelector('.layer-str');
+  const layerAlc  = document.querySelector('.layer-alc');
+  const layerOther= document.querySelector('.layer-other');
+  const layerMonLine = document.querySelector('.layer-mon-line');
+  // Can interior approx 0..320; we fill from the bottom upward.
+  // Ratios of total interior height (320):
+  //   Monster 92 → 0.92 → height = 294, y = 320-294 = 26
+  //   Strategic stacked above (6 → 0.06 → 19px above)
+  //   Alcohol next (2 → 6.4)
+  //   Other tail (~0.5px)
+  function updateCanFill() {
+    if (!businessSection) return;
+    const r = businessSection.getBoundingClientRect();
+    const vh = window.innerHeight;
+    // progress: 0 when top of section enters viewport bottom, 1 when section center reaches viewport center
+    const enter = vh;
+    const settle = vh * 0.4;
+    let p = (enter - r.top) / (enter - settle);
+    p = Math.max(0, Math.min(1, p));
+    // ease
+    p = p < 0.5 ? 2*p*p : -1 + (4 - 2*p)*p;
+
+    const total = 308; // usable interior height
+    const monH = total * 0.92 * p;
+    const strH = total * 0.06 * p;
+    const alcH = total * 0.02 * p;
+    const othH = total * 0.005 * p;
+
+    // Monster fills from the bottom
+    const monY = 314 - monH;
+    layerMon.setAttribute('y', monY);
+    layerMon.setAttribute('height', monH);
+    layerMonLine.setAttribute('y1', monY);
+    layerMonLine.setAttribute('y2', monY);
+    layerMonLine.setAttribute('opacity', p > 0.05 ? '1' : '0');
+
+    // Strategic stacks on top of monster
+    const strY = monY - strH;
+    layerStr.setAttribute('y', strY);
+    layerStr.setAttribute('height', strH);
+
+    const alcY = strY - alcH;
+    layerAlc.setAttribute('y', alcY);
+    layerAlc.setAttribute('height', alcH);
+
+    const othY = alcY - othH;
+    layerOther.setAttribute('y', othY);
+    layerOther.setAttribute('height', othH);
+  }
+
+  // ===========================================================
+  //  Dollar bar — scroll-driven layered fill
+  // ===========================================================
+  const costsSection = document.querySelector('[data-beat="costs"]');
+  const dollarBar = document.getElementById('dollarBar');
+  // Build the dollar layers once
+  (function buildDollar() {
+    if (!dollarBar) return;
+    // Top to bottom: COR 44, S&M 14, G&A 12, D&L 5, SBC 3, [survives 22 — hatched]
+    const layers = [
+      { pct: 44, color: '#E05C5C', name: 'COR' },
+      { pct: 14, color: '#F4A261', name: 'S&M' },
+      { pct: 12, color: '#2A9D8F', name: 'G&A' },
+      { pct: 5,  color: '#457B9D', name: 'D&L' },
+      { pct: 3,  color: '#9B5DE5', name: 'SBC' },
+    ];
+    let cumulative = 0;
+    layers.forEach((L, i) => {
+      const el = document.createElement('div');
+      el.className = 'dollar-fill';
+      el.style.background = L.color;
+      el.style.top = cumulative + '%';
+      el.style.height = L.pct + '%';
+      el.style.transitionDelay = (i * 90) + 'ms';
+      el.dataset.idx = i;
+      dollarBar.appendChild(el);
+      cumulative += L.pct;
+    });
+    // Survives band — hatched
+    const sv = document.createElement('div');
+    sv.className = 'dollar-survives';
+    sv.style.height = (100 - cumulative) + '%';
+    sv.innerHTML = '<span class="label">Survives · 22¢</span>';
+    dollarBar.appendChild(sv);
+  })();
+
+  function updateDollarFill() {
+    if (!costsSection) return;
+    const r = costsSection.getBoundingClientRect();
+    const vh = window.innerHeight;
+    if (r.top < vh * 0.7 && r.bottom > 0) {
+      dollarBar.querySelectorAll('.dollar-fill').forEach((el) => el.classList.add('in'));
+    }
+  }
+
+  // ===========================================================
+  //  Competitor cards — tap to expand
+  // ===========================================================
+  document.querySelectorAll('.comp').forEach(c => {
+    c.addEventListener('click', () => c.classList.toggle('open'));
+  });
+
+  // ===========================================================
+  //  Initial paint
+  // ===========================================================
+  requestAnimationFrame(() => {
+    updateProgress();
+    updateChromeMode();
+    updateCanFill();
+    updateDollarFill();
+  });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,998 @@
+/* ============================================================
+   GD Recap — mobile editorial recap
+   Palette: blueprint navy + oyster paper + signal amber
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Material — schematic/blueprint */
+  --hull:        #0B1A2E;   /* deep navy hull */
+  --hull-2:      #0F2138;   /* raised navy */
+  --hull-3:      #15293F;   /* deeper still */
+  --steel:       #1F3553;   /* ribs */
+  --line:        #2A3F5C;   /* hairlines on dark */
+  --line-soft:   rgba(180,200,225,0.16);
+  --line-faint:  rgba(180,200,225,0.08);
+
+  --paper:       #EFE9DC;   /* oyster — raised editorial band */
+  --paper-2:     #E5DDC9;
+  --ink:         #0B1A2E;
+  --ink-2:       #2D3E55;
+  --ink-3:       #5A6B7E;
+
+  --bone:        #F5EFE0;   /* lightest paper */
+
+  /* Signal — military instrumentation amber */
+  --signal:      #E8A33D;
+  --signal-2:    #FFC56B;
+  --signal-deep: #B27620;
+
+  /* Type on hull */
+  --on-hull:     #E9EEF5;
+  --on-hull-2:   #B5C0CF;
+  --on-hull-3:   #6F7E94;
+
+  /* Cost-stack supplied hex (mandatory) */
+  --c-cor:  #2563EB;
+  --c-sga:  #16A34A;
+  --c-rd:   #DC2626;
+  --c-da:   #9333EA;
+
+  /* Type */
+  --serif: 'Instrument Serif', 'Times New Roman', serif;
+  --sans:  'Geist', -apple-system, system-ui, sans-serif;
+  --mono:  'Geist Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0; padding: 0;
+  background: #2A2A2A;
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* The page IS the design — no device frame. Center it on a neutral void
+   so on a desktop preview it sits naturally; on mobile it's full-bleed. */
+.page {
+  width: 100%;
+  max-width: 414px;
+  margin: 0 auto;
+  background: var(--hull);
+  color: var(--on-hull);
+  position: relative;
+  overflow-x: clip;
+  min-height: 100vh;
+}
+
+/* =================================================================
+   PERSISTENT CHROME — sticky top bar w/ ticker, name, recap, hairline
+   ================================================================= */
+.chrome {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  padding: 12px 18px 10px;
+  background: rgba(11,26,46,0.78);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border-bottom: 1px solid var(--line-soft);
+}
+.chrome-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.tick {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--signal);
+  font-weight: 500;
+}
+.tick::before {
+  content: "";
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: var(--signal);
+  border-radius: 999px;
+  margin-right: 8px;
+  vertical-align: middle;
+  box-shadow: 0 0 12px rgba(232,163,61,0.6);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.35 } }
+
+.name {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--on-hull);
+  letter-spacing: -0.005em;
+}
+.recap {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--on-hull-3);
+}
+.progress {
+  margin-top: 8px;
+  height: 1px;
+  background: var(--line-soft);
+  position: relative;
+  overflow: hidden;
+}
+.progress-fill {
+  position: absolute; inset: 0 100% 0 0;
+  background: linear-gradient(90deg, transparent, var(--signal));
+  transform-origin: left;
+  width: 100%;
+  transform: scaleX(var(--p, 0));
+  transition: transform 80ms linear;
+}
+
+/* =================================================================
+   SECTION SCAFFOLDING
+   ================================================================= */
+section { position: relative; }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--signal);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.eyebrow .dash {
+  width: 18px; height: 1px;
+  background: currentColor;
+  display: inline-block;
+}
+
+.display {
+  font-family: var(--serif);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+.it { font-style: italic; }
+.amber { color: var(--signal); }
+.ink { color: var(--ink); }
+.paper-fg { color: var(--ink-2); }
+
+.body {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--on-hull-2);
+  font-weight: 350;
+}
+
+.mono-cap {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Reset beat — italic-serif on contrasting band */
+.reset {
+  padding: 56px 28px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.18;
+  letter-spacing: -0.012em;
+  text-align: left;
+}
+.reset.on-paper {
+  background: var(--paper);
+  color: var(--ink);
+  border-top: 1px solid rgba(11,26,46,0.06);
+  border-bottom: 1px solid rgba(11,26,46,0.06);
+}
+.reset.on-hull {
+  color: var(--on-hull);
+  background: var(--hull);
+}
+.reset .lead {
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 14px;
+  color: var(--signal);
+}
+.reset.on-paper .lead { color: var(--signal-deep); }
+
+/* =================================================================
+   HERO — backlog thesis
+   ================================================================= */
+.hero {
+  position: relative;
+  padding: 36px 22px 64px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.hero .grid-bg {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--line-faint) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-faint) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, black 50%, transparent 100%);
+  z-index: -1;
+}
+.hero-eyebrow { margin-top: 16px; }
+.hero h1 {
+  margin: 18px 0 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 64px;
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  color: var(--on-hull);
+}
+.hero h1 .num {
+  display: block;
+  font-size: 116px;
+  line-height: 0.88;
+  color: var(--signal);
+  letter-spacing: -0.04em;
+  margin: 6px 0 6px -4px;
+  font-feature-settings: "lnum";
+}
+.hero h1 .num sup {
+  font-size: 36px;
+  vertical-align: 60px;
+  margin-right: 6px;
+  color: var(--signal);
+  font-style: italic;
+}
+.hero .sub {
+  margin-top: 22px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--on-hull-2);
+  font-weight: 350;
+  max-width: 30ch;
+}
+.hero .sub em {
+  font-style: italic;
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--on-hull);
+}
+
+/* Backlog schematic — stacked keel blocks */
+.keel {
+  margin: 36px -22px 0;
+  padding: 0 22px;
+  position: relative;
+}
+.keel-frame {
+  width: 100%;
+  display: block;
+}
+.keel-caption {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  color: var(--on-hull-3);
+}
+.keel-caption span:first-child { color: var(--signal); }
+
+/* Drop indicator — scroll instructions */
+.scroll-hint {
+  position: absolute;
+  bottom: 14px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: var(--on-hull-3);
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+}
+.scroll-hint .line {
+  width: 1px; height: 28px;
+  background: linear-gradient(180deg, transparent, var(--signal));
+  animation: drop 1.8s ease-in-out infinite;
+  transform-origin: top;
+}
+@keyframes drop { 0% { transform: scaleY(0); transform-origin:top } 50% { transform: scaleY(1); transform-origin:top } 51% { transform-origin:bottom } 100% { transform:scaleY(0); transform-origin:bottom } }
+
+/* =================================================================
+   SEGMENTS — four schematic vehicles
+   ================================================================= */
+.segments {
+  padding: 72px 22px 32px;
+}
+.segments h2 {
+  margin: 16px 0 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 44px;
+  line-height: 0.98;
+  color: var(--on-hull);
+  letter-spacing: -0.02em;
+}
+.segments h2 .it { color: var(--signal); }
+.segments .body { margin-top: 16px; max-width: 32ch; }
+
+.fleet {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 38px;
+}
+.craft {
+  position: relative;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 22px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+.craft-meta {
+  display: flex; align-items: baseline; gap: 12px;
+  flex-wrap: wrap;
+}
+.craft-id {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--on-hull-3);
+}
+.craft-name {
+  font-family: var(--serif);
+  font-size: 30px;
+  line-height: 1;
+  color: var(--on-hull);
+  letter-spacing: -0.015em;
+}
+.craft-name em { color: var(--signal); font-style: italic; }
+.craft-fig {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--on-hull-2);
+  letter-spacing: 0.04em;
+  margin-left: auto;
+}
+.craft-rev {
+  font-family: var(--serif);
+  font-size: 36px;
+  line-height: 1;
+  color: var(--signal);
+  letter-spacing: -0.02em;
+  margin-top: 4px;
+}
+.craft-rev sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--on-hull-3);
+  letter-spacing: 0.14em;
+  vertical-align: 6px;
+  margin-left: 8px;
+}
+.craft-svg {
+  width: 100%;
+  display: block;
+  margin-top: 6px;
+}
+.craft-blurb {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--on-hull-2);
+  font-weight: 350;
+  max-width: 38ch;
+}
+.craft-share-track {
+  height: 3px;
+  background: var(--line-soft);
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.craft-share-fill {
+  position: absolute; inset: 0 100% 0 0;
+  background: var(--signal);
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.2s var(--ease-out);
+}
+.craft.in .craft-share-fill { transform: scaleX(var(--share)); }
+
+/* =================================================================
+   SCALE — count-up tiles
+   ================================================================= */
+.scale {
+  padding: 72px 22px 8px;
+  position: relative;
+}
+.scale h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.0;
+  color: var(--on-hull);
+  letter-spacing: -0.018em;
+  margin: 18px 0 0;
+}
+.scale h2 em { font-style: italic; color: var(--signal); }
+.scale-stats {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.stat {
+  border-top: 1px solid var(--line-soft);
+  padding: 22px 0 22px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 12px;
+}
+.stat:last-child { border-bottom: 1px solid var(--line-soft); }
+.stat-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--on-hull-3);
+}
+.stat-num {
+  font-family: var(--serif);
+  font-size: 64px;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--on-hull);
+  font-feature-settings: "lnum","tnum";
+}
+.stat-num .unit {
+  font-size: 22px;
+  color: var(--signal);
+  font-style: italic;
+  margin-left: 4px;
+  vertical-align: 18px;
+}
+.stat-aux {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--on-hull-3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: right;
+  max-width: 12ch;
+  line-height: 1.4;
+}
+
+/* =================================================================
+   COST WATERLINE — dollar split into 100 squares
+   ================================================================= */
+.waterline {
+  background: var(--paper);
+  color: var(--ink);
+  padding: 80px 22px 80px;
+  margin-top: 64px;
+  position: relative;
+  overflow: hidden;
+}
+.waterline::before {
+  /* Subtle blueprint grid carryover, very light */
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(11,26,46,0.04) 1px, transparent 1px);
+  background-size: 22px 22px;
+  pointer-events: none;
+}
+.waterline h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 38px;
+  line-height: 1.0;
+  letter-spacing: -0.018em;
+  color: var(--ink);
+  margin: 16px 0 0;
+  position: relative;
+}
+.waterline h2 em { font-style: italic; color: var(--signal-deep); }
+
+.dollar {
+  margin: 36px 0 0;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.dollar .cent {
+  background: var(--paper-2);
+  border-radius: 2px;
+  position: relative;
+  transition: background 200ms var(--ease-out), transform 400ms var(--ease-out);
+  transform: scale(0.6);
+  opacity: 0;
+}
+.waterline.in .dollar .cent { transform: scale(1); opacity: 1; }
+.dollar .cent[data-c="cor"] { background: var(--c-cor); }
+.dollar .cent[data-c="sga"] { background: var(--c-sga); }
+.dollar .cent[data-c="rd"]  { background: var(--c-rd);  }
+.dollar .cent[data-c="da"]  { background: var(--c-da);  }
+.dollar .cent[data-c="left"] {
+  background: transparent;
+  border: 1px solid var(--signal-deep);
+  box-shadow: 0 0 0 0 var(--signal);
+}
+.waterline.in .dollar .cent[data-c="left"] {
+  background: var(--signal);
+  animation: glow 2.4s ease-in-out infinite 1.5s;
+}
+@keyframes glow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(232,163,61,0); }
+  50% { box-shadow: 0 0 0 4px rgba(232,163,61,0.25); }
+}
+
+.dollar-legend {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.legend-row {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+  border-bottom: 1px solid rgba(11,26,46,0.08);
+  padding: 8px 0;
+}
+.legend-row .swatch { width: 12px; height: 12px; border-radius: 2px; }
+.legend-row .pct {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-style: italic;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.legend-row.left .pct { color: var(--signal-deep); }
+.legend-row.left .swatch {
+  background: var(--signal);
+  box-shadow: 0 0 0 2px var(--signal-deep) inset;
+}
+.legend-row .lab { text-transform: uppercase; }
+
+.waterline-foot {
+  margin-top: 32px;
+  font-family: var(--serif);
+  font-size: 22px;
+  font-style: italic;
+  line-height: 1.25;
+  color: var(--ink);
+  letter-spacing: -0.012em;
+}
+.waterline-foot strong {
+  font-weight: 400;
+  color: var(--signal-deep);
+}
+
+/* =================================================================
+   FOOTPRINT — sonar / compass arc
+   ================================================================= */
+.footprint {
+  padding: 72px 22px 56px;
+  position: relative;
+  overflow: hidden;
+}
+.footprint h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1;
+  letter-spacing: -0.018em;
+  color: var(--on-hull);
+  margin: 16px 0 0;
+}
+.footprint h2 em { font-style: italic; color: var(--signal); }
+.sonar {
+  width: 100%;
+  margin: 28px auto 0;
+  display: block;
+  max-width: 360px;
+}
+.geo-list {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.geo-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line-soft);
+}
+.geo-row:last-child { border-bottom: 1px solid var(--line-soft); }
+.geo-pct {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-style: italic;
+  color: var(--signal);
+  width: 64px;
+  letter-spacing: -0.01em;
+}
+.geo-region {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--on-hull);
+}
+.geo-bar {
+  width: 80px;
+  height: 2px;
+  background: var(--line-soft);
+  position: relative;
+  overflow: hidden;
+}
+.geo-bar::after {
+  content: "";
+  position: absolute; inset: 0 calc(100% - var(--w)) 0 0;
+  background: var(--signal);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 900ms var(--ease-out);
+}
+.footprint.in .geo-bar::after { transform: scaleX(1); }
+
+/* =================================================================
+   THE BET — earned dark interlude
+   ================================================================= */
+.bet {
+  background: #04080F;
+  color: var(--on-hull);
+  padding: 88px 22px 88px;
+  position: relative;
+  overflow: hidden;
+}
+.bet::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 70% 30%, rgba(232,163,61,0.07), transparent 70%),
+    radial-gradient(ellipse 80% 50% at 20% 80%, rgba(232,163,61,0.04), transparent 70%);
+  pointer-events: none;
+}
+.bet h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 44px;
+  line-height: 0.98;
+  letter-spacing: -0.022em;
+  color: var(--on-hull);
+  margin: 18px 0 0;
+  position: relative;
+}
+.bet h2 em { font-style: italic; color: var(--signal); }
+
+.bet-rows {
+  margin-top: 44px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 36px;
+  position: relative;
+}
+
+.bet-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.bet-num {
+  font-family: var(--serif);
+  font-size: 72px;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--signal);
+  font-feature-settings: "lnum";
+}
+.bet-num .it { font-style: italic; color: var(--on-hull); }
+.bet-num .small { font-size: 28px; vertical-align: 38px; margin-left: 4px; color: var(--signal); }
+.bet-row .lab {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--on-hull-3);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.bet-row .desc {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--on-hull-2);
+  font-weight: 350;
+  max-width: 36ch;
+}
+
+/* Dividend dots — 28 years */
+.div-track {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(28, 1fr);
+  gap: 3px;
+  align-items: end;
+  height: 28px;
+}
+.div-track .y {
+  background: var(--on-hull-3);
+  height: 30%;
+  border-radius: 1px;
+  transition: height 60ms ease, background 60ms ease;
+}
+.bet.in .div-track .y { background: var(--signal); }
+.bet.in .div-track .y:nth-child(n) { animation: rise 1.2s var(--ease-out) forwards; }
+
+@keyframes rise {
+  from { height: 8%; opacity: 0.4; }
+  to   { height: var(--h, 100%); opacity: 1; }
+}
+
+/* Capex bar — last year vs this year */
+.capex {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: end;
+  margin-top: 4px;
+  height: 100px;
+}
+.capex .col {
+  position: relative;
+  background: var(--line);
+  border-radius: 3px 3px 0 0;
+  transition: height 1s var(--ease-out);
+  overflow: visible;
+}
+.capex .col .v {
+  position: absolute;
+  top: -22px; left: 0; right: 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--on-hull-3);
+  letter-spacing: 0.06em;
+}
+.capex .col .lab {
+  position: absolute;
+  bottom: -22px; left: 0; right: 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--on-hull-3);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.capex .col.now { background: var(--signal); }
+.capex .col.now .v { color: var(--signal); }
+
+/* Debt knockdown */
+.debt-line {
+  position: relative;
+  margin-top: 10px;
+  height: 36px;
+}
+.debt-line svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* =================================================================
+   RIVAL — Northrop sized against GD
+   ================================================================= */
+.rival {
+  padding: 80px 22px 64px;
+  position: relative;
+}
+.rival h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 38px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--on-hull);
+  margin: 16px 0 0;
+}
+.rival h2 em { font-style: italic; color: var(--signal); }
+
+.duel {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.ship {
+  border-top: 1px solid var(--line-soft);
+  padding-top: 16px;
+  position: relative;
+}
+.ship .id {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--on-hull-3);
+}
+.ship .nm {
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1.05;
+  margin-top: 6px;
+  color: var(--on-hull);
+}
+.ship.us .nm { color: var(--signal); }
+.ship .cap-ring {
+  margin-top: 16px;
+  width: 100%;
+  display: block;
+}
+.ship .cap-num {
+  font-family: var(--serif);
+  font-size: 32px;
+  line-height: 1;
+  font-feature-settings: "lnum";
+  margin-top: 14px;
+  letter-spacing: -0.02em;
+  color: var(--on-hull);
+}
+.ship.us .cap-num { color: var(--signal); }
+.ship .cap-num small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--on-hull-3);
+  text-transform: uppercase;
+  margin-top: 6px;
+  font-style: normal;
+}
+.ship .row {
+  margin-top: 10px;
+  display: flex; justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--on-hull-2);
+  padding: 8px 0;
+  border-top: 1px dashed var(--line-soft);
+}
+.ship .row span:first-child { color: var(--on-hull-3); letter-spacing: 0.08em; text-transform: uppercase; }
+.ship .row span:last-child { font-weight: 500; }
+
+.rival-foot {
+  margin-top: 32px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.25;
+  color: var(--on-hull-2);
+  letter-spacing: -0.01em;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 24px;
+}
+.rival-foot em { color: var(--signal); }
+
+/* =================================================================
+   CLOSE — invert thesis: 10¢
+   ================================================================= */
+.close {
+  padding: 96px 22px 64px;
+  position: relative;
+  overflow: hidden;
+}
+.close .grid-bg {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--line-faint) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-faint) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 60%, black 50%, transparent 100%);
+  z-index: -1;
+}
+.close h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 50px;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  color: var(--on-hull);
+  margin-top: 18px;
+}
+.close h2 .num {
+  font-size: 124px;
+  line-height: 0.86;
+  color: var(--signal);
+  letter-spacing: -0.04em;
+  display: block;
+  margin-top: 6px;
+  font-feature-settings: "lnum";
+}
+.close h2 em { font-style: italic; color: var(--signal); }
+
+.dollar-flow {
+  margin: 36px 0 28px;
+  height: 14px;
+  position: relative;
+}
+.dollar-flow svg { width: 100%; height: 100%; overflow: visible; }
+
+.close .body {
+  font-size: 16px;
+  max-width: 32ch;
+  margin-top: 16px;
+}
+.close .body em {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--signal);
+  font-size: 19px;
+}
+
+.foot {
+  margin-top: 48px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 22px;
+  display: flex; justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  color: var(--on-hull-3);
+  text-transform: uppercase;
+}
+
+/* =================================================================
+   Reveal helpers
+   ================================================================= */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+}
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* SVG stroke draw helper */
+.draw {
+  stroke-dasharray: var(--len, 1000);
+  stroke-dashoffset: var(--len, 1000);
+  transition: stroke-dashoffset 1.4s var(--ease-out);
+}
+.in .draw { stroke-dashoffset: 0; }
+
+@media (max-width: 380px) {
+  .hero h1 { font-size: 56px; }
+  .hero h1 .num { font-size: 96px; }
+  .close h2 .num { font-size: 104px; }
+  .stat-num { font-size: 54px; }
+  .craft-rev { font-size: 30px; }
+}

@@ -1,0 +1,1604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>URI · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #ece7df;          /* warm concrete */
+    --bg-raised: #e2dccf;   /* slightly darker raised tone */
+    --ink: #14140f;         /* deep ink */
+    --ink-soft: #4a463d;
+    --ink-mute: #8a8478;
+    --rule: #cdc6b6;
+    --signal: #ffcc00;      /* hi-vis safety yellow */
+    --signal-deep: #f2a900; /* deeper amber for type accents */
+    --steel: #2a3947;       /* steel blue for engineering accents */
+    --rust: #b04a2a;        /* rust accent for warnings */
+    --night: #11110d;       /* the one earned dark beat */
+    --night-ink: #f2efe6;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  /* Mobile artifact, max 440px wide, centered with letterbox */
+  .artifact {
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--bg);
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+  @media (min-width: 460px) {
+    body { background: #1a1a17; }
+    .artifact {
+      box-shadow: 0 0 60px rgba(0,0,0,0.4);
+    }
+  }
+
+  /* ── persistent chrome ─────────────────────────── */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(236, 231, 223, 0.82);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    padding: 14px 18px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-bottom: 0.5px solid var(--rule);
+  }
+  .chrome-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+  }
+  .chrome-left { display: flex; align-items: baseline; gap: 8px; }
+  .ticker {
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    background: var(--ink);
+    color: var(--signal);
+    padding: 3px 6px;
+    border-radius: 2px;
+  }
+  .chrome-name {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .chrome-right {
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+  .chrome-right .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--rust);
+    border-radius: 50%;
+    margin-right: 6px;
+    transform: translateY(-1px);
+  }
+  .progress {
+    height: 1px;
+    background: var(--rule);
+    overflow: hidden;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--ink);
+    width: 0;
+    transition: width 90ms linear;
+  }
+
+  /* ── shared bits ─────────────────────────── */
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 18px;
+    height: 1px;
+    background: var(--ink-soft);
+  }
+  .eyebrow .accent { color: var(--signal-deep); }
+  .display {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  .ital { font-style: italic; }
+  .signal-ink { color: var(--signal-deep); }
+  .body-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    text-wrap: pretty;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .num-strike { font-variant-numeric: tabular-nums; }
+
+  /* ── HERO ─────────────────────────── */
+  .hero {
+    position: relative;
+    padding: 36px 24px 56px;
+    overflow: hidden;
+  }
+  .hero-eyebrow { margin-bottom: 28px; }
+  .hero-headline {
+    font-family: 'Fraunces', serif;
+    font-size: 64px;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    font-weight: 400;
+    color: var(--ink);
+    margin: 0;
+  }
+  .hero-headline .h-line { display: block; }
+  .hero-headline .h-yellow {
+    background: var(--signal);
+    padding: 0 6px 2px;
+    margin-left: -4px;
+  }
+  .hero-headline em {
+    font-style: italic;
+    font-weight: 400;
+  }
+  .hero-sub {
+    margin-top: 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 320px;
+  }
+  .hero-sub em { font-family: 'Fraunces', serif; font-style: italic; color: var(--ink); }
+  .hero-grid {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 14px;
+  }
+  .heroStat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 6px;
+  }
+  .heroStat-value {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    font-feature-settings: "tnum" 1;
+  }
+  .heroStat-value .unit {
+    font-size: 14px;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-left: 2px;
+  }
+
+  /* equipment scaffolding silhouette behind hero */
+  .hero-svg {
+    position: absolute;
+    right: -40px;
+    top: 80px;
+    width: 280px;
+    opacity: 0.14;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero > * { position: relative; z-index: 1; }
+
+  /* ── reset beat ─────────────────────────── */
+  .reset {
+    padding: 44px 28px 44px;
+    background: var(--bg-raised);
+    position: relative;
+  }
+  .reset-text {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .reset-text .pop { color: var(--signal-deep); font-style: italic; }
+  .reset-text .strong { font-style: normal; font-weight: 500; color: var(--ink); }
+  .reset-mark {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  /* ── section ─────────────────────────── */
+  .section {
+    padding: 56px 24px 56px;
+  }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 38px;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    margin: 14px 0 0;
+    color: var(--ink);
+    font-weight: 400;
+  }
+  .section-title em { font-style: italic; }
+  .section-lede {
+    margin-top: 18px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    text-wrap: pretty;
+  }
+  .section-lede em {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--ink);
+  }
+  .section-lede .y { color: var(--signal-deep); font-family: 'Fraunces', serif; font-style: italic; }
+
+  /* ── FLEET inventory ─────────────────────────── */
+  .fleet-frame {
+    margin-top: 32px;
+    border-top: 0.5px solid var(--rule);
+    border-bottom: 0.5px solid var(--rule);
+  }
+  .fleet-row {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 0.5px solid var(--rule);
+  }
+  .fleet-row:first-child { border-top: none; }
+  .fleet-icon {
+    width: 56px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink);
+  }
+  .fleet-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .fleet-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-mute);
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+  }
+  .fleet-bar {
+    width: 60px;
+    height: 6px;
+    background: var(--rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .fleet-bar i {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 1.2s cubic-bezier(.2,.7,.2,1);
+  }
+  .fleet-row.lit .fleet-bar i { transform: scaleX(1); }
+  .fleet-rev {
+    margin-top: 22px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    justify-content: space-between;
+  }
+  .fleet-rev-num {
+    font-family: 'Fraunces', serif;
+    font-size: 64px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .fleet-rev-num .of {
+    font-style: italic;
+    color: var(--signal-deep);
+    font-size: 28px;
+    margin-left: 2px;
+  }
+  .fleet-rev-cap {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-mute);
+    text-align: right;
+    line-height: 1.4;
+  }
+
+  /* ── SCALE beat ─────────────────────────── */
+  .scale-stage {
+    margin-top: 36px;
+    position: relative;
+  }
+  .scale-people {
+    width: 100%;
+    height: 220px;
+    display: block;
+  }
+  .scale-readout {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 14px;
+  }
+  .scale-readout .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 4px;
+  }
+  .scale-readout .val {
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    font-feature-settings: "tnum" 1;
+  }
+  .scale-readout .val em { color: var(--signal-deep); font-style: italic; }
+  .marketshare {
+    margin-top: 28px;
+  }
+  .ms-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-mute);
+    margin-bottom: 12px;
+  }
+
+  /* ── COSTS — load chart ─────────────────────── */
+  .load {
+    margin-top: 28px;
+    padding: 0;
+  }
+  .load-stack {
+    width: 100%;
+    height: 260px;
+    display: block;
+  }
+  .load-legend {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .leg-row {
+    display: grid;
+    grid-template-columns: 16px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 0.5px dashed var(--rule);
+  }
+  .leg-row:last-child { border-bottom: none; }
+  .leg-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 1px;
+  }
+  .leg-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .leg-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    font-feature-settings: "tnum" 1;
+  }
+  .load-foot {
+    margin-top: 22px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.3;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .load-foot .pop { color: var(--signal-deep); }
+
+  /* ── MAP / footprint ─────────────────────── */
+  .map-wrap {
+    margin-top: 30px;
+    position: relative;
+  }
+  .map-svg {
+    width: 100%;
+    display: block;
+  }
+  .map-readout {
+    margin-top: 18px;
+    display: flex;
+    gap: 24px;
+    align-items: baseline;
+  }
+  .map-readout .geo {
+    flex: 1;
+  }
+  .map-readout .pct {
+    font-family: 'Fraunces', serif;
+    font-size: 38px;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  .map-readout .pct.dim { color: var(--ink-mute); font-size: 26px; }
+  .map-readout .reg {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    margin-top: 6px;
+  }
+  .map-foot {
+    margin-top: 22px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .map-foot em { font-family: 'Fraunces', serif; font-style: italic; color: var(--ink); }
+
+  /* ── BET — dark beat ─────────────────────── */
+  .bet {
+    background: var(--night);
+    color: var(--night-ink);
+    padding: 64px 24px 64px;
+    margin-top: 0;
+  }
+  .bet .eyebrow { color: #b9b3a5; }
+  .bet .eyebrow::before { background: #b9b3a5; }
+  .bet .eyebrow .accent { color: var(--signal); }
+  .bet .section-title { color: var(--night-ink); }
+  .bet .section-title em { color: var(--signal); }
+  .bet .body-text { color: #b9b3a5; }
+  .bet .body-text em { font-family: 'Fraunces', serif; font-style: italic; color: var(--night-ink); }
+  .bet .body-text .y { color: var(--signal); font-family: 'Fraunces', serif; font-style: italic; }
+
+  .capex-stage {
+    margin-top: 36px;
+    position: relative;
+  }
+  .capex-svg { width: 100%; display: block; }
+  .capex-rows {
+    margin-top: 26px;
+    display: flex;
+    flex-direction: column;
+  }
+  .capex-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    padding: 14px 0;
+    border-top: 0.5px solid #2a2a23;
+  }
+  .capex-row:last-child { border-bottom: 0.5px solid #2a2a23; }
+  .capex-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--night-ink);
+    font-weight: 500;
+  }
+  .capex-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #8a8478;
+    letter-spacing: 0.04em;
+    margin-top: 4px;
+  }
+  .capex-num {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    color: var(--signal);
+    letter-spacing: -0.02em;
+    font-feature-settings: "tnum" 1;
+  }
+  .capex-num.muted { color: #b9b3a5; }
+  .he-banner {
+    margin-top: 36px;
+    padding: 20px 18px;
+    border: 0.5px solid #2a2a23;
+    background: #18180f;
+    position: relative;
+  }
+  .he-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg, transparent 0 8px, rgba(255,204,0,0.03) 8px 9px);
+    pointer-events: none;
+  }
+  .he-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--signal);
+  }
+  .he-headline {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.2;
+    color: var(--night-ink);
+    margin-top: 8px;
+    letter-spacing: -0.01em;
+  }
+  .he-headline .strong { font-style: normal; font-weight: 500; color: var(--signal); }
+  .he-cap {
+    margin-top: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #b9b3a5;
+  }
+
+  /* ── COMPETITION ─────────────────────────── */
+  .comp-stage {
+    margin-top: 32px;
+    position: relative;
+  }
+  .comp-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 14px;
+    padding: 22px 0;
+    border-top: 0.5px solid var(--rule);
+    align-items: start;
+  }
+  .comp-row:first-child { border-top: none; }
+  .comp-row:last-child { border-bottom: 0.5px solid var(--rule); }
+  .comp-tickbox {
+    text-align: left;
+  }
+  .comp-tick {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    background: var(--ink);
+    color: var(--bg);
+    padding: 3px 5px;
+    display: inline-block;
+    border-radius: 1px;
+  }
+  .comp-tick.uri { background: var(--signal); color: var(--ink); }
+  .comp-mc {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    color: var(--ink);
+    margin-top: 8px;
+    letter-spacing: -0.02em;
+  }
+  .comp-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .comp-bar {
+    margin-top: 10px;
+    height: 16px;
+    background: var(--bg-raised);
+    position: relative;
+    overflow: hidden;
+  }
+  .comp-bar i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: var(--ink);
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 1s cubic-bezier(.2,.7,.2,1);
+  }
+  .comp-bar.lit i { transform: scaleX(1); }
+  .comp-bar.uri i { background: var(--signal); }
+  .comp-meta {
+    margin-top: 8px;
+    display: flex;
+    gap: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .comp-meta b {
+    color: var(--ink);
+    font-weight: 500;
+    margin-right: 4px;
+  }
+  .comp-desc {
+    margin-top: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    text-wrap: pretty;
+  }
+  .comp-desc em { font-family: 'Fraunces', serif; font-style: italic; color: var(--ink); }
+
+  /* ── CLOSE ─────────────────────────── */
+  .close {
+    padding: 72px 24px 80px;
+    background: var(--bg);
+    position: relative;
+  }
+  .close-headline {
+    font-family: 'Fraunces', serif;
+    font-size: 60px;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    margin: 24px 0 0;
+    font-weight: 400;
+  }
+  .close-headline em { font-style: italic; }
+  .close-headline .h-yellow {
+    background: var(--signal);
+    padding: 0 4px;
+  }
+  .close-readout {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 18px;
+  }
+  .close-stat .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 4px;
+  }
+  .close-stat .val {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .close-foot {
+    margin-top: 56px;
+    border-top: 0.5px solid var(--rule);
+    padding-top: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-mute);
+    line-height: 1.5;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .close-foot .sig {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    display: block;
+  }
+
+  /* count-up holder */
+  .ctr { font-variant-numeric: tabular-nums; }
+
+  /* generic reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* sticky region for parallax barrel-of-equipment */
+  .park {
+    height: 80vh;
+    position: relative;
+  }
+</style>
+</head>
+<body>
+
+<div class="artifact" id="artifact">
+
+  <!-- ── persistent chrome ──────────────── -->
+  <header class="chrome" id="chrome">
+    <div class="chrome-row">
+      <div class="chrome-left">
+        <span class="ticker">URI</span>
+        <span class="chrome-name">United Rentals</span>
+      </div>
+      <div class="chrome-right">
+        <span class="dot"></span>RECAP · FY '25
+      </div>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progress"></div></div>
+  </header>
+
+  <!-- ── HERO ──────────────── -->
+  <section class="hero">
+    <!-- silhouette: aerial lift / scissor lift, hi-vis -->
+    <svg class="hero-svg" viewBox="0 0 240 320" fill="none" aria-hidden="true">
+      <!-- boom lift silhouette -->
+      <g stroke="#14140f" stroke-width="2" fill="none">
+        <!-- base / chassis -->
+        <rect x="40" y="240" width="160" height="36" />
+        <circle cx="68" cy="290" r="18" />
+        <circle cx="172" cy="290" r="18" />
+        <!-- turret -->
+        <rect x="100" y="210" width="40" height="30" />
+        <!-- boom segments -->
+        <line x1="120" y1="220" x2="60" y2="120" />
+        <line x1="60" y1="120" x2="170" y2="40" />
+        <!-- platform -->
+        <rect x="150" y="20" width="70" height="20" />
+        <line x1="150" y1="20" x2="150" y2="40" />
+        <line x1="220" y1="20" x2="220" y2="40" />
+        <!-- platform railings -->
+        <line x1="160" y1="6" x2="160" y2="20" />
+        <line x1="180" y1="6" x2="180" y2="20" />
+        <line x1="200" y1="6" x2="200" y2="20" />
+        <line x1="156" y1="6" x2="222" y2="6" />
+      </g>
+    </svg>
+
+    <div class="hero-eyebrow eyebrow"><span>NYSE · <span class="accent">URI</span></span></div>
+
+    <h1 class="hero-headline">
+      <span class="h-line">Someone</span>
+      <span class="h-line">has to <em>own</em></span>
+      <span class="h-line"><span class="h-yellow">the machines.</span></span>
+    </h1>
+
+    <p class="hero-sub">
+      United Rentals owns about <em>4,800 classes</em> of equipment across more than <em>1,500 yards</em> in North America — the world's largest rental fleet, sized to a continent that's perpetually under construction.
+    </p>
+
+    <div class="hero-grid">
+      <div>
+        <div class="heroStat-label">Market cap</div>
+        <div class="heroStat-value">$<span class="ctr" data-to="50.68" data-decimals="2">0</span><span class="unit">B</span></div>
+      </div>
+      <div>
+        <div class="heroStat-label">FY'23 revenue</div>
+        <div class="heroStat-value">$<span class="ctr" data-to="14.33" data-decimals="2">0</span><span class="unit">B</span></div>
+      </div>
+      <div>
+        <div class="heroStat-label">Locations</div>
+        <div class="heroStat-value"><span class="ctr" data-to="1500" data-suffix="+">0</span></div>
+      </div>
+      <div>
+        <div class="heroStat-label">Employees</div>
+        <div class="heroStat-value"><span class="ctr" data-to="27900">0</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── reset 1 ──────────────── -->
+  <aside class="reset">
+    <span class="reset-mark">Beat 01 · The setup</span>
+    <p class="reset-text">
+      Construction doesn't pause to <span class="strong">buy</span> equipment. It calls a yard, takes the keys, and <span class="pop">brings the bill back at the end of the day.</span>
+    </p>
+  </aside>
+
+  <!-- ── SECTION 2 · How it makes money / fleet inventory ──────────────── -->
+  <section class="section">
+    <span class="eyebrow">The fleet · <span class="accent">4,800 classes</span></span>
+    <h2 class="section-title">From a <em>lift</em> to a generator. Rented by the day.</h2>
+    <p class="section-lede">
+      Two segments do the work. <em>General Rentals</em> moves earth and lifts crews; <em>Specialty</em> handles the trickier jobs — trench safety, power, fluids. Equipment rental itself is <span class="y">~85%</span> of net sales; the rest is used-fleet sales, contractor supplies, and service.
+    </p>
+
+    <div class="fleet-frame" id="fleetFrame">
+      <!-- each row is a hand-built equipment glyph -->
+      <div class="fleet-row" data-fill="0.96">
+        <div class="fleet-icon">
+          <!-- aerial scissor lift -->
+          <svg width="48" height="32" viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="4" y="3" width="40" height="6"/>
+            <path d="M8 9 L24 22 L40 9 M8 22 L24 9 L40 22" />
+            <rect x="4" y="22" width="40" height="6"/>
+            <circle cx="12" cy="30" r="2"/>
+            <circle cx="36" cy="30" r="2"/>
+          </svg>
+        </div>
+        <div>
+          <div class="fleet-name">Aerial work platforms</div>
+          <div class="fleet-sub">SCISSOR · BOOM · TELEHANDLER</div>
+        </div>
+        <div class="fleet-bar"><i style="background:var(--ink)"></i></div>
+      </div>
+
+      <div class="fleet-row" data-fill="0.88">
+        <div class="fleet-icon">
+          <!-- excavator -->
+          <svg width="52" height="32" viewBox="0 0 52 32" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="6" y="20" width="36" height="6"/>
+            <circle cx="12" cy="29" r="2"/>
+            <circle cx="22" cy="29" r="2"/>
+            <circle cx="32" cy="29" r="2"/>
+            <rect x="14" y="12" width="14" height="8"/>
+            <line x1="28" y1="14" x2="42" y2="6"/>
+            <line x1="42" y1="6" x2="48" y2="14"/>
+            <path d="M48 14 l-2 6 l-6 0 z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="fleet-name">Earthmoving</div>
+          <div class="fleet-sub">EXCAVATOR · LOADER · DOZER</div>
+        </div>
+        <div class="fleet-bar"><i></i></div>
+      </div>
+
+      <div class="fleet-row" data-fill="0.74">
+        <div class="fleet-icon">
+          <!-- generator box -->
+          <svg width="44" height="32" viewBox="0 0 44 32" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="4" y="6" width="36" height="20"/>
+            <line x1="10" y1="10" x2="14" y2="10"/>
+            <line x1="10" y1="14" x2="14" y2="14"/>
+            <line x1="10" y1="18" x2="14" y2="18"/>
+            <line x1="10" y1="22" x2="14" y2="22"/>
+            <circle cx="28" cy="16" r="4"/>
+            <path d="M26 16 l2 2 l2 -2"/>
+            <line x1="4" y1="29" x2="40" y2="29"/>
+          </svg>
+        </div>
+        <div>
+          <div class="fleet-name">Power &amp; HVAC</div>
+          <div class="fleet-sub">GENSET · HEAT · CHILLER</div>
+        </div>
+        <div class="fleet-bar"><i></i></div>
+      </div>
+
+      <div class="fleet-row" data-fill="0.62">
+        <div class="fleet-icon">
+          <!-- trench shield -->
+          <svg width="48" height="32" viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="1.4">
+            <path d="M2 8 L46 8 L46 28 L2 28 Z"/>
+            <line x1="2" y1="14" x2="46" y2="14"/>
+            <line x1="2" y1="20" x2="46" y2="20"/>
+            <line x1="12" y1="8" x2="12" y2="28"/>
+            <line x1="24" y1="8" x2="24" y2="28"/>
+            <line x1="36" y1="8" x2="36" y2="28"/>
+          </svg>
+        </div>
+        <div>
+          <div class="fleet-name">Trench safety</div>
+          <div class="fleet-sub">SHIELD · SHORE · CONFINED-SPACE</div>
+        </div>
+        <div class="fleet-bar"><i></i></div>
+      </div>
+
+      <div class="fleet-row" data-fill="0.55">
+        <div class="fleet-icon">
+          <!-- pump -->
+          <svg width="48" height="32" viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="1.4">
+            <circle cx="24" cy="18" r="9"/>
+            <circle cx="24" cy="18" r="3"/>
+            <line x1="24" y1="9" x2="24" y2="3"/>
+            <line x1="33" y1="18" x2="44" y2="18"/>
+            <line x1="15" y1="18" x2="4" y2="18"/>
+            <line x1="4" y1="18" x2="4" y2="28"/>
+            <line x1="44" y1="18" x2="44" y2="28"/>
+          </svg>
+        </div>
+        <div>
+          <div class="fleet-name">Fluid solutions</div>
+          <div class="fleet-sub">PUMPS · TANKS · FILTRATION</div>
+        </div>
+        <div class="fleet-bar"><i></i></div>
+      </div>
+
+      <div class="fleet-row" data-fill="0.42">
+        <div class="fleet-icon">
+          <!-- forklift -->
+          <svg width="44" height="32" viewBox="0 0 44 32" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="14" y="10" width="14" height="14"/>
+            <line x1="28" y1="10" x2="34" y2="6"/>
+            <line x1="6" y1="10" x2="6" y2="26"/>
+            <line x1="6" y1="10" x2="14" y2="10"/>
+            <line x1="6" y1="14" x2="14" y2="14"/>
+            <line x1="2" y1="26" x2="14" y2="26"/>
+            <circle cx="18" cy="29" r="2"/>
+            <circle cx="26" cy="29" r="2"/>
+          </svg>
+        </div>
+        <div>
+          <div class="fleet-name">General tools</div>
+          <div class="fleet-sub">FORKLIFT · COMPRESSOR · TRAILER</div>
+        </div>
+        <div class="fleet-bar"><i></i></div>
+      </div>
+    </div>
+
+    <div class="fleet-rev">
+      <div class="fleet-rev-num">$<span class="ctr" data-to="3.98" data-decimals="2">0</span><span class="of">B</span></div>
+      <div class="fleet-rev-cap">Q1 2026<br/>net sales · record qtr.</div>
+    </div>
+  </section>
+
+  <!-- ── reset 2 ──────────────── -->
+  <aside class="reset">
+    <span class="reset-mark">Beat 02 · The proof</span>
+    <p class="reset-text">
+      A fleet this big <span class="strong">isn't an idea</span>. It is <span class="pop">people, branches, capital, and time</span> — compounded.
+    </p>
+  </aside>
+
+  <!-- ── SECTION 3 · Scale ──────────────── -->
+  <section class="section">
+    <span class="eyebrow">The scale · <span class="accent">~16%</span> of the market</span>
+    <h2 class="section-title">Twenty-eight thousand people. <em>One yard each, almost.</em></h2>
+    <p class="section-lede">
+      <em>27,900 employees</em>. About 1,500 locations. Roughly <span class="y">16%</span> of the entire North American equipment-rental market — and the largest single share of it.
+    </p>
+
+    <!-- a 28-figure crew array, with one hi-vis -->
+    <div class="scale-stage">
+      <svg class="scale-people" viewBox="0 0 380 220" id="crewSvg" aria-hidden="true">
+        <!-- 28 small worker glyphs in a 7x4 grid -->
+      </svg>
+      <p class="body-text" style="margin-top:6px; font-size:13.5px;">Each figure ≈ <em>1,000 employees</em>.</p>
+    </div>
+
+    <div class="marketshare">
+      <div class="ms-label">North American rental market · share</div>
+      <svg viewBox="0 0 320 36" width="100%" height="36" id="msSvg">
+        <!-- 100 hatch ticks; 16 of them lit -->
+      </svg>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-mute);letter-spacing:.08em;text-transform:uppercase;">
+        <span>URI · <span style="color:var(--signal-deep)">16%</span></span>
+        <span>Everyone else · 84%</span>
+      </div>
+    </div>
+
+    <div class="scale-readout">
+      <div>
+        <div class="lbl">Gross margin '23</div>
+        <div class="val"><em>40.6%</em></div>
+      </div>
+      <div>
+        <div class="lbl">Operating margin '23</div>
+        <div class="val">26.7%</div>
+      </div>
+      <div>
+        <div class="lbl">Operating cash flow '23</div>
+        <div class="val">$4.70<span style="font-size:14px;color:var(--ink-mute);font-style:italic"> B</span></div>
+      </div>
+      <div>
+        <div class="lbl">Free cash flow '23</div>
+        <div class="val">$2.31<span style="font-size:14px;color:var(--ink-mute);font-style:italic"> B</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── reset 3 ──────────────── -->
+  <aside class="reset">
+    <span class="reset-mark">Beat 03 · The math</span>
+    <p class="reset-text">
+      For every dollar that comes in the gate, <span class="pop">fifty-nine cents pay for the iron</span> — and then the depreciation clock starts.
+    </p>
+  </aside>
+
+  <!-- ── SECTION 4 · Costs · the load chart ──────────────── -->
+  <section class="section">
+    <span class="eyebrow">Where the dollar goes · <span class="accent">FY'23 P&amp;L</span></span>
+    <h2 class="section-title">A <em>load</em> on the deck.</h2>
+    <p class="section-lede">
+      Stack the cost categories on the platform of one of URI's own forklifts. The deck reads top-down — the heaviest pallet is at the bottom, the smallest sits up top.
+    </p>
+
+    <div class="load">
+      <svg class="load-stack" viewBox="0 0 320 260" aria-hidden="true" id="loadSvg">
+        <!-- forklift base -->
+        <g stroke="#14140f" stroke-width="1.6" fill="none">
+          <!-- cab outline (right side) -->
+          <line x1="252" y1="240" x2="252" y2="100"/>
+          <line x1="252" y1="100" x2="290" y2="100"/>
+          <line x1="290" y1="100" x2="290" y2="240"/>
+          <line x1="260" y1="120" x2="282" y2="120"/>
+          <!-- mast verticals (between deck and load) -->
+          <line x1="60" y1="240" x2="60" y2="20"/>
+          <line x1="220" y1="240" x2="220" y2="20"/>
+          <!-- forks/deck under the load -->
+          <line x1="40" y1="240" x2="240" y2="240"/>
+          <!-- ground line -->
+          <line x1="0" y1="252" x2="320" y2="252" stroke-dasharray="2 4"/>
+          <!-- wheels (under the cab) -->
+          <circle cx="262" cy="252" r="6"/>
+          <circle cx="282" cy="252" r="6"/>
+        </g>
+        <!-- pallets (5 stacked, bottom = biggest pct) -->
+        <!-- bottom pallet (Cost of revenue 59%) -->
+        <g id="palette-stack">
+          <!-- order top→bottom: smallest on top -->
+          <!-- 4% Interest -->
+          <rect class="pal" data-i="3" x="60" y="60" width="160" height="14" fill="#7ED6A8" stroke="#14140f" stroke-width="1"/>
+          <!-- 5% Tax -->
+          <rect class="pal" data-i="4" x="60" y="74" width="160" height="16" fill="#A78BFA" stroke="#14140f" stroke-width="1"/>
+          <!-- 8% SG&A -->
+          <rect class="pal" data-i="2" x="60" y="90" width="160" height="22" fill="#F5A623" stroke="#14140f" stroke-width="1"/>
+          <!-- 14% D&A -->
+          <rect class="pal" data-i="1" x="60" y="112" width="160" height="38" fill="#5B8FD4" stroke="#14140f" stroke-width="1"/>
+          <!-- 59% COGS (the ground-floor pallet) -->
+          <rect class="pal" data-i="0" x="60" y="150" width="160" height="90" fill="#E05C5C" stroke="#14140f" stroke-width="1"/>
+        </g>
+        <!-- value tags poking out -->
+        <g font-family="JetBrains Mono, monospace" font-size="9.5" fill="#14140f">
+          <text x="226" y="68">4% · Interest</text>
+          <text x="226" y="84">5% · Tax</text>
+          <text x="226" y="103">8% · SG&amp;A</text>
+          <text x="226" y="135">14% · D&amp;A</text>
+          <text x="226" y="200" font-size="11">59% · COGS</text>
+        </g>
+      </svg>
+    </div>
+
+    <p class="load-foot">
+      The fleet is <span class="pop">heavy on the deck</span> — and on the income statement.
+    </p>
+  </section>
+
+  <!-- ── reset 4 ──────────────── -->
+  <aside class="reset">
+    <span class="reset-mark">Beat 04 · The map</span>
+    <p class="reset-text">
+      You build a continental fleet by being <span class="pop">close enough to ship before lunch</span>.
+    </p>
+  </aside>
+
+  <!-- ── SECTION 5 · Footprint ──────────────── -->
+  <section class="section">
+    <span class="eyebrow">Footprint · <span class="accent">49 states</span></span>
+    <h2 class="section-title">A yard within a <em>day's drive</em> of every job.</h2>
+    <p class="section-lede">
+      <em>~1,500 yards</em> across 49 U.S. states and every Canadian province, plus locations in Europe, Australia, and New Zealand.
+    </p>
+
+    <div class="map-wrap">
+      <svg class="map-svg" viewBox="0 0 380 240" aria-hidden="true" id="mapSvg">
+        <!-- North America stylized blob -->
+        <defs>
+          <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#14140f" stroke-width="0.4" opacity="0.18"/>
+          </pattern>
+        </defs>
+        <!-- Canada -->
+        <path d="M30 30 L350 26 L356 86 L300 96 L240 92 L180 100 L120 96 L60 102 L30 92 Z"
+              fill="#e2dccf" stroke="#14140f" stroke-width="0.7"/>
+        <!-- USA -->
+        <path d="M40 100 L340 102 L334 188 L280 196 L210 200 L140 198 L70 192 L42 180 Z"
+              fill="url(#hatch)" stroke="#14140f" stroke-width="0.9"/>
+        <path d="M40 100 L340 102 L334 188 L280 196 L210 200 L140 198 L70 192 L42 180 Z"
+              fill="none" stroke="#14140f" stroke-width="0.9"/>
+        <!-- Mexico stub -->
+        <path d="M150 200 L240 202 L210 224 L170 222 Z" fill="#e2dccf" stroke="#14140f" stroke-width="0.7" opacity="0.6"/>
+        <!-- yard dots: ~60 dispersed across USA -->
+        <g id="yardDots" fill="#14140f"></g>
+        <!-- callouts -->
+        <g font-family="JetBrains Mono, monospace" font-size="8.5" fill="#14140f">
+          <text x="44" y="22" letter-spacing="1.2">CANADA · &amp; EUROPE · 9%</text>
+          <text x="44" y="222" letter-spacing="1.2">UNITED STATES · 91%</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="map-readout">
+      <div class="geo">
+        <div class="pct"><span class="ctr" data-to="91">0</span>%</div>
+        <div class="reg">United States</div>
+      </div>
+      <div class="geo">
+        <div class="pct dim"><span class="ctr" data-to="9">0</span>%</div>
+        <div class="reg">Canada &amp; Europe</div>
+      </div>
+    </div>
+
+    <p class="map-foot">
+      Density is the moat. <em>1,500 yards</em> is the kind of network a competitor can't simply order from a catalog.
+    </p>
+  </section>
+
+  <!-- ── reset 5 (transition into the dark beat) ──────────────── -->
+  <aside class="reset" style="background:#1d1d18;color:#e6e1d3;">
+    <span class="reset-mark" style="color:#8a8478;">Beat 05 · The bet</span>
+    <p class="reset-text" style="color:#e6e1d3;">
+      Owning the fleet is the easy part. <span class="pop" style="color:var(--signal);">Renewing it</span> — and buying the next one — is the strategy.
+    </p>
+  </aside>
+
+  <!-- ── SECTION 6 · The Bet (dark) ──────────────── -->
+  <section class="bet">
+    <span class="eyebrow">Capital deployed · <span class="accent">2026 plan</span></span>
+    <h2 class="section-title">$10 billion <em>back into the iron.</em></h2>
+    <p class="body-text" style="margin-top:18px;">
+      Three checkbooks open at once: <em>fleet capex</em>, <em>buybacks</em>, and <em>M&amp;A</em>. The dividend keeps growing alongside.
+    </p>
+
+    <div class="capex-stage">
+      <!-- bar stack: capex 4.6, buybacks 1.5, dividend 0.41, H&E 5.0 — share of '26 plan -->
+      <svg class="capex-svg" viewBox="0 0 340 90" id="capexBars" aria-hidden="true">
+        <!-- background grid -->
+        <line x1="0" y1="80" x2="340" y2="80" stroke="#2a2a23" stroke-width="0.6"/>
+        <!-- bars drawn via JS -->
+      </svg>
+    </div>
+
+    <div class="capex-rows">
+      <div class="capex-row">
+        <div>
+          <div class="capex-label">Gross fleet capex</div>
+          <div class="capex-sub">2026 GUIDE · MIDPOINT</div>
+        </div>
+        <div class="capex-num">$4.6B</div>
+      </div>
+      <div class="capex-row">
+        <div>
+          <div class="capex-label">Share repurchases</div>
+          <div class="capex-sub">2026 TARGET · ~$1.0B PRIOR YR</div>
+        </div>
+        <div class="capex-num">$1.5B</div>
+      </div>
+      <div class="capex-row">
+        <div>
+          <div class="capex-label">Dividend</div>
+          <div class="capex-sub">RAISED 10% IN 2024 · $406M PAID</div>
+        </div>
+        <div class="capex-num muted">$0.41B</div>
+      </div>
+    </div>
+
+    <div class="he-banner">
+      <div class="he-tag">M&amp;A · 2026</div>
+      <div class="he-headline">
+        H&amp;E Equipment Services, <span class="strong">acquired for ~$5B.</span>
+      </div>
+      <div class="he-cap">
+        The largest bolt-on yet — folding another national fleet into URI's branch network. Growth strategy, written in steel.
+      </div>
+    </div>
+
+    <p class="body-text" style="margin-top:34px;">
+      Net leverage sits near <em>1.9× adjusted EBITDA</em>: <span class="y">$1.47B</span> of total debt against <span class="y">$8.13B</span> of equity. Goodwill from years of acquisitions: about <em>$6.61B</em>.
+    </p>
+  </section>
+
+  <!-- ── reset 6 ──────────────── -->
+  <aside class="reset">
+    <span class="reset-mark">Beat 06 · The yard next door</span>
+    <p class="reset-text">
+      One direct rival. <span class="pop">A few oblique ones.</span> Different shapes of the same demand.
+    </p>
+  </aside>
+
+  <!-- ── SECTION 7 · Competition ──────────────── -->
+  <section class="section">
+    <span class="eyebrow">The competition · <span class="accent">market cap</span></span>
+    <h2 class="section-title">URI runs the largest yard. <em>Herc</em> runs the next one over.</h2>
+    <p class="section-lede">
+      Bars sized by market cap. Herc Holdings is the most direct rival — branch-by-branch, fleet-by-fleet. Grainger and Wabtec compete from adjacent angles.
+    </p>
+
+    <div class="comp-stage" id="compStage">
+      <!-- URI -->
+      <div class="comp-row">
+        <div class="comp-tickbox">
+          <div class="comp-tick uri">URI</div>
+          <div class="comp-mc">$50.7B</div>
+        </div>
+        <div>
+          <div class="comp-name">United Rentals</div>
+          <div class="comp-bar uri" data-w="0.92"><i></i></div>
+          <div class="comp-meta"><span><b>REV</b>$14.33B</span><span><b>SHARE</b>~16%</span></div>
+          <div class="comp-desc">The reference yard. <em>Largest fleet, deepest network</em>, broadest specialty mix.</div>
+        </div>
+      </div>
+      <!-- GWW -->
+      <div class="comp-row">
+        <div class="comp-tickbox">
+          <div class="comp-tick">GWW</div>
+          <div class="comp-mc">$55.0B</div>
+        </div>
+        <div>
+          <div class="comp-name">W.W. Grainger</div>
+          <div class="comp-bar" data-w="1.0"><i></i></div>
+          <div class="comp-meta"><span><b>REV</b>$17.94B</span><span><b>P/E</b>32.3</span><span><b>YoY</b>+4.5%</span></div>
+          <div class="comp-desc">Same-day industrial supply that can <em>displace rental demand</em> for smaller tools and consumables.</div>
+        </div>
+      </div>
+      <!-- WAB -->
+      <div class="comp-row">
+        <div class="comp-tickbox">
+          <div class="comp-tick">WAB</div>
+          <div class="comp-mc">$44.5B</div>
+        </div>
+        <div>
+          <div class="comp-name">Wabtec</div>
+          <div class="comp-bar" data-w="0.81"><i></i></div>
+          <div class="comp-meta"><span><b>REV</b>$11.17B</span><span><b>P/E</b>38.1</span><span><b>YoY</b>+7.5%</span></div>
+          <div class="comp-desc">Capital equipment for rail and infrastructure — overlapping <em>large-project customers</em>, different shape of sale.</div>
+        </div>
+      </div>
+      <!-- HRI -->
+      <div class="comp-row">
+        <div class="comp-tickbox">
+          <div class="comp-tick">HRI</div>
+          <div class="comp-mc">$3.7B</div>
+        </div>
+        <div>
+          <div class="comp-name">Herc Holdings</div>
+          <div class="comp-bar" data-w="0.07"><i></i></div>
+          <div class="comp-meta"><span><b>REV</b>$4.38B</span><span><b>P/E</b>3,676</span><span><b>YoY</b>+22.6%</span></div>
+          <div class="comp-desc">The <em>direct</em> rival — same fleet, same customers, same branch fights. Smaller, growing fastest.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── reset 7 ──────────────── -->
+  <aside class="reset">
+    <span class="reset-mark">Beat 07 · The close</span>
+    <p class="reset-text">
+      Back to where we started. <span class="pop">Someone has to own the machines.</span>
+    </p>
+  </aside>
+
+  <!-- ── CLOSE ──────────────── -->
+  <section class="close">
+    <span class="eyebrow">In sum · <span class="accent">FY '25</span></span>
+    <h2 class="close-headline">
+      <span style="display:block;">1,500 yards.</span>
+      <span style="display:block;">4,800 classes.</span>
+      <span style="display:block;"><em>One</em> <span class="h-yellow">operator.</span></span>
+    </h2>
+
+    <div class="close-readout">
+      <div class="close-stat">
+        <div class="lbl">Market cap</div>
+        <div class="val">$50.68B</div>
+      </div>
+      <div class="close-stat">
+        <div class="lbl">Net leverage</div>
+        <div class="val">~1.9×</div>
+      </div>
+      <div class="close-stat">
+        <div class="lbl">FCF '23</div>
+        <div class="val">$2.31B</div>
+      </div>
+      <div class="close-stat">
+        <div class="lbl">Q1 '26 EPS</div>
+        <div class="val">$9.71</div>
+      </div>
+    </div>
+
+    <div class="close-foot">
+      URI · NYSE · Recap FY '25
+      <span class="sig">A continental fleet, rented by the day.</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ── progress bar + reveal ───────────────────────────────────────── */
+(function () {
+  const artifact = document.getElementById('artifact');
+  const progress = document.getElementById('progress');
+
+  function onScroll() {
+    const r = artifact.getBoundingClientRect();
+    const total = artifact.scrollHeight - window.innerHeight;
+    const passed = Math.min(Math.max(-r.top, 0), total);
+    progress.style.width = (passed / total * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  /* reveal — fade in any .reveal that is not yet shown.
+     Also kick off counters when their parent is in view. */
+  const counters = document.querySelectorAll('.ctr');
+  const counterStarted = new WeakSet();
+
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+  function startCounter(el) {
+    if (counterStarted.has(el)) return;
+    counterStarted.add(el);
+    const to = parseFloat(el.dataset.to);
+    const decimals = el.dataset.decimals ? parseInt(el.dataset.decimals) : 0;
+    const suffix = el.dataset.suffix || '';
+    const dur = 1200;
+    const start = performance.now();
+    function step(t) {
+      const k = Math.min(1, (t - start) / dur);
+      const v = to * easeOutCubic(k);
+      el.textContent = v.toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      }) + (k === 1 ? suffix : '');
+      if (k < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function checkCounters() {
+    counters.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.92 && r.bottom > 0) startCounter(el);
+    });
+  }
+  window.addEventListener('scroll', checkCounters, { passive: true });
+  checkCounters();
+
+  /* fleet rows: reveal bars in cascade */
+  const fleetRows = document.querySelectorAll('.fleet-row');
+  function checkFleet() {
+    fleetRows.forEach((row, i) => {
+      const r = row.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.85) {
+        const fill = parseFloat(row.dataset.fill || '1');
+        const bar = row.querySelector('.fleet-bar i');
+        if (bar) {
+          bar.style.transitionDelay = (i * 80) + 'ms';
+          bar.style.transform = 'scaleX(' + fill + ')';
+          row.classList.add('lit');
+        }
+      }
+    });
+  }
+  window.addEventListener('scroll', checkFleet, { passive: true });
+  checkFleet();
+
+  /* competitor bars */
+  const compBars = document.querySelectorAll('.comp-bar');
+  function checkComp() {
+    compBars.forEach((bar, i) => {
+      const r = bar.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.85 && !bar.classList.contains('lit')) {
+        const w = parseFloat(bar.dataset.w);
+        const inner = bar.querySelector('i');
+        inner.style.transitionDelay = (i * 90) + 'ms';
+        inner.style.transform = 'scaleX(' + w + ')';
+        bar.classList.add('lit');
+      }
+    });
+  }
+  window.addEventListener('scroll', checkComp, { passive: true });
+  checkComp();
+})();
+
+/* ── crew grid (28 little workers, 1 hi-vis = ~1k of 27.9k) ─────── */
+(function () {
+  const svg = document.getElementById('crewSvg');
+  if (!svg) return;
+  const cols = 7, rows = 4;
+  const cellW = 380 / cols, cellH = 220 / rows;
+  const litIndex = 13; // somewhere in the middle, hi-vis
+  for (let i = 0; i < cols * rows; i++) {
+    const cx = (i % cols) * cellW + cellW/2;
+    const cy = Math.floor(i / cols) * cellH + cellH/2;
+    const lit = i === litIndex;
+    const stroke = lit ? '#14140f' : '#14140f';
+    const fillBody = lit ? '#ffcc00' : 'none';
+    const opacity = lit ? 1 : 0.55;
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('transform', `translate(${cx-10}, ${cy-22}) scale(0.9)`);
+    g.setAttribute('opacity', opacity);
+    g.innerHTML = `
+      <!-- hard hat -->
+      <path d="M2 8 Q10 -2 18 8 L18 12 L2 12 Z" fill="${fillBody}" stroke="${stroke}" stroke-width="1.1"/>
+      <line x1="0" y1="12" x2="20" y2="12" stroke="${stroke}" stroke-width="1.1"/>
+      <!-- head -->
+      <circle cx="10" cy="17" r="3" fill="none" stroke="${stroke}" stroke-width="1"/>
+      <!-- vest body -->
+      <path d="M3 22 L17 22 L19 38 L1 38 Z" fill="${fillBody}" stroke="${stroke}" stroke-width="1.1" opacity="${lit?1:0.85}"/>
+      <line x1="10" y1="22" x2="10" y2="38" stroke="${stroke}" stroke-width="0.8"/>
+      <!-- legs -->
+      <line x1="6" y1="38" x2="5" y2="46" stroke="${stroke}" stroke-width="1.1"/>
+      <line x1="14" y1="38" x2="15" y2="46" stroke="${stroke}" stroke-width="1.1"/>
+    `;
+    svg.appendChild(g);
+  }
+  // label arrow under the hi-vis (index 13)
+  const arrCol = litIndex % cols;
+  const arrRow = Math.floor(litIndex / cols);
+  const ax = arrCol * cellW + cellW/2;
+  const ay = arrRow * cellH + cellH/2 + 26;
+  const lab = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  lab.innerHTML = `
+    <line x1="${ax}" y1="${ay}" x2="${ax}" y2="${ay+10}" stroke="#14140f" stroke-width="0.8"/>
+    <text x="${ax-2}" y="${ay+22}" font-family="JetBrains Mono, monospace" font-size="8" fill="#14140f" text-anchor="middle">≈ 1,000</text>
+  `;
+  svg.appendChild(lab);
+})();
+
+/* ── market share bar (100 ticks) ───────────────────────────────── */
+(function () {
+  const svg = document.getElementById('msSvg');
+  if (!svg) return;
+  const total = 100, lit = 16;
+  const w = 320, h = 36;
+  const tickW = (w - 99 * 1) / total; // 100 ticks, 1px gap
+  for (let i = 0; i < total; i++) {
+    const x = i * (tickW + 1);
+    const fill = i < lit ? '#ffcc00' : '#cdc6b6';
+    const stroke = i < lit ? '#14140f' : 'none';
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    r.setAttribute('x', x.toFixed(2));
+    r.setAttribute('y', 6);
+    r.setAttribute('width', tickW.toFixed(2));
+    r.setAttribute('height', 24);
+    r.setAttribute('fill', fill);
+    if (stroke) r.setAttribute('stroke', stroke);
+    r.setAttribute('stroke-width', '0.4');
+    svg.appendChild(r);
+  }
+})();
+
+/* ── map yard dots, biased to USA (91%) ─────────────────────────── */
+(function () {
+  const g = document.getElementById('yardDots');
+  if (!g) return;
+  // 60 dots; 55 in US band, 5 in Canada/EU band
+  function dot(x, y, r) {
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx', x.toFixed(1));
+    c.setAttribute('cy', y.toFixed(1));
+    c.setAttribute('r', r);
+    c.setAttribute('fill', '#14140f');
+    g.appendChild(c);
+  }
+  function rand(seed) { // deterministic PRNG so dots are stable
+    return () => {
+      seed = (seed * 9301 + 49297) % 233280;
+      return seed / 233280;
+    };
+  }
+  const r = rand(7);
+  // US band: y 110..186, x 50..330
+  for (let i = 0; i < 55; i++) {
+    const x = 50 + r() * 280;
+    const y = 110 + r() * 76;
+    dot(x, y, 1.4 + r() * 0.6);
+  }
+  // a couple of clusters for big metros
+  [[90,160],[140,150],[180,140],[230,150],[270,170],[300,150]].forEach(([cx,cy])=>{
+    for (let k=0;k<4;k++){
+      dot(cx + (r()-0.5)*16, cy + (r()-0.5)*10, 1.6);
+    }
+  });
+  // Canada strip: y 40..86
+  for (let i = 0; i < 5; i++) {
+    const x = 60 + r() * 260;
+    const y = 38 + r() * 48;
+    dot(x, y, 1.4);
+  }
+})();
+
+/* ── capex bars (dark beat) ─────────────────────────────────────── */
+(function () {
+  const svg = document.getElementById('capexBars');
+  if (!svg) return;
+  // four bars: Capex 4.6, Buybacks 1.5, Dividend 0.41, H&E 5.0
+  const data = [
+    { label: 'CAPEX',   v: 4.6, color: '#ffcc00' },
+    { label: 'BUYBACK', v: 1.5, color: '#ffcc00' },
+    { label: 'DIVID.',  v: 0.41, color: '#b9b3a5' },
+    { label: 'H&E M&A', v: 5.0, color: '#ffcc00' }
+  ];
+  const max = 5.0;
+  const w = 340, h = 80;
+  const barW = 60, gap = 14;
+  const startX = (w - (barW * 4 + gap * 3)) / 2;
+  data.forEach((d, i) => {
+    const x = startX + i * (barW + gap);
+    const bh = (d.v / max) * 64;
+    const y = h - bh;
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    r.setAttribute('x', x);
+    r.setAttribute('y', y);
+    r.setAttribute('width', barW);
+    r.setAttribute('height', bh);
+    r.setAttribute('fill', d.color);
+    r.setAttribute('opacity', d.color === '#b9b3a5' ? 0.6 : 1);
+    svg.appendChild(r);
+    // label
+    const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    lbl.setAttribute('x', x + barW/2);
+    lbl.setAttribute('y', h + 8);
+    lbl.setAttribute('text-anchor', 'middle');
+    lbl.setAttribute('font-family', 'JetBrains Mono, monospace');
+    lbl.setAttribute('font-size', '8.5');
+    lbl.setAttribute('fill', '#8a8478');
+    lbl.setAttribute('letter-spacing', '0.12em');
+    lbl.textContent = d.label;
+    svg.appendChild(lbl);
+    // value tag
+    const val = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    val.setAttribute('x', x + barW/2);
+    val.setAttribute('y', y - 4);
+    val.setAttribute('text-anchor', 'middle');
+    val.setAttribute('font-family', 'Fraunces, serif');
+    val.setAttribute('font-size', '13');
+    val.setAttribute('fill', d.color === '#b9b3a5' ? '#b9b3a5' : '#ffcc00');
+    val.textContent = '$' + d.v.toFixed(d.v < 1 ? 2 : 1) + 'B';
+    svg.appendChild(val);
+  });
+})();
+</script>
+</body>
+</html>

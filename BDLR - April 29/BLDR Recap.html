@@ -1,0 +1,1552 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>BLDR · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* ============== Tokens ============== */
+  :root {
+    /* Kraft paper + ink + lumber */
+    --paper:        #EFE7D6;       /* kraft / drafting paper */
+    --paper-2:      #E6DCC6;       /* deeper kraft */
+    --paper-3:      #DBCFB2;
+    --paper-warm:   #F5EEDD;       /* lighter band for reset beats */
+    --ink:          #14110D;
+    --ink-2:        #2D2823;
+    --ink-3:        #5A5346;
+    --ink-4:        #8A8170;
+    --line:         #C7BA9C;       /* drafting hairline */
+    --line-soft:    #D4C9AE;
+    --line-strong:  #8E8262;
+
+    /* Lumber + blueprint */
+    --pine:         #C8941F;       /* warm sawn pine */
+    --pine-deep:    #A37715;
+    --pine-light:   #E8C66A;
+    --blueprint:    #1B3A6B;       /* blueprint ink */
+    --blueprint-2:  #2E5AA0;
+    --signal:       #D6411F;       /* editorial coral signal */
+    --signal-soft:  #FFDFD3;
+
+    /* Cost colors (from JSON — preserved for that single chart) */
+    --c-cor:    #2563EB;
+    --c-sga:    #16A34A;
+    --c-da:     #D97706;
+    --c-int:    #DC2626;
+
+    --night:        #0E1218;       /* the one inverted band */
+    --night-2:      #18202C;
+    --night-line:   #2E3A4D;
+
+    --font-display: 'Instrument Serif', 'Times New Roman', serif;
+    --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  html { background: #1a1a1a; }
+  body {
+    font-family: var(--font-sans);
+    color: var(--ink);
+    background: var(--paper);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* The page is the design — center on wider viewports, full bleed at mobile */
+  .page {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+    /* drafting paper texture: faint grid + grain */
+    background-image:
+      radial-gradient(rgba(20,17,13,0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: 0 0;
+  }
+
+  /* ============== Sticky chrome ============== */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(239,231,214,0.78);
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    border-bottom: 1px solid rgba(199,186,156,0.6);
+  }
+  .chrome-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px 10px;
+  }
+  .chrome-tick {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .chrome-tick .dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 999px;
+    background: var(--signal);
+    margin-right: 8px;
+    transform: translateY(-1px);
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-2);
+    font-weight: 400;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chrome-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .progress-rail {
+    height: 1.5px;
+    background: rgba(199,186,156,0.45);
+    width: 100%;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--signal);
+    transition: width 80ms linear;
+  }
+
+  /* ============== Section primitives ============== */
+  section {
+    position: relative;
+    padding: 56px 24px 48px;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ink-3);
+    margin: 0 0 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 18px;
+    height: 1px;
+    background: var(--ink-3);
+  }
+  .eyebrow .accent { color: var(--signal); }
+
+  h1, h2, h3, h4 { margin: 0; font-weight: 400; }
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.018em;
+    line-height: 0.96;
+    color: var(--ink);
+  }
+  .display em, .display .it { font-style: italic; }
+  .display .signal { color: var(--signal); font-style: italic; }
+  .display .pine   { color: var(--pine-deep); font-style: italic; }
+
+  p.body {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    margin: 0;
+    text-wrap: pretty;
+  }
+  p.body em { font-family: var(--font-display); font-style: italic; font-size: 17px; }
+  p.body .signal { color: var(--signal); }
+
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ============== HERO ============== */
+  .hero {
+    padding: 36px 24px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero .frame-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero-content { position: relative; z-index: 1; }
+
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .hero-eyebrow .pin {
+    width: 6px; height: 6px;
+    border-radius: 999px;
+    background: var(--signal);
+    box-shadow: 0 0 0 4px rgba(214,65,31,0.12);
+  }
+
+  .hero-thesis {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-top: 12px;
+  }
+  .hero-thesis .it { font-style: italic; }
+  .hero-thesis .pine { color: var(--pine-deep); font-style: italic; }
+  .hero-thesis .signal { color: var(--signal); font-style: italic; }
+  .hero-thesis .strike-num {
+    font-style: italic;
+    color: var(--ink);
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .hero-sub {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px 18px;
+    align-items: end;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+  .hero-sub .key {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    align-self: end;
+  }
+  .hero-sub .val {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .hero-sub .val em { font-style: italic; color: var(--pine-deep); }
+
+  /* Hero "house frame" SVG — drawn-on with scroll */
+  .frame-svg { position: absolute; right: -8px; top: 12px; width: 220px; opacity: 0.85; }
+  .frame-svg path, .frame-svg line { stroke: var(--ink); stroke-width: 1.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .frame-svg .pine-fill { fill: var(--pine); stroke: none; opacity: 0.0; }
+  .frame-svg .blueprint { stroke: var(--blueprint); stroke-dasharray: 3 3; opacity: 0.6; }
+
+  /* ============== BUSINESS — frame rises ============== */
+  .business { padding-top: 24px; }
+  .biz-stage {
+    margin: 28px -24px 0;
+    padding: 24px 24px 8px;
+    background: linear-gradient(to bottom, transparent, rgba(199,186,156,0.18) 70%, rgba(199,186,156,0.32));
+    position: relative;
+  }
+  .biz-stage::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 1px;
+    background: var(--ink);
+    opacity: 0.45;
+  }
+  .biz-svg { width: 100%; height: 280px; display: block; }
+  .biz-stack { display: grid; gap: 16px; margin-top: 28px; }
+  .biz-row {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    align-items: baseline;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .biz-row:last-child { border-bottom: none; }
+  .biz-row .num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+    padding-top: 4px;
+  }
+  .biz-row .name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1.05;
+    color: var(--ink);
+  }
+  .biz-row .name em { font-style: italic; color: var(--pine-deep); }
+  .biz-row .desc {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-3);
+    margin-top: 4px;
+    line-height: 1.45;
+  }
+  .biz-row .pct {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink);
+  }
+
+  /* ============== Reset beats ============== */
+  .reset {
+    margin: 8px 0 0;
+    padding: 56px 28px;
+    background: var(--paper-warm);
+    position: relative;
+  }
+  .reset.dim { background: var(--paper-2); }
+  .reset-quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.15;
+    color: var(--ink-2);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .reset-quote .signal { color: var(--signal); }
+  .reset-quote .pine   { color: var(--pine-deep); }
+  .reset-attr {
+    margin-top: 18px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .reset-attr::before { content: "— "; }
+
+  /* ============== SCALE ============== */
+  .scale-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 24px;
+  }
+  .scale-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: end;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .scale-row:last-child { border-bottom: none; }
+  .scale-num {
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.9;
+    color: var(--ink);
+    letter-spacing: -0.025em;
+  }
+  .scale-num .small { font-size: 36px; vertical-align: 6px; color: var(--ink-2); }
+  .scale-num .unit { font-size: 28px; color: var(--ink-3); margin-left: 2px; }
+  .scale-num em { font-style: italic; color: var(--pine-deep); }
+  .scale-num .signal { color: var(--signal); font-style: italic; }
+  .scale-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: right;
+    max-width: 130px;
+    line-height: 1.5;
+  }
+
+  /* growth indicator */
+  .growth-bar {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+  }
+
+  /* ============== COSTS — stud-wall stack ============== */
+  .costs { padding-top: 64px; padding-bottom: 64px; }
+  .costs-headline { margin-top: 8px; }
+  .stud-wall {
+    margin: 36px -8px 28px;
+    height: 360px;
+    position: relative;
+  }
+  .stud-wall svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .cost-legend {
+    display: grid;
+    gap: 14px;
+    margin-top: 12px;
+  }
+  .cost-row {
+    display: grid;
+    grid-template-columns: 12px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-swatch { width: 12px; height: 12px; border-radius: 2px; }
+  .cost-label { font-family: var(--font-sans); font-size: 14px; color: var(--ink); }
+  .cost-pct { font-family: var(--font-mono); font-size: 13px; color: var(--ink); font-weight: 500; }
+
+  .cents-grid {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    gap: 3px;
+  }
+  .cent {
+    aspect-ratio: 1 / 1;
+    background: var(--paper-3);
+    border-radius: 999px;
+  }
+  .cent.lit { background: var(--signal); box-shadow: 0 0 0 2px rgba(214,65,31,0.15); }
+  .cent.dim { background: rgba(20,17,13,0.18); }
+  .cents-caption {
+    margin-top: 18px;
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .cents-caption .signal { color: var(--signal); font-style: italic; }
+  .cents-caption em { font-style: italic; color: var(--pine-deep); }
+
+  /* ============== FOOTPRINT ============== */
+  .footprint { padding-top: 56px; }
+  .map-wrap {
+    margin: 28px -12px 0;
+    position: relative;
+  }
+  .map-wrap svg { width: 100%; height: auto; display: block; }
+  .map-stats {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 12px;
+  }
+  .map-stat {
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+  .map-stat .v {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .map-stat .v em { font-style: italic; color: var(--pine-deep); }
+  .map-stat .k {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 8px;
+  }
+
+  /* ============== THE BET — night band ============== */
+  .bet {
+    background: var(--night);
+    color: #E5E2DA;
+    padding: 72px 24px 64px;
+    margin: 0;
+  }
+  .bet .eyebrow { color: #8997B0; }
+  .bet .eyebrow::before { background: #8997B0; }
+  .bet .display { color: #F2EFE6; }
+  .bet .display .signal { color: #FF8B6A; }
+  .bet .display .pine { color: var(--pine-light); }
+  .bet p.body { color: #B7B2A4; }
+  .bet p.body em { color: #F2EFE6; }
+  .bet .meta { color: #8997B0; }
+
+  .bet-stack {
+    margin: 36px 0 0;
+    height: 220px;
+    position: relative;
+  }
+  .bet-stack svg { width: 100%; height: 100%; display: block; }
+  .bet-figures {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 16px;
+  }
+  .bet-fig .v {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 1;
+    color: #F2EFE6;
+    letter-spacing: -0.02em;
+  }
+  .bet-fig .v em { font-style: italic; color: var(--pine-light); }
+  .bet-fig .v .signal { color: #FF8B6A; font-style: italic; }
+  .bet-fig .k {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8997B0;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  /* ============== COMPETITION ============== */
+  .compete { padding-top: 64px; padding-bottom: 56px; }
+  .rivals { margin-top: 32px; display: grid; gap: 0; }
+  .rival {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .rival:last-child { border-bottom: none; }
+  .rival-head {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto;
+    gap: 10px;
+    align-items: baseline;
+    margin-bottom: 14px;
+  }
+  .rival-name {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .rival-tick {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+    padding: 3px 8px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+  .rival-cap {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink);
+    text-align: right;
+  }
+  .rival-bar-wrap {
+    height: 22px;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .rival-bar {
+    height: 6px;
+    background: var(--ink);
+    border-radius: 1px;
+    position: relative;
+  }
+  .rival-bar.bldr { background: var(--signal); }
+  .rival-bar.dim  { background: var(--ink-3); opacity: 0.65; }
+  .rival-marker {
+    position: absolute;
+    top: -3px; bottom: -3px;
+    width: 1px;
+    background: var(--ink-3);
+    opacity: 0.5;
+  }
+  .rival-desc {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-3);
+    margin-top: 12px;
+    max-width: 38ch;
+  }
+  .rival-desc em { font-family: var(--font-display); font-style: italic; color: var(--ink-2); font-size: 14px; }
+  .rival-desc .neg { color: var(--signal); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; }
+
+  .rival-axis {
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+  }
+
+  /* ============== TAKEAWAY ============== */
+  .takeaway {
+    padding: 80px 24px 96px;
+    position: relative;
+  }
+  .takeaway-flow {
+    margin: 28px -8px 28px;
+    height: 240px;
+    position: relative;
+  }
+  .takeaway-flow svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .takeaway-headline {
+    font-family: var(--font-display);
+    font-size: 46px;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-top: 12px;
+  }
+  .takeaway-headline .it { font-style: italic; }
+  .takeaway-headline .signal { color: var(--signal); font-style: italic; }
+  .takeaway-headline .pine { color: var(--pine-deep); font-style: italic; }
+
+  .colophon {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ============== Reveal animation ============== */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 600ms cubic-bezier(0.22,1,0.36,1), transform 600ms cubic-bezier(0.22,1,0.36,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* counts */
+  .count { font-variant-numeric: tabular-nums; }
+
+  @media (max-width: 360px) {
+    .hero-thesis { font-size: 48px; }
+    .scale-num { font-size: 54px; }
+    .takeaway-headline { font-size: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page" id="page">
+
+  <!-- =================== STICKY CHROME =================== -->
+  <header class="chrome" role="banner">
+    <div class="chrome-row">
+      <span class="chrome-tick"><span class="dot"></span>BLDR</span>
+      <span class="chrome-name">Builders FirstSource</span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+  </header>
+
+  <!-- =================== HERO =================== -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="frame-bg">
+      <svg class="frame-svg" id="heroFrame" viewBox="0 0 220 280" aria-hidden="true">
+        <!-- foundation line -->
+        <line x1="0" y1="240" x2="220" y2="240" />
+        <!-- house frame outline -->
+        <path d="M 30 240 L 30 130 L 110 70 L 190 130 L 190 240" />
+        <!-- roof line continuing -->
+        <line x1="22" y1="135" x2="110" y2="64" class="blueprint" />
+        <line x1="110" y1="64" x2="198" y2="135" class="blueprint" />
+        <!-- studs -->
+        <line x1="55" y1="240" x2="55" y2="148" />
+        <line x1="80" y1="240" x2="80" y2="160" />
+        <line x1="110" y1="240" x2="110" y2="130" />
+        <line x1="140" y1="240" x2="140" y2="160" />
+        <line x1="165" y1="240" x2="165" y2="148" />
+        <!-- header / sill -->
+        <line x1="30" y1="160" x2="190" y2="160" />
+        <line x1="30" y1="195" x2="190" y2="195" />
+        <!-- ridge / center stud -->
+        <line x1="110" y1="70" x2="110" y2="130" class="blueprint" />
+        <!-- dimension marks -->
+        <line x1="14" y1="130" x2="14" y2="240" />
+        <line x1="11" y1="130" x2="17" y2="130" />
+        <line x1="11" y1="240" x2="17" y2="240" />
+      </svg>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="pin"></span>
+        <span>NYSE · BLDR · Irving, TX</span>
+      </div>
+
+      <h1 class="hero-thesis">
+        Behind <span class="it">one in every</span><br/>
+        <span class="strike-num"><span class="signal">14</span></span>
+        American homes,<br/>
+        the same <span class="pine">lumber</span> truck.
+      </h1>
+
+      <div class="hero-sub">
+        <div class="key">Revenue<br/>FY '25</div>
+        <div class="val">$<span class="count" data-target="15.19" data-decimals="2">0.00</span><em>B</em></div>
+
+        <div class="key">Market<br/>cap</div>
+        <div class="val">$<span class="count" data-target="9.79" data-decimals="2">0.00</span><em>B</em></div>
+
+        <div class="key">Locations<br/>· 43 states</div>
+        <div class="val"><span class="count" data-target="585" data-decimals="0">0</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 1 =================== -->
+  <aside class="reset">
+    <p class="reset-quote">
+      You don't see them on the deed. <span class="signal italic">But the studs, the trusses, the doors —</span> they all came from one place.
+    </p>
+    <div class="reset-attr">The thesis</div>
+  </aside>
+
+  <!-- =================== BUSINESS — frame rises =================== -->
+  <section class="business" data-screen-label="02 The business">
+    <div class="eyebrow"><span>The work</span> · <span class="accent">how a frame rises</span></div>
+
+    <h2 class="display" style="font-size: 38px;">
+      They <span class="it">don't sell houses.</span><br/>
+      They sell <span class="pine">the bones.</span>
+    </h2>
+
+    <p class="body" style="margin-top: 18px;">
+      Three lines of work, stacked like a wall: <em>commodity materials</em> at the foundation, <em>factory-built components</em> bolted on top, and <em>installation</em> at the trim. Margin climbs as work moves up the stack.
+    </p>
+
+    <div class="biz-stage">
+      <svg class="biz-svg" id="frameBuild" viewBox="0 0 360 280" aria-hidden="true">
+        <!-- ground -->
+        <line x1="0" y1="260" x2="360" y2="260" stroke="#14110D" stroke-width="1.5"/>
+        <!-- ground hatching -->
+        <g stroke="#14110D" stroke-width="0.7" opacity="0.5">
+          <line x1="10" y1="266" x2="22" y2="274"/>
+          <line x1="40" y1="266" x2="52" y2="274"/>
+          <line x1="70" y1="266" x2="82" y2="274"/>
+          <line x1="100" y1="266" x2="112" y2="274"/>
+          <line x1="130" y1="266" x2="142" y2="274"/>
+          <line x1="160" y1="266" x2="172" y2="274"/>
+          <line x1="190" y1="266" x2="202" y2="274"/>
+          <line x1="220" y1="266" x2="232" y2="274"/>
+          <line x1="250" y1="266" x2="262" y2="274"/>
+          <line x1="280" y1="266" x2="292" y2="274"/>
+          <line x1="310" y1="266" x2="322" y2="274"/>
+          <line x1="340" y1="266" x2="352" y2="274"/>
+        </g>
+
+        <!-- LAYER 1: foundation lumber (commodity) -->
+        <g id="layerLumber">
+          <rect x="40" y="220" width="280" height="14" fill="#C8941F" stroke="#7A5A12" stroke-width="0.7"/>
+          <line x1="80" y1="220" x2="80" y2="234" stroke="#7A5A12" stroke-width="0.5"/>
+          <line x1="140" y1="220" x2="140" y2="234" stroke="#7A5A12" stroke-width="0.5"/>
+          <line x1="200" y1="220" x2="200" y2="234" stroke="#7A5A12" stroke-width="0.5"/>
+          <line x1="260" y1="220" x2="260" y2="234" stroke="#7A5A12" stroke-width="0.5"/>
+          <text x="40" y="214" font-family="Geist Mono" font-size="9" fill="#5A5346" letter-spacing="1">01 · LUMBER · 2X4</text>
+        </g>
+
+        <!-- LAYER 2: studs rising -->
+        <g id="layerStuds">
+          <rect x="50" y="130" width="6" height="90" fill="#C8941F" stroke="#7A5A12" stroke-width="0.5"/>
+          <rect x="100" y="130" width="6" height="90" fill="#C8941F" stroke="#7A5A12" stroke-width="0.5"/>
+          <rect x="150" y="130" width="6" height="90" fill="#C8941F" stroke="#7A5A12" stroke-width="0.5"/>
+          <rect x="200" y="130" width="6" height="90" fill="#C8941F" stroke="#7A5A12" stroke-width="0.5"/>
+          <rect x="250" y="130" width="6" height="90" fill="#C8941F" stroke="#7A5A12" stroke-width="0.5"/>
+          <rect x="300" y="130" width="6" height="90" fill="#C8941F" stroke="#7A5A12" stroke-width="0.5"/>
+          <!-- top plate -->
+          <rect x="40" y="120" width="280" height="10" fill="#A37715" stroke="#5A3F0E" stroke-width="0.5"/>
+        </g>
+
+        <!-- LAYER 3: truss (value-added components) -->
+        <g id="layerTruss">
+          <path d="M 40 120 L 180 50 L 320 120 Z" fill="none" stroke="#14110D" stroke-width="1.4"/>
+          <line x1="40" y1="120" x2="320" y2="120" stroke="#14110D" stroke-width="1.4"/>
+          <!-- web members -->
+          <line x1="180" y1="50" x2="180" y2="120" stroke="#14110D" stroke-width="0.9"/>
+          <line x1="110" y1="85" x2="110" y2="120" stroke="#14110D" stroke-width="0.9"/>
+          <line x1="250" y1="85" x2="250" y2="120" stroke="#14110D" stroke-width="0.9"/>
+          <line x1="40" y1="120" x2="180" y2="50" stroke="#14110D" stroke-width="0.9"/>
+          <line x1="40" y1="120" x2="110" y2="85" stroke="#14110D" stroke-width="0.9"/>
+          <line x1="180" y1="50" x2="250" y2="85" stroke="#14110D" stroke-width="0.9"/>
+          <line x1="180" y1="120" x2="110" y2="85" stroke="#14110D" stroke-width="0.9"/>
+          <line x1="180" y1="120" x2="250" y2="85" stroke="#14110D" stroke-width="0.9"/>
+          <!-- gusset plates -->
+          <circle cx="180" cy="50" r="3" fill="#D6411F"/>
+          <circle cx="110" cy="85" r="2.5" fill="#D6411F"/>
+          <circle cx="250" cy="85" r="2.5" fill="#D6411F"/>
+        </g>
+
+        <!-- LAYER 4: installation (worker silhouette) -->
+        <g id="layerInstall">
+          <circle cx="335" cy="232" r="4" fill="#14110D"/>
+          <line x1="335" y1="236" x2="335" y2="248" stroke="#14110D" stroke-width="1.2"/>
+          <line x1="335" y1="240" x2="328" y2="246" stroke="#14110D" stroke-width="1"/>
+          <line x1="335" y1="240" x2="343" y2="234" stroke="#14110D" stroke-width="1"/>
+          <line x1="335" y1="248" x2="330" y2="258" stroke="#14110D" stroke-width="1.2"/>
+          <line x1="335" y1="248" x2="340" y2="258" stroke="#14110D" stroke-width="1.2"/>
+          <!-- hammer -->
+          <line x1="343" y1="234" x2="343" y2="226" stroke="#14110D" stroke-width="1.2"/>
+          <rect x="340" y="222" width="6" height="4" fill="#14110D"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="biz-stack">
+      <div class="biz-row">
+        <div class="num">01</div>
+        <div>
+          <div class="name">Commodity <em>materials</em></div>
+          <div class="desc">Dimensional lumber, sheet goods, windows, doors. The foundation, sold by the truckload.</div>
+        </div>
+        <div class="pct">FOUNDATION</div>
+      </div>
+      <div class="biz-row">
+        <div class="num">02</div>
+        <div>
+          <div class="name">Value-added <em>components</em></div>
+          <div class="desc">Factory-built roof and floor trusses, wall panels, engineered wood, custom millwork.</div>
+        </div>
+        <div class="pct">RISING</div>
+      </div>
+      <div class="biz-row">
+        <div class="num">03</div>
+        <div>
+          <div class="name">Installation <em>&amp; turn-key</em></div>
+          <div class="desc">Professional install, framing crews. Local expertise at national scale.</div>
+        </div>
+        <div class="pct">TOP PLATE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== SCALE =================== -->
+  <section class="scale" data-screen-label="03 Scale">
+    <div class="eyebrow"><span>The scale</span> · <span class="accent">measured in trucks</span></div>
+
+    <h2 class="display" style="font-size: 40px;">
+      One business,<br/>
+      <span class="it">585 yards,</span><br/>
+      one continent.
+    </h2>
+
+    <div class="scale-grid">
+      <div class="scale-row">
+        <div class="scale-num">$<span class="count" data-target="15.19" data-decimals="2">0.00</span><span class="unit">B</span></div>
+        <div class="scale-label">Revenue<br/>FY '25</div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-num"><span class="count" data-target="3.36" data-decimals="2">0.00</span><span class="unit">B</span></div>
+        <div class="scale-label">Q4<br/>top line</div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-num"><span class="count" data-target="585" data-decimals="0">0</span></div>
+        <div class="scale-label">Distribution<br/>+ mfg locations</div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-num"><span class="count" data-target="43" data-decimals="0">0</span></div>
+        <div class="scale-label">U.S. states<br/>covered</div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-num"><span class="count" data-target="28" data-decimals="0">0</span><span class="unit">,000</span></div>
+        <div class="scale-label">Employees<br/>on the truck</div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-num"><em><span class="count" data-target="30.4" data-decimals="1">0.0</span>%</em></div>
+        <div class="scale-label">Gross margin<br/>· 5.2% op.</div>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top: 28px;">
+      Founded <em>1998</em>. Headquartered in Irving, Texas. A Fortune 500 constituent that ships <em>structural building products</em> from one yard to one job site, almost six hundred times over.
+    </p>
+  </section>
+
+  <!-- =================== RESET BEAT 2 =================== -->
+  <aside class="reset dim">
+    <p class="reset-quote">
+      Every dollar of revenue arrives in a flatbed.<br/>
+      <span class="signal italic">Most of it leaves on the next one.</span>
+    </p>
+    <div class="reset-attr">Where the money goes</div>
+  </aside>
+
+  <!-- =================== COSTS — stud wall =================== -->
+  <section class="costs" data-screen-label="04 Costs">
+    <div class="eyebrow"><span>The bill</span> · <span class="accent">a hundred cents in</span></div>
+
+    <h2 class="display costs-headline" style="font-size: 38px;">
+      Of every dollar that<br/>
+      walks <span class="it">through the gate,</span><br/>
+      <span class="pine">seventy</span> walks back out.
+    </h2>
+
+    <div class="stud-wall">
+      <svg id="studWallSvg" viewBox="0 0 360 360" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+        <!-- floor line -->
+        <line x1="0" y1="350" x2="360" y2="350" stroke="#14110D" stroke-width="1.2"/>
+        <!-- top plate, sized to total -->
+        <rect x="20" y="20" width="320" height="6" fill="#14110D"/>
+        <!-- bottom plate -->
+        <rect x="20" y="344" width="320" height="6" fill="#14110D"/>
+
+        <!-- Cost of revenue: 70% — biggest, blue -->
+        <g class="bar" data-pct="70">
+          <rect x="34" y="120" width="60" height="224" fill="#2563EB"/>
+          <line x1="34" y1="160" x2="94" y2="160" stroke="#FBFAF7" stroke-width="0.7" opacity="0.4"/>
+          <line x1="34" y1="220" x2="94" y2="220" stroke="#FBFAF7" stroke-width="0.7" opacity="0.4"/>
+          <line x1="34" y1="280" x2="94" y2="280" stroke="#FBFAF7" stroke-width="0.7" opacity="0.4"/>
+          <text x="64" y="100" text-anchor="middle" font-family="Instrument Serif" font-size="34" fill="#14110D">70<tspan font-size="20">%</tspan></text>
+          <text x="64" y="116" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="1.4" fill="#5A5346">COR</text>
+        </g>
+
+        <!-- SG&A 17% -->
+        <g class="bar" data-pct="17">
+          <rect x="118" y="290" width="60" height="54" fill="#16A34A"/>
+          <text x="148" y="278" text-anchor="middle" font-family="Instrument Serif" font-size="28" fill="#14110D">17<tspan font-size="16">%</tspan></text>
+          <text x="148" y="294" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="1.4" fill="#FBFAF7">SG&amp;A</text>
+        </g>
+
+        <!-- D&A 4% -->
+        <g class="bar" data-pct="4">
+          <rect x="202" y="332" width="60" height="12" fill="#D97706"/>
+          <text x="232" y="324" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#14110D">4<tspan font-size="13">%</tspan></text>
+        </g>
+
+        <!-- Interest 1% -->
+        <g class="bar" data-pct="1">
+          <rect x="286" y="341" width="60" height="3" fill="#DC2626"/>
+          <text x="316" y="333" text-anchor="middle" font-family="Instrument Serif" font-size="20" fill="#14110D">1<tspan font-size="12">%</tspan></text>
+        </g>
+
+        <!-- vertical "studs" between bars to evoke wall framing -->
+        <g stroke="#14110D" stroke-width="0.5" opacity="0.4">
+          <line x1="106" y1="26" x2="106" y2="344"/>
+          <line x1="190" y1="26" x2="190" y2="344"/>
+          <line x1="274" y1="26" x2="274" y2="344"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="cost-legend">
+      <div class="cost-row"><span class="cost-swatch" style="background:#2563EB"></span><span class="cost-label">Cost of revenue · lumber, doors, glass</span><span class="cost-pct">70%</span></div>
+      <div class="cost-row"><span class="cost-swatch" style="background:#16A34A"></span><span class="cost-label">SG&amp;A · sales, ops, overhead</span><span class="cost-pct">17%</span></div>
+      <div class="cost-row"><span class="cost-swatch" style="background:#D97706"></span><span class="cost-label">Depreciation &amp; amortization</span><span class="cost-pct">4%</span></div>
+      <div class="cost-row"><span class="cost-swatch" style="background:#DC2626"></span><span class="cost-label">Interest expense</span><span class="cost-pct">1%</span></div>
+    </div>
+
+    <!-- 100 cents grid -->
+    <div class="cents-grid" id="centsGrid" aria-hidden="true"></div>
+    <p class="cents-caption">
+      What lands as <em>operating profit</em> after the wall is built? <br/>
+      About <span class="signal">five cents on the dollar.</span>
+    </p>
+  </section>
+
+  <!-- =================== FOOTPRINT =================== -->
+  <section class="footprint" data-screen-label="05 Footprint">
+    <div class="eyebrow"><span>The footprint</span> · <span class="accent">forty-three states</span></div>
+
+    <h2 class="display" style="font-size: 40px;">
+      Ninety-nine cents<br/>
+      of every dollar earned <br/>
+      under <span class="pine">one flag.</span>
+    </h2>
+
+    <div class="map-wrap">
+      <svg id="mapSvg" viewBox="0 0 360 240" aria-hidden="true">
+        <defs>
+          <pattern id="dots" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+            <circle cx="3" cy="3" r="0.7" fill="#14110D" opacity="0.18"/>
+          </pattern>
+        </defs>
+
+        <!-- abstract continental US: blob shape -->
+        <path d="M 28 100
+                 Q 40 70, 80 64
+                 L 130 56
+                 Q 180 50, 220 58
+                 L 280 64
+                 Q 320 70, 332 96
+                 Q 336 120, 320 142
+                 L 290 160
+                 Q 270 178, 240 184
+                 Q 200 192, 170 188
+                 Q 140 184, 120 192
+                 L 100 200
+                 Q 80 204, 64 192
+                 Q 44 174, 36 150
+                 Q 26 122, 28 100 Z"
+              fill="url(#dots)" stroke="#14110D" stroke-width="1.1"/>
+
+        <!-- distribution dots — pseudo-locations -->
+        <g id="mapDots" fill="#D6411F">
+          <!-- east dense -->
+          <circle cx="280" cy="98" r="2.6"/><circle cx="270" cy="110" r="2.4"/><circle cx="262" cy="92" r="2.2"/>
+          <circle cx="252" cy="118" r="2.2"/><circle cx="288" cy="118" r="2.4"/><circle cx="298" cy="100" r="2"/>
+          <circle cx="276" cy="130" r="2"/><circle cx="240" cy="100" r="2.4"/><circle cx="248" cy="86" r="2"/>
+          <circle cx="266" cy="76" r="2"/><circle cx="234" cy="124" r="2.2"/><circle cx="220" cy="108" r="2"/>
+          <!-- midwest -->
+          <circle cx="200" cy="92" r="2.2"/><circle cx="190" cy="106" r="2"/><circle cx="178" cy="86" r="2"/>
+          <circle cx="170" cy="100" r="2.4"/><circle cx="158" cy="116" r="2"/><circle cx="148" cy="92" r="1.8"/>
+          <!-- south -->
+          <circle cx="180" cy="148" r="2.6"/><circle cx="200" cy="158" r="2.4"/><circle cx="220" cy="150" r="2"/>
+          <circle cx="160" cy="160" r="2.6"/><circle cx="140" cy="148" r="2.2"/><circle cx="240" cy="160" r="2"/>
+          <!-- texas (HQ — bigger) -->
+          <circle cx="142" cy="172" r="4" fill="#D6411F"/>
+          <circle cx="142" cy="172" r="9" fill="none" stroke="#D6411F" stroke-width="0.8" opacity="0.4"/>
+          <!-- west -->
+          <circle cx="100" cy="120" r="2"/><circle cx="84" cy="106" r="2"/><circle cx="70" cy="130" r="2"/>
+          <circle cx="60" cy="148" r="2"/><circle cx="92" cy="142" r="2"/><circle cx="76" cy="160" r="2"/>
+          <circle cx="110" cy="98" r="1.8"/>
+          <!-- mountain -->
+          <circle cx="130" cy="118" r="2"/><circle cx="118" cy="138" r="2"/>
+        </g>
+
+        <!-- HQ marker -->
+        <g>
+          <line x1="142" y1="172" x2="142" y2="218" stroke="#14110D" stroke-width="0.6" stroke-dasharray="2 2"/>
+          <text x="142" y="230" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="1.4" fill="#14110D">HQ · IRVING, TX</text>
+        </g>
+
+        <!-- 99% callout -->
+        <g>
+          <line x1="320" y1="50" x2="280" y2="80" stroke="#14110D" stroke-width="0.6"/>
+          <circle cx="320" cy="50" r="2" fill="#14110D"/>
+          <text x="324" y="46" font-family="Instrument Serif" font-size="22" fill="#14110D">99%</text>
+          <text x="324" y="60" font-family="Geist Mono" font-size="8" letter-spacing="1.4" fill="#5A5346">U.S.</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="map-stats">
+      <div class="map-stat">
+        <div class="v"><em>585</em></div>
+        <div class="k">Yards across<br/>the country</div>
+      </div>
+      <div class="map-stat">
+        <div class="v">43</div>
+        <div class="k">States with<br/>at least one</div>
+      </div>
+      <div class="map-stat">
+        <div class="v">28k</div>
+        <div class="k">Hands moving<br/>the lumber</div>
+      </div>
+      <div class="map-stat">
+        <div class="v"><em>1%</em></div>
+        <div class="k">Everything else.<br/>Other.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 3 — segue to bet =================== -->
+  <aside class="reset">
+    <p class="reset-quote">
+      With no dividend to defend, the <span class="signal italic">cash has only one place to go —</span><br/>
+      back into its own shares.
+    </p>
+    <div class="reset-attr">Capital allocation</div>
+  </aside>
+
+  <!-- =================== THE BET — night band =================== -->
+  <section class="bet" data-screen-label="06 The bet">
+    <div class="eyebrow"><span>The bet</span> · <span class="accent" style="color: #FF8B6A">99.3M shares retired</span></div>
+
+    <h2 class="display" style="font-size: 44px;">
+      Eight billion dollars,<br/>
+      <span class="signal">spent on themselves.</span>
+    </h2>
+
+    <p class="body" style="margin-top: 18px;">
+      Since August 2021, BLDR has bought back <em>99.3 million shares</em> at an average price of <em>$80.90</em>. No regular dividend. No splashy acquisition. Just a steady drip of <em>own-stock</em>, year over year.
+    </p>
+
+    <div class="bet-stack">
+      <svg id="betSvg" viewBox="0 0 340 220" aria-hidden="true">
+        <!-- ground -->
+        <line x1="0" y1="200" x2="340" y2="200" stroke="#3A4658" stroke-width="1"/>
+        <!-- a stack of "share certificates" being retired - paper rectangles, top ones glowing coral -->
+        <!-- back stack: faded -->
+        <g opacity="0.32">
+          <rect x="40" y="160" width="120" height="32" fill="none" stroke="#8997B0" stroke-width="0.8"/>
+          <rect x="36" y="156" width="120" height="32" fill="none" stroke="#8997B0" stroke-width="0.8"/>
+          <rect x="32" y="152" width="120" height="32" fill="none" stroke="#8997B0" stroke-width="0.8"/>
+          <rect x="28" y="148" width="120" height="32" fill="none" stroke="#8997B0" stroke-width="0.8"/>
+          <rect x="24" y="144" width="120" height="32" fill="none" stroke="#8997B0" stroke-width="0.8"/>
+        </g>
+        <!-- middle stack -->
+        <g opacity="0.6">
+          <rect x="20" y="120" width="120" height="32" fill="#18202C" stroke="#8997B0" stroke-width="0.8"/>
+          <rect x="22" y="116" width="120" height="32" fill="#18202C" stroke="#8997B0" stroke-width="0.8"/>
+          <rect x="24" y="112" width="120" height="32" fill="#18202C" stroke="#8997B0" stroke-width="0.8"/>
+        </g>
+
+        <!-- arrow showing retirement direction -->
+        <g stroke="#FF8B6A" stroke-width="1" fill="none">
+          <path d="M 170 100 L 230 100" stroke-dasharray="2 3"/>
+          <path d="M 224 96 L 230 100 L 224 104"/>
+        </g>
+        <text x="200" y="92" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="1.4" fill="#8997B0">RETIRED</text>
+
+        <!-- furnace / shred bin -->
+        <g>
+          <rect x="240" y="100" width="80" height="100" fill="none" stroke="#FF8B6A" stroke-width="1.2"/>
+          <line x1="248" y1="120" x2="312" y2="120" stroke="#FF8B6A" stroke-width="0.6" opacity="0.5"/>
+          <line x1="248" y1="140" x2="312" y2="140" stroke="#FF8B6A" stroke-width="0.6" opacity="0.5"/>
+          <line x1="248" y1="160" x2="312" y2="160" stroke="#FF8B6A" stroke-width="0.6" opacity="0.5"/>
+          <line x1="248" y1="180" x2="312" y2="180" stroke="#FF8B6A" stroke-width="0.6" opacity="0.5"/>
+          <!-- glow inside -->
+          <rect x="244" y="104" width="72" height="92" fill="#FF8B6A" opacity="0.08"/>
+          <text x="280" y="216" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="1.4" fill="#FF8B6A">$8.0B</text>
+        </g>
+
+        <!-- particles moving from stack to bin -->
+        <g fill="#FF8B6A" id="betParticles">
+          <circle cx="180" cy="100" r="1.5" opacity="0.9"/>
+          <circle cx="195" cy="100" r="1.2" opacity="0.7"/>
+          <circle cx="210" cy="100" r="1.4" opacity="0.85"/>
+          <circle cx="220" cy="100" r="1" opacity="0.6"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="bet-figures">
+      <div class="bet-fig">
+        <div class="v">$<span class="count" data-target="8.0" data-decimals="1">0.0</span><em>B</em></div>
+        <div class="k">Cumulative<br/>buyback · since Aug '21</div>
+      </div>
+      <div class="bet-fig">
+        <div class="v"><span class="count" data-target="99.3" data-decimals="1">0.0</span><em>M</em></div>
+        <div class="k">Shares<br/>retired</div>
+      </div>
+      <div class="bet-fig">
+        <div class="v">$<span class="count" data-target="80.90" data-decimals="2">0.00</span></div>
+        <div class="k">Avg.<br/>buyback price</div>
+      </div>
+      <div class="bet-fig">
+        <div class="v"><span class="signal">$0</span></div>
+        <div class="k">Regular<br/>cash dividend</div>
+      </div>
+      <div class="bet-fig">
+        <div class="v">$<span class="count" data-target="1.22" data-decimals="2">0.00</span><em>B</em></div>
+        <div class="k">Operating<br/>cash flow · FY '25</div>
+      </div>
+      <div class="bet-fig">
+        <div class="v">$<span class="count" data-target="853" data-decimals="0">0</span><em>M</em></div>
+        <div class="k">Free cash<br/>flow · FY '25</div>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top: 28px;">
+      Total equity sits at <em>$4.35B</em> against <em>$4.4B</em> of long-term debt — a <em>1.02×</em> leverage ratio. Nearly $4.79B of the balance sheet is goodwill, the price of <em>bolt-on after bolt-on.</em>
+    </p>
+  </section>
+
+  <!-- =================== COMPETITION =================== -->
+  <section class="compete" data-screen-label="07 Competition">
+    <div class="eyebrow"><span>The competition</span> · <span class="accent">same headwind</span></div>
+
+    <h2 class="display" style="font-size: 36px;">
+      Same cycle.<br/>
+      Same <span class="it">housing starts.</span><br/>
+      Same <span class="signal">red ink on growth.</span>
+    </h2>
+
+    <p class="body" style="margin-top: 18px;">
+      Three rivals share BLDR's customer — the production homebuilder. All three are running into the same wall: <em>fewer starts, lower prints, softer revenue.</em>
+    </p>
+
+    <div class="rivals">
+      <!-- BLDR (anchor) -->
+      <div class="rival">
+        <div class="rival-head">
+          <span class="rival-name">Builders FirstSource</span>
+          <span class="rival-tick">BLDR</span>
+          <span></span>
+          <span class="rival-cap">$9.79B</span>
+        </div>
+        <div class="rival-bar-wrap">
+          <div class="rival-bar bldr" style="width: 94%"></div>
+        </div>
+        <div class="rival-desc">
+          <em>Anchor.</em> Revenue $15.19B · margin 30.4% · the biggest yard in the yard.
+        </div>
+      </div>
+
+      <div class="rival">
+        <div class="rival-head">
+          <span class="rival-name">Owens Corning</span>
+          <span class="rival-tick">OC</span>
+          <span></span>
+          <span class="rival-cap">$9.87B</span>
+        </div>
+        <div class="rival-bar-wrap">
+          <div class="rival-bar" style="width: 95%; background: #14110D"></div>
+        </div>
+        <div class="rival-desc">
+          Insulation, roofing, composites — same homebuilder customer. Revenue <em>$10.10B</em> · YoY <span class="neg">−7.95%</span>.
+        </div>
+      </div>
+
+      <div class="rival">
+        <div class="rival-head">
+          <span class="rival-name">Oshkosh Corp</span>
+          <span class="rival-tick">OSK</span>
+          <span></span>
+          <span class="rival-cap">$9.26B</span>
+        </div>
+        <div class="rival-bar-wrap">
+          <div class="rival-bar dim" style="width: 89%"></div>
+        </div>
+        <div class="rival-desc">
+          Specialty vehicles for the job site — overlap on delivery + install. Revenue <em>$10.42B</em> · P/E 14.32 · YoY <span class="neg">−3.10%</span>.
+        </div>
+      </div>
+
+      <div class="rival">
+        <div class="rival-head">
+          <span class="rival-name">GMS Inc.</span>
+          <span class="rival-tick">GMS</span>
+          <span></span>
+          <span class="rival-cap" style="color: var(--ink-3)">—</span>
+        </div>
+        <div class="rival-bar-wrap">
+          <div class="rival-bar dim" style="width: 30%"></div>
+        </div>
+        <div class="rival-desc">
+          Industrial sector overlap. <em>Smaller silhouette.</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="rival-axis">
+      <span>$0</span><span>·</span><span>$10B mkt cap</span>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 4 — close =================== -->
+  <aside class="reset dim">
+    <p class="reset-quote">
+      A truck pulled in with <span class="pine italic">$15.19 billion</span> of lumber.<br/>
+      <span class="signal italic">A few cents</span> walked out the back door.
+    </p>
+    <div class="reset-attr">The takeaway</div>
+  </aside>
+
+  <!-- =================== TAKEAWAY =================== -->
+  <section class="takeaway" data-screen-label="08 Takeaway">
+    <div class="eyebrow"><span>What survives</span> · <span class="accent">per dollar in</span></div>
+
+    <h2 class="takeaway-headline">
+      <span class="it">Lumber in,</span><br/>
+      <span class="pine">lumber out.</span><br/>
+      A <span class="signal">thin coat of paint</span> on top.
+    </h2>
+
+    <div class="takeaway-flow">
+      <svg id="flowSvg" viewBox="0 0 360 240" aria-hidden="true">
+        <!-- Inflow: $1.00 -->
+        <text x="20" y="40" font-family="Geist Mono" font-size="9" letter-spacing="1.4" fill="#5A5346">$1.00 IN</text>
+        <line x1="20" y1="50" x2="120" y2="50" stroke="#14110D" stroke-width="6"/>
+        <!-- Splits cascading -->
+        <!-- 70 cents COR -->
+        <line x1="120" y1="50" x2="280" y2="80" stroke="#2563EB" stroke-width="4.2"/>
+        <text x="284" y="84" font-family="Instrument Serif" font-size="20" fill="#14110D">70¢</text>
+        <text x="284" y="96" font-family="Geist Mono" font-size="8" letter-spacing="1.4" fill="#5A5346">COR</text>
+        <!-- 17 cents SG&A -->
+        <line x1="120" y1="50" x2="280" y2="124" stroke="#16A34A" stroke-width="3.4"/>
+        <text x="284" y="128" font-family="Instrument Serif" font-size="18" fill="#14110D">17¢</text>
+        <text x="284" y="140" font-family="Geist Mono" font-size="8" letter-spacing="1.4" fill="#5A5346">SG&amp;A</text>
+        <!-- 4 cents D&A -->
+        <line x1="120" y1="50" x2="280" y2="160" stroke="#D97706" stroke-width="2.4"/>
+        <text x="284" y="164" font-family="Instrument Serif" font-size="14" fill="#14110D">4¢</text>
+        <!-- 1 cent INT -->
+        <line x1="120" y1="50" x2="280" y2="180" stroke="#DC2626" stroke-width="1.8"/>
+        <text x="284" y="184" font-family="Instrument Serif" font-size="12" fill="#14110D">1¢</text>
+        <!-- ~5 cents survive (operating margin 5.2%) -->
+        <line x1="120" y1="50" x2="280" y2="210" stroke="#D6411F" stroke-width="2.4"/>
+        <text x="284" y="214" font-family="Instrument Serif" font-size="16" fill="#D6411F" font-style="italic">5¢</text>
+        <text x="284" y="226" font-family="Geist Mono" font-size="8" letter-spacing="1.4" fill="#D6411F">SURVIVE</text>
+
+        <!-- branch points dots -->
+        <circle cx="120" cy="50" r="3" fill="#14110D"/>
+      </svg>
+    </div>
+
+    <p class="body" style="margin-top: 14px;">
+      A national footprint, a <em>$15B</em> top line, and a margin you can count on one hand. The strategy isn't to widen that margin — it's to do this <em>more times</em>, in <em>more places,</em> and to <em>keep the share count shrinking</em> while it does.
+    </p>
+
+    <div class="colophon">
+      <span>BLDR · NYSE</span>
+      <span>FY '25 · v2</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ============== Sticky progress hairline ==============
+  const fill = document.getElementById('progressFill');
+  const page = document.getElementById('page');
+
+  function updateProgress() {
+    const max = page.scrollHeight - window.innerHeight;
+    const p = Math.max(0, Math.min(1, window.scrollY / Math.max(1, max)));
+    fill.style.width = (p * 100) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+  updateProgress();
+
+  // ============== Reveal on enter ==============
+  const revealEls = [];
+  document.querySelectorAll('section, aside.reset').forEach(el => {
+    el.classList.add('reveal');
+    revealEls.push(el);
+  });
+  // Hero visible immediately
+  document.querySelector('.hero').classList.add('in');
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        // trigger counters within
+        e.target.querySelectorAll('.count:not(.done)').forEach(animateCount);
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+
+  revealEls.forEach(el => io.observe(el));
+
+  // immediately count hero numbers
+  document.querySelector('.hero').querySelectorAll('.count').forEach(animateCount);
+
+  // ============== Count-up ==============
+  function animateCount(el) {
+    if (el.classList.contains('done')) return;
+    el.classList.add('done');
+    const target = parseFloat(el.dataset.target);
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    const dur = 1100;
+    const start = performance.now();
+    function frame(now) {
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const v = target * eased;
+      el.textContent = v.toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+      if (t < 1) requestAnimationFrame(frame);
+      else el.textContent = target.toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ============== 100 cents grid: 5 lit, rest dimmed ==============
+  // Operating margin ~5.2%, so 5 lit cents
+  (function buildCents() {
+    const grid = document.getElementById('centsGrid');
+    if (!grid) return;
+    for (let i = 0; i < 100; i++) {
+      const c = document.createElement('div');
+      c.className = 'cent';
+      if (i < 5) c.classList.add('lit'); // 5 cents survive
+      else if (i < 95) c.classList.add('dim');
+      grid.appendChild(c);
+    }
+  })();
+
+  // ============== Hero frame draw-on (scroll) ==============
+  const heroFrame = document.getElementById('heroFrame');
+  const heroPaths = heroFrame.querySelectorAll('path, line');
+  heroPaths.forEach(p => {
+    const len = p.getTotalLength ? p.getTotalLength() : 100;
+    p.style.strokeDasharray = len;
+    p.style.strokeDashoffset = len;
+    p.style.transition = 'stroke-dashoffset 1.6s cubic-bezier(0.22,1,0.36,1)';
+  });
+  setTimeout(() => {
+    heroPaths.forEach((p, i) => {
+      setTimeout(() => { p.style.strokeDashoffset = 0; }, i * 60);
+    });
+  }, 200);
+
+  // ============== Frame-build SVG: scroll-scrubbed ==============
+  // Layers reveal as you scroll past them
+  const frameBuild = document.getElementById('frameBuild');
+  const layerLumber = document.getElementById('layerLumber');
+  const layerStuds  = document.getElementById('layerStuds');
+  const layerTruss  = document.getElementById('layerTruss');
+  const layerInstall= document.getElementById('layerInstall');
+  [layerLumber, layerStuds, layerTruss, layerInstall].forEach(g => {
+    g.style.opacity = 0;
+    g.style.transform = 'translateY(20px)';
+    g.style.transformOrigin = 'center bottom';
+    g.style.transition = 'opacity 600ms cubic-bezier(0.22,1,0.36,1), transform 700ms cubic-bezier(0.22,1,0.36,1)';
+  });
+
+  function checkFrameLayers() {
+    const r = frameBuild.getBoundingClientRect();
+    const vh = window.innerHeight;
+    if (r.top < vh * 0.85) {
+      const progress = Math.min(1, (vh * 0.9 - r.top) / (vh * 0.7));
+      const reveal = (g, threshold) => {
+        if (progress > threshold) {
+          g.style.opacity = 1;
+          g.style.transform = 'translateY(0)';
+        }
+      };
+      reveal(layerLumber, 0.05);
+      reveal(layerStuds, 0.25);
+      reveal(layerTruss, 0.45);
+      reveal(layerInstall, 0.65);
+    }
+  }
+  window.addEventListener('scroll', checkFrameLayers, { passive: true });
+  checkFrameLayers();
+
+  // ============== Stud wall: bars grow from bottom ==============
+  const studBars = document.querySelectorAll('#studWallSvg .bar rect');
+  studBars.forEach(rect => {
+    const y = parseFloat(rect.getAttribute('y'));
+    const h = parseFloat(rect.getAttribute('height'));
+    rect.dataset.targetY = y;
+    rect.dataset.targetH = h;
+    rect.setAttribute('y', y + h);
+    rect.setAttribute('height', 0);
+    rect.style.transition = 'all 1.1s cubic-bezier(0.22,1,0.36,1)';
+  });
+  let studAnimated = false;
+  const studWall = document.querySelector('.stud-wall');
+  function checkStudWall() {
+    const r = studWall.getBoundingClientRect();
+    if (!studAnimated && r.top < window.innerHeight * 0.7) {
+      studAnimated = true;
+      studBars.forEach((rect, i) => {
+        setTimeout(() => {
+          rect.setAttribute('y', rect.dataset.targetY);
+          rect.setAttribute('height', rect.dataset.targetH);
+        }, i * 140);
+      });
+    }
+  }
+  window.addEventListener('scroll', checkStudWall, { passive: true });
+  checkStudWall();
+
+  // ============== Bet particles drift ==============
+  const particles = document.querySelectorAll('#betParticles circle');
+  let pt = 0;
+  function tickParticles() {
+    pt += 1;
+    particles.forEach((p, i) => {
+      const baseX = [180, 195, 210, 220][i];
+      const offset = ((pt * 0.6) + i * 18) % 80;
+      p.setAttribute('cx', baseX + offset * 0.6);
+      const sway = Math.sin((pt + i * 30) * 0.06) * 4;
+      p.setAttribute('cy', 100 + sway);
+      const fade = 1 - (offset / 80);
+      p.setAttribute('opacity', Math.max(0.1, fade));
+    });
+    requestAnimationFrame(tickParticles);
+  }
+  tickParticles();
+
+  // ============== Map dots stagger-in ==============
+  const mapDots = document.querySelectorAll('#mapDots circle');
+  mapDots.forEach(d => {
+    d.style.opacity = 0;
+    d.style.transition = 'opacity 500ms ease-out';
+  });
+  let mapAnimated = false;
+  const mapWrap = document.querySelector('.map-wrap');
+  function checkMap() {
+    const r = mapWrap.getBoundingClientRect();
+    if (!mapAnimated && r.top < window.innerHeight * 0.75) {
+      mapAnimated = true;
+      mapDots.forEach((d, i) => {
+        setTimeout(() => { d.style.opacity = 1; }, i * 28);
+      });
+    }
+  }
+  window.addEventListener('scroll', checkMap, { passive: true });
+  checkMap();
+
+  // ============== Flow lines draw-on ==============
+  const flowLines = document.querySelectorAll('#flowSvg line');
+  flowLines.forEach(l => {
+    const len = l.getTotalLength ? l.getTotalLength() : 200;
+    l.style.strokeDasharray = len;
+    l.style.strokeDashoffset = len;
+    l.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(0.22,1,0.36,1)';
+  });
+  let flowAnimated = false;
+  const flowWrap = document.querySelector('.takeaway-flow');
+  function checkFlow() {
+    const r = flowWrap.getBoundingClientRect();
+    if (!flowAnimated && r.top < window.innerHeight * 0.75) {
+      flowAnimated = true;
+      flowLines.forEach((l, i) => {
+        setTimeout(() => { l.style.strokeDashoffset = 0; }, i * 180);
+      });
+    }
+  }
+  window.addEventListener('scroll', checkFlow, { passive: true });
+  checkFlow();
+
+  // ============== Hero parallax on house frame ==============
+  const heroFrameSvg = document.querySelector('.frame-svg');
+  function heroParallax() {
+    const y = window.scrollY;
+    if (y < 600) {
+      heroFrameSvg.style.transform = `translateY(${y * 0.15}px)`;
+    }
+  }
+  window.addEventListener('scroll', heroParallax, { passive: true });
+
+</script>
+</body>
+</html>

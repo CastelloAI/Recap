@@ -1,0 +1,1464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>SOLV · Recap</title>
+<link rel="stylesheet" href="styles/tokens.css" />
+<style>
+  /* ---------- PAGE-LOCAL TOKENS (Solventum-tuned) ---------- */
+  :root{
+    /* Solventum palette: clinical, calm, with one earned signal red */
+    --gauze:        #F6F2EA;   /* warm paper — bandage cotton */
+    --gauze-2:      #EFE9DD;   /* raised gauze */
+    --gauze-3:      #E3DCCB;   /* deep gauze, dividers */
+    --ledger:       #14171C;   /* near-black ink */
+    --ledger-2:     #2F343C;   /* secondary ink */
+    --ledger-3:     #6E7480;   /* tertiary */
+    --hairline:     #DCD5C3;
+    --scrubs:       #1F4A4F;   /* hospital teal — calm, clinical */
+    --scrubs-2:     #2C6A6F;
+    --scrubs-soft:  #D8E2E0;
+    --signal:       #C8362E;   /* the vital signal, one red */
+    --signal-soft:  #F4D5D2;
+    --plasma:       #E8B47B;   /* warm capex highlight */
+    --indigo:       #2A3B66;   /* HIS / data segment */
+  }
+
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body{ margin:0; padding:0; }
+  html{ background: #0a0a0a; }
+  body{
+    background: var(--gauze);
+    color: var(--ledger);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* The page itself is the design — a mobile-width artifact, centered on a dark void on wider screens */
+  .page{
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    background: var(--gauze);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 80px rgba(0,0,0,0.35);
+  }
+
+  /* ---------- PERSISTENT CHROME ---------- */
+  .chrome{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    background: rgba(246,242,234,0.78);
+    border-bottom: 1px solid rgba(220,213,195,0.5);
+  }
+  .chrome-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 14px 20px 10px;
+    gap: 12px;
+  }
+  .chrome-left{ display:flex; align-items:baseline; gap:10px; min-width:0; }
+  .ticker{
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--ledger);
+    font-weight: 500;
+  }
+  .ticker .dot{ color: var(--signal); }
+  .co-name{
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-style: italic;
+    color: var(--ledger-2);
+    line-height: 1;
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+  }
+  .recap-label{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ledger-3);
+  }
+  .progress-track{
+    height: 1.5px;
+    background: transparent;
+    position: relative;
+  }
+  .progress-fill{
+    position:absolute; left:0; top:0; bottom:0;
+    width: 0%;
+    background: linear-gradient(90deg, var(--scrubs), var(--signal));
+    transition: width 80ms linear;
+  }
+
+  /* ---------- TYPOGRAPHIC PRIMITIVES ---------- */
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ledger-3);
+    font-weight: 500;
+  }
+  .eyebrow .num{ color: var(--signal); }
+  .display{
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.022em;
+    color: var(--ledger);
+  }
+  .ital{ font-style: italic; }
+  .signal{ color: var(--signal); }
+  .scrubs{ color: var(--scrubs); }
+  .muted{ color: var(--ledger-2); }
+  .body{
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.5;
+    color: var(--ledger-2);
+  }
+  .caption{
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ledger-3);
+  }
+
+  /* ---------- BEAT SCAFFOLD ---------- */
+  .beat{
+    position: relative;
+    padding: 80px 22px;
+  }
+  .beat .eyebrow{ margin-bottom: 22px; }
+  .beat .display{ font-size: 44px; }
+
+  /* Reset beats — italic-serif interludes on contrasting bands */
+  .reset{
+    padding: 56px 28px;
+    background: var(--ledger);
+    color: var(--gauze);
+  }
+  .reset.alt{ background: var(--scrubs); color: var(--scrubs-soft); }
+  .reset.gauze{ background: var(--gauze-2); color: var(--ledger); }
+  .reset .quote{
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+  }
+  .reset .quote em{
+    font-style: italic;
+    color: var(--signal);
+    font-weight: 400;
+  }
+  .reset.gauze .quote em{ color: var(--signal); }
+  .reset .quote-mark{
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 64px;
+    line-height: 0.6;
+    color: var(--signal);
+    display:inline-block;
+    margin-bottom: 8px;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding: 36px 22px 64px;
+    position: relative;
+    min-height: 92vh;
+    display:flex; flex-direction: column; justify-content: space-between;
+  }
+  .hero-meta{
+    display:flex; gap: 18px; align-items:center;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ledger-3);
+  }
+  .hero-meta .pulse{
+    width: 8px; height: 8px; border-radius:50%;
+    background: var(--signal);
+    box-shadow: 0 0 0 0 rgba(200,54,46,0.55);
+    animation: pulse 1.6s ease-out infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow: 0 0 0 0 rgba(200,54,46,0.55); }
+    70%{ box-shadow: 0 0 0 12px rgba(200,54,46,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(200,54,46,0); }
+  }
+  .hero-head{
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 0.93;
+    letter-spacing: -0.025em;
+    margin-top: 36px;
+  }
+  .hero-head .l1{ display:block; }
+  .hero-head .l2{ display:block; font-style: italic; color: var(--scrubs); }
+  .hero-head .l3{ display:block; }
+  .hero-head .l3 em{ font-style: italic; color: var(--signal); }
+  .hero-sub{
+    margin-top: 28px;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ledger-2);
+    max-width: 36ch;
+  }
+  .hero-sub em{ font-style: italic; font-family: var(--font-display); font-size: 19px; color: var(--ledger); }
+
+  .hero-pulse{
+    position: relative;
+    margin-top: 40px;
+    height: 130px;
+  }
+  .hero-pulse svg{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .hero-pulse .grid-line{
+    position:absolute; left:0; right:0; height:1px;
+    background: var(--hairline);
+  }
+  .hero-pulse .label-1{
+    position:absolute; left:0; top: -22px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ledger-3);
+  }
+  .hero-pulse .label-2{
+    position:absolute; right:0; top:-22px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ledger-3);
+  }
+
+  .hero-foot{
+    margin-top: 32px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    border-top: 1px solid var(--hairline);
+    padding-top: 20px;
+  }
+  .hero-stat .num{
+    font-family: var(--font-display); font-size: 36px; line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .hero-stat .num.italic{ font-style: italic; color: var(--scrubs); }
+  .hero-stat .lab{
+    margin-top: 6px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ledger-3);
+  }
+  .scroll-hint{
+    margin-top: 24px;
+    display:flex; align-items:center; gap: 10px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ledger-3);
+  }
+  .scroll-hint .arr{
+    display:inline-block;
+    animation: scrollDown 1.6s var(--ease-out, ease-out) infinite;
+  }
+  @keyframes scrollDown{
+    0%{ transform: translateY(-3px); opacity: 0.4; }
+    50%{ transform: translateY(3px); opacity: 1; }
+    100%{ transform: translateY(-3px); opacity: 0.4; }
+  }
+
+  /* ---------- BUSINESS / SEGMENTS ---------- */
+  .seg-stack{ margin-top: 12px; }
+  .seg{
+    position: relative;
+    padding: 18px 0;
+    border-top: 1px solid var(--hairline);
+  }
+  .seg:last-child{ border-bottom: 1px solid var(--hairline); }
+  .seg-head{
+    display:flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .seg-head .name{
+    font-family: var(--font-display); font-size: 28px; line-height: 1.05;
+  }
+  .seg-head .pct{
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em;
+    color: var(--ledger);
+  }
+  .seg-bar{
+    height: 6px; background: var(--gauze-3); border-radius: 999px; overflow:hidden;
+    position:relative;
+  }
+  .seg-bar .fill{
+    position:absolute; left:0; top:0; bottom:0;
+    width: 0%;
+    border-radius: 999px;
+    transition: width 1.2s var(--ease-out);
+  }
+  .seg .desc{
+    margin-top: 12px;
+    font-family: var(--font-sans);
+    font-size: 13.5px; line-height: 1.5;
+    color: var(--ledger-2);
+  }
+  .seg .desc em{ font-style: italic; font-family: var(--font-display); font-size: 16px; }
+  .seg .tag{
+    display:inline-block; margin-top: 12px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ledger-3);
+    padding: 4px 10px; border-radius: 999px;
+    border: 1px solid var(--hairline);
+    background: var(--gauze);
+  }
+  .seg-1 .fill{ background: var(--scrubs); }
+  .seg-2 .fill{ background: var(--plasma); }
+  .seg-3 .fill{ background: var(--indigo); }
+  .seg-1 .name-dot{ color: var(--scrubs); }
+  .seg-2 .name-dot{ color: var(--plasma); }
+  .seg-3 .name-dot{ color: var(--indigo); }
+  .seg .name-dot{ font-family: var(--font-mono); font-size: 11px; margin-right: 6px; vertical-align: 4px; }
+
+  /* ---------- SCALE BEAT ---------- */
+  .scale-grid{
+    display: grid; gap: 4px;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 12px;
+  }
+  .scale-cell{
+    padding: 24px 4px 24px 0;
+    border-top: 1px solid var(--hairline);
+  }
+  .scale-cell.full{ grid-column: 1 / -1; }
+  .scale-cell .num{
+    font-family: var(--font-display); font-size: 56px; line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+  .scale-cell .num.italic{ font-style: italic; color: var(--scrubs); }
+  .scale-cell.signal .num{ color: var(--signal); }
+  .scale-cell .lab{
+    margin-top: 8px;
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ledger-3);
+  }
+  .scale-cell .sub{
+    margin-top: 4px;
+    font-family: var(--font-sans); font-size: 12.5px; color: var(--ledger-2);
+  }
+  .scale-cell.full .num{ font-size: 88px; }
+
+  /* ---------- COSTS / DOLLAR ---------- */
+  .dollar-wrap{
+    margin-top: 28px;
+    background: var(--gauze-2);
+    border: 1px solid var(--hairline);
+    border-radius: 14px;
+    padding: 22px 18px 20px;
+    position: relative;
+  }
+  .dollar-wrap::before{
+    content: ""; position:absolute; inset:6px;
+    border: 1px dashed var(--hairline);
+    border-radius: 10px;
+    pointer-events:none;
+  }
+  .dollar-head{
+    display:flex; justify-content:space-between; align-items: baseline;
+    margin-bottom: 14px;
+  }
+  .dollar-head .l{
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ledger-3);
+  }
+  .dollar-head .r{
+    font-family: var(--font-display); font-style: italic; font-size: 17px;
+    color: var(--ledger);
+  }
+  .dollar-bar{
+    height: 36px; border-radius: 4px; overflow: hidden;
+    display:flex; background: var(--gauze-3);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+  }
+  .dollar-bar .seg-cost{
+    height: 100%;
+    width: 0%;
+    transition: width 1.2s var(--ease-out);
+  }
+  .dollar-legend{
+    margin-top: 14px;
+    display:flex; flex-direction: column; gap: 0;
+  }
+  .legend-row{
+    display:grid; grid-template-columns: 16px 1fr auto; gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 1px solid var(--hairline);
+    font-family: var(--font-sans); font-size: 13.5px;
+    color: var(--ledger);
+  }
+  .legend-row:first-child{ border-top: none; }
+  .legend-row .swatch{
+    width: 12px; height: 12px; border-radius: 2px;
+  }
+  .legend-row .pct{
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.02em;
+    color: var(--ledger);
+    font-feature-settings: "tnum";
+  }
+  .dollar-foot{
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 2px solid var(--ledger);
+    display:flex; justify-content: space-between; align-items: baseline;
+  }
+  .dollar-foot .lab{
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ledger-3);
+  }
+  .dollar-foot .val{
+    font-family: var(--font-display); font-style: italic; font-size: 36px;
+    color: var(--signal);
+  }
+
+  /* ---------- THE BET ---------- */
+  .bet-section{
+    background: var(--ledger);
+    color: var(--gauze);
+    padding: 80px 22px;
+  }
+  .bet-section .eyebrow{ color: rgba(246,242,234,0.65); }
+  .bet-section .eyebrow .num{ color: var(--signal); }
+  .bet-section .display{
+    font-size: 44px; color: var(--gauze);
+  }
+  .bet-section .display em{ font-style: italic; color: var(--plasma); }
+  .bet-section .body{ color: rgba(246,242,234,0.75); }
+  .bet-flow{
+    margin-top: 36px;
+    position: relative;
+  }
+  .bet-row{
+    display:grid; grid-template-columns: auto 1fr;
+    gap: 16px; padding: 18px 0;
+    border-top: 1px solid rgba(246,242,234,0.12);
+  }
+  .bet-row:last-child{ border-bottom: 1px solid rgba(246,242,234,0.12); }
+  .bet-row .amt{
+    font-family: var(--font-display); font-style: italic;
+    font-size: 32px; line-height: 1; min-width: 110px;
+    color: var(--plasma);
+  }
+  .bet-row.outflow .amt{ color: var(--signal); }
+  .bet-row .det .lab{
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: rgba(246,242,234,0.55);
+    margin-bottom: 4px;
+  }
+  .bet-row .det .head{
+    font-family: var(--font-sans); font-size: 15px; font-weight: 500;
+    color: var(--gauze);
+  }
+  .bet-row .det .desc{
+    margin-top: 4px;
+    font-family: var(--font-sans); font-size: 12.5px;
+    color: rgba(246,242,234,0.65); line-height: 1.45;
+  }
+
+  /* ---------- DEBT BARREL ---------- */
+  .debt-vis{
+    margin-top: 30px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    align-items: end;
+  }
+  .debt-col{
+    text-align: left;
+  }
+  .debt-bar{
+    width: 100%; border-radius: 4px 4px 0 0;
+    background: linear-gradient(180deg, var(--signal) 0%, #7d201c 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .debt-bar.before{ height: 200px; }
+  .debt-bar.after{ height: 84px; background: linear-gradient(180deg, var(--scrubs-2) 0%, #143034 100%); }
+  .debt-bar::after{
+    content: ""; position:absolute; inset:0;
+    background: repeating-linear-gradient(180deg, rgba(255,255,255,0.08) 0 1px, transparent 1px 18px);
+  }
+  .debt-num{
+    font-family: var(--font-display); font-style: italic;
+    font-size: 28px; color: var(--gauze);
+    margin-top: 8px;
+  }
+  .debt-lab{
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: rgba(246,242,234,0.55);
+    margin-top: 2px;
+  }
+
+  /* ---------- FOOTPRINT ---------- */
+  .map-wrap{
+    margin-top: 28px;
+    position: relative;
+    padding: 26px 8px;
+    background: var(--gauze-2);
+    border: 1px solid var(--hairline);
+    border-radius: 14px;
+  }
+  .map-wrap svg{ width: 100%; height: auto; display:block; }
+  .map-list{
+    margin-top: 16px;
+  }
+  .map-row{
+    display:grid; grid-template-columns: 1fr 60px 80px;
+    gap: 12px; align-items: center;
+    padding: 14px 0;
+    border-top: 1px solid var(--hairline);
+  }
+  .map-row .reg{
+    font-family: var(--font-display); font-size: 22px;
+  }
+  .map-row .reg.italic{ font-style: italic; color: var(--scrubs); }
+  .map-row .pct{
+    font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.02em;
+    text-align: right;
+  }
+  .map-row .meter{
+    height: 4px; border-radius: 999px; background: var(--gauze-3); position:relative;
+  }
+  .map-row .meter span{
+    position:absolute; left:0; top:0; bottom:0;
+    background: var(--scrubs); border-radius: 999px;
+    width: 0%;
+    transition: width 1s var(--ease-out);
+  }
+
+  /* ---------- COMPETITORS ---------- */
+  .rivals{
+    margin-top: 28px;
+  }
+  .rival{
+    border-top: 1px solid var(--hairline);
+    padding: 22px 0;
+  }
+  .rival:last-child{ border-bottom: 1px solid var(--hairline); }
+  .rival-top{
+    display:flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .rival-name{
+    font-family: var(--font-display); font-size: 26px; line-height: 1.05;
+  }
+  .rival-name .ital{ font-style: italic; color: var(--scrubs); }
+  .rival-tk{
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em;
+    color: var(--ledger-3);
+    padding: 3px 8px; border: 1px solid var(--hairline); border-radius: 999px;
+    background: var(--gauze);
+  }
+  .rival-vs{
+    margin-top: 12px;
+    display:grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    border-top: 1px solid var(--hairline);
+    padding-top: 12px;
+  }
+  .rival-cell .lab{
+    font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ledger-3);
+    margin-bottom: 4px;
+  }
+  .rival-cell .val{
+    font-family: var(--font-display); font-size: 22px; line-height: 1;
+  }
+  .rival-cell .val.italic{ font-style: italic; color: var(--signal); }
+  .rival-blurb{
+    margin-top: 12px;
+    font-family: var(--font-sans); font-size: 13px; line-height: 1.5;
+    color: var(--ledger-2);
+  }
+  .rival-blurb em{ font-style: italic; font-family: var(--font-display); font-size: 15px; color: var(--ledger); }
+
+  /* ---------- SCALE COMPARE BAR (for rivals) ---------- */
+  .compare{
+    margin-top: 32px;
+    padding-top: 18px;
+    border-top: 2px solid var(--ledger);
+  }
+  .compare .lab{
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ledger-3);
+    margin-bottom: 14px;
+  }
+  .compare-row{
+    display:grid; grid-template-columns: 78px 1fr 60px;
+    gap: 10px; align-items: center;
+    padding: 10px 0;
+  }
+  .compare-row .who{
+    font-family: var(--font-mono); font-size: 12px;
+  }
+  .compare-row .who.us{ color: var(--signal); font-weight: 500; }
+  .compare-row .bar{
+    height: 14px; background: var(--gauze-3); border-radius: 2px; overflow:hidden;
+    position: relative;
+  }
+  .compare-row .bar span{
+    position:absolute; left:0; top:0; bottom:0;
+    width: 0%;
+    background: var(--ledger-2);
+    transition: width 1.2s var(--ease-out);
+  }
+  .compare-row.us .bar span{ background: var(--signal); }
+  .compare-row .mc{
+    font-family: var(--font-mono); font-size: 12px; text-align: right;
+    color: var(--ledger);
+    font-feature-settings: "tnum";
+  }
+
+  /* ---------- TAKEAWAY ---------- */
+  .takeaway{
+    background: var(--gauze-2);
+    padding: 96px 22px 110px;
+  }
+  .takeaway .eyebrow{ color: var(--ledger-3); }
+  .takeaway .head{
+    font-family: var(--font-display);
+    font-size: 56px; line-height: 0.95;
+    letter-spacing: -0.025em;
+    margin-top: 18px;
+  }
+  .takeaway .head em{ font-style: italic; color: var(--signal); }
+  .takeaway .head .l2{ display:block; color: var(--scrubs); font-style: italic; }
+  .takeaway-stats{
+    margin-top: 36px;
+    display:grid; grid-template-columns: 1fr 1fr; gap: 0 16px;
+  }
+  .takeaway-stats .cell{
+    padding: 16px 0;
+    border-top: 1px solid var(--hairline);
+  }
+  .takeaway-stats .cell .v{
+    font-family: var(--font-display); font-size: 28px; line-height: 1;
+  }
+  .takeaway-stats .cell .v.italic{ font-style: italic; color: var(--signal); }
+  .takeaway-stats .cell .l{
+    margin-top: 4px;
+    font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ledger-3);
+  }
+  .takeaway .closer{
+    margin-top: 40px;
+    font-family: var(--font-display); font-style: italic;
+    font-size: 22px; line-height: 1.35;
+    color: var(--ledger-2);
+  }
+  .takeaway .closer span{ color: var(--signal); }
+
+  .pagefoot{
+    padding: 40px 22px 60px;
+    background: var(--gauze);
+    text-align: left;
+  }
+  .pagefoot .row{
+    display:flex; justify-content: space-between; align-items: baseline;
+    border-top: 1px solid var(--hairline);
+    padding-top: 18px;
+  }
+  .pagefoot .row .l{
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ledger-3);
+  }
+  .pagefoot .row .r{
+    font-family: var(--font-display); font-style: italic; font-size: 18px;
+    color: var(--ledger);
+  }
+  .pagefoot .disc{
+    margin-top: 18px;
+    font-family: var(--font-sans); font-size: 11px; color: var(--ledger-3); line-height: 1.5;
+  }
+
+  /* ---------- REVEAL UTILS ---------- */
+  .reveal{
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+  }
+  .reveal.in{ opacity: 1; transform: none; }
+  .reveal.d1{ transition-delay: 80ms; }
+  .reveal.d2{ transition-delay: 160ms; }
+  .reveal.d3{ transition-delay: 240ms; }
+  .reveal.d4{ transition-delay: 320ms; }
+  .reveal.d5{ transition-delay: 400ms; }
+
+  /* small grain on paper */
+  .page::before{
+    content:"";
+    position:absolute; inset:0;
+    pointer-events:none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+    opacity: 0.04;
+    mix-blend-mode: multiply;
+    z-index: 1;
+  }
+  .page > *{ position: relative; z-index: 2; }
+
+  /* labels under hero progress chart */
+  .axis-tick{
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em;
+    fill: var(--ledger-3);
+    text-transform: uppercase;
+  }
+
+  /* SVG paths */
+  .draw{
+    stroke-dasharray: var(--len, 1000);
+    stroke-dashoffset: var(--len, 1000);
+    transition: stroke-dashoffset 1.5s var(--ease-out);
+  }
+  .draw.in{ stroke-dashoffset: 0; }
+
+  /* Three pillars SVG (segment vis) */
+  .pillars{
+    margin-top: 8px;
+    display:grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    align-items: end;
+    height: 200px;
+  }
+  .pillar{
+    position: relative;
+    background: var(--gauze-2);
+    border: 1px solid var(--hairline);
+    border-radius: 6px 6px 0 0;
+    overflow: hidden;
+    height: 100%;
+  }
+  .pillar .fill{
+    position: absolute; left:0; right:0; bottom:0;
+    height: 0%;
+    transition: height 1.2s var(--ease-out);
+  }
+  .pillar.p1 .fill{ background: var(--scrubs); }
+  .pillar.p2 .fill{ background: var(--plasma); }
+  .pillar.p3 .fill{ background: var(--indigo); }
+  .pillar .label{
+    position: absolute; top: 10px; left: 10px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ledger);
+    z-index: 2;
+  }
+  .pillar.p1 .label, .pillar.p2 .label, .pillar.p3 .label{ color: var(--ledger); }
+  .pillar .pct{
+    position: absolute; bottom: 10px; left: 10px;
+    font-family: var(--font-display); font-style: italic;
+    font-size: 22px; color: #fff; z-index:2;
+    mix-blend-mode: normal;
+  }
+
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <!-- ============================================================
+       PERSISTENT CHROME
+       ============================================================ -->
+  <header class="chrome">
+    <div class="chrome-row">
+      <div class="chrome-left">
+        <span class="ticker">SOLV<span class="dot">·</span>NYSE</span>
+        <span class="co-name">Solventum</span>
+      </div>
+      <span class="recap-label">Recap · FY '25</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+  </header>
+
+  <!-- ============================================================
+       1. THESIS / HERO
+       ============================================================ -->
+  <section class="hero" data-screen-label="01 Thesis">
+    <div>
+      <div class="hero-meta">
+        <span class="pulse"></span>
+        <span>Spun out of 3M · Apr 1, 2024</span>
+      </div>
+
+      <h1 class="hero-head">
+        <span class="l1">Seventy</span>
+        <span class="l2">years old.</span>
+        <span class="l3">Two <em>years</em> public.</span>
+      </h1>
+
+      <p class="hero-sub">
+        Solventum runs <em>three</em> healthcare franchises that 3M built and then
+        let go — wound care, dental, and the software that bills for both.
+      </p>
+    </div>
+
+    <div>
+      <div class="hero-pulse">
+        <span class="label-1">FY '25 · pulse</span>
+        <span class="label-2">$8.32B revenue</span>
+        <svg viewBox="0 0 380 130" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="0" y1="65" x2="380" y2="65" stroke="#DCD5C3" stroke-width="0.5" stroke-dasharray="2 4"/>
+          <path id="pulsePath"
+                d="M0,65 L60,65 L75,65 L82,40 L88,90 L94,20 L100,110 L106,55 L116,65 L180,65 L195,65 L202,42 L208,88 L214,18 L220,108 L226,55 L236,65 L300,65 L315,65 L322,50 L328,80 L334,30 L340,100 L346,55 L356,65 L380,65"
+                fill="none" stroke="#C8362E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+                class="draw" style="--len: 900px;"/>
+        </svg>
+      </div>
+
+      <div class="hero-foot">
+        <div class="hero-stat">
+          <div class="num">$12.22<span style="font-size: 22px; font-style:italic; color:var(--ledger-3);">B</span></div>
+          <div class="lab">Market cap</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num italic">22,000</div>
+          <div class="lab">Employees worldwide</div>
+        </div>
+      </div>
+
+      <div class="scroll-hint">
+        <span>Scroll · the recap</span>
+        <span class="arr">↓</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESET 1 -->
+  <section class="reset gauze">
+    <span class="quote-mark">“</span>
+    <p class="quote">
+      Three businesses. One spine. The story is what stayed —
+      <em>and what 3M kept the receipts for.</em>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       2. THE BUSINESS (segments)
+       ============================================================ -->
+  <section class="beat" data-screen-label="02 Business">
+    <div class="eyebrow"><span class="num">·</span> The shop floor &nbsp;·&nbsp; three franchises</div>
+    <h2 class="display">
+      Where the <span class="ital signal">revenue</span><br/>
+      actually comes from.
+    </h2>
+
+    <div class="seg-stack" id="segStack">
+      <div class="seg seg-1">
+        <div class="seg-head">
+          <div class="name"><span class="name-dot">●</span>MedSurg</div>
+          <div class="pct">57.9%</div>
+        </div>
+        <div class="seg-bar"><div class="fill" data-w="57.9"></div></div>
+        <p class="desc">
+          Negative pressure wound therapy, dressings, infection prevention,
+          surgical solutions. <em>The bandage business — at hospital scale.</em>
+        </p>
+        <span class="tag">~$4.82B revenue</span>
+      </div>
+
+      <div class="seg seg-2">
+        <div class="seg-head">
+          <div class="name"><span class="name-dot">●</span>Dental Solutions</div>
+          <div class="pct">16.2%</div>
+        </div>
+        <div class="seg-bar"><div class="fill" data-w="16.2"></div></div>
+        <p class="desc">
+          Restorative composites, orthodontics, prevention. <em>The chair-side
+          economy</em> — what the dentist reaches for during your visit.
+        </p>
+        <span class="tag">~$1.35B revenue</span>
+      </div>
+
+      <div class="seg seg-3">
+        <div class="seg-head">
+          <div class="name"><span class="name-dot">●</span>Health Information Systems</div>
+          <div class="pct">16.3%</div>
+        </div>
+        <div class="seg-bar"><div class="fill" data-w="16.3"></div></div>
+        <p class="desc">
+          Revenue cycle and clinical coding software — <em>the layer that turns
+          care into a bill</em>, sold by subscription.
+        </p>
+        <span class="tag">~$1.36B revenue</span>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top:28px;">
+      The remaining <span class="signal">9.6%</span> is allocated revenue and other —
+      a stub from the <span class="ital muted" style="font-family:var(--font-display); font-size:18px;">Purification &amp; Filtration</span>
+      business sold to Thermo Fisher in September 2025.
+    </p>
+  </section>
+
+  <!-- ============================================================
+       3. THE SCALE
+       ============================================================ -->
+  <section class="beat" style="background: var(--gauze-2);" data-screen-label="03 Scale">
+    <div class="eyebrow"><span class="num">·</span> The size of the room</div>
+    <h2 class="display">
+      What a <span class="ital scrubs">healthcare<br/>spinoff</span> looks like
+      at <span class="ital signal">eight billion</span>.
+    </h2>
+
+    <div class="scale-grid" id="scaleGrid">
+      <div class="scale-cell full signal">
+        <div class="num" data-count="8.32" data-prefix="$" data-suffix="B" data-decimals="2">$0.00B</div>
+        <div class="lab">FY '25 revenue</div>
+      </div>
+      <div class="scale-cell">
+        <div class="num italic" data-count="53.5" data-suffix="%" data-decimals="1">0%</div>
+        <div class="lab">Gross margin</div>
+        <div class="sub">Higher-value mix post-divestiture</div>
+      </div>
+      <div class="scale-cell">
+        <div class="num italic" data-count="26.2" data-suffix="%" data-decimals="1">0%</div>
+        <div class="lab">Operating margin</div>
+        <div class="sub">Recurring revenue tilt</div>
+      </div>
+      <div class="scale-cell">
+        <div class="num" data-count="2.00" data-prefix="$" data-suffix="B" data-decimals="2">$0.00B</div>
+        <div class="lab">Q4 '25 revenue</div>
+      </div>
+      <div class="scale-cell">
+        <div class="num" data-count="1.57" data-prefix="$" data-decimals="2">$0.00</div>
+        <div class="lab">Q4 '25 EPS</div>
+      </div>
+      <div class="scale-cell full">
+        <div class="num italic" data-count="22000" data-suffix="" data-decimals="0">0</div>
+        <div class="lab">People on the payroll</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESET 2 -->
+  <section class="reset">
+    <span class="quote-mark">“</span>
+    <p class="quote">
+      Of every dollar that comes through the door,
+      <em>fifteen cents make it out the other side.</em>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       4. WHERE THE MONEY GOES (costs)
+       ============================================================ -->
+  <section class="beat" data-screen-label="04 Costs">
+    <div class="eyebrow"><span class="num">·</span> A hundred cents in</div>
+    <h2 class="display">
+      Where the <span class="ital signal">dollar</span><br/>
+      goes before profit.
+    </h2>
+    <p class="body" style="margin-top:18px; max-width: 38ch;">
+      Reading the income statement as a single dollar bill — each band is a
+      slice of revenue that walks back out as cost.
+    </p>
+
+    <div class="dollar-wrap" id="dollarWrap">
+      <div class="dollar-head">
+        <div class="l">$1.00 of revenue</div>
+        <div class="r">→ <span class="ital">profit</span></div>
+      </div>
+      <div class="dollar-bar" id="dollarBar">
+        <div class="seg-cost" style="background:#4E79A7;" data-w="7"  data-label="COGS"></div>
+        <div class="seg-cost" style="background:#F28E2B;" data-w="20" data-label="SG&A"></div>
+        <div class="seg-cost" style="background:#59A14F;" data-w="9"  data-label="R&D"></div>
+        <div class="seg-cost" style="background:#E15759;" data-w="14" data-label="Amort"></div>
+        <div class="seg-cost" style="background:#B07AA1;" data-w="5"  data-label="Restruct"></div>
+      </div>
+
+      <div class="dollar-legend">
+        <div class="legend-row">
+          <div class="swatch" style="background:#4E79A7;"></div>
+          <div>Cost of revenue</div>
+          <div class="pct">7¢</div>
+        </div>
+        <div class="legend-row">
+          <div class="swatch" style="background:#F28E2B;"></div>
+          <div>Selling, general &amp; admin</div>
+          <div class="pct">20¢</div>
+        </div>
+        <div class="legend-row">
+          <div class="swatch" style="background:#59A14F;"></div>
+          <div>Research &amp; development</div>
+          <div class="pct">9¢</div>
+        </div>
+        <div class="legend-row">
+          <div class="swatch" style="background:#E15759;"></div>
+          <div>Amortization of intangibles</div>
+          <div class="pct">14¢</div>
+        </div>
+        <div class="legend-row">
+          <div class="swatch" style="background:#B07AA1;"></div>
+          <div>Restructuring &amp; separation</div>
+          <div class="pct">5¢</div>
+        </div>
+      </div>
+
+      <div class="dollar-foot">
+        <div class="lab">What survives</div>
+        <div class="val">~45¢</div>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top:18px; font-size: 13px;">
+      <span class="ital muted" style="font-family: var(--font-display); font-size:16px;">Amortization &amp; restructuring</span>
+      together eat <span class="signal">19¢</span> — the bill for a decades-old
+      acquisition pile and the cost of separating from the parent.
+    </p>
+  </section>
+
+  <!-- RESET 3 -->
+  <section class="reset alt">
+    <span class="quote-mark" style="color: var(--gauze);">“</span>
+    <p class="quote" style="color: var(--gauze);">
+      Four billion in. Three billion out the back door.
+      <em style="color: #FFD7B6;">A balance sheet, mid-edit.</em>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       5. THE BET
+       ============================================================ -->
+  <section class="bet-section" data-screen-label="05 Bet">
+    <div class="eyebrow"><span class="num">·</span> The bet &nbsp;·&nbsp; capital, redeployed</div>
+    <h2 class="display">
+      Sold a <em>piece</em>.<br/>
+      Bought down<br/>
+      the debt.
+    </h2>
+    <p class="body" style="margin-top: 18px; max-width: 38ch;">
+      September 2025: Solventum sold Purification &amp; Filtration to Thermo
+      Fisher for ~$4B. The proceeds didn't sit. Here's where they went.
+    </p>
+
+    <div class="bet-flow">
+      <div class="bet-row">
+        <div class="amt">+$4.0B</div>
+        <div class="det">
+          <div class="lab">In · divestiture proceeds</div>
+          <div class="head">Purification &amp; Filtration → Thermo Fisher</div>
+          <div class="desc">Clean exit, cash in hand. The remaining business is now three segments tighter.</div>
+        </div>
+      </div>
+      <div class="bet-row outflow">
+        <div class="amt">−$2.0B</div>
+        <div class="det">
+          <div class="lab">Out · senior notes repaid</div>
+          <div class="head">Senior notes</div>
+          <div class="desc">Highest-coupon debt taken off the stack first.</div>
+        </div>
+      </div>
+      <div class="bet-row outflow">
+        <div class="amt">−$870M</div>
+        <div class="det">
+          <div class="lab">Out · term loan</div>
+          <div class="head">Term loan paydown</div>
+          <div class="desc">The floating-rate piece, retired in full.</div>
+        </div>
+      </div>
+      <div class="bet-row outflow">
+        <div class="amt">−$725M</div>
+        <div class="det">
+          <div class="lab">Out · M&amp;A</div>
+          <div class="head">Acera Surgical · upfront</div>
+          <div class="desc">Tuck-in for advanced wound care — feeding the largest segment.</div>
+        </div>
+      </div>
+      <div class="bet-row outflow">
+        <div class="amt">−$1.0B</div>
+        <div class="det">
+          <div class="lab">Authorized · buyback</div>
+          <div class="head">Share repurchase program</div>
+          <div class="desc">No regular dividend — capital returns route through buyback instead.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Debt before / after -->
+    <div style="margin-top: 56px;">
+      <div class="eyebrow" style="color: rgba(246,242,234,0.55); margin-bottom: 14px;">
+        Total debt · before vs. after the deal
+      </div>
+      <div class="debt-vis">
+        <div class="debt-col">
+          <div class="debt-bar before"></div>
+          <div class="debt-num">~$7.9B</div>
+          <div class="debt-lab">Pre-divestiture</div>
+        </div>
+        <div class="debt-col">
+          <div class="debt-bar after"></div>
+          <div class="debt-num">$5.04B</div>
+          <div class="debt-lab">FY '25 year-end</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top: 36px; max-width: 38ch;">
+      Operating cash flow was <span class="ital" style="font-family: var(--font-display); font-size: 18px; color: var(--gauze);">$369M.</span>
+      Capex was <span class="ital" style="font-family: var(--font-display); font-size: 18px; color: var(--gauze);">$379M.</span>
+      Free cash flow lands at <span style="color: var(--signal);">−$10M</span> for the
+      separation year — the cost of being newly born.
+    </p>
+  </section>
+
+  <!-- ============================================================
+       6. FOOTPRINT
+       ============================================================ -->
+  <section class="beat" data-screen-label="06 Footprint">
+    <div class="eyebrow"><span class="num">·</span> The footprint</div>
+    <h2 class="display">
+      Most of the <span class="ital scrubs">care</span><br/>
+      still happens at <span class="ital signal">home.</span>
+    </h2>
+
+    <div class="map-wrap">
+      <svg viewBox="0 0 360 180" aria-hidden="true">
+        <defs>
+          <pattern id="dots" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.6" fill="#C9C0AB"/>
+          </pattern>
+        </defs>
+        <!-- world rough silhouette -->
+        <rect x="0" y="0" width="360" height="180" fill="url(#dots)" opacity="0.6"/>
+        <!-- N. America -->
+        <path d="M30,40 Q50,30 80,38 L100,55 L95,82 L70,95 L50,90 L40,75 Z" fill="#C8362E" opacity="0.92"/>
+        <!-- S. America -->
+        <path d="M85,100 L100,98 L105,130 L92,150 L82,140 Z" fill="#1F4A4F" opacity="0.5"/>
+        <!-- Europe -->
+        <path d="M165,40 Q180,32 200,40 L210,55 L195,68 L172,62 Z" fill="#1F4A4F" opacity="0.85"/>
+        <!-- Africa -->
+        <path d="M180,72 L210,72 L215,110 L200,130 L185,120 L175,95 Z" fill="#1F4A4F" opacity="0.35"/>
+        <!-- Asia -->
+        <path d="M215,40 Q260,32 300,42 L315,60 L305,78 L260,82 L225,72 Z" fill="#1F4A4F" opacity="0.6"/>
+        <!-- Australia -->
+        <path d="M295,118 L325,115 L330,135 L305,140 Z" fill="#1F4A4F" opacity="0.45"/>
+
+        <!-- node markers -->
+        <g>
+          <circle cx="65" cy="68" r="8" fill="none" stroke="#C8362E" stroke-width="1.5"/>
+          <circle cx="65" cy="68" r="3.5" fill="#C8362E"/>
+          <text x="65" y="50" text-anchor="middle" class="axis-tick" style="font-size:9px; fill:#14171C;">56% · US</text>
+        </g>
+        <g>
+          <circle cx="190" cy="55" r="6" fill="none" stroke="#1F4A4F" stroke-width="1.2"/>
+          <circle cx="190" cy="55" r="2.5" fill="#1F4A4F"/>
+          <text x="190" y="40" text-anchor="middle" class="axis-tick" style="fill:#14171C;">22% · EU</text>
+        </g>
+        <g>
+          <circle cx="270" cy="62" r="5" fill="none" stroke="#1F4A4F" stroke-width="1.2"/>
+          <circle cx="270" cy="62" r="2" fill="#1F4A4F"/>
+          <text x="270" y="48" text-anchor="middle" class="axis-tick" style="fill:#14171C;">14% · APAC</text>
+        </g>
+        <g>
+          <circle cx="93" cy="125" r="3.5" fill="none" stroke="#1F4A4F" stroke-width="1"/>
+          <circle cx="93" cy="125" r="1.5" fill="#1F4A4F"/>
+          <text x="93" y="160" text-anchor="middle" class="axis-tick" style="fill:#6E7480;">8% · ROW</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="map-list">
+      <div class="map-row">
+        <div class="reg">United States</div>
+        <div class="meter"><span data-w="100" style="background: var(--signal);"></span></div>
+        <div class="pct">56%</div>
+      </div>
+      <div class="map-row">
+        <div class="reg italic">Europe</div>
+        <div class="meter"><span data-w="39"></span></div>
+        <div class="pct">22%</div>
+      </div>
+      <div class="map-row">
+        <div class="reg italic">Asia-Pacific</div>
+        <div class="meter"><span data-w="25"></span></div>
+        <div class="pct">14%</div>
+      </div>
+      <div class="map-row">
+        <div class="reg italic">Rest of world</div>
+        <div class="meter"><span data-w="14"></span></div>
+        <div class="pct">8%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESET 4 -->
+  <section class="reset gauze">
+    <span class="quote-mark">“</span>
+    <p class="quote">
+      Three rivals, one for each franchise.
+      <em>Different doors, same hospital.</em>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       7. THE COMPETITION
+       ============================================================ -->
+  <section class="beat" data-screen-label="07 Competition">
+    <div class="eyebrow"><span class="num">·</span> The competition &nbsp;·&nbsp; one per door</div>
+    <h2 class="display">
+      Each segment has<br/>
+      its <span class="ital signal">own enemy.</span>
+    </h2>
+
+    <div class="rivals">
+
+      <div class="rival">
+        <div class="rival-top">
+          <div class="rival-name">Smith &amp; <span class="ital">Nephew</span></div>
+          <div class="rival-tk">SNN</div>
+        </div>
+        <div class="caption">vs. MedSurg · advanced wound care</div>
+        <div class="rival-vs">
+          <div class="rival-cell">
+            <div class="lab">Market cap</div>
+            <div class="val">$10.68B</div>
+          </div>
+          <div class="rival-cell">
+            <div class="lab">Revenue YoY</div>
+            <div class="val italic">+6.09%</div>
+          </div>
+        </div>
+        <p class="rival-blurb">
+          The <em>direct</em> rival in negative pressure wound therapy and dressings —
+          most-cited in Solventum's own filings.
+        </p>
+      </div>
+
+      <div class="rival">
+        <div class="rival-top">
+          <div class="rival-name">Align <span class="ital">Technology</span></div>
+          <div class="rival-tk">ALGN</div>
+        </div>
+        <div class="caption">vs. Dental Solutions · the chair-side budget</div>
+        <div class="rival-vs">
+          <div class="rival-cell">
+            <div class="lab">Market cap</div>
+            <div class="val">$13.61B</div>
+          </div>
+          <div class="rival-cell">
+            <div class="lab">Annual revenue</div>
+            <div class="val italic">$4.03B</div>
+          </div>
+        </div>
+        <p class="rival-blurb">
+          Clear aligners encroaching on traditional restorative workflows —
+          <em>same dental practice budget</em>, different procedure.
+        </p>
+      </div>
+
+      <div class="rival">
+        <div class="rival-top">
+          <div class="rival-name">Guardant <span class="ital">Health</span></div>
+          <div class="rival-tk">GH</div>
+        </div>
+        <div class="caption">vs. Health Information Systems · the data layer</div>
+        <div class="rival-vs">
+          <div class="rival-cell">
+            <div class="lab">Market cap</div>
+            <div class="val">$11.85B</div>
+          </div>
+          <div class="rival-cell">
+            <div class="lab">Revenue YoY</div>
+            <div class="val italic">+32.88%</div>
+          </div>
+        </div>
+        <p class="rival-blurb">
+          The fastest grower of the three — pushing AI-driven clinical decision
+          support into <em>the same hospital workflows</em> Solventum's HIS occupies.
+        </p>
+      </div>
+    </div>
+
+    <!-- Compare bar — market caps lined up -->
+    <div class="compare" id="compareBlock">
+      <div class="lab">Market cap · sized against SOLV</div>
+      <div class="compare-row us">
+        <div class="who us">SOLV</div>
+        <div class="bar"><span data-w="89.8"></span></div>
+        <div class="mc">$12.22B</div>
+      </div>
+      <div class="compare-row">
+        <div class="who">ALGN</div>
+        <div class="bar"><span data-w="100"></span></div>
+        <div class="mc">$13.61B</div>
+      </div>
+      <div class="compare-row">
+        <div class="who">GH</div>
+        <div class="bar"><span data-w="87.1"></span></div>
+        <div class="mc">$11.85B</div>
+      </div>
+      <div class="compare-row">
+        <div class="who">SNN</div>
+        <div class="bar"><span data-w="78.5"></span></div>
+        <div class="mc">$10.68B</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       8. TAKEAWAY
+       ============================================================ -->
+  <section class="takeaway" data-screen-label="08 Takeaway">
+    <div class="eyebrow"><span class="num">·</span> The takeaway</div>
+    <h1 class="head">
+      Two years <em>public.</em><br/>
+      <span class="l2">Three segments left.</span>
+      <span style="display:block;">One <em>spine.</em></span>
+    </h1>
+
+    <div class="takeaway-stats">
+      <div class="cell">
+        <div class="v italic">$8.32B</div>
+        <div class="l">Revenue, slimmer</div>
+      </div>
+      <div class="cell">
+        <div class="v">$5.04B</div>
+        <div class="l">Debt, paid down</div>
+      </div>
+      <div class="cell">
+        <div class="v italic">$1.00B</div>
+        <div class="l">Buyback authorized</div>
+      </div>
+      <div class="cell">
+        <div class="v">22,000</div>
+        <div class="l">People, retained</div>
+      </div>
+    </div>
+
+    <p class="closer">
+      A 70-year-old healthcare business, finally on its own balance sheet —
+      lighter, narrower, and <span>betting that focus pays.</span>
+    </p>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="row">
+      <div class="l">SOLV · NYSE · Recap FY '25</div>
+      <div class="r">end.</div>
+    </div>
+    <p class="disc">
+      All figures sourced from Solventum FY 2025 disclosures. Recap is informational, not investment advice.
+    </p>
+  </footer>
+
+</div>
+
+<script>
+/* ---------- SCROLL PROGRESS + REVEALS ---------- */
+(function(){
+  const progress = document.getElementById('progress');
+  const reveals = [];
+
+  // gather reveal-able blocks: every .beat, .reset, .takeaway, etc.
+  document.querySelectorAll('.hero, .beat, .reset, .bet-section, .takeaway, .pagefoot').forEach(sec=>{
+    sec.classList.add('reveal-section');
+  });
+
+  // mark child elements for stagger
+  function tagReveals(scope){
+    scope.querySelectorAll('.eyebrow, .display, .body, .seg, .scale-cell, .legend-row, .map-row, .rival, .compare-row, .bet-row, .hero-stat, .takeaway-stats .cell, .head, .closer, .hero-pulse, .dollar-wrap, .map-wrap, .debt-vis, .pagefoot .row, .pagefoot .disc, .quote, .hero-head, .hero-sub, .hero-meta, .scroll-hint').forEach((el, i)=>{
+      el.classList.add('reveal');
+      const d = i % 5;
+      if(d>0) el.classList.add('d'+d);
+    });
+  }
+  tagReveals(document);
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        // also kick off scoped animations
+        if(e.target.matches('.seg')){
+          const f = e.target.querySelector('.fill');
+          if(f && !f.dataset.set){ f.style.width = f.dataset.w + '%'; f.dataset.set=1; }
+        }
+        if(e.target.matches('.dollar-wrap')){
+          e.target.querySelectorAll('.seg-cost').forEach(s=>{
+            s.style.width = s.dataset.w + '%';
+          });
+        }
+        if(e.target.matches('.scale-cell')){
+          const num = e.target.querySelector('[data-count]');
+          if(num && !num.dataset.done){
+            num.dataset.done = 1;
+            countUp(num);
+          }
+        }
+        if(e.target.matches('.map-row')){
+          const m = e.target.querySelector('.meter span');
+          if(m && !m.dataset.set){ m.style.width = m.dataset.w + '%'; m.dataset.set=1; }
+        }
+        if(e.target.matches('.compare-row')){
+          const b = e.target.querySelector('.bar span');
+          if(b && !b.dataset.set){ b.style.width = b.dataset.w + '%'; b.dataset.set=1; }
+        }
+        if(e.target.matches('.hero-pulse')){
+          const path = e.target.querySelector('#pulsePath');
+          if(path){
+            const len = path.getTotalLength();
+            path.style.setProperty('--len', len + 'px');
+            requestAnimationFrame(()=> path.classList.add('in'));
+          }
+        }
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+
+  // count-up
+  function countUp(el){
+    const target = parseFloat(el.dataset.count);
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const duration = 1100;
+    const start = performance.now();
+    function frame(t){
+      const p = Math.min(1, (t - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const v = target * eased;
+      el.textContent = prefix + (decimals === 0 ? Math.round(v).toLocaleString() : v.toFixed(decimals)) + suffix;
+      if(p < 1) requestAnimationFrame(frame);
+      else el.textContent = prefix + (decimals === 0 ? Math.round(target).toLocaleString() : target.toFixed(decimals)) + suffix;
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // progress hairline
+  const doc = document.documentElement;
+  function onScroll(){
+    const h = doc.scrollHeight - window.innerHeight;
+    const p = h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0;
+    progress.style.width = (p * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // hero parallax — subtle pulse line drift
+  const pulse = document.querySelector('.hero-pulse svg');
+  function onScrollParallax(){
+    if(!pulse) return;
+    const y = window.scrollY;
+    pulse.style.transform = 'translateY(' + (y * -0.06) + 'px)';
+  }
+  window.addEventListener('scroll', onScrollParallax, { passive: true });
+})();
+</script>
+
+</body>
+</html>

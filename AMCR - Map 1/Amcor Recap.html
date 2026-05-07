@@ -1,0 +1,1645 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AMCR · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== Tokens (lifted from Zair system, tightened for Amcor) ===== */
+:root {
+  --paper:        #F4EFE5;     /* warmer kraft base — packaging paper */
+  --paper-2:      #EAE3D4;     /* raised tone */
+  --paper-3:      #DCD3BE;     /* deeper kraft */
+  --paper-edge:   #C9BFA6;
+  --ink:          #18160F;     /* near-black warm */
+  --ink-2:        #3A352A;
+  --ink-3:        #6B6557;
+  --ink-4:        #9B9484;
+  --line:         #D4CBB6;
+  --line-soft:    #E2DAC6;
+
+  /* Signal — Amcor blue lifted from cost color #2563EB, warmed slightly */
+  --signal:       #1F4FCC;
+  --signal-soft:  #DCE4F8;
+  --signal-deep:  #0F2C7A;
+
+  /* One earned dark beat */
+  --dark:         #14110A;
+  --dark-2:       #1F1B12;
+  --dark-line:    #2E2818;
+  --dark-ink:     #F0E9D7;
+  --dark-ink-2:   #B7AC91;
+
+  /* Cost wheel — supplied hexes (sacrosanct) */
+  --c-cor:  #2563EB;
+  --c-sga:  #16A34A;
+  --c-da:   #D97706;
+  --c-ri:   #DC2626;
+  --c-rd:   #7C3AED;
+
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:    'Geist', -apple-system, system-ui, sans-serif;
+  --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, monospace;
+
+  --maxw: 440px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Subtle paper grain — fibers visible at close range */
+body::before {
+  content:"";
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.09 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/></svg>");
+  mix-blend-mode: multiply;
+  opacity: 0.18;
+}
+
+/* ===== Page shell — mobile width ===== */
+.page {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  padding-top: 56px; /* chrome height */
+}
+
+/* ===== Persistent chrome ===== */
+.chrome {
+  position: fixed;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--maxw);
+  z-index: 50;
+  background: rgba(244,239,229,0.78);
+  backdrop-filter: saturate(1.4) blur(14px);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.chrome-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px 11px;
+}
+.tk-mono {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+.tk-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--signal); display: inline-block; margin-right: 8px; vertical-align: 1px; }
+.tk-name {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--ink-2);
+  flex: 1;
+  letter-spacing: -0.005em;
+}
+.tk-recap {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border: 1px solid var(--line);
+  padding: 3px 7px 2px;
+  border-radius: 4px;
+}
+.scroll-rail {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 1.5px;
+  background: transparent;
+}
+.scroll-fill {
+  height: 100%;
+  background: var(--signal);
+  width: 0%;
+  transition: width 60ms linear;
+}
+
+/* ===== Section primitives ===== */
+section { position: relative; padding: 72px 22px; }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 22px;
+  display: flex; align-items: center; gap: 10px;
+}
+.eyebrow .num {
+  display: inline-block;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 2px 5px 1px;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  color: var(--ink-3);
+  background: rgba(255,255,255,0.4);
+}
+.eyebrow .signal { color: var(--signal); }
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.96;
+  letter-spacing: -0.018em;
+  color: var(--ink);
+}
+.italic { font-family: var(--font-display); font-style: italic; font-weight: 400; }
+.italic.signal { color: var(--signal); }
+
+p.body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0;
+  text-wrap: pretty;
+}
+p.body em { font-family: var(--font-display); font-style: italic; color: var(--signal); font-size: 1.06em; letter-spacing: -0.005em; }
+p.body strong { color: var(--ink); font-weight: 600; }
+
+.caption {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
+/* ===== Reset beats ===== */
+.reset {
+  padding: 56px 28px;
+  background: var(--paper-2);
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+.reset p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.18;
+  color: var(--ink);
+  letter-spacing: -0.012em;
+  margin: 0;
+  text-wrap: balance;
+}
+.reset p .signal { color: var(--signal); }
+.reset .ornament {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--ink-4);
+  margin-bottom: 18px;
+}
+
+/* ===== HERO ===== */
+.hero {
+  padding: 64px 22px 96px;
+  position: relative;
+  overflow: hidden;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 64px;
+  line-height: 0.94;
+  letter-spacing: -0.025em;
+  margin: 0 0 28px;
+  color: var(--ink);
+}
+.hero h1 .it { font-style: italic; color: var(--signal); }
+.hero .lede {
+  font-family: var(--font-sans);
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 36ch;
+  margin: 0;
+}
+.hero-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 56px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.hero-meta > div {
+  padding: 14px 4px;
+  border-right: 1px solid var(--line-soft);
+}
+.hero-meta > div:last-child { border-right: none; }
+.hero-meta .v {
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.hero-meta .l {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* Hero bottle scene */
+.bottle-scene {
+  position: relative;
+  margin: 28px 0 0;
+  height: 420px;
+}
+.bottle-scene svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+/* ===== Big-figure tile ===== */
+.bigfig {
+  font-family: var(--font-display);
+  font-size: 96px;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  font-weight: 400;
+}
+.bigfig .unit {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-left: 6px;
+  vertical-align: 38px;
+}
+.bigfig .it { font-style: italic; }
+
+/* ===== Segments scene (how it makes money) ===== */
+.segments {
+  margin-top: 36px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+}
+.seg-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  position: relative;
+}
+.seg {
+  padding: 22px 20px;
+  border-bottom: 1px solid var(--line-soft);
+  position: relative;
+}
+.seg:last-child { border-bottom: none; }
+.seg .pct {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.seg .label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.seg .name {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 4px;
+  letter-spacing: -0.005em;
+}
+.seg .desc {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.seg .rev {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--signal);
+  margin-top: 8px;
+}
+/* Material fill bar behind each segment proportional to revenue */
+.seg .matfill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--paper-2);
+  z-index: 0;
+  width: 0%;
+  transition: width 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.seg.flex .matfill { background: linear-gradient(90deg, #E5DDC8 0%, #DAD0B7 100%); }
+.seg.rigid .matfill { background: linear-gradient(90deg, #DCE4F8 0%, #C5D2F1 100%); }
+.seg > * { position: relative; z-index: 1; }
+
+/* ===== Scale stat sequence ===== */
+.scale-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line-soft);
+  border: 1px solid var(--line-soft);
+  margin-top: 36px;
+}
+.scale-grid .cell {
+  background: var(--paper);
+  padding: 22px 18px;
+  min-height: 130px;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.scale-grid .cell .v {
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.scale-grid .cell .v .it { font-style: italic; }
+.scale-grid .cell .l {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 12px;
+  line-height: 1.4;
+}
+.scale-grid .cell.wide { grid-column: 1 / -1; }
+.scale-grid .cell.signal .v { color: var(--signal); }
+
+/* ===== Merger lamination scene ===== */
+.merger {
+  margin-top: 32px;
+  height: 280px;
+  position: relative;
+}
+.merger svg { width: 100%; height: 100%; }
+
+/* ===== Cost column ===== */
+.cost-wrap { margin-top: 36px; display: grid; grid-template-columns: 1fr; gap: 0; }
+.cost-col {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--paper);
+  overflow: hidden;
+}
+.cost-bar {
+  display: flex;
+  flex-direction: column;
+  height: 480px;
+}
+.cost-bar .slice {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  padding: 14px 16px;
+  color: #fff;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.cost-bar .slice:last-child { border-bottom: none; }
+.cost-bar .slice .pct {
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  margin-right: 14px;
+  min-width: 56px;
+}
+.cost-bar .slice .meta {
+  display: flex; flex-direction: column;
+  padding-top: 5px;
+}
+.cost-bar .slice .meta .lbl {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  margin-bottom: 2px;
+}
+.cost-bar .slice .meta .sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.78;
+}
+.cost-bar .slice.cor { background: var(--c-cor); }
+.cost-bar .slice.sga { background: var(--c-sga); }
+.cost-bar .slice.da  { background: var(--c-da); }
+.cost-bar .slice.ri  { background: var(--c-ri); }
+.cost-bar .slice.rd  { background: var(--c-rd); }
+.cost-bar .slice.rem { background: var(--ink); flex: 0 0 auto; }
+.cost-bar .slice.rem .meta .lbl { color: #FFD9CB; }
+.cost-bar .slice .pct .it { font-style: italic; }
+
+.cost-axis {
+  display: flex; justify-content: space-between;
+  padding: 12px 2px 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ===== Footprint — fold/label scene ===== */
+.foot-scene {
+  margin-top: 32px;
+  position: relative;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  padding: 24px 20px 18px;
+}
+.foot-scene .label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 4px;
+}
+.foot-rows {
+  margin-top: 6px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.foot-row {
+  display: grid;
+  grid-template-columns: 22px 1fr 56px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--line);
+  position: relative;
+}
+.foot-row:last-child { border-bottom: none; }
+.foot-row .idx {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.1em;
+}
+.foot-row .reg {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+  position: relative;
+}
+.foot-row .reg .track {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: -8px;
+  height: 2px;
+  background: var(--paper-3);
+}
+.foot-row .reg .fill {
+  position: absolute;
+  left: 0; bottom: -8px;
+  height: 2px;
+  background: var(--ink);
+  width: 0%;
+  transition: width 800ms cubic-bezier(0.22,1,0.36,1);
+}
+.foot-row.dom .reg .fill { background: var(--signal); }
+.foot-row .pct {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-align: right;
+}
+.foot-row.dom .pct { color: var(--signal); font-style: italic; }
+
+/* ===== Competition — three bottles ===== */
+.compete-scene {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.comp-row {
+  padding: 22px 20px 24px;
+  border-bottom: 1px solid var(--line-soft);
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 18px;
+  align-items: stretch;
+}
+.comp-row:last-child { border-bottom: none; }
+.comp-row.amcr { background: var(--signal-soft); }
+.comp-row.amcr .name { color: var(--signal-deep); }
+.comp-bottle { position: relative; }
+.comp-bottle svg { width: 100%; height: 100%; display: block; }
+.comp-meta .name {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.008em;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.comp-meta .ticker {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  margin-bottom: 12px;
+}
+.comp-meta .figs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+.comp-meta .figs .v {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.comp-meta .figs .v .it { font-style: italic; }
+.comp-meta .figs .l {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 3px;
+}
+.comp-meta .desc {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.comp-meta .desc em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+.growth-pos { color: #1F8A4C; }
+.growth-neg { color: var(--c-ri); }
+
+/* ===== DARK BEAT — weight ===== */
+.weight {
+  background: var(--dark);
+  color: var(--dark-ink);
+  border-top: 1px solid var(--dark-line);
+  border-bottom: 1px solid var(--dark-line);
+  padding: 96px 22px;
+  position: relative;
+}
+.weight .eyebrow { color: var(--dark-ink-2); }
+.weight .eyebrow .num { color: var(--dark-ink-2); border-color: var(--dark-line); background: rgba(255,255,255,0.04); }
+.weight h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 50px;
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  color: var(--dark-ink);
+  margin: 0 0 24px;
+}
+.weight h2 .it { font-style: italic; color: #FF8B6A; }
+.weight p.body { color: var(--dark-ink-2); }
+.weight p.body strong { color: var(--dark-ink); }
+.weight p.body em { color: #FF8B6A; }
+
+.scale-fig {
+  margin-top: 36px;
+  height: 240px;
+  position: relative;
+}
+.scale-fig svg { width: 100%; height: 100%; overflow: visible; }
+
+.weight-stats {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--dark-line);
+  border: 1px solid var(--dark-line);
+}
+.weight-stats .cell {
+  background: var(--dark);
+  padding: 18px 14px;
+}
+.weight-stats .v {
+  font-family: var(--font-display);
+  font-size: 36px;
+  line-height: 1;
+  letter-spacing: -0.018em;
+  color: var(--dark-ink);
+}
+.weight-stats .v.over { color: #FF8B6A; font-style: italic; }
+.weight-stats .l {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dark-ink-2);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+/* ===== Closing thesis ===== */
+.close {
+  padding: 96px 22px 120px;
+  position: relative;
+}
+.close h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 56px;
+  line-height: 0.96;
+  letter-spacing: -0.022em;
+  color: var(--ink);
+  margin: 0 0 28px;
+}
+.close h2 .it { font-style: italic; color: var(--signal); }
+.close .dollar-grid {
+  margin: 36px 0 28px;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+}
+.close .dollar-grid .cent {
+  aspect-ratio: 1;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+.close .dollar-grid .cent.spent { background: transparent; border-color: var(--line-soft); border-style: dashed; }
+.close .dollar-grid .cent.kept { background: var(--signal); border-color: var(--signal); }
+.close .legend {
+  display: flex; gap: 18px; flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.close .legend span { display: inline-flex; align-items: center; gap: 6px; }
+.close .legend .sw { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 1px solid var(--line); }
+.close .legend .sw.kept { background: var(--signal); border-color: var(--signal); }
+.close .legend .sw.spent { background: transparent; border: 1px dashed var(--line-soft); }
+
+.colophon {
+  border-top: 1px solid var(--line);
+  margin-top: 64px;
+  padding-top: 24px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  line-height: 1.7;
+}
+
+/* ===== Reveal animation ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 600ms cubic-bezier(0.22,1,0.36,1), transform 600ms cubic-bezier(0.22,1,0.36,1);
+}
+.reveal.in { opacity: 1; transform: none; }
+.reveal.d1 { transition-delay: 60ms; }
+.reveal.d2 { transition-delay: 120ms; }
+.reveal.d3 { transition-delay: 180ms; }
+.reveal.d4 { transition-delay: 240ms; }
+
+/* SVG animation helpers */
+.draw {
+  stroke-dasharray: var(--len, 1000);
+  stroke-dashoffset: var(--len, 1000);
+  transition: stroke-dashoffset 1400ms cubic-bezier(0.22,1,0.36,1);
+}
+.in .draw { stroke-dashoffset: 0; }
+
+/* ===== Responsive bump for narrow phones ===== */
+@media (max-width: 380px) {
+  .hero h1 { font-size: 56px; }
+  .close h2 { font-size: 48px; }
+  .weight h2 { font-size: 42px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============= Persistent chrome ============= -->
+<div class="chrome" role="banner">
+  <div class="chrome-row">
+    <span class="tk-mono"><span class="tk-dot"></span>AMCR</span>
+    <span class="tk-name">Amcor plc</span>
+    <span class="tk-recap">Recap · FY '25</span>
+  </div>
+  <div class="scroll-rail"><div class="scroll-fill" id="scrollFill"></div></div>
+</div>
+
+<main class="page">
+
+  <!-- ====== HERO ====== -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="eyebrow"><span class="num">01</span><span>The thesis</span></div>
+
+    <h1 class="reveal">
+      Most of what<br/>you buy<br/>arrives in <span class="it">something Amcor made.</span>
+    </h1>
+
+    <p class="lede reveal d1">
+      A 160-year-old paper miller in Melbourne became the world's packaging plumbing — flexible films, rigid bottles, closures, dispensers. Then in April it absorbed Berry Global and got bigger overnight.
+    </p>
+
+    <!-- Bottle metaphor: scroll-driven liquid fill -->
+    <div class="bottle-scene reveal d2" id="bottleScene">
+      <svg viewBox="0 0 380 420" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <clipPath id="bottleClip">
+            <path d="M155 60 L155 105 Q155 118 148 128 L130 158 Q118 176 118 200 L118 360 Q118 380 138 380 L242 380 Q262 380 262 360 L262 200 Q262 176 250 158 L232 128 Q225 118 225 105 L225 60 Z"/>
+          </clipPath>
+          <linearGradient id="liqGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#3F6FE0"/>
+            <stop offset="100%" stop-color="#0F2C7A"/>
+          </linearGradient>
+          <pattern id="ridges" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="rgba(24,22,15,0.06)" stroke-width="1"/>
+          </pattern>
+        </defs>
+
+        <!-- Backdrop — quiet kraft -->
+        <rect x="0" y="0" width="380" height="420" fill="none"/>
+
+        <!-- Bottle silhouette -->
+        <path d="M155 60 L155 105 Q155 118 148 128 L130 158 Q118 176 118 200 L118 360 Q118 380 138 380 L242 380 Q262 380 262 360 L262 200 Q262 176 250 158 L232 128 Q225 118 225 105 L225 60 Z"
+              fill="#FFFFFF" fill-opacity="0.55" stroke="#18160F" stroke-width="1.4"/>
+
+        <!-- Liquid (scroll-driven) -->
+        <g clip-path="url(#bottleClip)">
+          <rect id="liquid" x="118" y="380" width="144" height="0" fill="url(#liqGrad)"/>
+          <rect x="118" y="380" width="144" height="0" fill="url(#ridges)" id="liquidRidges"/>
+          <!-- meniscus wave -->
+          <path id="meniscus" d="M118 380 Q150 372 190 380 T262 380 L262 386 L118 386 Z" fill="#3F6FE0" opacity="0.95"/>
+        </g>
+
+        <!-- Cap -->
+        <rect x="148" y="40" width="84" height="22" fill="#18160F" rx="1"/>
+        <rect x="148" y="40" width="84" height="6" fill="#3A352A"/>
+
+        <!-- Label band -->
+        <g>
+          <rect x="118" y="232" width="144" height="78" fill="#F4EFE5" stroke="#18160F" stroke-width="1"/>
+          <text x="190" y="256" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8.5" letter-spacing="2.4" fill="#6B6557">FY '25 NET SALES</text>
+          <text x="190" y="290" text-anchor="middle" font-family="Instrument Serif, serif" font-size="36" fill="#18160F" letter-spacing="-0.02em">$15.01<tspan font-style="italic">B</tspan></text>
+          <line x1="130" y1="300" x2="250" y2="300" stroke="#D4CBB6" stroke-width="0.8"/>
+          <text x="190" y="306" text-anchor="middle" font-family="Geist Mono, monospace" font-size="7.5" letter-spacing="2" fill="#6B6557">+44.82% YoY · TTM</text>
+        </g>
+
+        <!-- Drip line + tick marks -->
+        <g font-family="Geist Mono, monospace" font-size="8" fill="#6B6557" letter-spacing="0.1em">
+          <line x1="92" y1="200" x2="105" y2="200" stroke="#18160F" stroke-width="0.8"/>
+          <text x="84" y="203" text-anchor="end">100%</text>
+          <line x1="92" y1="290" x2="105" y2="290" stroke="#D4CBB6" stroke-width="0.8"/>
+          <text x="84" y="293" text-anchor="end">50%</text>
+          <line x1="92" y1="380" x2="105" y2="380" stroke="#18160F" stroke-width="0.8"/>
+          <text x="84" y="383" text-anchor="end">0</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-meta reveal d3">
+      <div>
+        <div class="v">$19.4<span style="font-size:14px;">B</span></div>
+        <div class="l">Market cap</div>
+      </div>
+      <div>
+        <div class="v">77K</div>
+        <div class="l">Employees</div>
+      </div>
+      <div>
+        <div class="v">36+</div>
+        <div class="l">Countries</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== RESET BEAT 1 ====== -->
+  <div class="reset" data-screen-label="02 Reset 1">
+    <div class="ornament">· · ·</div>
+    <p>Look around. The yogurt cup, the pill blister, the squeeze bottle, the pouch. <span class="signal">Behind the shelf is a plumber.</span></p>
+  </div>
+
+  <!-- ====== HOW IT MAKES MONEY — Two materials ====== -->
+  <section data-screen-label="03 How it makes money">
+    <div class="eyebrow"><span class="num">02</span><span>How the money comes in</span></div>
+
+    <h2 class="display reveal" style="font-size:44px; margin:0 0 18px;">
+      Two materials.<br/><span class="italic signal">One sales force.</span>
+    </h2>
+    <p class="body reveal d1" style="max-width:38ch;">
+      Every dollar of FY'25 revenue arrived through one of two segments — both selling to the same multinationals on long-term supply contracts.
+    </p>
+
+    <div class="segments reveal d2" id="segments">
+      <div class="seg flex" data-fill="72">
+        <div class="matfill"></div>
+        <div class="label">Segment 01 · Flexibles</div>
+        <div class="pct">72<span style="font-family:var(--font-mono); font-size:18px; vertical-align:18px; letter-spacing:0.05em; color:var(--ink-3);">%</span></div>
+        <div class="name">Global Flexible Packaging Solutions</div>
+        <div class="desc">Polymer resin, aluminum, fiber. Films and pouches for food, beverage, pharma, personal care.</div>
+        <div class="rev">$10.87B · NET SALES</div>
+      </div>
+      <div class="seg rigid" data-fill="28">
+        <div class="matfill"></div>
+        <div class="label">Segment 02 · Rigid</div>
+        <div class="pct">28<span style="font-family:var(--font-mono); font-size:18px; vertical-align:18px; letter-spacing:0.05em; color:var(--ink-3);">%</span></div>
+        <div class="name">Global Rigid Packaging Solutions</div>
+        <div class="desc">Plastic bottles, containers, closures, dispensing devices. Food, beverage, personal care.</div>
+        <div class="rev">$4.14B · NET SALES</div>
+      </div>
+    </div>
+
+    <p class="caption reveal d3" style="margin-top:18px;">
+      Q2 FY'26 most recent quarter · $5.45B · EPS $0.86
+    </p>
+  </section>
+
+  <!-- ====== SCALE ====== -->
+  <section style="background: var(--paper-2); border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft);" data-screen-label="04 Scale">
+    <div class="eyebrow"><span class="num">03</span><span>The scale of the plumbing</span></div>
+
+    <h2 class="display reveal" style="font-size:44px;">
+      <span class="italic">210</span> plants.<br/>
+      <span class="italic">36</span> countries.<br/>
+      One <span class="italic signal">supply chain.</span>
+    </h2>
+
+    <div class="scale-grid reveal d1">
+      <div class="cell">
+        <div class="v" data-count="15.01" data-suffix="B" data-decimals="2" data-prefix="$">$0.00<span style="font-family:var(--font-mono); font-size:14px;">B</span></div>
+        <div class="l">FY'25 net sales</div>
+      </div>
+      <div class="cell signal">
+        <div class="v" data-count="44.82" data-suffix="%" data-decimals="2"><span class="it">0.00%</span></div>
+        <div class="l">TTM YoY revenue growth</div>
+      </div>
+      <div class="cell">
+        <div class="v" data-count="77" data-suffix="K">0K</div>
+        <div class="l">Employees worldwide</div>
+      </div>
+      <div class="cell">
+        <div class="v" data-count="210">0</div>
+        <div class="l">Production locations</div>
+      </div>
+      <div class="cell wide">
+        <div class="v" style="font-size:36px;">From a Melbourne paper mill in <span class="it">1860</span> — to a Zurich-run network spanning <span class="it">36+</span> countries.</div>
+        <div class="l">Founded · domiciled Jersey · op. HQ Zurich</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== RESET BEAT 2 ====== -->
+  <div class="reset" data-screen-label="05 Reset 2">
+    <div class="ornament">· · ·</div>
+    <p>Then in April, two films <span class="signal">laminated.</span></p>
+  </div>
+
+  <!-- ====== THE BET — Berry merger lamination ====== -->
+  <section data-screen-label="06 The bet">
+    <div class="eyebrow"><span class="num">04</span><span>The bet · Berry Global</span></div>
+
+    <h2 class="display reveal" style="font-size:48px; margin-bottom:18px;">
+      An <span class="italic signal">all-stock</span><br/>absorption.
+    </h2>
+    <p class="body reveal d1" style="max-width:40ch;">
+      The deal closed <strong>April 30, 2025</strong>. Two packaging companies became one — and the line-item arithmetic of the combined balance sheet went with it: <em>$11.3B of goodwill, $7.4B of intangibles, $5.5B of customer relationships.</em> Management has called for <strong>$650M</strong> in synergies through FY'28.
+    </p>
+
+    <div class="merger reveal d2" id="mergerScene">
+      <svg viewBox="0 0 380 280" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="filmA" x1="0" x2="1">
+            <stop offset="0" stop-color="#DCD3BE"/>
+            <stop offset="1" stop-color="#C9BFA6"/>
+          </linearGradient>
+          <linearGradient id="filmB" x1="0" x2="1">
+            <stop offset="0" stop-color="#DCE4F8"/>
+            <stop offset="1" stop-color="#A6B6E8"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Top film: Amcor -->
+        <g id="filmTop">
+          <rect x="20" y="40" width="340" height="60" fill="url(#filmA)" stroke="#18160F" stroke-width="1"/>
+          <text x="34" y="58" font-family="Geist Mono, monospace" font-size="9" letter-spacing="2" fill="#3A352A">AMCOR · FLEX + RIGID</text>
+          <text x="34" y="92" font-family="Instrument Serif, serif" font-size="22" fill="#18160F">$13.6B <tspan font-style="italic" font-size="13" fill="#6B6557">pre-merger sales</tspan></text>
+        </g>
+
+        <!-- Bottom film: Berry -->
+        <g id="filmBot">
+          <rect x="20" y="180" width="340" height="60" fill="url(#filmB)" stroke="#18160F" stroke-width="1"/>
+          <text x="34" y="198" font-family="Geist Mono, monospace" font-size="9" letter-spacing="2" fill="#0F2C7A">BERRY GLOBAL · ABSORBED</text>
+          <text x="34" y="232" font-family="Instrument Serif, serif" font-size="22" fill="#18160F">All-stock <tspan font-style="italic" font-size="13" fill="#6B6557">closed Apr 30, '25</tspan></text>
+        </g>
+
+        <!-- Lamination indicator: pressure arrows -->
+        <g id="press" stroke="#18160F" stroke-width="1.2" fill="none">
+          <path d="M40 130 L40 150 M40 150 L34 144 M40 150 L46 144" />
+          <path d="M120 130 L120 150 M120 150 L114 144 M120 150 L126 144" />
+          <path d="M200 130 L200 150 M200 150 L194 144 M200 150 L206 144" />
+          <path d="M280 130 L280 150 M280 150 L274 144 M280 150 L286 144" />
+          <path d="M360 130 L360 150 M360 150 L354 144 M360 150 L366 144" stroke-dasharray="2 2" opacity="0.5"/>
+        </g>
+
+        <!-- Center seam -->
+        <line x1="20" y1="140" x2="360" y2="140" stroke="#18160F" stroke-dasharray="3 3" stroke-width="0.6"/>
+        <text x="190" y="135" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="2" fill="#1F4FCC">SEAL · 36+ COUNTRIES · 77K HEADCOUNT</text>
+      </svg>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0; margin-top:32px; border:1px solid var(--line);">
+      <div style="padding:18px 16px; border-right:1px solid var(--line-soft);">
+        <div style="font-family:var(--font-display); font-size:32px; line-height:1; letter-spacing:-0.01em;">$11.3<span style="font-size:14px; font-family:var(--font-mono);">B</span></div>
+        <div style="font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3); margin-top:8px;">Goodwill on books</div>
+      </div>
+      <div style="padding:18px 16px;">
+        <div style="font-family:var(--font-display); font-size:32px; line-height:1; letter-spacing:-0.01em; color:var(--signal);"><span style="font-style:italic;">$650</span><span style="font-size:14px; font-family:var(--font-mono);">M</span></div>
+        <div style="font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3); margin-top:8px;">Synergy target · through FY'28</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== COSTS — vertical material column ====== -->
+  <section style="background: var(--paper-2); border-top: 1px solid var(--line-soft);" data-screen-label="07 Costs">
+    <div class="eyebrow"><span class="num">05</span><span>Where the dollar goes · 100¢ in</span></div>
+
+    <h2 class="display reveal" style="font-size:46px; margin-bottom:18px;">
+      Most of the bottle <span class="italic" style="color:var(--c-cor);">is the bottle.</span>
+    </h2>
+    <p class="body reveal d1" style="max-width:40ch;">
+      Packaging is a raw-materials pass-through business. <strong>81¢ of every revenue dollar</strong> is the polymer, aluminum, and fiber itself — leaving thin slivers for everything else. Gross margin sits at <em>18.9%</em>.
+    </p>
+
+    <div class="cost-wrap reveal d2">
+      <div class="cost-col">
+        <div class="cost-bar" id="costBar">
+          <!-- heights set by JS proportional to pct of 100, with a "remaining" 7¢ for operating profit -->
+          <div class="slice cor" data-pct="81">
+            <div class="pct">81<span style="font-family:var(--font-mono); font-size:14px; vertical-align:10px;">¢</span></div>
+            <div class="meta"><div class="lbl">Cost of revenue</div><div class="sub">Resin · Aluminum · Fiber</div></div>
+          </div>
+          <div class="slice sga" data-pct="5">
+            <div class="pct">5<span style="font-family:var(--font-mono); font-size:14px; vertical-align:5px;">¢</span></div>
+            <div class="meta"><div class="lbl">SG&amp;A</div><div class="sub">Selling · Admin</div></div>
+          </div>
+          <div class="slice da" data-pct="4">
+            <div class="pct">4<span style="font-family:var(--font-mono); font-size:14px; vertical-align:5px;">¢</span></div>
+            <div class="meta"><div class="lbl">D&amp;A</div><div class="sub">Plant · Equipment</div></div>
+          </div>
+          <div class="slice ri" data-pct="2">
+            <div class="pct">2<span style="font-family:var(--font-mono); font-size:14px; vertical-align:5px;">¢</span></div>
+            <div class="meta"><div class="lbl">Restructuring</div><div class="sub">Berry integration</div></div>
+          </div>
+          <div class="slice rd" data-pct="1">
+            <div class="pct">1<span style="font-family:var(--font-mono); font-size:14px; vertical-align:5px;">¢</span></div>
+            <div class="meta"><div class="lbl">R&amp;D</div><div class="sub">Films · Closures</div></div>
+          </div>
+          <div class="slice rem" data-pct="7">
+            <div class="pct"><span class="it">7</span><span style="font-family:var(--font-mono); font-size:14px; vertical-align:5px;">¢</span></div>
+            <div class="meta"><div class="lbl">Operating margin</div><div class="sub">What's left · 6.7%</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cost-axis">
+        <span>$1.00 in</span>
+        <span>↓</span>
+        <span>$0.07 op</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== RESET BEAT 3 ====== -->
+  <div class="reset" data-screen-label="08 Reset 3">
+    <div class="ornament">· · ·</div>
+    <p>And it ships from <span class="signal">everywhere</span> — but not evenly.</p>
+  </div>
+
+  <!-- ====== FOOTPRINT ====== -->
+  <section data-screen-label="09 Footprint">
+    <div class="eyebrow"><span class="num">06</span><span>The footprint</span></div>
+
+    <h2 class="display reveal" style="font-size:44px;">
+      <span class="italic signal">Half</span> the<br/>map is<br/>North America.
+    </h2>
+
+    <div class="foot-scene reveal d1" id="footScene">
+      <div class="label">Net sales · FY '25 · by region</div>
+
+      <div class="foot-rows">
+        <div class="foot-row dom" data-pct="48">
+          <div class="idx">01</div>
+          <div class="reg">North America<div class="track"></div><div class="fill"></div></div>
+          <div class="pct">48%</div>
+        </div>
+        <div class="foot-row" data-pct="25">
+          <div class="idx">02</div>
+          <div class="reg">Europe<div class="track"></div><div class="fill"></div></div>
+          <div class="pct">25%</div>
+        </div>
+        <div class="foot-row" data-pct="14">
+          <div class="idx">03</div>
+          <div class="reg">Latin America<div class="track"></div><div class="fill"></div></div>
+          <div class="pct">14%</div>
+        </div>
+        <div class="foot-row" data-pct="11">
+          <div class="idx">04</div>
+          <div class="reg">Asia-Pacific<div class="track"></div><div class="fill"></div></div>
+          <div class="pct">11%</div>
+        </div>
+        <div class="foot-row" data-pct="2">
+          <div class="idx">05</div>
+          <div class="reg">Rest of world<div class="track"></div><div class="fill"></div></div>
+          <div class="pct">2%</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="body reveal d2" style="margin-top:24px; max-width:40ch;">
+      The Berry merger reweights the map further toward <em>North America</em> — where Berry's footprint was densest, and where Amcor was already largest.
+    </p>
+  </section>
+
+  <!-- ====== COMPETITION — three bottles ====== -->
+  <section style="background: var(--paper-2); border-top: 1px solid var(--line-soft);" data-screen-label="10 Competition">
+    <div class="eyebrow"><span class="num">07</span><span>The competition</span></div>
+
+    <h2 class="display reveal" style="font-size:44px; margin-bottom:18px;">
+      Three rivals.<br/><span class="italic signal">Three angles</span> of attack.
+    </h2>
+
+    <div class="compete-scene reveal d1">
+
+      <!-- AMCR — own bottle -->
+      <div class="comp-row amcr">
+        <div class="comp-bottle">
+          <svg viewBox="0 0 78 140" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <rect x="30" y="6" width="18" height="10" fill="#0F2C7A"/>
+            <path d="M28 18 L28 26 Q28 30 26 32 L20 40 Q14 46 14 56 L14 124 Q14 132 22 132 L56 132 Q64 132 64 124 L64 56 Q64 46 58 40 L52 32 Q50 30 50 26 L50 18 Z" fill="#1F4FCC" stroke="#0F2C7A" stroke-width="1"/>
+            <rect x="14" y="76" width="50" height="32" fill="#FFFFFF" opacity="0.9"/>
+            <text x="39" y="92" text-anchor="middle" font-family="Geist Mono, monospace" font-size="6" letter-spacing="1.4" fill="#0F2C7A">AMCR</text>
+            <text x="39" y="103" text-anchor="middle" font-family="Instrument Serif, serif" font-size="11" fill="#0F2C7A">$19.4B</text>
+          </svg>
+        </div>
+        <div class="comp-meta">
+          <div class="name">Amcor plc</div>
+          <div class="ticker">NYSE · AMCR</div>
+          <div class="figs">
+            <div>
+              <div class="v"><span class="it">$15.0</span>B</div>
+              <div class="l">Revenue</div>
+            </div>
+            <div>
+              <div class="v growth-pos">+44.8%</div>
+              <div class="l">YoY · TTM</div>
+            </div>
+          </div>
+          <div class="desc">The benchmark. Recently <em>doubled in size</em> via Berry — the field's outlier on growth.</div>
+        </div>
+      </div>
+
+      <!-- Ball -->
+      <div class="comp-row">
+        <div class="comp-bottle">
+          <svg viewBox="0 0 78 140" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <!-- Aluminum can — Ball makes cans -->
+            <rect x="22" y="14" width="34" height="6" fill="#A4A29C"/>
+            <rect x="20" y="20" width="38" height="108" fill="#C9C6BF" stroke="#3A352A" stroke-width="1"/>
+            <rect x="22" y="22" width="34" height="104" fill="url(#alum)"/>
+            <defs>
+              <linearGradient id="alum" x1="0" x2="1">
+                <stop offset="0" stop-color="#E2DAC6"/>
+                <stop offset="0.5" stop-color="#FFFFFF"/>
+                <stop offset="1" stop-color="#C9C6BF"/>
+              </linearGradient>
+            </defs>
+            <rect x="22" y="22" width="34" height="22" fill="#3A352A" opacity="0.06"/>
+            <rect x="20" y="128" width="38" height="6" fill="#3A352A" opacity="0.5"/>
+            <text x="39" y="78" text-anchor="middle" font-family="Geist Mono, monospace" font-size="6" letter-spacing="1.4" fill="#3A352A">BALL</text>
+            <text x="39" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-size="11" fill="#18160F">$17.2B</text>
+          </svg>
+        </div>
+        <div class="comp-meta">
+          <div class="name">Ball Corp</div>
+          <div class="ticker">NYSE · BALL</div>
+          <div class="figs">
+            <div>
+              <div class="v"><span class="it">$13.2</span>B</div>
+              <div class="l">Revenue</div>
+            </div>
+            <div>
+              <div class="v growth-pos">+11.6%</div>
+              <div class="l">YoY · P/E 18.8</div>
+            </div>
+          </div>
+          <div class="desc">Aluminum cans. Direct rival on Amcor's <em>rigid beverage</em> side — selling to the same multinationals.</div>
+        </div>
+      </div>
+
+      <!-- Smurfit Westrock -->
+      <div class="comp-row">
+        <div class="comp-bottle">
+          <svg viewBox="0 0 78 140" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <!-- Corrugated box -->
+            <polygon points="14,40 39,28 64,40 64,124 39,136 14,124" fill="#C9A77A" stroke="#3A352A" stroke-width="1"/>
+            <polygon points="14,40 39,28 64,40 39,52" fill="#DCB48A"/>
+            <line x1="39" y1="52" x2="39" y2="136" stroke="#3A352A" stroke-width="0.6" opacity="0.5"/>
+            <!-- corrugation -->
+            <g stroke="#A07A4D" stroke-width="0.6" opacity="0.5">
+              <line x1="18" y1="60" x2="36" y2="68"/>
+              <line x1="18" y1="76" x2="36" y2="84"/>
+              <line x1="18" y1="92" x2="36" y2="100"/>
+              <line x1="18" y1="108" x2="36" y2="116"/>
+              <line x1="42" y1="68" x2="60" y2="60"/>
+              <line x1="42" y1="84" x2="60" y2="76"/>
+              <line x1="42" y1="100" x2="60" y2="92"/>
+              <line x1="42" y1="116" x2="60" y2="108"/>
+            </g>
+            <text x="39" y="78" text-anchor="middle" font-family="Geist Mono, monospace" font-size="6" letter-spacing="1.4" fill="#3A352A">SW</text>
+            <text x="39" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-size="11" fill="#18160F">$22.1B</text>
+          </svg>
+        </div>
+        <div class="comp-meta">
+          <div class="name">Smurfit WestRock</div>
+          <div class="ticker">NYSE · SW</div>
+          <div class="figs">
+            <div>
+              <div class="v"><span class="it">$31.2</span>B</div>
+              <div class="l">Revenue</div>
+            </div>
+            <div>
+              <div class="v growth-neg">−1.8%</div>
+              <div class="l">YoY · P/E 31.6</div>
+            </div>
+          </div>
+          <div class="desc">The <em>scale leader</em> by revenue. Overlaps Amcor in flexible + specialty cartons across the same multinational customer base.</div>
+        </div>
+      </div>
+
+      <!-- IP -->
+      <div class="comp-row">
+        <div class="comp-bottle">
+          <svg viewBox="0 0 78 140" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <!-- Paper roll -->
+            <ellipse cx="39" cy="36" rx="26" ry="10" fill="#E2DAC6" stroke="#3A352A" stroke-width="1"/>
+            <path d="M13 36 L13 116 Q13 126 39 126 Q65 126 65 116 L65 36" fill="#EAE3D4" stroke="#3A352A" stroke-width="1"/>
+            <ellipse cx="39" cy="116" rx="26" ry="10" fill="#DCD3BE" stroke="#3A352A" stroke-width="1"/>
+            <ellipse cx="39" cy="36" rx="14" ry="5" fill="#C9BFA6" stroke="#3A352A" stroke-width="0.6"/>
+            <ellipse cx="39" cy="36" rx="6" ry="2" fill="#3A352A"/>
+            <text x="39" y="78" text-anchor="middle" font-family="Geist Mono, monospace" font-size="6" letter-spacing="1.4" fill="#3A352A">IP</text>
+            <text x="39" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-size="11" fill="#18160F">$19.7B</text>
+          </svg>
+        </div>
+        <div class="comp-meta">
+          <div class="name">International Paper</div>
+          <div class="ticker">NYSE · IP</div>
+          <div class="figs">
+            <div>
+              <div class="v"><span class="it">$23.6</span>B</div>
+              <div class="l">Revenue</div>
+            </div>
+            <div>
+              <div class="v">+0.3%</div>
+              <div class="l">YoY · growth</div>
+            </div>
+          </div>
+          <div class="desc">An <em>emerging threat</em>. Pivoting toward corrugated and consumer fiber — converging on Amcor's food-service and e-commerce lines.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ====== DARK BEAT — the weight ====== -->
+  <section class="weight" data-screen-label="11 Weight">
+    <div class="eyebrow"><span class="num">08</span><span>The weight</span></div>
+
+    <h2 class="reveal">
+      The dividend<br/>is bigger<br/>than the <span class="it">cash that<br/>pays it.</span>
+    </h2>
+    <p class="body reveal d1" style="max-width:38ch;">
+      Free cash flow in FY'25: <strong>$810M</strong>. Dividends paid that year: <strong>$845M</strong>. The <em>payout ratio cleared 100%</em> — a deliberate signal to shareholders mid-merger, but a balance the synergy plan has to restore.
+    </p>
+
+    <!-- Tilted scale visualization -->
+    <div class="scale-fig reveal d2" id="scaleFig">
+      <svg viewBox="0 0 380 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- pivot column -->
+        <rect x="186" y="120" width="8" height="100" fill="#2E2818"/>
+        <polygon points="160,220 220,220 200,200 180,200" fill="#2E2818"/>
+
+        <!-- beam — tilted toward the dividend (right) -->
+        <g id="beam" transform="translate(190 124) rotate(8)">
+          <rect x="-150" y="-3" width="300" height="6" fill="#F0E9D7" rx="2"/>
+          <!-- left chain -->
+          <line x1="-120" y1="3" x2="-120" y2="34" stroke="#B7AC91" stroke-width="1"/>
+          <!-- right chain -->
+          <line x1="120" y1="3" x2="120" y2="44" stroke="#B7AC91" stroke-width="1"/>
+        </g>
+
+        <!-- left pan: FCF $810M -->
+        <g transform="translate(70 162)">
+          <ellipse cx="0" cy="2" rx="56" ry="6" fill="#1F1B12" opacity="0.6"/>
+          <path d="M-56 0 L56 0 L48 28 L-48 28 Z" fill="#2E2818" stroke="#B7AC91" stroke-width="1"/>
+          <text x="0" y="-10" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="2" fill="#B7AC91">FCF</text>
+          <text x="0" y="22" text-anchor="middle" font-family="Instrument Serif, serif" font-size="22" fill="#F0E9D7">$810M</text>
+        </g>
+
+        <!-- right pan: Dividend $845M — heavier, lower -->
+        <g transform="translate(310 172)">
+          <ellipse cx="0" cy="2" rx="60" ry="6" fill="#1F1B12" opacity="0.6"/>
+          <path d="M-60 0 L60 0 L52 32 L-52 32 Z" fill="#3A1F17" stroke="#FF8B6A" stroke-width="1"/>
+          <text x="0" y="-10" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" letter-spacing="2" fill="#FF8B6A">DIVIDEND</text>
+          <text x="0" y="24" text-anchor="middle" font-family="Instrument Serif, serif" font-size="24" fill="#FF8B6A" font-style="italic">$845M</text>
+        </g>
+
+        <!-- ground -->
+        <line x1="0" y1="220" x2="380" y2="220" stroke="#2E2818" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <div class="weight-stats reveal d3">
+      <div class="cell">
+        <div class="v">$11.7<span style="font-size:14px; font-family:var(--font-mono);">B</span></div>
+        <div class="l">Total equity</div>
+      </div>
+      <div class="cell">
+        <div class="v">$827<span style="font-size:14px; font-family:var(--font-mono);">M</span></div>
+        <div class="l">Cash on hand</div>
+      </div>
+      <div class="cell">
+        <div class="v">$1.39<span style="font-size:14px; font-family:var(--font-mono);">B</span></div>
+        <div class="l">Operating cash flow</div>
+      </div>
+      <div class="cell">
+        <div class="v over">&gt;100<span style="font-size:18px;">%</span></div>
+        <div class="l">Payout ratio</div>
+      </div>
+      <div class="cell">
+        <div class="v">$580<span style="font-size:14px; font-family:var(--font-mono);">M</span></div>
+        <div class="l">FY'25 capex</div>
+      </div>
+      <div class="cell">
+        <div class="v">$650<span style="font-size:14px; font-family:var(--font-mono);">M</span></div>
+        <div class="l">Synergy target · FY'28</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== CLOSE — restate hero, inverted ====== -->
+  <section class="close" data-screen-label="12 Close">
+    <div class="eyebrow"><span class="num">09</span><span>The takeaway</span></div>
+
+    <h2 class="reveal">
+      A dollar arrives.<br/>
+      <span class="it">Seven cents</span><br/>
+      survive.
+    </h2>
+
+    <p class="body reveal d1" style="max-width:38ch; margin-bottom:8px;">
+      Of every dollar in the door — <em>resin, can, film, label</em> — six and a half cents leave as operating profit. That's the packaging trade. Volume is the only way to make it big.
+    </p>
+
+    <!-- 100-cent dollar grid; 7 lit -->
+    <div class="dollar-grid reveal d2" id="dollarGrid"></div>
+
+    <div class="legend reveal d3">
+      <span><span class="sw kept"></span>Operating margin · 7¢</span>
+      <span><span class="sw spent"></span>Spent on the bottle · 93¢</span>
+    </div>
+
+    <p class="body reveal d3" style="margin-top:32px; max-width:40ch;">
+      Amcor opened FY'25 by absorbing a peer. It closes the year with a balance sheet to digest, a payout to defend, and <em>$650M in promised synergies</em> to make the math work. The plumbing keeps running while it does.
+    </p>
+
+    <div class="colophon reveal d4">
+      AMCR · NYSE · FY '25 Recap<br/>
+      Source · Company filings · Market data as reported<br/>
+      <span style="color:var(--signal);">·</span> End of recap
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* =====================================================
+   Scroll progress + reveal IO
+   ===================================================== */
+(function(){
+  const fill = document.getElementById('scrollFill');
+  function onScroll() {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const p = max > 0 ? (h.scrollTop || document.body.scrollTop) / max : 0;
+    fill.style.width = (p * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+
+  // reveal observer
+  const io = new IntersectionObserver((entries)=>{
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+})();
+
+/* =====================================================
+   Bottle scroll-driven liquid fill
+   ===================================================== */
+(function(){
+  const scene = document.getElementById('bottleScene');
+  if (!scene) return;
+  const liquid = document.getElementById('liquid');
+  const ridges = document.getElementById('liquidRidges');
+  const meniscus = document.getElementById('meniscus');
+
+  // Bottle inner clip extents (matches clipPath)
+  const TOP = 60;     // top of fillable region in svg coords
+  const BOT = 380;    // bottom
+  const HEIGHT = BOT - TOP;
+  // We'll fill from 0 (none) to the FY'25 sales level — let's say liquid rises to label-bottom (y=232)
+  // i.e. fill height ~ from y=232 to y=380 = 148 (representing $15.01B / "current" fill)
+  const FINAL_FILL = 148;
+
+  function update() {
+    const r = scene.getBoundingClientRect();
+    const vh = window.innerHeight;
+    // 0 when scene top hits bottom of viewport; 1 when scene bottom hits top of viewport
+    const total = r.height + vh;
+    const traveled = Math.min(Math.max(vh - r.top, 0), total);
+    let p = traveled / total;
+    // Begin filling once scene is somewhat visible, finish before it leaves
+    p = Math.min(Math.max((p - 0.15) / 0.55, 0), 1);
+
+    const h = FINAL_FILL * p;
+    const y = BOT - h;
+
+    liquid.setAttribute('y', y);
+    liquid.setAttribute('height', h);
+    ridges.setAttribute('y', y);
+    ridges.setAttribute('height', h);
+
+    // wave at the surface
+    const w = 4 + Math.sin(performance.now()/600) * 2;
+    meniscus.setAttribute('d',
+      `M118 ${y} Q150 ${y - w} 190 ${y} T262 ${y} L262 ${y+6} L118 ${y+6} Z`);
+  }
+  window.addEventListener('scroll', update, { passive:true });
+  window.addEventListener('resize', update);
+  update();
+  // gentle wave loop
+  function tick(){ update(); requestAnimationFrame(tick); }
+  requestAnimationFrame(tick);
+})();
+
+/* =====================================================
+   Material fill bars (segments)
+   ===================================================== */
+(function(){
+  const segs = document.querySelectorAll('#segments .seg');
+  const io = new IntersectionObserver((entries)=>{
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        const seg = e.target;
+        const fill = seg.querySelector('.matfill');
+        const pct = seg.getAttribute('data-fill');
+        requestAnimationFrame(()=> { fill.style.width = pct + '%'; });
+        io.unobserve(seg);
+      }
+    }
+  }, { threshold: 0.4 });
+  segs.forEach(s => io.observe(s));
+})();
+
+/* =====================================================
+   Cost column — set heights proportionally on reveal
+   ===================================================== */
+(function(){
+  const bar = document.getElementById('costBar');
+  if (!bar) return;
+  const slices = bar.querySelectorAll('.slice');
+  function layout() {
+    const total = bar.clientHeight;
+    let used = 0;
+    slices.forEach(s => {
+      const pct = parseFloat(s.getAttribute('data-pct'));
+      const h = Math.max(28, total * (pct / 100)); // min height for legibility
+      s.style.height = h + 'px';
+      used += h;
+    });
+  }
+  // initial 0 heights for animation
+  slices.forEach(s => s.style.height = '0px');
+
+  const io = new IntersectionObserver((entries)=>{
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        slices.forEach((s, i) => {
+          const pct = parseFloat(s.getAttribute('data-pct'));
+          const total = bar.clientHeight;
+          const h = Math.max(28, total * (pct / 100));
+          s.style.transition = `height 900ms cubic-bezier(0.22,1,0.36,1) ${i*80}ms`;
+          requestAnimationFrame(()=> s.style.height = h + 'px');
+        });
+        io.unobserve(bar);
+      }
+    }
+  }, { threshold: 0.25 });
+  io.observe(bar);
+
+  window.addEventListener('resize', () => {
+    // re-fit if resized after animation
+    const total = bar.clientHeight;
+    if (total === 0) return;
+    slices.forEach(s => {
+      const pct = parseFloat(s.getAttribute('data-pct'));
+      const h = Math.max(28, total * (pct / 100));
+      s.style.height = h + 'px';
+    });
+  });
+})();
+
+/* =====================================================
+   Footprint fill bars on reveal
+   ===================================================== */
+(function(){
+  const rows = document.querySelectorAll('.foot-row');
+  const io = new IntersectionObserver((entries)=>{
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        rows.forEach((r, i) => {
+          const pct = r.getAttribute('data-pct');
+          const fill = r.querySelector('.fill');
+          if (fill) {
+            setTimeout(()=> fill.style.width = pct + '%', i * 90);
+          }
+        });
+        io.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.3 });
+  const scene = document.getElementById('footScene');
+  if (scene) io.observe(scene);
+})();
+
+/* =====================================================
+   Count-ups for scale grid
+   ===================================================== */
+(function(){
+  function fmt(n, decimals, prefix, suffix) {
+    return (prefix||'') + n.toFixed(decimals||0) + (suffix||'');
+  }
+  const els = document.querySelectorAll('[data-count]');
+  const io = new IntersectionObserver((entries)=>{
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        const el = e.target;
+        const target = parseFloat(el.dataset.count);
+        const decimals = parseInt(el.dataset.decimals||'0', 10);
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '';
+        const dur = 1200;
+        const t0 = performance.now();
+        // preserve italic spans inside if present
+        const hasItalic = el.querySelector('.it');
+        function step(t) {
+          const p = Math.min(1, (t - t0) / dur);
+          const eased = 1 - Math.pow(1 - p, 3);
+          const v = target * eased;
+          if (hasItalic) {
+            el.innerHTML = `<span class="it">${fmt(v, decimals, prefix, suffix)}</span>`;
+          } else if (suffix === 'B' || suffix === 'M' || suffix === 'K') {
+            el.innerHTML = `${prefix}${v.toFixed(decimals)}<span style="font-family:var(--font-mono); font-size:14px;">${suffix}</span>`;
+          } else {
+            el.textContent = fmt(v, decimals, prefix, suffix);
+          }
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+        io.unobserve(el);
+      }
+    }
+  }, { threshold: 0.5 });
+  els.forEach(el => io.observe(el));
+})();
+
+/* =====================================================
+   Build dollar grid (100 cents, 7 kept)
+   ===================================================== */
+(function(){
+  const g = document.getElementById('dollarGrid');
+  if (!g) return;
+  for (let i = 0; i < 100; i++) {
+    const d = document.createElement('div');
+    d.className = 'cent ' + (i < 93 ? 'spent' : 'kept');
+    g.appendChild(d);
+  }
+  // light up the kept cents on reveal — staggered
+  const io = new IntersectionObserver((entries)=>{
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        const cents = g.querySelectorAll('.cent');
+        cents.forEach((c, i) => {
+          c.style.opacity = '0';
+          c.style.transform = 'scale(0.6)';
+          c.style.transition = `opacity 360ms ease-out ${i*8}ms, transform 480ms cubic-bezier(0.34,1.56,0.64,1) ${i*8}ms`;
+          requestAnimationFrame(() => {
+            c.style.opacity = '1';
+            c.style.transform = 'none';
+          });
+        });
+        io.unobserve(g);
+      }
+    }
+  }, { threshold: 0.3 });
+  io.observe(g);
+})();
+
+/* =====================================================
+   Lamination press — scrub merger
+   ===================================================== */
+(function(){
+  const scene = document.getElementById('mergerScene');
+  if (!scene) return;
+  const top = scene.querySelector('#filmTop');
+  const bot = scene.querySelector('#filmBot');
+  function update() {
+    const r = scene.getBoundingClientRect();
+    const vh = window.innerHeight;
+    let p = 1 - Math.min(Math.max(r.top / vh, 0), 1);
+    p = Math.min(Math.max((p - 0.15) / 0.55, 0), 1);
+    // top moves down, bot moves up — they meet
+    const closeAmt = 28 * p;
+    top.setAttribute('transform', `translate(0 ${closeAmt})`);
+    bot.setAttribute('transform', `translate(0 ${-closeAmt})`);
+  }
+  window.addEventListener('scroll', update, { passive:true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+/* =====================================================
+   Tilted scale beam — small breathing motion
+   ===================================================== */
+(function(){
+  const beam = document.querySelector('#scaleFig #beam');
+  if (!beam) return;
+  let t0 = performance.now();
+  function step() {
+    const dt = (performance.now() - t0) / 1000;
+    const wobble = 8 + Math.sin(dt * 1.4) * 0.6;
+    beam.setAttribute('transform', `translate(190 124) rotate(${wobble.toFixed(2)})`);
+    requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+})();
+
+</script>
+
+</body>
+</html>

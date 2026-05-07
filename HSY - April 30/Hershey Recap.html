@@ -1,0 +1,1498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>HSY · Recap FY '25</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" />
+<style>
+  /* ============================================================
+     HERSHEY · FY'25 RECAP — mobile-first editorial scroll
+     Palette: cocoa, cream, foil. One signal coral.
+     ============================================================ */
+  :root {
+    /* Cocoa palette — derived for Hershey */
+    --cream:        #F4E9D2;   /* page background — warm cream, like Hershey wrapper inner */
+    --cream-2:      #EADBB8;   /* raised, warmer */
+    --cream-3:      #E0CDA1;
+    --foil:         #D9D2C5;   /* foil silver-gray */
+    --milk:         #8A4B22;   /* milk chocolate brown */
+    --milk-2:       #6B3410;
+    --cocoa:        #3B1F0E;   /* dark cocoa — primary ink for hero */
+    --cocoa-deep:   #1F0F06;   /* near-black cocoa, weight section */
+    --ink:          #1B1410;
+    --ink-2:        #4A3A30;
+    --ink-3:        #7A6A5E;
+    --line:         rgba(59,31,14,0.14);
+    --line-2:       rgba(59,31,14,0.28);
+
+    /* Signal coral (from design system) — used sparingly for editorial emphasis */
+    --signal:       #E05C2A;   /* aligns with biggest_costs primary hex */
+    --signal-soft:  #FFD6BF;
+
+    /* Cost colors from JSON */
+    --c-cor:        #E05C2A;
+    --c-sma:        #4A90D9;
+    --c-da:         #7B68EE;
+    --c-cx:         #2ECC71;
+    --c-rd:         #F4C542;
+
+    --font-display: 'Instrument Serif', 'Times New Roman', serif;
+    --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono:    'Geist Mono', ui-monospace, 'SF Mono', monospace;
+  }
+
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+
+  /* The mobile artifact — fills the viewport on small screens, centered with backdrop on larger */
+  .page {
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    background: var(--cream);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle paper grain across the whole page */
+  .page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='3'/><feColorMatrix values='0 0 0 0 0.23  0 0 0 0 0.12  0 0 0 0 0.05  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* When viewport is wider than the page, show a dark cocoa surround */
+  @media (min-width: 480px) {
+    body { background: #1A0E07; }
+    .page { box-shadow: 0 20px 80px rgba(0,0,0,0.5); }
+  }
+
+  /* ===== Persistent chrome ===== */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    background: rgba(244,233,210,0.78);
+    border-bottom: 1px solid var(--line);
+  }
+  .chrome-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px 10px;
+  }
+  .chrome-ticker {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--cocoa);
+    background: var(--cocoa);
+    color: var(--cream);
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .chrome-label {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .chrome-progress {
+    height: 1.5px;
+    background: var(--line);
+    position: relative;
+  }
+  .chrome-progress-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    background: var(--signal);
+    transition: width 60ms linear;
+  }
+
+  /* ===== Section structure ===== */
+  section { position: relative; }
+  .beat { padding: 80px 24px; }
+  .beat-tight { padding: 56px 24px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--milk-2);
+    font-weight: 500;
+    margin-bottom: 18px;
+    display: block;
+  }
+  .eyebrow .dot { color: var(--signal); margin: 0 8px; }
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    color: var(--cocoa);
+    margin: 0;
+  }
+  .display em { font-style: italic; color: var(--signal); }
+  .body {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    margin: 16px 0 0;
+    text-wrap: pretty;
+  }
+  .body em { font-family: var(--font-display); font-style: italic; color: var(--signal); font-size: 1.08em; }
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+
+  /* Reveal-on-scroll */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    padding: 60px 24px 100px;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero::after {
+    /* a faint cocoa rising from the bottom */
+    content: '';
+    position: absolute;
+    inset: 60% 0 0 0;
+    background: linear-gradient(to bottom, transparent, rgba(59,31,14,0.06));
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--milk-2);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .hero-eyebrow .pip { color: var(--signal); }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: 60px;
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    color: var(--cocoa);
+    margin: 0;
+    font-weight: 400;
+  }
+  .hero h1 .l2 { display: block; font-style: italic; color: var(--milk-2); }
+  .hero h1 .l3 { display: block; }
+  .hero h1 .period { color: var(--signal); }
+  .hero-sub {
+    margin-top: 26px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 320px;
+  }
+  .hero-sub em { font-family: var(--font-display); font-style: italic; color: var(--signal); }
+
+  /* The hero chocolate bar — scroll-scrubbed */
+  .hero-bar {
+    margin-top: 56px;
+    position: relative;
+    height: 220px;
+    perspective: 800px;
+  }
+  .hero-bar-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Hero stat strip */
+  .hero-stats {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-stat {
+    background: var(--cream);
+    padding: 18px 12px 16px;
+  }
+  .hero-stat .v {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1;
+    color: var(--cocoa);
+    letter-spacing: -0.02em;
+  }
+  .hero-stat .v em { font-style: italic; color: var(--signal); }
+  .hero-stat .l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* ===== Reset beat ===== */
+  .reset {
+    background: var(--cocoa);
+    color: var(--cream);
+    padding: 56px 28px;
+    position: relative;
+  }
+  .reset.alt { background: var(--milk-2); }
+  .reset.deep { background: var(--cocoa-deep); }
+  .reset p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.25;
+    margin: 0;
+    color: var(--cream);
+    letter-spacing: -0.01em;
+  }
+  .reset p .hit { color: var(--signal); font-style: italic; }
+  .reset .meta {
+    color: rgba(244,233,210,0.55);
+    margin-bottom: 16px;
+  }
+
+  /* ===== The business — three stacked bars ===== */
+  .bars {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .seg-bar {
+    background: var(--cream-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 18px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .seg-bar .seg-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .seg-bar .seg-name {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--cocoa);
+  }
+  .seg-bar .seg-pct {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--milk-2);
+  }
+  .seg-bar .seg-rev {
+    margin-top: 8px;
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--cocoa);
+  }
+  .seg-bar .seg-rev em { font-style: italic; color: var(--signal); }
+  .seg-bar .seg-desc {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--ink-3);
+    line-height: 1.45;
+  }
+  .seg-bar .seg-fill {
+    position: absolute;
+    left: 0; bottom: 0;
+    height: 4px;
+    background: var(--cocoa);
+    width: 0%;
+    transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
+  }
+  .seg-bar:nth-child(1) { background: linear-gradient(180deg, #5C2D14 0%, #3B1F0E 100%); color: var(--cream); border-color: transparent; }
+  .seg-bar:nth-child(1) .seg-name,
+  .seg-bar:nth-child(1) .seg-rev { color: var(--cream); }
+  .seg-bar:nth-child(1) .seg-rev em { color: #FFB58E; }
+  .seg-bar:nth-child(1) .seg-pct { color: rgba(244,233,210,0.7); }
+  .seg-bar:nth-child(1) .seg-desc { color: rgba(244,233,210,0.7); }
+  .seg-bar:nth-child(1) .seg-fill { background: var(--signal); }
+  .seg-bar:nth-child(2) { background: var(--cream-2); }
+  .seg-bar:nth-child(2) .seg-fill { background: var(--milk-2); }
+  .seg-bar:nth-child(3) .seg-fill { background: var(--milk); }
+
+  /* Brand mosaic */
+  .brand-mosaic {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .brand-chip {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line-2);
+    color: var(--ink-2);
+    background: rgba(255,255,255,0.4);
+  }
+  .brand-chip.lit { background: var(--cocoa); color: var(--cream); border-color: var(--cocoa); }
+  .brand-more {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    align-self: center;
+    padding: 6px 4px;
+  }
+
+  /* ===== Scale: count-ups, big numerals ===== */
+  .scale-grid {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  .scale-cell {
+    padding: 26px 4px 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .scale-cell:nth-child(odd) { border-right: 1px solid var(--line); padding-right: 16px; }
+  .scale-cell:nth-child(even) { padding-left: 16px; }
+  .scale-cell .v {
+    font-family: var(--font-display);
+    font-size: 52px;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    color: var(--cocoa);
+  }
+  .scale-cell .v em { font-style: italic; color: var(--signal); }
+  .scale-cell .v .unit { font-size: 0.5em; color: var(--milk-2); margin-left: 2px; }
+  .scale-cell .l {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+
+  /* ===== Cost bar — chocolate bar segmented ===== */
+  .cost-section { padding: 80px 0; }
+  .cost-section .pad { padding: 0 24px; }
+  .cost-bar-wrap {
+    margin-top: 40px;
+    padding: 0 24px;
+  }
+  .cost-bar-svg { width: 100%; height: auto; display: block; }
+  .cost-legend {
+    margin-top: 32px;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .cost-row {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    gap: 12px;
+    align-items: baseline;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    align-self: center;
+  }
+  .cost-label {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .cost-label .sub {
+    display: block;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-top: 2px;
+  }
+  .cost-pct {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--cocoa);
+    letter-spacing: -0.02em;
+  }
+  .cost-pct .pct { font-size: 0.55em; color: var(--milk-2); margin-left: 1px; }
+
+  /* ===== Footprint — concentric ===== */
+  .footprint .stage {
+    margin-top: 40px;
+    position: relative;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+  }
+  .footprint svg { width: 100%; height: 100%; display: block; }
+  .footprint-legend {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .fp-row {
+    display: grid;
+    grid-template-columns: 16px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .fp-row:last-child { border: none; }
+  .fp-dot { width: 10px; height: 10px; border-radius: 50%; justify-self: center; }
+  .fp-name { font-family: var(--font-sans); font-size: 14px; color: var(--ink); }
+  .fp-pct { font-family: var(--font-mono); font-size: 13px; color: var(--cocoa); font-weight: 500; }
+
+  /* ===== The bet — capital allocation ===== */
+  .bet { background: var(--cocoa-deep); color: var(--cream); padding: 80px 24px; }
+  .bet .eyebrow { color: rgba(244,233,210,0.55); }
+  .bet .display { color: var(--cream); }
+  .bet .display em { color: var(--signal); }
+  .bet .body { color: rgba(244,233,210,0.78); }
+
+  .alloc {
+    margin-top: 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .alloc-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 22px 0;
+    border-top: 1px solid rgba(244,233,210,0.12);
+  }
+  .alloc-row:last-child { border-bottom: 1px solid rgba(244,233,210,0.12); }
+  .alloc-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .alloc-name {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--cream);
+  }
+  .alloc-amt {
+    font-family: var(--font-display);
+    font-size: 34px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--cream);
+  }
+  .alloc-amt em { font-style: italic; color: var(--signal); }
+  .alloc-track {
+    height: 6px;
+    background: rgba(244,233,210,0.1);
+    border-radius: 999px;
+    position: relative;
+    overflow: hidden;
+  }
+  .alloc-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    background: linear-gradient(90deg, var(--signal) 0%, #FF8B5A 100%);
+    border-radius: 999px;
+    transition: width 1.4s cubic-bezier(0.22,1,0.36,1);
+  }
+  .alloc-note {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: rgba(244,233,210,0.6);
+    line-height: 1.5;
+  }
+
+  .streak {
+    margin-top: 36px;
+    background: rgba(244,233,210,0.04);
+    border: 1px solid rgba(244,233,210,0.12);
+    border-radius: 12px;
+    padding: 22px 20px;
+  }
+  .streak-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: rgba(244,233,210,0.6);
+    text-transform: uppercase;
+  }
+  .streak-num {
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.95;
+    color: var(--cream);
+    letter-spacing: -0.025em;
+    margin-top: 8px;
+  }
+  .streak-num em { font-style: italic; color: var(--signal); }
+  .streak-sub {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: rgba(244,233,210,0.7);
+    margin-top: 6px;
+  }
+  .streak-dots {
+    margin-top: 18px;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .streak-dot {
+    flex: 1;
+    height: 18px;
+    background: rgba(244,233,210,0.18);
+    border-radius: 2px;
+    min-width: 14px;
+  }
+  .streak-dot.lit { background: var(--signal); }
+
+  /* ===== Competitors ===== */
+  .compete .row {
+    margin-top: 30px;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+  }
+  .compete .row:last-child { border-bottom: 1px solid var(--line); }
+  .compete .row-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .compete .ticker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--cream);
+    background: var(--cocoa);
+    padding: 3px 7px;
+    border-radius: 4px;
+  }
+  .compete .name {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--cocoa);
+  }
+  .compete .tag {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--signal);
+    text-transform: uppercase;
+  }
+  .compete .compare-row {
+    display: grid;
+    grid-template-columns: 90px 1fr 70px;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+  }
+  .compete .who {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .compete .bar-track {
+    height: 22px;
+    background: var(--cream-2);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .compete .bar-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    border-radius: 4px;
+    transition: width 1.4s cubic-bezier(0.22,1,0.36,1);
+  }
+  .compete .bar-hsy { background: var(--cocoa); }
+  .compete .bar-other { background: var(--milk); }
+  .compete .bar-fill.muted { background: var(--cream-3); }
+  .compete .bar-val {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-2);
+    text-align: right;
+  }
+  .compete .desc {
+    margin-top: 16px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .compete .desc em { font-family: var(--font-display); font-style: italic; color: var(--signal); font-size: 1.05em; }
+
+  /* The Mondelez moment — special framing */
+  .mondelez-pull {
+    margin-top: 18px;
+    padding: 18px 20px;
+    background: var(--cream-2);
+    border-left: 3px solid var(--signal);
+    border-radius: 4px;
+  }
+  .mondelez-pull p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.3;
+    color: var(--cocoa);
+    margin: 0;
+  }
+  .mondelez-pull p .hit { color: var(--signal); }
+  .mondelez-pull .meta { margin-top: 10px; }
+
+  /* ===== Closing thesis ===== */
+  .close {
+    padding: 100px 24px 80px;
+    text-align: left;
+    background: var(--cream);
+    position: relative;
+  }
+  .close .display {
+    font-size: 56px;
+    line-height: 0.96;
+  }
+  .close .penny-grid {
+    margin-top: 44px;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px;
+  }
+  .close .penny {
+    aspect-ratio: 1 / 1;
+    background: var(--cream-2);
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    transition: background .8s ease, border-color .8s ease, transform .6s ease;
+  }
+  .close .penny.lit {
+    background: var(--signal);
+    border-color: var(--signal);
+  }
+  .close .penny-cap {
+    margin-top: 22px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .close .penny-cap em { color: var(--signal); font-style: normal; }
+
+  .colophon {
+    padding: 40px 24px 60px;
+    border-top: 1px solid var(--line);
+    text-align: left;
+  }
+  .colophon .meta { color: var(--ink-3); }
+  .colophon .ticker-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 18px;
+  }
+  .colophon .ticker {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: var(--cocoa);
+    color: var(--cream);
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .colophon .lh {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .colophon .src {
+    margin-top: 24px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+    line-height: 1.6;
+  }
+
+  /* Utility */
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <!-- ===== PERSISTENT CHROME ===== -->
+  <header class="chrome">
+    <div class="chrome-row">
+      <span class="chrome-ticker">HSY</span>
+      <span class="chrome-name">The Hershey Company</span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="chrome-progress"><div class="chrome-progress-fill" id="prog"></div></div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="hero-eyebrow"><span class="pip">●</span>&nbsp;&nbsp;NYSE · HSY <span class="pip">·</span> Confectionery <span class="pip">·</span> Hershey, PA</div>
+    <h1>
+      America's<span class="period">.</span>
+      <span class="l2">sweet tooth,</span>
+      <span class="l3">packaged<span class="period">.</span></span>
+    </h1>
+    <p class="hero-sub">One company sells <em>more than seventy</em> brands of sugar to a country with <em>one mouth</em>. In FY'25, that mouth paid <em>$11.69 billion</em> for the privilege.</p>
+
+    <!-- Hero chocolate bar — scrolls open as you scroll -->
+    <div class="hero-bar">
+      <svg class="hero-bar-svg" id="heroBar" viewBox="0 0 360 220" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="choc" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#5C2D14"/>
+            <stop offset="50%" stop-color="#3B1F0E"/>
+            <stop offset="100%" stop-color="#1F0F06"/>
+          </linearGradient>
+          <linearGradient id="chocHi" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#7A3E1A"/>
+            <stop offset="50%" stop-color="#5C2D14"/>
+            <stop offset="100%" stop-color="#3B1F0E"/>
+          </linearGradient>
+          <filter id="bevel" x="-5%" y="-5%" width="110%" height="110%">
+            <feGaussianBlur stdDeviation="0.6"/>
+          </filter>
+        </defs>
+
+        <!-- Bar body -->
+        <g id="bar" transform="translate(40,30)">
+          <!-- shadow -->
+          <ellipse cx="140" cy="170" rx="120" ry="8" fill="rgba(31,15,6,0.22)"/>
+          <!-- bar -->
+          <rect x="0" y="0" width="280" height="155" rx="6" fill="url(#choc)"/>
+          <!-- side highlight -->
+          <rect x="0" y="0" width="280" height="14" rx="6" fill="url(#chocHi)" opacity="0.7"/>
+          <!-- segment grooves -->
+          <g stroke="#1A0E07" stroke-width="2" opacity="0.55">
+            <line x1="70"  y1="6" x2="70"  y2="149"/>
+            <line x1="140" y1="6" x2="140" y2="149"/>
+            <line x1="210" y1="6" x2="210" y2="149"/>
+            <line x1="6" y1="52"  x2="274" y2="52"/>
+            <line x1="6" y1="103" x2="274" y2="103"/>
+          </g>
+          <!-- HERSHEY-style debossed letterforms in each cell -->
+          <g font-family="Geist, sans-serif" font-weight="600" font-size="10" fill="#1A0E07" opacity="0.45" text-anchor="middle" letter-spacing="0.18em">
+            <text x="35"  y="32">HSY</text><text x="105" y="32">$11.69B</text><text x="175" y="32">FY '25</text><text x="245" y="32">REV</text>
+            <text x="35"  y="83">81%</text><text x="105" y="83">CONF</text><text x="175" y="83">11%</text><text x="245" y="83">SALTY</text>
+            <text x="35"  y="134">8%</text><text x="105" y="134">INTL</text><text x="175" y="134">17K</text><text x="245" y="134">PEOPLE</text>
+          </g>
+          <!-- A single cell that "lifts" — the signal coral square -->
+          <rect id="liftCell" x="70" y="52" width="70" height="51" fill="rgba(224,92,42,0)" stroke="rgba(224,92,42,0)" stroke-width="2"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- 4-up hero stats -->
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="v">$<span class="num" data-count="39.04" data-decimals="2">0.00</span><span style="font-size:.5em;color:var(--milk-2)">B</span></div>
+        <div class="l">Market cap</div>
+      </div>
+      <div class="hero-stat">
+        <div class="v"><em><span class="num" data-count="11.69" data-decimals="2">0.00</span></em><span style="font-size:.5em;color:var(--milk-2)">B rev</span></div>
+        <div class="l">FY '25 revenue</div>
+      </div>
+      <div class="hero-stat">
+        <div class="v"><span class="num" data-count="70" data-suffix="+">0</span></div>
+        <div class="l">Brands</div>
+      </div>
+      <div class="hero-stat">
+        <div class="v"><span class="num" data-count="80">0</span></div>
+        <div class="l">Countries shipped</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESET BEAT 1 ===== -->
+  <div class="reset reveal">
+    <div class="meta">A note before we begin</div>
+    <p>It started in <em class="hit">1894</em>, in a town named after the man. <em class="hit">A hundred and thirty‑two years later,</em> the town is still named after the man — and so is most of the candy aisle.</p>
+  </div>
+
+  <!-- ===== THE BUSINESS — three segments ===== -->
+  <section class="beat reveal">
+    <span class="eyebrow">The business <span class="dot">·</span> Three bars in one wrapper</span>
+    <h2 class="display" style="font-size:44px;">Confection,<br/>then <em>everything else.</em></h2>
+    <p class="body">Hershey reports through three segments. One of them is <em>most of it</em>. The other two are where the next decade has to come from.</p>
+
+    <div class="bars">
+      <div class="seg-bar reveal" data-fill="81">
+        <div class="seg-head"><span class="seg-name">North America Confectionery</span><span class="seg-pct">81% of net sales</span></div>
+        <div class="seg-rev">$<em>9.48</em>B</div>
+        <div class="seg-desc">Hershey's, Reese's, Kit Kat — the bars on every checkout shelf in America.</div>
+        <div class="seg-fill"></div>
+      </div>
+      <div class="seg-bar reveal" data-fill="11">
+        <div class="seg-head"><span class="seg-name">North America Salty Snacks</span><span class="seg-pct">11% of net sales</span></div>
+        <div class="seg-rev">$1.27B</div>
+        <div class="seg-desc">Dot's Homestyle Pretzels and SkinnyPop — the bet that the candy aisle isn't enough.</div>
+        <div class="seg-fill"></div>
+      </div>
+      <div class="seg-bar reveal" data-fill="8">
+        <div class="seg-head"><span class="seg-name">International</span><span class="seg-pct">8% of net sales</span></div>
+        <div class="seg-rev">$941.6M</div>
+        <div class="seg-desc">Mexico, Brazil, India, Malaysia. A rounding error that wants to be a chapter.</div>
+        <div class="seg-fill"></div>
+      </div>
+    </div>
+
+    <div class="brand-mosaic" aria-label="Brand portfolio">
+      <span class="brand-chip lit">Hershey's</span>
+      <span class="brand-chip lit">Reese's</span>
+      <span class="brand-chip lit">Kit Kat</span>
+      <span class="brand-chip">Twizzlers</span>
+      <span class="brand-chip">Jolly Rancher</span>
+      <span class="brand-chip">Ice Breakers</span>
+      <span class="brand-chip">SkinnyPop</span>
+      <span class="brand-chip">Dot's Pretzels</span>
+      <span class="brand-chip">LesserEvil</span>
+      <span class="brand-chip">ONE Bars</span>
+      <span class="brand-more">+ 60 more</span>
+    </div>
+  </section>
+
+  <!-- ===== SCALE ===== -->
+  <section class="beat-tight reveal" style="padding-top:24px;">
+    <span class="eyebrow">A hundred and thirty years of scale</span>
+    <h2 class="display" style="font-size:44px;">The footprint<br/>of <em>a sweet tooth.</em></h2>
+
+    <div class="scale-grid">
+      <div class="scale-cell reveal">
+        <div class="v"><em><span class="num" data-count="17" data-suffix="K">0</span></em></div>
+        <div class="l">Employees, global</div>
+      </div>
+      <div class="scale-cell reveal">
+        <div class="v"><span class="num" data-count="80">0</span></div>
+        <div class="l">Export countries</div>
+      </div>
+      <div class="scale-cell reveal">
+        <div class="v">$<span class="num" data-count="3.09" data-decimals="2">0.00</span><span class="unit">B</span></div>
+        <div class="l">Q4 '25 revenue</div>
+      </div>
+      <div class="scale-cell reveal">
+        <div class="v">$<em><span class="num" data-count="1.71" data-decimals="2">0.00</span></em></div>
+        <div class="l">Q4 '25 EPS</div>
+      </div>
+      <div class="scale-cell reveal">
+        <div class="v"><span class="num" data-count="33.5" data-decimals="1">0.0</span><span class="unit">%</span></div>
+        <div class="l">Gross margin</div>
+      </div>
+      <div class="scale-cell reveal">
+        <div class="v"><em><span class="num" data-count="12.3" data-decimals="1">0.0</span></em><span class="unit">%</span></div>
+        <div class="l">Operating margin</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESET BEAT 2 ===== -->
+  <div class="reset alt reveal">
+    <div class="meta">The trouble with chocolate</div>
+    <p><em class="hit">Cocoa got expensive.</em> The candy aisle didn't. Every dollar that walks in must first pass through a commodity that quintupled.</p>
+  </div>
+
+  <!-- ===== WHERE THE MONEY GOES — the cost bar ===== -->
+  <section class="cost-section reveal">
+    <div class="pad">
+      <span class="eyebrow">The bill <span class="dot">·</span> Per dollar of revenue</span>
+      <h2 class="display" style="font-size:44px;">A dollar in,<br/><em>broken into squares.</em></h2>
+      <p class="body">Hershey's cost stack, drawn the way Hershey would draw it — as a chocolate bar. Each square is a cent of every dollar that walks in the door. Most of them never make it out.</p>
+    </div>
+
+    <div class="cost-bar-wrap">
+      <svg class="cost-bar-svg" id="costBar" viewBox="0 0 360 200" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <filter id="cb-bevel">
+            <feGaussianBlur stdDeviation="0.4"/>
+          </filter>
+        </defs>
+        <!-- shadow -->
+        <ellipse cx="180" cy="184" rx="155" ry="6" fill="rgba(31,15,6,0.18)"/>
+        <!-- The bar — 100 squares, 10 cols x 10 rows, but rendered as horizontal segments -->
+        <!-- Outer wrapper -->
+        <rect x="6" y="20" width="348" height="150" rx="8" fill="#2A1408"/>
+        <!-- Inner cells colored by the cost breakdown -->
+        <g id="costCells">
+          <!-- generated by JS -->
+        </g>
+        <!-- Top highlight strip -->
+        <rect x="6" y="20" width="348" height="6" rx="6" fill="rgba(255,255,255,0.06)"/>
+        <!-- Grooves -->
+        <g stroke="#1A0E07" stroke-width="1.5" opacity="0.5">
+          <line x1="6" y1="60"  x2="354" y2="60"/>
+          <line x1="6" y1="100" x2="354" y2="100"/>
+          <line x1="6" y1="140" x2="354" y2="140"/>
+        </g>
+        <!-- Cents tick at bottom -->
+        <g font-family="Geist Mono, monospace" font-size="9" fill="#7A6A5E" letter-spacing="0.1em">
+          <text x="6"   y="186">0¢</text>
+          <text x="172" y="186">50¢</text>
+          <text x="333" y="186">100¢</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="cost-legend">
+      <div class="cost-row reveal">
+        <div class="cost-swatch" style="background:#E05C2A"></div>
+        <div class="cost-label">Cost of Revenue<span class="sub">Cocoa, sugar, dairy, manufacturing</span></div>
+        <div class="cost-pct">67<span class="pct">¢</span></div>
+      </div>
+      <div class="cost-row reveal">
+        <div class="cost-swatch" style="background:#4A90D9"></div>
+        <div class="cost-label">Selling, Marketing &amp; Admin<span class="sub">Halloween, holiday, the front of every shelf</span></div>
+        <div class="cost-pct">14<span class="pct">¢</span></div>
+      </div>
+      <div class="cost-row reveal">
+        <div class="cost-swatch" style="background:#7B68EE"></div>
+        <div class="cost-label">Depreciation &amp; Amortization<span class="sub">Plants, equipment, acquired brands</span></div>
+        <div class="cost-pct">4<span class="pct">¢</span></div>
+      </div>
+      <div class="cost-row reveal">
+        <div class="cost-swatch" style="background:#2ECC71"></div>
+        <div class="cost-label">Capital Expenditures<span class="sub">$454.6M reinvested into the line</span></div>
+        <div class="cost-pct">4<span class="pct">¢</span></div>
+      </div>
+      <div class="cost-row reveal">
+        <div class="cost-swatch" style="background:#F4C542"></div>
+        <div class="cost-label">Research &amp; Development<span class="sub">Better-for-you, new formats</span></div>
+        <div class="cost-pct">1<span class="pct">¢</span></div>
+      </div>
+      <div class="cost-row reveal" style="border-top:1px solid var(--line-2); padding-top:18px;">
+        <div class="cost-swatch" style="background:var(--cocoa)"></div>
+        <div class="cost-label" style="color:var(--cocoa);"><strong style="font-weight:600">Operating margin</strong><span class="sub">What survives, before taxes &amp; interest</span></div>
+        <div class="cost-pct" style="color:var(--signal)"><em style="font-style:italic">12.3</em><span class="pct">¢</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTPRINT ===== -->
+  <section class="footprint beat reveal">
+    <span class="eyebrow">The footprint <span class="dot">·</span> Where the dollar comes from</span>
+    <h2 class="display" style="font-size:44px;">Mostly <em>one country</em>.<br/>By design.</h2>
+    <p class="body">Hershey is an American company that exports. Eighty-seven cents of every dollar comes from a single domestic market. The other thirteen are the next bet.</p>
+
+    <div class="stage">
+      <svg viewBox="0 0 360 360" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="ringGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#5C2D14"/>
+            <stop offset="100%" stop-color="#3B1F0E"/>
+          </radialGradient>
+        </defs>
+        <!-- background dot grid -->
+        <g fill="rgba(59,31,14,0.18)" id="dotGrid"></g>
+
+        <!-- Outer ring — international 6% -->
+        <circle id="ring3" cx="180" cy="180" r="160" fill="none" stroke="rgba(138,75,34,0.4)" stroke-width="1" stroke-dasharray="3 5"/>
+        <!-- Mid ring — Mexico/LatAm 7% -->
+        <circle id="ring2" cx="180" cy="180" r="115" fill="none" stroke="rgba(138,75,34,0.7)" stroke-width="1.5"/>
+        <!-- Inner — US, the chocolate disk -->
+        <circle id="ring1" cx="180" cy="180" r="78" fill="url(#ringGrad)"/>
+        <!-- Subtle bar grooves on the disk -->
+        <g stroke="#1A0E07" stroke-width="1" opacity="0.35" fill="none">
+          <line x1="120" y1="180" x2="240" y2="180"/>
+          <line x1="180" y1="120" x2="180" y2="240"/>
+        </g>
+
+        <!-- Labels -->
+        <g font-family="Geist Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#3B1F0E">
+          <text x="180" y="178" text-anchor="middle" font-family="Instrument Serif, serif" font-size="32" fill="#F4E9D2" font-style="italic">87%</text>
+          <text x="180" y="196" text-anchor="middle" font-size="9" fill="rgba(244,233,210,0.7)">UNITED STATES</text>
+        </g>
+        <g font-family="Geist Mono, monospace" font-size="10" letter-spacing="0.08em" fill="#6B3410">
+          <text x="180" y="65" text-anchor="middle">7% · MEXICO &amp; LATAM</text>
+          <text x="180" y="345" text-anchor="middle">6% · APAC &amp; OTHER</text>
+        </g>
+
+        <!-- Tick orbits -->
+        <g>
+          <circle cx="180" cy="65" r="3" fill="#E05C2A"/>
+          <circle cx="180" cy="295" r="2.5" fill="#8A4B22"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="footprint-legend">
+      <div class="fp-row reveal">
+        <span class="fp-dot" style="background:var(--cocoa)"></span>
+        <span class="fp-name">United States</span>
+        <span class="fp-pct">87%</span>
+      </div>
+      <div class="fp-row reveal">
+        <span class="fp-dot" style="background:var(--milk)"></span>
+        <span class="fp-name">Mexico &amp; Latin America</span>
+        <span class="fp-pct">7%</span>
+      </div>
+      <div class="fp-row reveal">
+        <span class="fp-dot" style="background:var(--signal)"></span>
+        <span class="fp-name">Asia‑Pacific &amp; Other Intl.</span>
+        <span class="fp-pct">6%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESET BEAT 3 ===== -->
+  <div class="reset deep reveal">
+    <div class="meta">A note on capital</div>
+    <p>You don't get to <em class="hit">a hundred and thirty‑two years</em> by being clever with money. You get there by being <em class="hit">boringly consistent</em> with it.</p>
+  </div>
+
+  <!-- ===== THE BET — capital allocation, dark beat ===== -->
+  <section class="bet reveal">
+    <span class="eyebrow" style="color:rgba(244,233,210,0.55);">The bet <span class="dot" style="color:var(--signal)">·</span> Where capital actually goes</span>
+    <h2 class="display">A balance sheet<br/>built like <em>a vault.</em></h2>
+    <p class="body">Total debt of $218.55M against $4.64B in equity. Cash of $925.9M. $1.82B in free cash flow last year. The leverage tells you what the family-trust ownership has always told you: <em>steady wins.</em></p>
+
+    <div class="alloc">
+      <div class="alloc-row reveal" data-fill="100">
+        <div class="alloc-head">
+          <span class="alloc-name">Dividends paid</span>
+          <span class="alloc-amt">$<em>1.09</em>B</span>
+        </div>
+        <div class="alloc-track"><div class="alloc-fill" style="--w:100%"></div></div>
+        <div class="alloc-note">14+ consecutive annual increases. The Hershey Trust gets a check first; everyone else gets one second.</div>
+      </div>
+
+      <div class="alloc-row reveal" data-fill="75">
+        <div class="alloc-head">
+          <span class="alloc-name">LesserEvil acquisition</span>
+          <span class="alloc-amt">$815.2M</span>
+        </div>
+        <div class="alloc-track"><div class="alloc-fill" style="--w:75%"></div></div>
+        <div class="alloc-note">November 2025. Better-for-you snacking, paid for in cash. The bolt-on M&amp;A continues — Amplify, Dot's, now LesserEvil.</div>
+      </div>
+
+      <div class="alloc-row reveal" data-fill="42">
+        <div class="alloc-head">
+          <span class="alloc-name">Capital expenditure</span>
+          <span class="alloc-amt">$454.6M</span>
+        </div>
+        <div class="alloc-track"><div class="alloc-fill" style="--w:42%"></div></div>
+        <div class="alloc-note">Plants, lines, supply chain — keeping the pipes warm.</div>
+      </div>
+
+      <div class="alloc-row reveal" data-fill="20">
+        <div class="alloc-head">
+          <span class="alloc-name">Revolver headroom</span>
+          <span class="alloc-amt">$1.35B</span>
+        </div>
+        <div class="alloc-track"><div class="alloc-fill" style="--w:124%"></div></div>
+        <div class="alloc-note">An unsecured credit facility, mostly untouched. Dry powder for the next bolt-on.</div>
+      </div>
+    </div>
+
+    <div class="streak">
+      <div class="streak-label">Dividend streak</div>
+      <div class="streak-num"><em><span class="num" data-count="14">0</span>+</em> years</div>
+      <div class="streak-sub">Consecutive annual increases. Each square below is a year.</div>
+      <div class="streak-dots" id="streakDots"></div>
+    </div>
+  </section>
+
+  <!-- ===== COMPETITORS ===== -->
+  <section class="compete beat reveal">
+    <span class="eyebrow">The neighbors <span class="dot">·</span> Three companies on the same shelf</span>
+    <h2 class="display" style="font-size:44px;">Sized against<br/><em>the sweet shelf.</em></h2>
+    <p class="body">Hershey is large. Three of its rivals are larger by market cap — by very different amounts, and for very different reasons. The bars are scaled to the same axis.</p>
+
+    <!-- MDLZ -->
+    <div class="row reveal">
+      <div class="row-head">
+        <span class="ticker">MDLZ</span>
+        <span class="name">Mondelez International</span>
+        <span class="tag">Almost-suitor</span>
+      </div>
+      <div class="compare-row">
+        <span class="who">HSY · MCAP</span>
+        <div class="bar-track"><div class="bar-fill bar-hsy" style="--w:53%"></div></div>
+        <span class="bar-val">$39.0B</span>
+      </div>
+      <div class="compare-row">
+        <span class="who">MDLZ · MCAP</span>
+        <div class="bar-track"><div class="bar-fill bar-other" style="--w:100%"></div></div>
+        <span class="bar-val">$73.4B</span>
+      </div>
+      <div class="compare-row">
+        <span class="who">MDLZ · REV</span>
+        <div class="bar-track"><div class="bar-fill muted" style="--w:96%"></div></div>
+        <span class="bar-val">$38.5B</span>
+      </div>
+
+      <div class="mondelez-pull">
+        <p>In 2024, Mondelez made a <span class="hit">preliminary acquisition offer</span> for Hershey. The Hershey Trust said no.</p>
+        <div class="meta">Source · 10‑K narrative</div>
+      </div>
+
+      <p class="desc">Cadbury, Milka, Toblerone — the global chocolate aisle, minus America. Mondelez competes <em>head‑to‑head</em> in every channel Hershey serves. Revenue grew 5.75% YoY.</p>
+    </div>
+
+    <!-- KDP -->
+    <div class="row reveal">
+      <div class="row-head">
+        <span class="ticker">KDP</span>
+        <span class="name">Keurig Dr Pepper</span>
+        <span class="tag">Same shelf, other aisle</span>
+      </div>
+      <div class="compare-row">
+        <span class="who">HSY · MCAP</span>
+        <div class="bar-track"><div class="bar-fill bar-hsy" style="--w:53%"></div></div>
+        <span class="bar-val">$39.0B</span>
+      </div>
+      <div class="compare-row">
+        <span class="who">KDP · MCAP</span>
+        <div class="bar-track"><div class="bar-fill bar-other" style="--w:49%"></div></div>
+        <span class="bar-val">$36.1B</span>
+      </div>
+      <div class="compare-row">
+        <span class="who">KDP · REV</span>
+        <div class="bar-track"><div class="bar-fill muted" style="--w:42%"></div></div>
+        <span class="bar-val">$16.6B</span>
+      </div>
+      <p class="desc">The convenience-store impulse aisle, but in beverages. Their distribution increasingly <em>brushes against</em> Hershey's mass-channel presence. Revenue grew 8.16% YoY.</p>
+    </div>
+
+    <!-- STZ -->
+    <div class="row reveal">
+      <div class="row-head">
+        <span class="ticker">STZ</span>
+        <span class="name">Constellation Brands</span>
+        <span class="tag">Discretionary rival</span>
+      </div>
+      <div class="compare-row">
+        <span class="who">HSY · MCAP</span>
+        <div class="bar-track"><div class="bar-fill bar-hsy" style="--w:53%"></div></div>
+        <span class="bar-val">$39.0B</span>
+      </div>
+      <div class="compare-row">
+        <span class="who">STZ · MCAP</span>
+        <div class="bar-track"><div class="bar-fill bar-other" style="--w:38%"></div></div>
+        <span class="bar-val">$28.1B</span>
+      </div>
+      <div class="compare-row">
+        <span class="who">STZ · REV</span>
+        <div class="bar-track"><div class="bar-fill muted" style="--w:26%"></div></div>
+        <span class="bar-val">$10.2B</span>
+      </div>
+      <p class="desc">Premium beer and spirits. Not a confectioner — a <em>discretionary‑dollar rival</em> for the same checkout, the same gifting season. Revenue down 10.48% YoY.</p>
+    </div>
+  </section>
+
+  <!-- ===== RESET BEAT 4 ===== -->
+  <div class="reset reveal">
+    <div class="meta">Closing</div>
+    <p>One company sells <em class="hit">a hundred and ten million dollars of candy a day.</em> Twelve cents of every dollar makes it out. The rest pays for the chocolate.</p>
+  </div>
+
+  <!-- ===== CLOSE — invert the open ===== -->
+  <section class="close reveal">
+    <span class="eyebrow">The takeaway <span class="dot">·</span> What survives</span>
+    <h2 class="display">A dollar in.<br/><em>12¢ out.</em></h2>
+    <p class="body">The hero opened with what walks in: <em>$11.69 billion</em>. The close lands on what walks out — once cocoa, sugar, the shelf, the line, and the lawyers have been paid. Below: 100 cents of revenue. The lit ones are operating profit.</p>
+
+    <div class="penny-grid" id="pennyGrid">
+      <!-- 100 pennies generated -->
+    </div>
+    <div class="penny-cap"><em>12.3¢</em> of every dollar · Operating margin · FY '25</div>
+  </section>
+
+  <!-- ===== Colophon ===== -->
+  <footer class="colophon">
+    <div class="meta">FY '25 recap · The Hershey Company · Generated April 2026</div>
+    <div class="ticker-row">
+      <span class="ticker">NYSE: HSY</span>
+      <span class="lh">Hershey, Pennsylvania · est. <em style="font-style:italic; font-family:var(--font-display); color:var(--signal)">1894</em></span>
+    </div>
+    <div class="src">Source · FY 2025 10‑K · Q4 2025 earnings release · Company filings.<br/>All figures traceable to public disclosures.</div>
+  </footer>
+
+</div>
+
+<script>
+  // ============================================================
+  //  Scroll-driven behavior
+  // ============================================================
+
+  // -- Progress hairline
+  const prog = document.getElementById('prog');
+  function updateProgress(){
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const p = max > 0 ? (h.scrollTop || document.body.scrollTop) / max : 0;
+    prog.style.width = (p * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // -- IntersectionObserver: reveal-in
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        // start count-ups inside
+        e.target.querySelectorAll('.num').forEach(startCount);
+        // fill segment bars
+        e.target.querySelectorAll('.seg-bar').forEach(b => {
+          const f = b.querySelector('.seg-fill');
+          if (f) f.style.width = b.dataset.fill + '%';
+        });
+        // fill alloc bars
+        e.target.querySelectorAll('.alloc-fill').forEach(f => {
+          const w = f.style.getPropertyValue('--w');
+          if (w) f.style.width = w;
+        });
+        // fill compete bars
+        e.target.querySelectorAll('.bar-fill').forEach(f => {
+          const w = f.style.getPropertyValue('--w');
+          if (w) f.style.width = w;
+        });
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // -- Count-up
+  function startCount(el){
+    if (el.dataset.done) return;
+    el.dataset.done = '1';
+    const target = parseFloat(el.dataset.count || '0');
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    const suffix = el.dataset.suffix || '';
+    const dur = 1100;
+    const t0 = performance.now();
+    function tick(now){
+      const t = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const v = target * eased;
+      el.textContent = v.toFixed(decimals) + suffix;
+      if (t < 1) requestAnimationFrame(tick);
+      else el.textContent = target.toFixed(decimals) + suffix;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ============================================================
+  //  COST BAR — render 100 cells colored by cost breakdown
+  //  Layout: 25 columns x 4 rows = 100 squares (one cent each)
+  // ============================================================
+  (function renderCostBar(){
+    const cells = document.getElementById('costCells');
+    const colors = [
+      { pct: 67, color: '#E05C2A' },     // COR
+      { pct: 14, color: '#4A90D9' },     // SMA
+      { pct: 4,  color: '#7B68EE' },     // DA
+      { pct: 4,  color: '#2ECC71' },     // CAPEX
+      { pct: 1,  color: '#F4C542' },     // R&D
+      { pct: 10, color: '#3B1F0E' }      // operating margin (what survives) — 12 actual but 10 to balance to 100; we'll use 10
+    ];
+    // Adjust totals to 100 — we'll spend the remaining 10 cents on 'operating margin' shown as cocoa
+    // 67+14+4+4+1+10 = 100 ✓
+    const cols = 25, rows = 4;
+    const cellW = 348 / cols;
+    const cellH = 150 / rows;
+    let i = 0;
+    const flat = [];
+    colors.forEach(c => { for (let k = 0; k < c.pct; k++) flat.push(c.color); });
+    for (let r = 0; r < rows; r++){
+      for (let c = 0; c < cols; c++){
+        const x = 6 + c * cellW + 1;
+        const y = 20 + r * cellH + 1;
+        const w = cellW - 2;
+        const h = cellH - 2;
+        const fill = flat[i++] || '#3B1F0E';
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', x);
+        rect.setAttribute('y', y);
+        rect.setAttribute('width', w);
+        rect.setAttribute('height', h);
+        rect.setAttribute('rx', 1.5);
+        rect.setAttribute('fill', fill);
+        rect.setAttribute('opacity', '0');
+        rect.style.transition = 'opacity .9s ease';
+        rect.style.transitionDelay = (i * 6) + 'ms';
+        cells.appendChild(rect);
+      }
+    }
+    // Trigger fade-in when cost bar enters viewport
+    const cb = document.getElementById('costBar');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          cells.querySelectorAll('rect').forEach(r => r.setAttribute('opacity', '1'));
+          obs.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    obs.observe(cb);
+  })();
+
+  // ============================================================
+  //  Streak dots — 14 lit, 1 unlit (next year)
+  // ============================================================
+  (function renderStreak(){
+    const wrap = document.getElementById('streakDots');
+    for (let i = 0; i < 15; i++){
+      const d = document.createElement('div');
+      d.className = 'streak-dot' + (i < 14 ? ' lit' : '');
+      d.style.transition = 'background .5s ease';
+      d.style.transitionDelay = (i * 50) + 'ms';
+      wrap.appendChild(d);
+    }
+  })();
+
+  // ============================================================
+  //  Penny grid — 100 pennies, 12 lit (operating margin proxy)
+  // ============================================================
+  (function renderPennies(){
+    const grid = document.getElementById('pennyGrid');
+    for (let i = 0; i < 100; i++){
+      const p = document.createElement('div');
+      p.className = 'penny';
+      p.style.transitionDelay = (i * 14) + 'ms';
+      grid.appendChild(p);
+    }
+    const close = document.querySelector('.close');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          // Light 12 pennies (12.3% rounded down) — pick the bottom-left for "what survives"
+          const pennies = grid.querySelectorAll('.penny');
+          // pattern: light a contiguous 12-cell block bottom-left
+          const lit = [];
+          // bottom 1.2 rows: rows 8 and 9 (last two), cols 0..1 of row 8 + all of row 9 = 2 + 10 = 12
+          for (let c = 0; c < 10; c++) lit.push(9 * 10 + c); // row 9 (last)
+          for (let c = 0; c < 2; c++)  lit.push(8 * 10 + c); // first 2 of row 8
+          lit.forEach(idx => {
+            if (pennies[idx]) pennies[idx].classList.add('lit');
+          });
+          obs.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    obs.observe(close);
+  })();
+
+  // ============================================================
+  //  Footprint dot grid — for ambient background
+  // ============================================================
+  (function renderFootprintDots(){
+    const wrap = document.getElementById('dotGrid');
+    if (!wrap) return;
+    const step = 22;
+    for (let y = 12; y < 360; y += step){
+      for (let x = 12; x < 360; x += step){
+        // skip dots near center to keep it clean
+        const dx = x - 180, dy = y - 180;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if (d < 170) continue;
+        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('r', 1);
+        wrap.appendChild(c);
+      }
+    }
+  })();
+
+  // ============================================================
+  //  Hero bar — scroll-tied "lift" of one cell
+  // ============================================================
+  (function heroLift(){
+    const lift = document.getElementById('liftCell');
+    const hero = document.querySelector('.hero');
+    if (!lift || !hero) return;
+    function tick(){
+      const r = hero.getBoundingClientRect();
+      const winH = window.innerHeight;
+      // 0 when hero just visible at bottom, 1 when hero scrolled off top
+      const total = r.height + winH;
+      const passed = winH - r.top;
+      const t = Math.max(0, Math.min(1, passed / total));
+      // The lifted cell glows in coral as the user scrolls past hero
+      const fillOpacity = Math.min(0.18, t * 0.35);
+      const strokeOpacity = Math.min(1, t * 1.4);
+      lift.setAttribute('fill', `rgba(224,92,42,${fillOpacity.toFixed(3)})`);
+      lift.setAttribute('stroke', `rgba(224,92,42,${strokeOpacity.toFixed(3)})`);
+    }
+    window.addEventListener('scroll', tick, { passive: true });
+    tick();
+  })();
+
+  // ============================================================
+  //  Postmessage to parent for slide tracking (single-screen)
+  // ============================================================
+  try { window.parent.postMessage({ slideIndexChanged: 0 }, '*'); } catch(e){}
+</script>
+</body>
+</html>

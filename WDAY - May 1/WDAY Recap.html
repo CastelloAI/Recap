@@ -1,0 +1,1267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WDAY · Recap FY '26</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  /* ---------------- mobile container ---------------- */
+  .mobile {
+    max-width: 440px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px var(--line), 0 40px 80px -30px rgba(20,20,20,0.18);
+  }
+  @media (min-width: 460px){
+    body { background: #ECEAE3; padding: 24px 0; }
+    .mobile { border-radius: 32px; min-height: calc(100vh - 48px); }
+  }
+
+  /* ---------------- persistent chrome ---------------- */
+  .chrome {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(251,250,247,0.78);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border-bottom: 1px solid var(--line);
+  }
+  .chrome-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 12px;
+  }
+  .chrome-left { display: flex; align-items: baseline; gap: 10px; }
+  .chrome-ticker {
+    font-family: var(--font-mono);
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+  }
+  .chrome-ticker .dot { color: var(--coral-400); }
+  .chrome-name {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .chrome-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .progress {
+    height: 1.5px; width: 100%;
+    background: var(--paper-3);
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%; width: 0%;
+    background: var(--coral-400);
+    transition: width 80ms linear;
+  }
+
+  /* ---------------- editorial primitives ---------------- */
+  section { position: relative; padding: 0 24px; }
+  .beat { padding: 88px 24px 64px; position: relative; }
+  .beat--tight { padding-top: 56px; padding-bottom: 48px; }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--coral-500);
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 24px;
+  }
+  .eyebrow .num { color: var(--ink-3); }
+  .eyebrow .glyph { width: 5px; height: 5px; background: var(--coral-400); border-radius: 50%; display: inline-block; }
+
+  h1.thesis, h2.thesis {
+    font-family: var(--font-display);
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  h1.thesis { font-size: 56px; }
+  h2.thesis { font-size: 42px; }
+  h2.thesis--sm { font-size: 34px; }
+  .it { font-style: italic; }
+  .signal { color: var(--coral-500); }
+  .iris { color: var(--iris-500); }
+
+  p.lead {
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    margin: 20px 0 0;
+    max-width: 36ch;
+  }
+  p.lead .it { font-family: var(--font-display); font-size: 19px; line-height: 1.4; }
+
+  .figure-num {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+
+  .mono-cap {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------------- reset beats ---------------- */
+  .reset {
+    padding: 48px 32px;
+    background: var(--paper-2);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .reset--ink {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+  }
+  .reset--ink .reset-text { color: var(--paper-2); }
+  .reset-text {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.25;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .reset-text .signal { color: var(--coral-400); }
+
+  /* ---------------- HERO ---------------- */
+  .hero {
+    padding: 56px 24px 72px;
+    position: relative;
+    min-height: 88vh;
+    display: flex; flex-direction: column;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: flex; justify-content: space-between;
+    margin-bottom: 64px;
+  }
+  .hero-eyebrow .ticker-big { color: var(--ink); font-weight: 500; }
+  .hero-h1 {
+    font-family: var(--font-display);
+    font-size: 72px;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .hero-h1 .it { color: var(--coral-500); }
+  .hero-sub {
+    margin-top: 28px;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 32ch;
+  }
+  .hero-sub .it { font-family: var(--font-display); font-style: italic; font-size: 18px; }
+  .hero-cols {
+    margin-top: auto;
+    padding-top: 56px;
+    display: grid; grid-template-columns: 1fr 1px 1fr;
+    gap: 20px;
+    align-items: end;
+  }
+  .hero-col {
+    display: flex; flex-direction: column;
+  }
+  .hero-col .label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 12px;
+  }
+  .hero-col .num {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 0.9;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .hero-col .num .it { font-style: italic; color: var(--coral-500); }
+  .hero-col .sub {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+  .hero-divider {
+    background: var(--line-strong);
+    width: 1px; height: 80%;
+    align-self: end;
+    margin-bottom: 8px;
+  }
+
+  /* falling rule animation */
+  .hero-rule {
+    margin-top: 36px;
+    height: 1px;
+    background: var(--ink);
+    transform-origin: left center;
+    animation: drawRule 1.4s var(--ease-out) 0.4s both;
+  }
+  @keyframes drawRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+  /* ---------------- BUSINESS / SUBSCRIPTION ---------------- */
+  .meter {
+    margin-top: 32px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 28px 24px;
+    position: relative;
+  }
+  .meter-row { display: flex; align-items: baseline; gap: 16px; margin-bottom: 18px; }
+  .meter-pct {
+    font-family: var(--font-display);
+    font-size: 84px; line-height: 0.85;
+    color: var(--coral-500);
+    letter-spacing: -0.04em;
+  }
+  .meter-pct sup { font-size: 36px; vertical-align: top; line-height: 1; }
+  .meter-cap {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    line-height: 1.5;
+    flex: 1;
+  }
+  .pulse-track {
+    height: 56px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center;
+    gap: 4px;
+    overflow: hidden;
+    padding: 0 0;
+  }
+  .pulse-bar {
+    flex: 1;
+    background: var(--coral-300);
+    border-radius: 1px;
+  }
+  .pulse-bar.pro { background: var(--ink-3); opacity: 0.35; }
+  .meter-foot {
+    margin-top: 14px;
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .meter-foot .sub { color: var(--coral-500); font-weight: 500; }
+  .meter-foot .pro { color: var(--ink-3); }
+
+  /* ---------------- SCALE: F500 dot grid ---------------- */
+  .scale-stack {
+    margin-top: 36px;
+    display: flex; flex-direction: column; gap: 32px;
+  }
+  .stat-row {
+    display: flex; flex-direction: column;
+    gap: 6px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 64px; line-height: 0.92;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  .stat-num .unit {
+    font-family: var(--font-display);
+    font-size: 38px;
+    color: var(--ink-3);
+    margin-left: 4px;
+  }
+  .stat-num .it { font-style: italic; color: var(--coral-500); }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .stat-note {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.5;
+    margin-top: 6px;
+    max-width: 38ch;
+  }
+
+  .f500 {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    gap: 4px 4px;
+    width: 100%;
+  }
+  .f500 .cell {
+    aspect-ratio: 1/1;
+    background: var(--paper-3);
+    border-radius: 1px;
+    transition: background 220ms var(--ease-out);
+  }
+  .f500 .cell.on { background: var(--coral-400); }
+  .f500-cap {
+    margin-top: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .f500-cap .signal { color: var(--coral-500); }
+
+  /* ---------------- THE DOLLAR ---------------- */
+  .dollar-wrap {
+    margin-top: 36px;
+    background: var(--paper-2);
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    padding: 0;
+    overflow: hidden;
+  }
+  .dollar-head {
+    padding: 20px 24px 12px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: 1px dashed var(--line-strong);
+  }
+  .dollar-head .one {
+    font-family: var(--font-display);
+    font-size: 56px; line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+  }
+  .dollar-head .cents {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: right;
+  }
+  .dollar-grid {
+    padding: 18px 18px 18px;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px;
+  }
+  .dollar-grid .penny {
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    background: var(--paper-3);
+    border: 1px solid rgba(0,0,0,0.04);
+    transform: scale(0.6);
+    opacity: 0;
+    transition: transform 380ms var(--ease-spring), opacity 200ms ease, background 200ms ease;
+  }
+  .dollar-grid .penny.in { transform: scale(1); opacity: 1; }
+  .dollar-legend {
+    padding: 6px 18px 22px;
+    display: grid; grid-template-columns: 1fr; gap: 10px;
+  }
+  .legend-row {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    gap: 12px; align-items: center;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+  }
+  .legend-row .swatch {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+  }
+  .legend-row .lbl { text-transform: none; letter-spacing: 0; font-family: var(--font-sans); font-size: 13px; color: var(--ink); }
+  .legend-row .pct { color: var(--ink); font-weight: 500; }
+  .dollar-survives {
+    margin-top: 28px;
+    display: flex; align-items: baseline; gap: 14px;
+  }
+  .dollar-survives .num {
+    font-family: var(--font-display);
+    font-size: 84px; line-height: 0.85;
+    color: var(--coral-500);
+    letter-spacing: -0.04em;
+    font-style: italic;
+  }
+  .dollar-survives .num .small { font-size: 36px; }
+  .dollar-survives .cap {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 19px;
+    color: var(--ink-2);
+    line-height: 1.3;
+    max-width: 22ch;
+  }
+  .dollar-survives .cap .signal { color: var(--coral-500); font-style: normal; font-family: var(--font-sans); font-weight: 500; font-size: 16px; }
+
+  /* ---------------- BET: R&D + buyback streams ---------------- */
+  .bet-stage {
+    margin-top: 36px;
+    display: flex; flex-direction: column;
+    gap: 28px;
+  }
+  .bet-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .bet-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .bet-head .v { color: var(--ink); font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; text-transform: none; }
+  .bet-head .v .it { font-style: italic; color: var(--coral-500); }
+  .bet-bar {
+    height: 14px; background: var(--paper-3); border-radius: 1px; overflow: hidden;
+    position: relative;
+  }
+  .bet-bar .fill {
+    height: 100%; width: 0%;
+    background: var(--coral-400);
+    transition: width 1.2s var(--ease-out);
+  }
+  .bet-bar .fill.iris { background: var(--iris-400); }
+  .bet-bar .fill.ink { background: var(--ink); }
+  .bet-bar .fill.muted { background: var(--ink-3); opacity: 0.5; }
+  .bet-foot {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.5;
+    max-width: 40ch;
+  }
+  .bet-axis {
+    margin-top: 12px;
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.1em; color: var(--ink-3);
+    border-top: 1px solid var(--line); padding-top: 8px;
+  }
+
+  .pq {
+    margin-top: 32px;
+    padding: 20px 0 0;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+  .pq .signal { color: var(--coral-500); }
+
+  /* ---------------- FOOTPRINT: horizon ---------------- */
+  .horizon {
+    margin-top: 32px;
+    height: 220px;
+    position: relative;
+    border-bottom: 1px solid var(--ink);
+  }
+  .horizon-bar {
+    position: absolute; bottom: 0;
+    background: var(--coral-400);
+    transition: height 1.2s var(--ease-out);
+    border-right: 1px solid var(--paper);
+  }
+  .horizon-bar.us  { left: 0%;  width: 75%; background: var(--coral-400); }
+  .horizon-bar.eu  { left: 75%; width: 17%; background: var(--coral-300); }
+  .horizon-bar.apac { left: 92%; width: 8%;  background: var(--coral-200); }
+  .horizon-label {
+    position: absolute; top: -4px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-3);
+    transform: translateY(-100%);
+    white-space: nowrap;
+  }
+  .horizon-label .pct { color: var(--ink); font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; display: block; line-height: 1; margin-bottom: 4px; }
+  .horizon-label .pct .small { font-size: 14px; color: var(--ink-3); }
+  .horizon-foot {
+    margin-top: 12px;
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 10.5px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------------- COMPETITION ---------------- */
+  .comp-stack { margin-top: 36px; display: flex; flex-direction: column; gap: 0; }
+  .comp-row {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    transition: background 200ms ease;
+  }
+  .comp-row:first-child { border-top: 1px solid var(--ink); padding-top: 24px; }
+  .comp-row:last-child { border-bottom: 1px solid var(--ink); }
+  .comp-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 12px;
+  }
+  .comp-name {
+    font-family: var(--font-display);
+    font-size: 24px; letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .comp-tick {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.12em;
+    color: var(--ink-3);
+  }
+  .comp-bar-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+  .comp-bar {
+    height: 8px; background: var(--paper-3); border-radius: 1px; overflow: hidden;
+    position: relative;
+  }
+  .comp-bar .fill {
+    height: 100%; width: 0%;
+    background: var(--ink-3);
+    transition: width 1.2s var(--ease-out);
+  }
+  .comp-bar .fill.self { background: var(--coral-400); }
+  .comp-bar .fill.threat { background: var(--ink); }
+  .comp-cap {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--ink); white-space: nowrap;
+  }
+  .comp-cap .it { font-family: var(--font-display); font-style: italic; font-size: 14px; color: var(--coral-500); margin-left: 4px; }
+  .comp-desc {
+    margin-top: 12px;
+    font-family: var(--font-sans);
+    font-size: 13px; line-height: 1.5;
+    color: var(--ink-2);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 360ms var(--ease-out), opacity 220ms ease, margin-top 240ms ease;
+  }
+  .comp-row.open .comp-desc { max-height: 320px; opacity: 1; }
+  .comp-row .chev {
+    display: inline-block; width: 9px; height: 9px;
+    border-right: 1.5px solid var(--ink-3);
+    border-bottom: 1.5px solid var(--ink-3);
+    transform: rotate(45deg);
+    transition: transform 220ms ease;
+    margin-left: 8px;
+  }
+  .comp-row.open .chev { transform: rotate(-135deg); }
+
+  .threat-pull {
+    margin-top: 36px;
+    padding: 24px 20px;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+  }
+  .threat-pull .lab {
+    font-family: var(--font-mono); font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--coral-300);
+    margin-bottom: 12px;
+  }
+  .threat-pull .txt {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px; line-height: 1.3;
+    color: var(--paper);
+  }
+  .threat-pull .txt .signal { color: var(--coral-300); font-style: normal; }
+
+  /* ---------------- TAKEAWAY ---------------- */
+  .close {
+    padding: 96px 24px 80px;
+    background: var(--ink);
+    color: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .close .eyebrow { color: var(--coral-300); }
+  .close .h-final {
+    font-family: var(--font-display);
+    font-size: 56px; line-height: 0.95;
+    letter-spacing: -0.025em;
+    color: var(--paper);
+    margin: 12px 0 0;
+  }
+  .close .h-final .it { color: var(--coral-300); }
+  .close .lead { color: rgba(244,242,237,0.78); margin-top: 24px; max-width: 34ch; }
+  .close .lead .it { font-family: var(--font-display); font-size: 19px; color: var(--paper); }
+
+  .close-cols {
+    margin-top: 56px;
+    display: grid; grid-template-columns: 1fr 1px 1fr;
+    gap: 18px;
+    border-top: 1px solid rgba(244,242,237,0.18);
+    padding-top: 32px;
+  }
+  .close-cols .label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(244,242,237,0.5); margin-bottom: 12px; }
+  .close-cols .num { font-family: var(--font-display); font-size: 38px; line-height: 0.9; color: var(--paper); letter-spacing: -0.02em; }
+  .close-cols .num .it { font-style: italic; color: var(--coral-300); }
+  .close-cols .sub { font-family: var(--font-sans); font-size: 12px; color: rgba(244,242,237,0.55); margin-top: 8px; line-height: 1.4; }
+  .close-divider { background: rgba(244,242,237,0.18); width: 1px; align-self: stretch; }
+
+  .colophon {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(244,242,237,0.18);
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(244,242,237,0.45);
+  }
+
+  /* ---------------- reveal ---------------- */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal.delay-1 { transition-delay: 80ms; }
+  .reveal.delay-2 { transition-delay: 160ms; }
+  .reveal.delay-3 { transition-delay: 240ms; }
+  .reveal.delay-4 { transition-delay: 320ms; }
+
+  /* count-up text */
+  .countup { font-variant-numeric: tabular-nums; }
+
+</style>
+</head>
+<body>
+
+<div class="mobile">
+
+  <!-- ============ PERSISTENT CHROME ============ -->
+  <header class="chrome">
+    <div class="chrome-row">
+      <div class="chrome-left">
+        <span class="chrome-ticker">WDAY<span class="dot">·</span></span>
+        <span class="chrome-name">Workday</span>
+      </div>
+      <span class="chrome-label">Recap · FY '26</span>
+    </div>
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+  </header>
+
+  <!-- ============ HERO / THESIS ============ -->
+  <section class="hero" data-screen-label="01 Thesis">
+    <div class="hero-eyebrow">
+      <span class="ticker-big">NASDAQ : WDAY</span>
+      <span>FY '26 · Annual</span>
+    </div>
+
+    <h1 class="hero-h1">
+      Two columns.<br>
+      <span class="it">People.</span><br>
+      <span class="it">Money.</span>
+    </h1>
+
+    <div class="hero-rule"></div>
+
+    <p class="hero-sub">
+      Workday writes both ledgers — the one that <span class="it">pays you</span>
+      and the one that <span class="it">tracks where it went</span> —
+      for more than 10,000 organizations, including <span class="it">65% of the Fortune 500.</span>
+    </p>
+
+    <div class="hero-cols reveal" data-rev>
+      <div class="hero-col">
+        <div class="label">FY '26 Revenue</div>
+        <div class="num">$<span class="it">9.55</span>B</div>
+        <div class="sub">92% recurring · subscription</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-col">
+        <div class="label">Market Cap</div>
+        <div class="num">$<span class="it">31.6</span>B</div>
+        <div class="sub">21,000 employees · Pleasanton, CA</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 1 ============ -->
+  <section class="reset">
+    <div class="reset-text">
+      Behind every paycheck inside the Fortune 500, <span class="it signal">someone is keeping the books.</span>
+      More often than not, that someone is <span class="signal">a system.</span>
+    </div>
+  </section>
+
+  <!-- ============ THE BUSINESS — subscription rhythm ============ -->
+  <section class="beat" data-screen-label="02 Business">
+    <div class="eyebrow"><span class="num">02</span><span class="glyph"></span> The metronome · 92% recurring</div>
+    <h2 class="thesis">
+      A <span class="it signal">subscription</span><br>
+      that <span class="it">renews itself.</span>
+    </h2>
+    <p class="lead">
+      The product is access — annual contracts to HCM and Financials. The cash
+      arrives <span class="it">in steady beats,</span> mostly the same beats as last year, plus a little more.
+    </p>
+
+    <div class="meter reveal" data-rev>
+      <div class="meter-row">
+        <div class="meter-pct">92<sup>%</sup></div>
+        <div class="meter-cap">
+          of FY '26 revenue<br>is <span style="color:var(--coral-500);">subscription</span>
+        </div>
+      </div>
+      <div class="pulse-track" id="pulseTrack"></div>
+      <div class="meter-foot">
+        <span class="sub">▌ Subscription · $8.79B</span>
+        <span class="pro">Services · $0.76B</span>
+      </div>
+    </div>
+
+    <p class="lead" style="margin-top:28px;">
+      Gross margin of <span class="it signal">75.7%.</span> Operating margin still slim
+      at 7.5% — but every dollar booked tends to <span class="it">come back next year.</span>
+    </p>
+  </section>
+
+  <!-- ============ THE SCALE ============ -->
+  <section class="beat beat--tight" data-screen-label="03 Scale">
+    <div class="eyebrow"><span class="num">03</span><span class="glyph"></span> The footprint · 10,000 + orgs</div>
+    <h2 class="thesis">
+      Scale you only<br>see when it <span class="it signal">breaks.</span>
+    </h2>
+
+    <div class="scale-stack">
+      <div class="stat-row reveal" data-rev>
+        <div class="stat-num"><span class="countup" data-to="10000" data-suffix="+">0</span></div>
+        <div class="stat-label">Organizations on the platform</div>
+        <div class="stat-note">From global banks to community hospitals — Workday is the system of record for HR and finance at scale.</div>
+      </div>
+
+      <!-- Fortune 500 grid -->
+      <div class="stat-row reveal" data-rev>
+        <div style="display:flex; align-items:baseline; justify-content:space-between;">
+          <div class="stat-num"><span class="countup" data-to="65" data-suffix="%">0</span></div>
+          <div class="stat-label" style="text-align:right;">of the<br>Fortune 500</div>
+        </div>
+        <div class="f500" id="f500"></div>
+        <div class="f500-cap">
+          <span>500 squares · 1 per company</span>
+          <span class="signal">▌ 325 use Workday</span>
+        </div>
+      </div>
+
+      <div class="stat-row reveal" data-rev>
+        <div class="stat-num"><span class="countup" data-to="21000">0</span></div>
+        <div class="stat-label">Employees · global</div>
+        <div class="stat-note">Headquartered in Pleasanton, CA — operations across North America, Europe, and Asia-Pacific.</div>
+      </div>
+
+      <div class="stat-row reveal" data-rev>
+        <div class="stat-num">$<span class="countup" data-to="9.55" data-decimals="2">0</span><span class="unit">B</span></div>
+        <div class="stat-label">FY '26 Revenue</div>
+        <div class="stat-note">A <span class="it signal" style="font-family:var(--font-display); font-style:italic;">$693M</span> in net income · EPS of $2.47 in Q4.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 2 ============ -->
+  <section class="reset">
+    <div class="reset-text">
+      Of every dollar that comes in the door, <span class="it signal">most leaves again — fast.</span>
+      Where it goes is the <span class="signal">whole story.</span>
+    </div>
+  </section>
+
+  <!-- ============ THE DOLLAR ============ -->
+  <section class="beat" data-screen-label="04 The Dollar">
+    <div class="eyebrow"><span class="num">04</span><span class="glyph"></span> A hundred cents in</div>
+    <h2 class="thesis">
+      One <span class="it signal">dollar</span> of revenue,<br>
+      <span class="it">spent.</span>
+    </h2>
+    <p class="lead">
+      For every <span class="it">$1.00</span> of FY '26 revenue, here is where the cents go
+      — built up from cost of revenue, R&amp;D, and the sales engine that wins the next contract.
+    </p>
+
+    <div class="dollar-wrap reveal" data-rev id="dollarWrap">
+      <div class="dollar-head">
+        <div class="one">$1<span style="font-style:italic; color:var(--coral-500);">.</span>00</div>
+        <div class="cents">100¢<br>per dollar in</div>
+      </div>
+      <div class="dollar-grid" id="dollarGrid"></div>
+      <div class="dollar-legend" id="dollarLegend"></div>
+    </div>
+
+    <div class="dollar-survives reveal" data-rev>
+      <div class="num"><span class="small">~</span>15<span class="small">¢</span></div>
+      <div class="cap">survive to the operating line. <br><span class="signal">↘ 7.5% GAAP op margin</span></div>
+    </div>
+
+    <p class="lead" style="margin-top:24px;">
+      R&amp;D is the largest single line — <span class="it signal">$2.7B in FY '26.</span>
+      Stock-based comp, threaded through the operating costs above, accounts for roughly 13¢ on its own.
+    </p>
+  </section>
+
+  <!-- ============ RESET BEAT 3 ============ -->
+  <section class="reset reset--ink">
+    <div class="reset-text">
+      <span style="color:var(--paper);">Asset-light. <span class="it" style="color:var(--coral-300);">Cash-heavy.</span></span>
+      <span style="color:rgba(244,242,237,0.6); display:block; margin-top:6px; font-size:18px;">A SaaS balance sheet, in two words.</span>
+    </div>
+  </section>
+
+  <!-- ============ THE BET ============ -->
+  <section class="beat" data-screen-label="05 The Bet">
+    <div class="eyebrow"><span class="num">05</span><span class="glyph"></span> Where the cash flow lands</div>
+    <h2 class="thesis">
+      $2.78B in <span class="it signal">free cash.</span><br>
+      Two bets, <span class="it">parallel.</span>
+    </h2>
+    <p class="lead">
+      Capex is a rounding error — <span class="it">$162M.</span> The capital story
+      sits on the next two lines: <span class="it">build</span>, and <span class="it">buy back.</span>
+    </p>
+
+    <div class="bet-stage">
+      <div class="bet-row">
+        <div class="bet-head">
+          <span>R&amp;D investment</span>
+          <span class="v">$<span class="it">2.7</span>B</span>
+        </div>
+        <div class="bet-bar"><div class="fill" data-pct="93" style="background:var(--coral-400);"></div></div>
+        <div class="bet-foot">Funds the <span style="font-style:italic; font-family:var(--font-display); color:var(--coral-500);">Illuminate</span> AI platform — agentic add-ons whose ACV more than doubled YoY.</div>
+      </div>
+
+      <div class="bet-row">
+        <div class="bet-head">
+          <span>Share buybacks</span>
+          <span class="v">$<span class="it">2.9</span>B</span>
+        </div>
+        <div class="bet-bar"><div class="fill ink" data-pct="100"></div></div>
+        <div class="bet-foot">No dividend. Capital returned to shareholders entirely through repurchase.</div>
+      </div>
+
+      <div class="bet-row">
+        <div class="bet-head">
+          <span>Capital expenditure</span>
+          <span class="v">$<span class="it">0.16</span>B</span>
+        </div>
+        <div class="bet-bar"><div class="fill muted" data-pct="6"></div></div>
+        <div class="bet-foot">5.5% of FCF. The cloud doesn't need new factories.</div>
+      </div>
+
+      <div class="bet-axis">
+        <span>$0</span><span>$1B</span><span>$2B</span><span>$3B</span>
+      </div>
+    </div>
+
+    <div class="pq">
+      "Conservatively leveraged: $2.99B debt against $7.80B equity, <span class="signal">6.3× interest coverage</span>, $1.50B in cash at hand."
+    </div>
+  </section>
+
+  <!-- ============ FOOTPRINT ============ -->
+  <section class="beat" data-screen-label="06 Footprint">
+    <div class="eyebrow"><span class="num">06</span><span class="glyph"></span> The map · revenue by region</div>
+    <h2 class="thesis thesis--sm">
+      Three quarters from <span class="it signal">one country.</span>
+    </h2>
+    <p class="lead">
+      An American business, mostly — with two outposts of growth across the Atlantic and the Pacific.
+    </p>
+
+    <div class="horizon" id="horizon">
+      <div class="horizon-bar us" data-h="100" style="height:0%;">
+        <div class="horizon-label" style="left:6px;">
+          <span class="pct">75<span class="small">%</span></span>
+          United States
+        </div>
+      </div>
+      <div class="horizon-bar eu" data-h="32" style="height:0%;">
+        <div class="horizon-label" style="left:50%; transform:translate(-50%, -100%);">
+          <span class="pct">17<span class="small">%</span></span>
+          Europe
+        </div>
+      </div>
+      <div class="horizon-bar apac" data-h="18" style="height:0%;">
+        <div class="horizon-label" style="right:0; left:auto;">
+          <span class="pct">8<span class="small">%</span></span>
+          APAC&nbsp;+&nbsp;ROW
+        </div>
+      </div>
+    </div>
+    <div class="horizon-foot">
+      <span>← west</span>
+      <span>east →</span>
+    </div>
+  </section>
+
+  <!-- ============ COMPETITION ============ -->
+  <section class="beat" data-screen-label="07 Competition">
+    <div class="eyebrow"><span class="num">07</span><span class="glyph"></span> Competition · sized by market cap</div>
+    <h2 class="thesis">
+      Three names<br>
+      sit <span class="it signal">across the table.</span>
+    </h2>
+    <p class="lead">
+      Bars below are scaled to market cap. Tap a row for context. <span class="it">One of these is bigger than Workday by a factor of three.</span>
+    </p>
+
+    <div class="comp-stack" id="compStack">
+
+      <!-- Self -->
+      <div class="comp-row" data-static>
+        <div class="comp-head">
+          <div class="comp-name">Workday <span style="color:var(--ink-3); font-size:14px; font-family: var(--font-mono); letter-spacing:0.1em;">· you</span></div>
+          <div class="comp-tick">WDAY</div>
+        </div>
+        <div class="comp-bar-row">
+          <div class="comp-bar"><div class="fill self" data-pct="29.3" style="width:0%"></div></div>
+          <div class="comp-cap">$31.6B<span class="it">·base</span></div>
+        </div>
+      </div>
+
+      <div class="comp-row" data-comp>
+        <div class="comp-head">
+          <div class="comp-name">Cognizant <span class="chev"></span></div>
+          <div class="comp-tick">CTSH</div>
+        </div>
+        <div class="comp-bar-row">
+          <div class="comp-bar"><div class="fill" data-pct="27.2" style="width:0%"></div></div>
+          <div class="comp-cap">$29.3B</div>
+        </div>
+        <div class="comp-desc">
+          Implementation and integration partner-turned-rival — Cognizant overlaps Workday's professional services and increasingly pitches itself as an alternative platform for HR and finance modernization.
+          <div style="margin-top:10px; font-family:var(--font-mono); font-size:11px; color:var(--ink-3); letter-spacing:0.06em;">
+            REV $21.1B · P/E 13.2 · YoY +6.95%
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-row" data-comp>
+        <div class="comp-head">
+          <div class="comp-name">Roper Tech. <span class="chev"></span></div>
+          <div class="comp-tick">ROP</div>
+        </div>
+        <div class="comp-bar-row">
+          <div class="comp-bar"><div class="fill" data-pct="34.5" style="width:0%"></div></div>
+          <div class="comp-cap">$37.2B</div>
+        </div>
+        <div class="comp-desc">
+          A portfolio of vertical SaaS businesses competing in workforce, financial, and data analytics — particularly in healthcare and government, segments where Workday is actively expanding.
+          <div style="margin-top:10px; font-family:var(--font-mono); font-size:11px; color:var(--ink-3); letter-spacing:0.06em;">
+            REV $7.9B · P/E 24.2 · YoY +12.26%
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-row" data-comp data-threat>
+        <div class="comp-head">
+          <div class="comp-name">ServiceNow <span class="chev"></span></div>
+          <div class="comp-tick">NOW</div>
+        </div>
+        <div class="comp-bar-row">
+          <div class="comp-bar"><div class="fill threat" data-pct="100" style="width:0%"></div></div>
+          <div class="comp-cap" style="font-weight:500;">$107.8B<span class="it">3.4×</span></div>
+        </div>
+        <div class="comp-desc">
+          The escalating threat. The Now Platform is encroaching on Workday's core HR workflows — onboarding, case management, agentic AI — pitching the same "unified system of record" Workday has held for two decades.
+          <div style="margin-top:10px; font-family:var(--font-mono); font-size:11px; color:var(--ink-3); letter-spacing:0.06em;">
+            REV $13.3B · P/E 61.7 · YoY +20.88%
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="threat-pull">
+      <div class="lab">The mirror</div>
+      <div class="txt">
+        ServiceNow's pitch — <span class="signal">"unified system of record for people and money"</span> — is the sentence Workday has spoken to itself for twenty years.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TAKEAWAY ============ -->
+  <section class="close" data-screen-label="08 Takeaway">
+    <div class="eyebrow"><span class="num">08</span><span class="glyph" style="background:var(--coral-300);"></span> The close</div>
+    <h2 class="h-final">
+      The page returns.<br>
+      <span class="it">Two columns.</span><br>
+      <span class="it">Same ones.</span>
+    </h2>
+    <p class="lead">
+      The thesis opened with <span class="it">people</span> and <span class="it">money.</span>
+      It closes on what's written between them — the <span class="it">15¢</span> that survives,
+      the <span class="it">$2.78B</span> in cash that doesn't, and the AI lines whose
+      <span class="it">ACV more than doubled</span> in a year.
+    </p>
+
+    <div class="close-cols">
+      <div>
+        <div class="label">Free cash flow</div>
+        <div class="num">$<span class="it">2.78</span>B</div>
+        <div class="sub">FY '26 · operating cash $2.94B</div>
+      </div>
+      <div class="close-divider"></div>
+      <div>
+        <div class="label">Net income</div>
+        <div class="num">$<span class="it">693</span>M</div>
+        <div class="sub">GAAP · EPS $2.47 (Q4)</div>
+      </div>
+    </div>
+
+    <div class="colophon">
+      <span>WDAY · FY '26</span>
+      <span>End of recap</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ===================== build dynamic visuals ===================== */
+
+// Fortune 500 grid — 500 cells, 65% lit (325)
+(function buildF500(){
+  const host = document.getElementById('f500');
+  const total = 500;
+  const lit = 325; // 65% of 500
+  // pseudo-shuffled positions deterministically
+  const litSet = new Set();
+  let seed = 7;
+  function rnd(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  while (litSet.size < lit) { litSet.add(Math.floor(rnd() * total)); }
+  for (let i = 0; i < total; i++) {
+    const c = document.createElement('div');
+    c.className = 'cell';
+    if (litSet.has(i)) c.dataset.lit = '1';
+    host.appendChild(c);
+  }
+})();
+
+// The Dollar — 100 pennies arranged in 10x10, colored by cost segments
+(function buildDollar(){
+  const grid = document.getElementById('dollarGrid');
+  const legend = document.getElementById('dollarLegend');
+  // Five categories from data. SBC noted as already-included (style differently).
+  const segments = [
+    { pct: 28, color: '#E8734A', label: 'Research & Development', note: '' },
+    { pct: 24, color: '#4F86C6', label: 'Cost of Revenue',         note: '' },
+    { pct: 20, color: '#6DBF82', label: 'Sales & Marketing',       note: '' },
+    { pct: 7,  color: '#A97DC9', label: 'General & Admin',         note: '' },
+    { pct: 13, color: '#F2C94C', label: 'Stock-Based Comp',        note: 'threaded through above' },
+    // Remaining 8 cents = the rest of operating expenses + interest etc, unbucketed.
+    { pct: 8,  color: 'var(--paper-3)', label: 'Other operating + interest', note: '', muted: true },
+  ];
+  // colored grid: lay first 28 R&D, then 24 COGS, etc., to 100 cents
+  // SBC is "threaded through" — we'll show it striped inside the others.
+  // For the actual grid, we use the "real" 79 cents of expense buckets + 8 other = 87, plus 13 SBC visualized as overlay.
+  // Simpler approach: lay the 4 hard categories (28+24+20+7=79), then 8 "other", then 13 SBC striped on top of the others.
+  const layCats = [
+    { pct: 28, color: '#E8734A' }, // R&D
+    { pct: 24, color: '#4F86C6' }, // COGS
+    { pct: 20, color: '#6DBF82' }, // S&M
+    { pct: 7,  color: '#A97DC9' }, // G&A
+    { pct: 8,  color: '#D6D2C8' }, // other (paper-3-ish)
+    { pct: 13, color: '#F2C94C' }, // SBC (visualized as separate cluster — informational)
+  ];
+  let placed = 0;
+  layCats.forEach(seg => {
+    for (let i = 0; i < seg.pct; i++) {
+      const p = document.createElement('div');
+      p.className = 'penny';
+      p.style.setProperty('--c', seg.color);
+      p.style.background = seg.color;
+      if (seg.color === '#F2C94C') {
+        // SBC: ringed to indicate "included above"
+        p.style.background = `repeating-linear-gradient(45deg, #F2C94C, #F2C94C 3px, #E5B82F 3px, #E5B82F 5px)`;
+      }
+      p.dataset.idx = placed;
+      grid.appendChild(p);
+      placed++;
+    }
+  });
+
+  // legend
+  segments.forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'legend-row';
+    row.innerHTML = `
+      <div class="swatch" style="background:${s.color === 'var(--paper-3)' ? 'var(--paper-3)' : s.color};${s.color === '#F2C94C' ? 'background:repeating-linear-gradient(45deg,#F2C94C,#F2C94C 2px,#E5B82F 2px,#E5B82F 4px);' : ''}"></div>
+      <div class="lbl">${s.label}${s.note ? ` <span style="color:var(--ink-3); font-size:11px; font-family:var(--font-mono);">· ${s.note}</span>` : ''}</div>
+      <div class="pct">${s.pct}¢</div>
+    `;
+    legend.appendChild(row);
+  });
+})();
+
+// Subscription pulse track
+(function buildPulse(){
+  const host = document.getElementById('pulseTrack');
+  // 24 bars, 92% subscription = 22 sub bars + 2 services bars at end
+  // We'll render with subtle height variation (heartbeat feel)
+  const bars = 32;
+  const subs = Math.round(bars * 0.92); // 29
+  for (let i = 0; i < bars; i++) {
+    const b = document.createElement('div');
+    b.className = 'pulse-bar';
+    if (i >= subs) b.classList.add('pro');
+    // heart-beat-like pattern: tall, short, tall-tall, short...
+    const phase = i % 4;
+    const heights = [44, 22, 36, 28];
+    b.style.height = heights[phase] + 'px';
+    host.appendChild(b);
+  }
+})();
+
+/* ===================== scroll progress ===================== */
+const progressBar = document.getElementById('progressBar');
+function onScroll() {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const pct = max > 0 ? Math.min(100, (h.scrollTop / max) * 100) : 0;
+  progressBar.style.width = pct + '%';
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+/* ===================== reveal observer ===================== */
+const revObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      // count-ups
+      e.target.querySelectorAll('.countup').forEach(runCountUp);
+      // bet bars
+      e.target.querySelectorAll('.bet-bar .fill').forEach(f => {
+        const pct = parseFloat(f.dataset.pct || 0);
+        f.style.width = pct + '%';
+      });
+      // comp bars
+      e.target.querySelectorAll('.comp-bar .fill').forEach(f => {
+        const pct = parseFloat(f.dataset.pct || 0);
+        f.style.width = pct + '%';
+      });
+      // F500 dots — staggered fill
+      const f500 = e.target.querySelector('#f500');
+      if (f500 && !f500.dataset.lit) {
+        f500.dataset.lit = '1';
+        const cells = f500.querySelectorAll('.cell');
+        cells.forEach((c, i) => {
+          if (c.dataset.lit) {
+            setTimeout(() => c.classList.add('on'), 8 * i + 200);
+          }
+        });
+      }
+      // Dollar pennies — staggered
+      const dw = e.target.querySelector('#dollarGrid');
+      if (dw && !dw.dataset.played) {
+        dw.dataset.played = '1';
+        const pennies = dw.querySelectorAll('.penny');
+        pennies.forEach((p, i) => {
+          setTimeout(() => p.classList.add('in'), 14 * i);
+        });
+      }
+      // Horizon bars
+      const horizon = e.target.querySelector('#horizon') || (e.target.id === 'horizon' ? e.target : null);
+      revObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.18 });
+document.querySelectorAll('[data-rev]').forEach(el => {
+  el.classList.add('reveal');
+  revObs.observe(el);
+});
+
+// Horizon: separate observer (simpler)
+const horizonObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.horizon-bar').forEach(b => {
+        const h = parseFloat(b.dataset.h || 0);
+        b.style.height = h + '%';
+      });
+      horizonObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.25 });
+const horizon = document.getElementById('horizon');
+if (horizon) horizonObs.observe(horizon);
+
+/* ===================== count-up ===================== */
+function runCountUp(el) {
+  if (el.dataset.done) return;
+  el.dataset.done = '1';
+  const to = parseFloat(el.dataset.to);
+  const decimals = parseInt(el.dataset.decimals || '0', 10);
+  const suffix = el.dataset.suffix || '';
+  const dur = 1100;
+  const start = performance.now();
+  function fmt(n) {
+    if (decimals > 0) return n.toFixed(decimals);
+    if (to >= 1000) return Math.round(n).toLocaleString('en-US');
+    return Math.round(n).toString();
+  }
+  function tick(now) {
+    const t = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - t, 3);
+    const v = to * eased;
+    el.textContent = fmt(v) + suffix;
+    if (t < 1) requestAnimationFrame(tick);
+    else el.textContent = fmt(to) + suffix;
+  }
+  el.textContent = fmt(0) + suffix;
+  requestAnimationFrame(tick);
+}
+
+/* ===================== competitor expand ===================== */
+document.querySelectorAll('.comp-row[data-comp]').forEach(row => {
+  row.addEventListener('click', () => row.classList.toggle('open'));
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1717 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>WAB · Recap FY '25</title>
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  /* ---------- Wabtec adaptation of the Zair system ---------- */
+  :root {
+    /* Override accent palette for this artifact: rail-industrial */
+    --signal:        #E8A33B;   /* signal-amber: primary accent, the locomotive headlamp */
+    --signal-soft:   #F2C271;
+    --signal-deep:   #B07418;
+    --steel:         #2F4858;   /* steel blue, secondary */
+    --steel-2:       #4A6B7E;
+    --rust:          #B45826;   /* freight rust, used very sparingly */
+
+    /* Re-bind page surfaces — keep paper warmth */
+    --bg:            #F4F0E6;   /* warmer than paper, "newsprint" */
+    --bg-2:          #EAE3D2;
+    --bg-3:          #DCD2BB;
+    --ink:           #1A1814;
+    --ink-2:         #3A352C;
+    --ink-3:         #6A6357;
+    --ink-4:         #9C947F;
+    --line:          #D6CCB3;
+    --line-strong:   #BBAD8C;
+
+    /* Dark band for "the bet" */
+    --night:         #0E1418;
+    --night-2:       #1A2429;
+    --night-line:    #2A3640;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; background: #2A2620; }
+  body {
+    font-family: var(--font-sans);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* The stage: a centered mobile column on desktop, full bleed on phones */
+  .page {
+    position: relative;
+    width: 100%;
+    max-width: 412px;
+    margin: 0 auto;
+    background: var(--bg);
+    color: var(--ink);
+    overflow: hidden;
+    min-height: 100vh;
+    /* faint paper grain */
+    background-image:
+      radial-gradient(rgba(26,24,20,0.025) 1px, transparent 1px),
+      radial-gradient(rgba(26,24,20,0.018) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+  }
+
+  /* ---------- Sticky chrome ---------- */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(244,240,230,0.78);
+    backdrop-filter: blur(14px) saturate(1.15);
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+    border-bottom: 1px solid rgba(214,204,179,0.55);
+  }
+  .chrome-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px 10px;
+  }
+  .chrome-tick {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 3px 7px;
+    border-radius: 3px;
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .chrome-recap {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .chrome-progress {
+    height: 1.5px;
+    background: var(--line);
+    position: relative;
+  }
+  .chrome-progress::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    width: var(--scroll, 0%);
+    background: var(--signal);
+    transition: width 80ms linear;
+  }
+
+  /* ---------- Eyebrows + reset beats ---------- */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .eyebrow .sig { color: var(--signal-deep); }
+  .eyebrow .dot { color: var(--ink-4); margin: 0 6px; }
+
+  .reset {
+    padding: 56px 28px 56px;
+    background: var(--bg-2);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .reset .quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.18;
+    color: var(--ink-2);
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+  }
+  .reset .quote em { font-style: italic; color: var(--signal-deep); }
+  .reset .mark {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .reset .mark::before {
+    content: '';
+    display: inline-block;
+    width: 22px;
+    height: 1px;
+    background: var(--ink-4);
+  }
+
+  /* ---------- Sections ---------- */
+  section { padding: 0; position: relative; }
+  .pad { padding: 60px 28px; }
+  .pad-x { padding-left: 28px; padding-right: 28px; }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 28px 28px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-eyebrow { margin-bottom: 28px; }
+  .hero-year {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .hero-h1 {
+    font-family: var(--font-display);
+    font-size: 62px;
+    line-height: 0.92;
+    font-weight: 400;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin: 0 0 18px;
+  }
+  .hero-h1 em {
+    font-style: italic;
+    color: var(--signal-deep);
+  }
+  .hero-sub {
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 320px;
+    margin-bottom: 36px;
+  }
+  .hero-sub em { font-family: var(--font-display); font-style: italic; color: var(--signal-deep); }
+
+  /* The locomotive scene */
+  .loco-scene {
+    position: relative;
+    height: 220px;
+    margin: 0 -28px;
+  }
+  .loco-scene svg { display: block; width: 100%; height: 100%; }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 18px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .stat .stat-num {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .stat .stat-num em { font-style: italic; color: var(--signal-deep); }
+  .stat .stat-lbl {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 6px;
+  }
+
+  /* ---------- Business: two tracks ---------- */
+  .tracks {
+    padding: 64px 0 60px;
+    background: var(--bg);
+    position: relative;
+  }
+  .tracks .head { padding: 0 28px; margin-bottom: 28px; }
+  .tracks h2 {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.02;
+    margin: 14px 0 0;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .tracks h2 em { font-style: italic; color: var(--signal-deep); }
+  .tracks .lead {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    margin-top: 16px;
+    max-width: 320px;
+    padding: 0 28px;
+  }
+  .tracks .lead em { font-family: var(--font-display); font-style: italic; color: var(--signal-deep); font-size: 16px; }
+
+  .track-row {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 14px;
+    align-items: stretch;
+    padding: 24px 28px;
+    border-top: 1px solid var(--line);
+    position: relative;
+  }
+  .track-row:last-of-type { border-bottom: 1px solid var(--line); }
+  .track-row .pct {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.95;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+  }
+  .track-row .pct em { font-style: italic; color: var(--signal-deep); }
+  .track-row .pct .pctmark {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--ink-3);
+    vertical-align: 16px;
+    margin-left: 1px;
+  }
+  .track-row .seg-name {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+  .track-row .desc {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+
+  /* ---------- Scale section: count-up ---------- */
+  .scale {
+    padding: 70px 28px 60px;
+    background: var(--bg);
+  }
+  .scale .big {
+    font-family: var(--font-display);
+    font-size: 88px;
+    line-height: 0.9;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    margin: 16px 0 6px;
+  }
+  .scale .big em { font-style: italic; color: var(--signal-deep); }
+  .scale .big-sub {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .scale .delta {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-top: 18px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--signal-deep);
+    letter-spacing: 0.04em;
+  }
+  .scale .delta-arrow { font-size: 10px; }
+  .scale .delta em { font-family: var(--font-display); font-style: italic; font-size: 18px; color: var(--signal-deep); letter-spacing: -0.01em; }
+
+  .scale-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 18px;
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+  .scale-grid .num {
+    font-family: var(--font-display);
+    font-size: 34px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .scale-grid .num em { font-style: italic; }
+  .scale-grid .lbl {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  /* ---------- Costs: freight train ---------- */
+  .costs {
+    padding: 70px 0 64px;
+    background: var(--bg-2);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .costs .head { padding: 0 28px; margin-bottom: 36px; }
+  .costs h2 {
+    font-family: var(--font-display);
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 14px 0 0;
+  }
+  .costs h2 em { font-style: italic; color: var(--signal-deep); }
+  .costs .lead {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    margin-top: 14px;
+    max-width: 320px;
+    padding: 0 28px;
+  }
+
+  .train-stage {
+    position: relative;
+    padding: 0 0 8px;
+  }
+  .train-rail {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 24px;
+    height: 6px;
+    background: linear-gradient(180deg, #5C5345 0%, #2C2920 50%, #5C5345 100%);
+    border-top: 1px solid #847866;
+    border-bottom: 1px solid #1A1814;
+    z-index: 0;
+  }
+  .train-ties {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 12px;
+    height: 12px;
+    background-image: repeating-linear-gradient(
+      90deg,
+      #4A4232 0,
+      #4A4232 14px,
+      transparent 14px,
+      transparent 26px
+    );
+    z-index: 0;
+  }
+  .train {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    padding: 0 16px 30px;
+    overflow-x: visible;
+  }
+  .car {
+    position: relative;
+    height: 84px;
+    border-radius: 3px 3px 1px 1px;
+    box-shadow: inset 0 -3px 0 rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.18), 0 2px 0 rgba(0,0,0,0.2);
+    flex-shrink: 0;
+    transition: transform 320ms var(--ease-out), opacity 320ms var(--ease-out);
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  .car.in { transform: translateY(0); opacity: 1; }
+  .car-meta {
+    position: absolute;
+    top: -42px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    pointer-events: none;
+  }
+  .car-pct {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .car-lbl {
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 4px;
+    white-space: nowrap;
+  }
+  .car-wheels {
+    position: absolute;
+    bottom: -10px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 8px;
+  }
+  .wheel {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #1A1814;
+    border: 2px solid #847866;
+    box-shadow: inset 0 0 0 2px #1A1814, 0 1px 0 rgba(0,0,0,0.4);
+  }
+  .car-band {
+    position: absolute;
+    left: 6px; right: 6px;
+    top: 28%;
+    height: 1px;
+    background: rgba(0,0,0,0.22);
+  }
+
+  /* The locomotive at the head */
+  .loco-head {
+    position: relative;
+    z-index: 1;
+    width: 78px;
+    height: 96px;
+    flex-shrink: 0;
+    margin-right: 6px;
+  }
+
+  .train-caption {
+    padding: 28px 28px 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--ink-2);
+    border-top: 1px solid var(--line);
+    margin: 22px 28px 0;
+    padding: 22px 0 0;
+  }
+  .train-caption em { color: var(--signal-deep); }
+  .train-caption strong {
+    font-family: var(--font-display);
+    font-style: normal;
+    color: var(--ink);
+    font-weight: 400;
+  }
+
+  /* ---------- Footprint ---------- */
+  .footprint {
+    padding: 70px 28px 60px;
+    background: var(--bg);
+  }
+  .footprint h2 {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 14px 0 0;
+  }
+  .footprint h2 em { font-style: italic; color: var(--signal-deep); }
+  .footprint .lead {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    margin-top: 14px;
+    max-width: 320px;
+  }
+
+  .geo-rows {
+    margin-top: 36px;
+    border-top: 1px solid var(--line);
+  }
+  .geo-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 0 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .geo-pct {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    width: 70px;
+  }
+  .geo-pct em { font-style: italic; color: var(--signal-deep); }
+  .geo-pct .pm { font-size: 16px; color: var(--ink-3); vertical-align: 12px; }
+  .geo-name {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .geo-bar {
+    grid-column: 2 / 4;
+    margin-top: 10px;
+    height: 6px;
+    background: var(--bg-3);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+  }
+  .geo-row { grid-template-columns: auto 1fr; }
+  .geo-bar-fill {
+    height: 100%;
+    background: var(--signal);
+    width: 0;
+    transition: width 1100ms var(--ease-out);
+    border-radius: 999px;
+  }
+  .geo-bar-fill.steel { background: var(--steel); }
+  .geo-bar-fill.steel2 { background: var(--steel-2); }
+  .geo-bar-fill.muted { background: var(--ink-4); }
+  .geo-meta {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+
+  /* ---------- The bet (dark interlude) ---------- */
+  .bet {
+    background: var(--night);
+    color: #E8E2D2;
+    padding: 84px 28px 80px;
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid var(--line-strong);
+  }
+  .bet::before {
+    /* faint signal-dot grid */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(232,163,59,0.08) 1px, transparent 1.5px);
+    background-size: 18px 18px;
+    pointer-events: none;
+  }
+  .bet .eyebrow { color: var(--signal); position: relative; }
+  .bet h2 {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    margin: 14px 0 0;
+    color: #F4EFE0;
+    position: relative;
+  }
+  .bet h2 em { font-style: italic; color: var(--signal); }
+  .bet .lead {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: #BFB8A4;
+    margin-top: 18px;
+    max-width: 320px;
+    position: relative;
+  }
+  .bet .lead em { font-family: var(--font-display); font-style: italic; color: var(--signal); font-size: 16px; }
+
+  .timeline {
+    position: relative;
+    margin-top: 44px;
+    padding-left: 22px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: linear-gradient(180deg, transparent 0%, var(--signal) 8%, var(--signal) 92%, transparent 100%);
+    opacity: 0.55;
+  }
+  .tl-row {
+    position: relative;
+    padding: 14px 0 14px;
+  }
+  .tl-row + .tl-row { border-top: 1px solid #21302E; }
+  .tl-row::before {
+    content: '';
+    position: absolute;
+    left: -22px;
+    top: 22px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--night);
+    border: 1.5px solid var(--signal);
+    box-shadow: 0 0 0 4px rgba(232,163,59,0.12);
+  }
+  .tl-row.alt::before { background: var(--signal); }
+  .tl-date {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--signal);
+  }
+  .tl-amount {
+    font-family: var(--font-display);
+    font-size: 28px;
+    line-height: 1.05;
+    color: #F4EFE0;
+    letter-spacing: -0.02em;
+    margin-top: 4px;
+  }
+  .tl-amount em { font-style: italic; color: var(--signal); }
+  .tl-desc {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.5;
+    color: #B8B1A0;
+    margin-top: 4px;
+  }
+
+  .bet-balance {
+    margin-top: 44px;
+    padding-top: 28px;
+    border-top: 1px solid #21302E;
+  }
+  .bet-balance-lbl {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #8A8472;
+    margin-bottom: 16px;
+  }
+  .scale-bar {
+    position: relative;
+    height: 90px;
+    display: flex;
+    align-items: flex-end;
+  }
+  .scale-pillar {
+    flex: 1;
+    background: linear-gradient(180deg, var(--signal) 0%, var(--signal-deep) 100%);
+    height: 39%;
+    margin-right: 4px;
+    border-radius: 2px 2px 0 0;
+    position: relative;
+  }
+  .scale-pillar.eq {
+    background: linear-gradient(180deg, #C9C0AC 0%, #8A8474 100%);
+    height: 100%;
+    margin-right: 0;
+  }
+  .scale-pillar .pl-cap {
+    position: absolute;
+    top: -36px;
+    left: 0;
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: #F4EFE0;
+    line-height: 1;
+  }
+  .scale-pillar .pl-lbl {
+    position: absolute;
+    bottom: -22px;
+    left: 0;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8A8472;
+    white-space: nowrap;
+  }
+  .scale-pillar.eq .pl-cap { color: #F4EFE0; }
+  .scale-pillar.eq .pl-lbl { color: #8A8472; }
+
+  .bet-cf {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 18px;
+    margin-top: 56px;
+  }
+  .bet-cf .num {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+    color: #F4EFE0;
+    letter-spacing: -0.02em;
+  }
+  .bet-cf .num em { font-style: italic; color: var(--signal); }
+  .bet-cf .lbl {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8A8472;
+    margin-top: 6px;
+  }
+
+  /* ---------- Competition ---------- */
+  .compete {
+    padding: 70px 28px 60px;
+    background: var(--bg);
+  }
+  .compete h2 {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 14px 0 0;
+  }
+  .compete h2 em { font-style: italic; color: var(--signal-deep); }
+  .compete .lead {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    margin-top: 14px;
+    max-width: 320px;
+  }
+
+  .compete-stage {
+    margin-top: 44px;
+    position: relative;
+  }
+  .comp-row {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 14px;
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+    align-items: center;
+  }
+  .comp-row:last-child { border-bottom: 1px solid var(--line); }
+  .comp-row.self {
+    background: rgba(232,163,59,0.08);
+    margin: 0 -28px;
+    padding: 18px 28px;
+    border-color: rgba(232,163,59,0.5);
+  }
+  .comp-tick {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    background: var(--bg-3);
+    padding: 4px 8px;
+    border-radius: 3px;
+    text-align: center;
+    align-self: start;
+    margin-top: 2px;
+  }
+  .comp-row.self .comp-tick { background: var(--ink); color: var(--bg); }
+  .comp-name {
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .comp-meta {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+  .comp-bar {
+    grid-column: 1 / 3;
+    margin-top: 12px;
+    height: 24px;
+    position: relative;
+    background: var(--bg-2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .comp-bar-fill {
+    position: absolute;
+    inset: 0;
+    width: 0;
+    background: var(--ink-4);
+    border-right: 2px solid var(--ink);
+    transition: width 1200ms var(--ease-out);
+  }
+  .comp-row.self .comp-bar-fill { background: var(--signal); border-right-color: var(--signal-deep); }
+  .comp-bar-cap {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    z-index: 2;
+    font-weight: 500;
+  }
+  .comp-rel {
+    margin-top: 12px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    grid-column: 1 / 3;
+  }
+  .comp-rel em { font-family: var(--font-display); font-style: italic; color: var(--signal-deep); font-size: 14px; }
+  .comp-stats {
+    grid-column: 1 / 3;
+    display: flex;
+    gap: 18px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+  }
+  .comp-stats .cs {
+    flex: 1;
+  }
+  .comp-stats .cs-num {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .comp-stats .cs-lbl {
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+
+  /* ---------- Close ---------- */
+  .close {
+    padding: 96px 28px 80px;
+    background: var(--bg);
+    position: relative;
+    border-top: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .close .eyebrow { color: var(--signal-deep); }
+  .close h1 {
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin: 24px 0 24px;
+  }
+  .close h1 em { font-style: italic; color: var(--signal-deep); }
+  .close .kicker {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--ink-2);
+    max-width: 340px;
+    margin-bottom: 36px;
+  }
+  .close .kicker em { color: var(--signal-deep); font-style: italic; }
+  .close-stat {
+    margin-top: 32px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .close-stat .num {
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.95;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+  }
+  .close-stat .num em { font-style: italic; color: var(--signal-deep); }
+  .close-stat .lbl {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    line-height: 1.4;
+    flex: 1;
+  }
+  .close-foot {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+
+  /* ---------- Reveal animations ---------- */
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal.d1 { transition-delay: 80ms; }
+  .reveal.d2 { transition-delay: 160ms; }
+  .reveal.d3 { transition-delay: 240ms; }
+  .reveal.d4 { transition-delay: 320ms; }
+
+  /* The hero loco's smoke + headlamp */
+  @keyframes lampPulse {
+    0%, 100% { opacity: 0.85; }
+    50% { opacity: 1; }
+  }
+  @keyframes smoke1 {
+    0% { transform: translate(0,0) scale(1); opacity: 0; }
+    20% { opacity: 0.65; }
+    100% { transform: translate(-12px,-50px) scale(1.5); opacity: 0; }
+  }
+  @keyframes smoke2 {
+    0% { transform: translate(0,0) scale(0.8); opacity: 0; }
+    25% { opacity: 0.45; }
+    100% { transform: translate(8px,-44px) scale(1.4); opacity: 0; }
+  }
+  .smoke-a { animation: smoke1 3.4s ease-out infinite; transform-origin: center; }
+  .smoke-b { animation: smoke2 4.1s ease-out infinite; animation-delay: 1.2s; transform-origin: center; }
+  .smoke-c { animation: smoke1 3.8s ease-out infinite; animation-delay: 0.6s; transform-origin: center; }
+  .lamp { animation: lampPulse 2.4s ease-in-out infinite; transform-origin: center; }
+
+  /* parallax landscape (hero) */
+  @keyframes wheelSpin {
+    to { transform: rotate(-360deg); }
+  }
+  .wheelspin { animation: wheelSpin 2.6s linear infinite; transform-origin: center; transform-box: fill-box; }
+  .wheelspin-fast { animation: wheelSpin 1.6s linear infinite; transform-origin: center; transform-box: fill-box; }
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <!-- ========== STICKY CHROME ========== -->
+  <div class="chrome">
+    <div class="chrome-row">
+      <span class="chrome-tick">WAB</span>
+      <span class="chrome-name">Wabtec</span>
+      <span class="chrome-recap">RECAP · FY '25</span>
+    </div>
+    <div class="chrome-progress"></div>
+  </div>
+
+  <!-- ========== HERO ========== -->
+  <section class="hero">
+    <div class="hero-eyebrow eyebrow">
+      <span class="sig">●</span> &nbsp;CH. 01<span class="dot">·</span>The thesis
+    </div>
+    <div class="hero-year">Pittsburgh, PA<span style="margin: 0 8px; color: var(--ink-4);">·</span>Est. 1869</div>
+    <h1 class="hero-h1">
+      Air brakes<br/>
+      that <em>still</em><br/>
+      move the<br/>
+      world.
+    </h1>
+    <p class="hero-sub">
+      <em>One hundred fifty-six years</em> after George Westinghouse invented the railway air brake, the company he started is <em>still</em> the brake — a $44.5B builder of locomotives, signals, and the software that runs the rails.
+    </p>
+
+    <!-- Locomotive scene -->
+    <div class="loco-scene" aria-hidden="true">
+      <svg viewBox="0 0 412 220" preserveAspectRatio="xMidYMid meet">
+        <!-- horizon -->
+        <defs>
+          <linearGradient id="skyGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#F4EEDE"/>
+            <stop offset="100%" stop-color="#E8DFC6"/>
+          </linearGradient>
+          <linearGradient id="bodyGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#3A4F5C"/>
+            <stop offset="50%" stop-color="#2F4858"/>
+            <stop offset="100%" stop-color="#1F3340"/>
+          </linearGradient>
+          <radialGradient id="lampGrad" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0%" stop-color="#FFE8B5" stop-opacity="0.95"/>
+            <stop offset="40%" stop-color="#E8A33B" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#E8A33B" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="railGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#9C947F"/>
+            <stop offset="50%" stop-color="#5A5446"/>
+            <stop offset="100%" stop-color="#9C947F"/>
+          </linearGradient>
+        </defs>
+
+        <rect x="0" y="0" width="412" height="220" fill="url(#skyGrad)"/>
+
+        <!-- distant hills -->
+        <path d="M0,160 Q100,140 200,150 T412,148 L412,180 L0,180 Z" fill="#D6CCB3" opacity="0.6"/>
+        <path d="M0,170 Q120,156 240,166 T412,164 L412,180 L0,180 Z" fill="#BBAD8C" opacity="0.55"/>
+
+        <!-- ties -->
+        <g>
+          <rect x="-2" y="180" width="416" height="6" fill="#5A4D38"/>
+          <g fill="#3A2F20">
+            <rect x="-4" y="186" width="22" height="10"/>
+            <rect x="22" y="186" width="22" height="10"/>
+            <rect x="48" y="186" width="22" height="10"/>
+            <rect x="74" y="186" width="22" height="10"/>
+            <rect x="100" y="186" width="22" height="10"/>
+            <rect x="126" y="186" width="22" height="10"/>
+            <rect x="152" y="186" width="22" height="10"/>
+            <rect x="178" y="186" width="22" height="10"/>
+            <rect x="204" y="186" width="22" height="10"/>
+            <rect x="230" y="186" width="22" height="10"/>
+            <rect x="256" y="186" width="22" height="10"/>
+            <rect x="282" y="186" width="22" height="10"/>
+            <rect x="308" y="186" width="22" height="10"/>
+            <rect x="334" y="186" width="22" height="10"/>
+            <rect x="360" y="186" width="22" height="10"/>
+            <rect x="386" y="186" width="22" height="10"/>
+          </g>
+        </g>
+        <!-- twin rails -->
+        <rect x="0" y="195" width="412" height="2.5" fill="url(#railGrad)"/>
+        <rect x="0" y="200" width="412" height="2.5" fill="url(#railGrad)"/>
+
+        <!-- locomotive body -->
+        <g transform="translate(60,72)">
+          <!-- smoke -->
+          <g fill="#CFC6B0">
+            <circle class="smoke-a" cx="48" cy="-4" r="9"/>
+            <circle class="smoke-b" cx="56" cy="0" r="7"/>
+            <circle class="smoke-c" cx="42" cy="6" r="6"/>
+          </g>
+          <!-- stack -->
+          <rect x="38" y="6" width="14" height="14" fill="#1F3340"/>
+          <rect x="36" y="6" width="18" height="3" fill="#4A6B7E"/>
+
+          <!-- main hood -->
+          <rect x="20" y="20" width="180" height="48" rx="3" fill="url(#bodyGrad)"/>
+          <!-- side trim -->
+          <rect x="20" y="30" width="180" height="1.5" fill="#5A7787" opacity="0.7"/>
+          <rect x="20" y="58" width="180" height="1.5" fill="#0E1A22" opacity="0.7"/>
+
+          <!-- cab -->
+          <path d="M150,2 L200,2 L210,20 L210,68 L150,68 Z" fill="url(#bodyGrad)"/>
+          <rect x="158" y="8" width="44" height="22" rx="2" fill="#7BA3BA" opacity="0.9"/>
+          <rect x="158" y="8" width="44" height="22" rx="2" fill="none" stroke="#0E1A22" stroke-width="1"/>
+          <line x1="180" y1="8" x2="180" y2="30" stroke="#0E1A22" stroke-width="0.8"/>
+
+          <!-- side detailing -->
+          <g fill="#0E1A22" opacity="0.45">
+            <rect x="30" y="36" width="12" height="14" rx="1"/>
+            <rect x="48" y="36" width="12" height="14" rx="1"/>
+            <rect x="66" y="36" width="12" height="14" rx="1"/>
+            <rect x="84" y="36" width="12" height="14" rx="1"/>
+            <rect x="102" y="36" width="12" height="14" rx="1"/>
+            <rect x="120" y="36" width="12" height="14" rx="1"/>
+          </g>
+          <!-- cooling fan circle -->
+          <circle cx="38" cy="28" r="4" fill="#0E1A22" opacity="0.6"/>
+
+          <!-- nose -->
+          <path d="M0,30 L20,20 L20,68 L0,68 Z" fill="url(#bodyGrad)"/>
+          <!-- headlamp (pulsing) -->
+          <g class="lamp">
+            <circle cx="3" cy="34" r="9" fill="url(#lampGrad)"/>
+            <circle cx="3" cy="34" r="3.5" fill="#FFE8B5"/>
+            <circle cx="3" cy="34" r="2" fill="#FFFAE7"/>
+          </g>
+          <!-- WAB plate -->
+          <rect x="78" y="42" width="44" height="12" rx="1" fill="#E8A33B"/>
+          <text x="100" y="51" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" font-weight="700" fill="#1A1814" letter-spacing="2">WAB</text>
+
+          <!-- coupler -->
+          <rect x="-4" y="58" width="6" height="6" fill="#1A1814"/>
+
+          <!-- chassis -->
+          <rect x="-2" y="68" width="214" height="8" fill="#1A1814"/>
+
+          <!-- wheels -->
+          <g>
+            <g class="wheelspin" transform="translate(20,84)">
+              <circle r="10" fill="#0A0F12" stroke="#5A6E7C" stroke-width="2"/>
+              <circle r="3.5" fill="#5A6E7C"/>
+              <line x1="-8" y1="0" x2="8" y2="0" stroke="#3A4F5C" stroke-width="1.2"/>
+              <line x1="0" y1="-8" x2="0" y2="8" stroke="#3A4F5C" stroke-width="1.2"/>
+            </g>
+            <g class="wheelspin" transform="translate(60,84)">
+              <circle r="10" fill="#0A0F12" stroke="#5A6E7C" stroke-width="2"/>
+              <circle r="3.5" fill="#5A6E7C"/>
+              <line x1="-8" y1="0" x2="8" y2="0" stroke="#3A4F5C" stroke-width="1.2"/>
+              <line x1="0" y1="-8" x2="0" y2="8" stroke="#3A4F5C" stroke-width="1.2"/>
+            </g>
+            <g class="wheelspin" transform="translate(140,84)">
+              <circle r="10" fill="#0A0F12" stroke="#5A6E7C" stroke-width="2"/>
+              <circle r="3.5" fill="#5A6E7C"/>
+              <line x1="-8" y1="0" x2="8" y2="0" stroke="#3A4F5C" stroke-width="1.2"/>
+              <line x1="0" y1="-8" x2="0" y2="8" stroke="#3A4F5C" stroke-width="1.2"/>
+            </g>
+            <g class="wheelspin" transform="translate(180,84)">
+              <circle r="10" fill="#0A0F12" stroke="#5A6E7C" stroke-width="2"/>
+              <circle r="3.5" fill="#5A6E7C"/>
+              <line x1="-8" y1="0" x2="8" y2="0" stroke="#3A4F5C" stroke-width="1.2"/>
+              <line x1="0" y1="-8" x2="0" y2="8" stroke="#3A4F5C" stroke-width="1.2"/>
+            </g>
+          </g>
+          <!-- connecting rod -->
+          <line x1="20" y1="84" x2="60" y2="84" stroke="#5A6E7C" stroke-width="2" opacity="0.8"/>
+          <line x1="140" y1="84" x2="180" y2="84" stroke="#5A6E7C" stroke-width="2" opacity="0.8"/>
+        </g>
+
+        <!-- distance shimmer in front of lamp -->
+        <ellipse cx="50" cy="106" rx="38" ry="5" fill="#E8A33B" opacity="0.12"/>
+      </svg>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num"><em>$11.17</em>B</div>
+        <div class="stat-lbl">FY'25 Revenue</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">$44.5<em>B</em></div>
+        <div class="stat-lbl">Market Cap</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num"><em>156</em></div>
+        <div class="stat-lbl">Years standing</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">~<em>29</em>k</div>
+        <div class="stat-lbl">Employees worldwide</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RESET 1 ========== -->
+  <div class="reset">
+    <div class="mark">Interlude · 01</div>
+    <div class="quote">
+      The hardest part of moving freight isn't moving it. <em>It's stopping it.</em>
+    </div>
+  </div>
+
+  <!-- ========== BUSINESS: TWO TRACKS ========== -->
+  <section class="tracks">
+    <div class="head">
+      <div class="eyebrow"><span class="sig">02</span> &nbsp;The business <span class="dot">·</span>Two tracks</div>
+      <h2>One company,<br/>running on <em>two rails.</em></h2>
+      <p class="lead" style="padding:0;margin-top:16px;">Wabtec splits its $11.17B in revenue across two segments — <em>freight</em> that hauls the economy and <em>transit</em> that moves the city.</p>
+    </div>
+
+    <div class="track-row">
+      <div class="pct">~<em>74</em><span class="pctmark">%</span></div>
+      <div>
+        <div class="seg-name">Segment 01 · Freight</div>
+        <div class="desc">New &amp; modernized diesel-electric locomotives, aftermarket parts and services, plus rail control and digital intelligence — Positive Train Control, Trip Optimizer.</div>
+      </div>
+    </div>
+    <div class="track-row">
+      <div class="pct">~<em>26</em><span class="pctmark">%</span></div>
+      <div>
+        <div class="seg-name">Segment 02 · Transit</div>
+        <div class="desc">Braking systems, HVAC, doors, signaling, and passenger information for commuter and urban rail. The quieter, more recurring half.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SCALE ========== -->
+  <section class="scale">
+    <div class="eyebrow reveal"><span class="sig">03</span> &nbsp;The scale <span class="dot">·</span>$11.17B</div>
+    <div class="big reveal d1" data-count-to="11.17" data-prefix="$" data-suffix="B">$<span class="cnum">0.00</span>B</div>
+    <div class="big-sub reveal d1">FY'25 revenue</div>
+    <div class="delta reveal d2"><span class="delta-arrow">▲</span> <em>+7.51%</em> &nbsp;year over year</div>
+
+    <div class="scale-grid">
+      <div class="reveal d1">
+        <div class="num"><em>34.1</em>%</div>
+        <div class="lbl">Gross margin</div>
+      </div>
+      <div class="reveal d2">
+        <div class="num"><em>16.1</em>%</div>
+        <div class="lbl">Operating margin</div>
+      </div>
+      <div class="reveal d3">
+        <div class="num">$<em>2.95</em>B</div>
+        <div class="lbl">Q1 '26 revenue</div>
+      </div>
+      <div class="reveal d4">
+        <div class="num">$<em>2.71</em></div>
+        <div class="lbl">Q1 '26 EPS</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RESET 2 ========== -->
+  <div class="reset">
+    <div class="mark">Interlude · 02</div>
+    <div class="quote">
+      Every dollar that rolls in <em>has to roll out</em> — and most of it goes back into steel, into wheels, into the things that <em>actually move.</em>
+    </div>
+  </div>
+
+  <!-- ========== COSTS: FREIGHT TRAIN ========== -->
+  <section class="costs">
+    <div class="head">
+      <div class="eyebrow"><span class="sig">04</span> &nbsp;Where the dollar goes <span class="dot">·</span>The cost train</div>
+      <h2>For every <em>$1</em><br/>of revenue&hellip;</h2>
+      <p class="lead" style="padding:0;margin-top:14px;">Each freight car is sized to its share of total cost. The locomotive at the head pulls the whole train.</p>
+    </div>
+
+    <div class="train-stage">
+      <div class="train-rail"></div>
+      <div class="train-ties"></div>
+      <div class="train" id="costTrain">
+        <!-- Locomotive head -->
+        <div class="loco-head" aria-hidden="true">
+          <svg viewBox="0 0 78 96" width="78" height="96">
+            <defs>
+              <linearGradient id="locoMini" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#3A4F5C"/>
+                <stop offset="100%" stop-color="#1F3340"/>
+              </linearGradient>
+            </defs>
+            <!-- stack -->
+            <rect x="20" y="14" width="8" height="10" fill="#1F3340"/>
+            <!-- hood -->
+            <rect x="6" y="24" width="60" height="34" rx="2" fill="url(#locoMini)"/>
+            <!-- cab -->
+            <path d="M48,8 L66,8 L70,24 L70,58 L48,58 Z" fill="url(#locoMini)"/>
+            <rect x="52" y="14" width="14" height="12" fill="#7BA3BA"/>
+            <!-- nose taper -->
+            <path d="M0,32 L6,24 L6,58 L0,58 Z" fill="url(#locoMini)"/>
+            <!-- headlamp -->
+            <circle cx="2" cy="36" r="2.5" fill="#FFE8B5"/>
+            <!-- WAB plate -->
+            <rect x="22" y="36" width="22" height="8" rx="1" fill="#E8A33B"/>
+            <text x="33" y="42" text-anchor="middle" font-family="Geist Mono, monospace" font-size="6" font-weight="700" fill="#1A1814">WAB</text>
+            <!-- chassis -->
+            <rect x="0" y="58" width="70" height="6" fill="#1A1814"/>
+            <!-- wheels -->
+            <circle cx="14" cy="72" r="8" fill="#0A0F12" stroke="#5A6E7C" stroke-width="1.5"/>
+            <circle cx="14" cy="72" r="2.5" fill="#5A6E7C"/>
+            <circle cx="56" cy="72" r="8" fill="#0A0F12" stroke="#5A6E7C" stroke-width="1.5"/>
+            <circle cx="56" cy="72" r="2.5" fill="#5A6E7C"/>
+            <!-- coupler -->
+            <rect x="68" y="62" width="6" height="4" fill="#1A1814"/>
+          </svg>
+        </div>
+
+        <!-- Cost cars: each width scaled ~3.6×pct, color from JSON -->
+        <div class="car" style="width:60px;background:#2563EB" data-pct="66" data-label="Cost of Revenue">
+          <div class="car-meta">
+            <div class="car-pct">66<span style="font-size:13px;color:var(--ink-3);">%</span></div>
+            <div class="car-lbl">Cost of revenue</div>
+          </div>
+          <div class="car-band"></div>
+          <div class="car-wheels"><div class="wheel"></div><div class="wheel"></div></div>
+        </div>
+        <div class="car" style="width:36px;background:#16A34A" data-pct="9" data-label="SG&amp;A">
+          <div class="car-meta">
+            <div class="car-pct">9<span style="font-size:13px;color:var(--ink-3);">%</span></div>
+            <div class="car-lbl">SG&amp;A</div>
+          </div>
+          <div class="car-band"></div>
+          <div class="car-wheels"><div class="wheel"></div><div class="wheel"></div></div>
+        </div>
+        <div class="car" style="width:30px;background:#D97706" data-pct="5" data-label="R&amp;D">
+          <div class="car-meta">
+            <div class="car-pct">5<span style="font-size:13px;color:var(--ink-3);">%</span></div>
+            <div class="car-lbl">R&amp;D</div>
+          </div>
+          <div class="car-band"></div>
+          <div class="car-wheels"><div class="wheel"></div><div class="wheel"></div></div>
+        </div>
+        <div class="car" style="width:26px;background:#9333EA" data-pct="4" data-label="Amortization">
+          <div class="car-meta">
+            <div class="car-pct">4<span style="font-size:13px;color:var(--ink-3);">%</span></div>
+            <div class="car-lbl">Amort.</div>
+          </div>
+          <div class="car-band"></div>
+          <div class="car-wheels"><div class="wheel"></div><div class="wheel"></div></div>
+        </div>
+        <div class="car" style="width:20px;background:#DC2626" data-pct="2" data-label="Restructuring">
+          <div class="car-meta">
+            <div class="car-pct">2<span style="font-size:13px;color:var(--ink-3);">%</span></div>
+            <div class="car-lbl">Restruct.</div>
+          </div>
+          <div class="car-band"></div>
+          <div class="car-wheels"><div class="wheel"></div><div class="wheel"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="train-caption">
+      What the train leaves behind: <strong>14¢</strong> of every revenue dollar — <em>operating profit.</em>
+    </div>
+  </section>
+
+  <!-- ========== FOOTPRINT ========== -->
+  <section class="footprint">
+    <div class="eyebrow"><span class="sig">05</span> &nbsp;Footprint <span class="dot">·</span>The map</div>
+    <h2>Sixty cents on<br/>the dollar come<br/><em>from home.</em></h2>
+    <p class="lead">Pittsburgh-headquartered, North-American-anchored — but the rail network is global. Revenue mix by region, FY'25.</p>
+
+    <div class="geo-rows" id="geoRows">
+      <div class="geo-row">
+        <div class="geo-pct"><em>60</em><span class="pm">%</span></div>
+        <div>
+          <div class="geo-name">North America</div>
+          <div class="geo-meta">Pittsburgh · Erie · Fort Worth</div>
+          <div class="geo-bar"><div class="geo-bar-fill" data-w="100"></div></div>
+        </div>
+      </div>
+      <div class="geo-row">
+        <div class="geo-pct"><em>18</em><span class="pm">%</span></div>
+        <div>
+          <div class="geo-name">Europe</div>
+          <div class="geo-meta">Frauscher (AT) · Dellner (SE) · UK · DE</div>
+          <div class="geo-bar"><div class="geo-bar-fill steel" data-w="30"></div></div>
+        </div>
+      </div>
+      <div class="geo-row">
+        <div class="geo-pct"><em>12</em><span class="pm">%</span></div>
+        <div>
+          <div class="geo-name">Asia-Pacific</div>
+          <div class="geo-meta">India · Australia · China</div>
+          <div class="geo-bar"><div class="geo-bar-fill steel2" data-w="20"></div></div>
+        </div>
+      </div>
+      <div class="geo-row">
+        <div class="geo-pct"><em>10</em><span class="pm">%</span></div>
+        <div>
+          <div class="geo-name">Rest of world</div>
+          <div class="geo-meta">South America · Africa · Middle East</div>
+          <div class="geo-bar"><div class="geo-bar-fill muted" data-w="17"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RESET 3 ========== -->
+  <div class="reset" style="background:var(--bg-3);">
+    <div class="mark">Interlude · 03</div>
+    <div class="quote">
+      A railroad isn't built by laying track. <em>It's built by buying the company that already laid it.</em>
+    </div>
+  </div>
+
+  <!-- ========== THE BET (DARK) ========== -->
+  <section class="bet">
+    <div class="eyebrow">Ch. 06 <span style="color:#5A5446;">·</span> The bet · M&amp;A</div>
+    <h2>An <em>$11&nbsp;billion</em><br/>marriage,<br/>and the bolt-ons<br/>that <em>followed.</em></h2>
+    <p class="lead">Wabtec's modern shape was forged by acquisition. The 2019 GE Transportation merger doubled the company; the bolt-ons since have <em>filled in the edges.</em></p>
+
+    <div class="timeline">
+      <div class="tl-row alt">
+        <div class="tl-date">2019 · Merger</div>
+        <div class="tl-amount"><em>$11B</em> &middot; GE Transportation</div>
+        <div class="tl-desc">The landmark deal — folded in GE's locomotive manufacturing and recast Wabtec as a freight-rail giant.</div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-date">Dec 2025 · Bolt-on</div>
+        <div class="tl-amount">Frauscher Sensor Tech.</div>
+        <div class="tl-desc">Austrian rail-sensing specialists — extends the digital-intelligence stack into wayside detection.</div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-date">Feb 2026 · Bolt-on</div>
+        <div class="tl-amount">Dellner Couplers</div>
+        <div class="tl-desc">Swedish coupler manufacturer — deepens the transit-segment hardware portfolio.</div>
+      </div>
+    </div>
+
+    <div class="bet-balance">
+      <div class="bet-balance-lbl">The balance sheet · debt vs. equity</div>
+      <div class="scale-bar">
+        <div class="scale-pillar" id="pillarDebt">
+          <span class="pl-cap">$4.29B</span>
+          <span class="pl-lbl">Total debt</span>
+        </div>
+        <div class="scale-pillar eq" id="pillarEq">
+          <span class="pl-cap">$11.14B</span>
+          <span class="pl-lbl">Total equity</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bet-cf">
+      <div>
+        <div class="num">$<em>1.76</em>B</div>
+        <div class="lbl">Operating cash flow · FY'25</div>
+      </div>
+      <div>
+        <div class="num">$<em>1.50</em>B</div>
+        <div class="lbl">Free cash flow · FY'25</div>
+      </div>
+      <div>
+        <div class="num">$<em>260</em>M</div>
+        <div class="lbl">Capex · FY'25</div>
+      </div>
+      <div>
+        <div class="num">$<em>173</em>M</div>
+        <div class="lbl">Dividends paid</div>
+      </div>
+      <div>
+        <div class="num">$<em>223</em>M</div>
+        <div class="lbl">Buybacks · $1.2B authorized</div>
+      </div>
+      <div>
+        <div class="num"><em>+24</em>%</div>
+        <div class="lbl">Dividend hike · early '26</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== COMPETITION ========== -->
+  <section class="compete">
+    <div class="eyebrow"><span class="sig">07</span> &nbsp;The competition <span class="dot">·</span>Sized up</div>
+    <h2>Bigger ones,<br/>and <em>specialists.</em></h2>
+    <p class="lead">Locomotive rivalry, automation overlap, and a precision-electronics neighbor. Bars scale to FY revenue.</p>
+
+    <div class="compete-stage">
+      <div class="comp-row self">
+        <span class="comp-tick">WAB</span>
+        <div>
+          <div class="comp-name">Wabtec <span style="color:var(--ink-3);font-weight:400;">— this company</span></div>
+          <div class="comp-meta">Rev $11.17B<span style="color:var(--ink-4);"> · </span>Mkt cap $44.52B<span style="color:var(--ink-4);"> · </span>+7.51% YoY</div>
+        </div>
+        <div class="comp-bar">
+          <div class="comp-bar-fill" data-w="16.5"></div>
+          <span class="comp-bar-cap">$11.17B rev</span>
+        </div>
+      </div>
+
+      <div class="comp-row">
+        <span class="comp-tick">CAT</span>
+        <div>
+          <div class="comp-name">Caterpillar Inc.</div>
+          <div class="comp-meta">Mkt cap $369.74B<span style="color:var(--ink-4);"> · </span>P/E 41.62<span style="color:var(--ink-4);"> · </span>+4.29% YoY</div>
+        </div>
+        <div class="comp-bar">
+          <div class="comp-bar-fill" data-w="100"></div>
+          <span class="comp-bar-cap">$67.59B rev</span>
+        </div>
+        <div class="comp-rel">
+          <em>Progress Rail,</em> a Caterpillar subsidiary, competes head-on in locomotives, modernization, and rail services. The two recently <em>settled litigation.</em>
+        </div>
+      </div>
+
+      <div class="comp-row">
+        <span class="comp-tick">ROK</span>
+        <div>
+          <div class="comp-name">Rockwell Automation</div>
+          <div class="comp-meta">Mkt cap $46.71B<span style="color:var(--ink-4);"> · </span>P/E 47.18<span style="color:var(--ink-4);"> · </span>+5.84% YoY</div>
+        </div>
+        <div class="comp-bar">
+          <div class="comp-bar-fill" data-w="12.3"></div>
+          <span class="comp-bar-cap">$8.34B rev</span>
+        </div>
+        <div class="comp-rel">
+          Overlaps with Wabtec's <em>digital intelligence</em> and industrial IoT — both chasing connected, software-driven heavy industry.
+        </div>
+      </div>
+
+      <div class="comp-row">
+        <span class="comp-tick">AME</span>
+        <div>
+          <div class="comp-name">AMETEK Inc.</div>
+          <div class="comp-meta">Mkt cap $54.12B<span style="color:var(--ink-4);"> · </span>P/E 36.56<span style="color:var(--ink-4);"> · </span>+6.63% YoY</div>
+        </div>
+        <div class="comp-bar">
+          <div class="comp-bar-fill" data-w="11.0"></div>
+          <span class="comp-bar-cap">$7.40B rev</span>
+        </div>
+        <div class="comp-rel">
+          Precision electronics, power systems, engineered components — <em>aftermarket and sensing</em> overlap with Wabtec's transit and digital businesses.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RESET 4 ========== -->
+  <div class="reset">
+    <div class="mark">Interlude · 04</div>
+    <div class="quote">
+      The brake came first. <em>Everything since</em> has just been holding the line.
+    </div>
+  </div>
+
+  <!-- ========== CLOSE ========== -->
+  <section class="close">
+    <div class="eyebrow">Ch. 08 · The takeaway</div>
+    <h1>1869 → 2026.<br/>The <em>brakes</em><br/>still hold.</h1>
+    <div class="kicker">
+      The hero opened on <em>156 years.</em> The close lands here: a Pittsburgh company, two segments, a $44B market cap — <em>still</em> the brake on the world's freight, and now its software too.
+    </div>
+
+    <div class="close-stat">
+      <div class="num">$<em>1.50</em>B</div>
+      <div class="lbl">Free cash flow · FY'25 · the part that compounds</div>
+    </div>
+    <div class="close-stat">
+      <div class="num">+<em>24</em>%</div>
+      <div class="lbl">Dividend raise · early '26 · the part shareholders feel</div>
+    </div>
+    <div class="close-stat">
+      <div class="num"><em>156</em></div>
+      <div class="lbl">Years standing · the part that's hardest to replicate</div>
+    </div>
+
+    <div class="close-foot">
+      <span>WAB · NYSE</span>
+      <span>FY '25 RECAP</span>
+      <span>END</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ---------- Scroll progress ----------
+  const page = document.getElementById('page');
+  const chrome = document.querySelector('.chrome');
+  function onScroll() {
+    const doc = document.documentElement;
+    const max = doc.scrollHeight - window.innerHeight;
+    const p = Math.max(0, Math.min(1, window.scrollY / Math.max(1, max)));
+    chrome.style.setProperty('--scroll', (p * 100).toFixed(2) + '%');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ---------- IO reveals ----------
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ---------- Count-up for the big revenue ----------
+  const big = document.querySelector('.scale .big');
+  const cnum = big.querySelector('.cnum');
+  const target = parseFloat(big.dataset.countTo);
+  let counted = false;
+  const countIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !counted) {
+        counted = true;
+        const start = performance.now();
+        const dur = 1400;
+        function tick(t) {
+          const k = Math.min(1, (t - start) / dur);
+          const eased = 1 - Math.pow(1 - k, 3);
+          cnum.textContent = (target * eased).toFixed(2);
+          if (k < 1) requestAnimationFrame(tick);
+          else cnum.textContent = target.toFixed(2);
+        }
+        requestAnimationFrame(tick);
+      }
+    });
+  }, { threshold: 0.4 });
+  countIO.observe(big);
+
+  // ---------- Geo bars: animate width ----------
+  const geoIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.geo-bar-fill').forEach((f, i) => {
+          setTimeout(() => { f.style.width = f.dataset.w + '%'; }, i * 120);
+        });
+        geoIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.25 });
+  const geoRows = document.getElementById('geoRows');
+  if (geoRows) geoIO.observe(geoRows);
+
+  // ---------- Cost train cars stagger in ----------
+  const trainIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const cars = e.target.querySelectorAll('.car');
+        cars.forEach((c, i) => {
+          setTimeout(() => c.classList.add('in'), 140 + i * 110);
+        });
+        trainIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  const trainEl = document.getElementById('costTrain');
+  if (trainEl) trainIO.observe(trainEl);
+
+  // ---------- Competitor bar fills ----------
+  const compIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.comp-bar-fill').forEach((f, i) => {
+          setTimeout(() => { f.style.width = f.dataset.w + '%'; }, i * 140);
+        });
+        compIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.25 });
+  const compStage = document.querySelector('.compete-stage');
+  if (compStage) compIO.observe(compStage);
+
+  // ---------- Bet pillars: animate height ----------
+  const pillarIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const debt = document.getElementById('pillarDebt');
+        const eq = document.getElementById('pillarEq');
+        if (debt) {
+          debt.style.height = '0%';
+          eq.style.height = '0%';
+          requestAnimationFrame(() => {
+            debt.style.transition = 'height 1100ms cubic-bezier(0.22,1,0.36,1)';
+            eq.style.transition = 'height 1100ms cubic-bezier(0.22,1,0.36,1) 200ms';
+            debt.style.height = '38.5%';
+            eq.style.height = '100%';
+          });
+        }
+        pillarIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  const balance = document.querySelector('.bet-balance');
+  if (balance) pillarIO.observe(balance);
+
+  // ---------- Hero locomotive subtle horizontal parallax on scroll ----------
+  const heroSvg = document.querySelector('.loco-scene svg');
+  if (heroSvg) {
+    const heroSection = document.querySelector('.hero');
+    window.addEventListener('scroll', () => {
+      const r = heroSection.getBoundingClientRect();
+      const k = Math.max(-1, Math.min(1, -r.top / Math.max(1, r.height)));
+      // subtle parallax — locomotive drifts forward slightly as user scrolls
+      heroSvg.style.transform = `translateX(${(k * 18).toFixed(1)}px)`;
+    }, { passive: true });
+  }
+</script>
+</body>
+</html>

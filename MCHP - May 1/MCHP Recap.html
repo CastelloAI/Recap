@@ -1,0 +1,1441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>MCHP · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root{
+  /* Paper + ink, slightly cooler than zair to nod silicon */
+  --paper:#FBFAF7;
+  --paper-2:#F4F2ED;
+  --paper-3:#ECEAE3;
+  --ink:#141414;
+  --ink-2:#3B3A37;
+  --ink-3:#6B6A65;
+  --ink-4:#A4A29C;
+  --line:#E4E1D9;
+  --line-strong:#CFCBC0;
+
+  /* Signal: a deeper, technical coral — between MCHP's brand red and the system coral */
+  --signal:#E4502E;
+  --signal-soft:#FFE7DE;
+  --signal-dim:#B83D22;
+
+  /* Silicon palette — for the die/grid scenes */
+  --si-1:#1F2937;     /* dark substrate */
+  --si-2:#0B0E14;     /* deep substrate */
+  --si-3:#2C3849;     /* trace dark */
+  --si-4:#9AA8B7;     /* trace light */
+
+  /* Cost colors — supplied verbatim from data */
+  --c-cor:#4F86C6;
+  --c-rd:#E8734A;
+  --c-sga:#6DBF82;
+  --c-amort:#A97DC9;
+  --c-rest:#F2C94C;
+
+  --font-display:'Instrument Serif','Times New Roman',serif;
+  --font-sans:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --font-mono:'Geist Mono','SF Mono',ui-monospace,'Menlo',monospace;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+html{background:#1a1917}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-sans);
+  font-size:16px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* Outer frame: keeps the artifact mobile-shaped at any viewport, no chrome */
+.frame{
+  width:100%;
+  max-width:430px;
+  margin:0 auto;
+  position:relative;
+  background:var(--paper);
+  overflow:hidden;
+  min-height:100vh;
+}
+
+/* ---------- Sticky orientation chrome ---------- */
+.chrome{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter:saturate(1.4) blur(14px);
+  -webkit-backdrop-filter:saturate(1.4) blur(14px);
+  background:rgba(251,250,247,0.78);
+  border-bottom:1px solid var(--line);
+}
+.chrome.dark{background:rgba(15,14,13,0.78);border-bottom-color:#2a2826;color:var(--paper)}
+.chrome-row{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 20px 10px;
+}
+.chrome-left{display:flex; align-items:baseline; gap:10px; min-width:0}
+.tkr{
+  font-family:var(--font-mono);
+  font-size:13px;
+  letter-spacing:0.04em;
+  font-weight:500;
+  color:var(--ink);
+}
+.chrome.dark .tkr{color:var(--paper)}
+.tkr .dot{color:var(--signal)}
+.cname{
+  font-family:var(--font-sans);
+  font-size:13px;
+  color:var(--ink-3);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.recap-label{
+  font-family:var(--font-mono);
+  font-size:10px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+  border:1px solid var(--line);
+  padding:4px 8px;
+  border-radius:999px;
+}
+.chrome.dark .recap-label{border-color:#2a2826;color:#8c8a84}
+.progress{
+  height:1.5px; background:transparent; position:relative; overflow:hidden;
+}
+.progress::after{
+  content:""; position:absolute; left:0; top:0; bottom:0;
+  width:var(--p,0%);
+  background:var(--signal);
+  transition:width 60ms linear;
+}
+
+/* ---------- Type scale ---------- */
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:10.5px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--signal);
+  font-weight:500;
+}
+.eyebrow .muted{color:var(--ink-3)}
+.eyebrow.dark{color:var(--signal)}
+h1.display, h2.display, .display{
+  font-family:var(--font-display);
+  font-weight:400;
+  line-height:0.96;
+  letter-spacing:-0.018em;
+  margin:0;
+}
+.italic{font-style:italic}
+.serif{font-family:var(--font-display)}
+.mono{font-family:var(--font-mono)}
+.signal{color:var(--signal)}
+.muted{color:var(--ink-3)}
+p{margin:0; line-height:1.55}
+.body{font-size:15.5px; line-height:1.55; color:var(--ink-2)}
+.small{font-size:13px; line-height:1.5; color:var(--ink-3)}
+.cap{font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-3)}
+
+/* ---------- Section wrapper ---------- */
+section{ position:relative; padding:60px 22px; }
+section.tight{padding:32px 22px}
+section.dark{
+  background:#0F0E0D; color:#F0EDE6;
+}
+section.dark .body{color:#C9C6BF}
+section.dark .muted{color:#8c8a84}
+section.dark .cap{color:#8c8a84}
+section.sunken{background:var(--paper-2)}
+
+/* ---------- Reset beats ---------- */
+.reset{
+  background:var(--paper-2);
+  padding:44px 26px;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.reset.dark-band{
+  background:#0F0E0D;
+  color:#F0EDE6;
+  border-color:#2a2826;
+}
+.reset p{
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:24px;
+  line-height:1.25;
+  letter-spacing:-0.005em;
+  color:var(--ink-2);
+}
+.reset.dark-band p{color:#D9D6CE}
+
+/* ---------- HERO ---------- */
+.hero{
+  padding:36px 22px 56px;
+  position:relative;
+  overflow:hidden;
+}
+.hero-stage{
+  position:relative;
+  height:300px;
+  margin:8px -22px 28px;
+  background:linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
+  overflow:hidden;
+}
+.hero h1{
+  font-size:54px;
+  line-height:0.98;
+  letter-spacing:-0.02em;
+  color:var(--ink);
+}
+.hero h1 .it{font-style:italic; color:var(--ink-2)}
+.hero h1 .sig{color:var(--signal); font-style:italic}
+.hero-sub{
+  margin-top:22px;
+  font-size:15.5px;
+  color:var(--ink-2);
+  line-height:1.55;
+  max-width:34ch;
+}
+.hero-meta{
+  margin-top:28px;
+  display:flex; align-items:center; gap:12px;
+  font-family:var(--font-mono);
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+}
+.hero-meta .pulse{
+  width:6px; height:6px; border-radius:50%;
+  background:var(--signal);
+  box-shadow:0 0 0 0 rgba(228,80,46,0.45);
+  animation:pulse 1.6s ease-out infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(228,80,46,0.5)}
+  100%{box-shadow:0 0 0 10px rgba(228,80,46,0)}
+}
+
+/* ---------- Big number style ---------- */
+.bignum{
+  font-family:var(--font-display);
+  font-size:88px;
+  line-height:0.92;
+  letter-spacing:-0.025em;
+  font-weight:400;
+}
+.bignum .it{font-style:italic}
+.bignum .small-it{font-size:38px; font-style:italic; color:var(--ink-3); margin-left:2px}
+.bignum-sub{
+  font-family:var(--font-mono);
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+  margin-top:8px;
+}
+
+/* ---------- Money flow scene ---------- */
+.flow-scene{
+  margin:0 -22px;
+  padding:0;
+  height:380px;
+  position:relative;
+}
+
+/* ---------- Scale stat strip ---------- */
+.stat-strip{
+  margin-top:36px;
+  display:grid; grid-template-columns:1fr;
+  gap:0;
+}
+.stat-row{
+  display:flex; align-items:flex-end; justify-content:space-between;
+  padding:22px 0;
+  border-bottom:1px solid var(--line);
+}
+.stat-row:last-child{border-bottom:none}
+.stat-row .lbl{
+  font-family:var(--font-mono);
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+  max-width:14ch;
+}
+.stat-row .v{
+  font-family:var(--font-display);
+  font-size:42px;
+  line-height:1;
+  letter-spacing:-0.018em;
+  text-align:right;
+}
+.stat-row .v .it{font-style:italic; color:var(--ink-3)}
+.stat-row .v.sig{color:var(--signal)}
+
+/* ---------- MCU stack viz ---------- */
+.mcu-stack{
+  margin:24px -22px 0;
+  padding:0 22px;
+  display:flex; flex-direction:column; gap:8px;
+}
+.mcu-bar{
+  display:grid; grid-template-columns:50px 1fr 56px; align-items:center;
+  gap:12px;
+  font-family:var(--font-mono);
+  font-size:11px; letter-spacing:0.06em;
+  color:var(--ink-2);
+}
+.mcu-bar .b{
+  height:14px; background:var(--ink-4); position:relative;
+  border-radius:1px; overflow:hidden;
+}
+.mcu-bar .b::after{
+  content:""; position:absolute; inset:0;
+  background-image:repeating-linear-gradient(90deg, transparent 0 6px, rgba(255,255,255,0.45) 6px 7px);
+}
+.mcu-bar .pct{text-align:right; color:var(--ink-3); font-size:11px}
+
+/* ---------- Wafer cost scene ---------- */
+.wafer-wrap{
+  margin:18px -22px 0;
+  padding:0 22px;
+}
+.wafer-legend{
+  margin-top:24px;
+  display:flex; flex-direction:column; gap:0;
+}
+.wafer-row{
+  display:grid; grid-template-columns:14px 1fr auto;
+  align-items:center;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid var(--line);
+}
+.wafer-row:last-child{border-bottom:none}
+.wafer-row .swatch{width:14px; height:14px; border-radius:2px}
+.wafer-row .lbl{font-family:var(--font-sans); font-size:14px; color:var(--ink-2)}
+.wafer-row .pct{font-family:var(--font-mono); font-size:13px; color:var(--ink); letter-spacing:0.02em}
+
+/* ---------- Debt section (dark interlude) ---------- */
+.debt-stage{
+  margin:24px -22px 16px;
+  position:relative;
+}
+.scale-meta{
+  display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:32px;
+}
+.scale-meta .col .v{
+  font-family:var(--font-display); font-size:38px; line-height:1; color:#F0EDE6;
+}
+.scale-meta .col .v.dim{color:#8c8a84}
+.scale-meta .col .lbl{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em;
+  text-transform:uppercase; color:#8c8a84; margin-top:8px;
+}
+
+/* ---------- Geo strip ---------- */
+.geo-rows{margin-top:18px; display:flex; flex-direction:column; gap:0}
+.geo-row{
+  padding:18px 0;
+  border-bottom:1px solid var(--line);
+  display:grid; grid-template-columns:80px 1fr;
+  gap:18px; align-items:center;
+}
+.geo-row:last-child{border-bottom:none}
+.geo-row .num{
+  font-family:var(--font-display);
+  font-size:44px; line-height:1; letter-spacing:-0.02em;
+}
+.geo-row .num.sig{color:var(--signal); font-style:italic}
+.geo-row .right{display:flex; flex-direction:column; gap:8px}
+.geo-row .name{font-family:var(--font-sans); font-size:14px; color:var(--ink-2); font-weight:500}
+.geo-row .desc{font-family:var(--font-sans); font-size:12.5px; color:var(--ink-3); line-height:1.45}
+
+/* ---------- Dividend ladder ---------- */
+.ladder-wrap{margin:24px -22px 0; padding:0}
+
+/* ---------- Competitor cards ---------- */
+.comp-list{margin-top:22px; display:flex; flex-direction:column; gap:0}
+.comp-row{
+  padding:22px 0;
+  border-bottom:1px solid var(--line);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.comp-row:last-child{border-bottom:none}
+.comp-row .top{
+  display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+}
+.comp-row .name{
+  font-family:var(--font-display); font-size:26px; line-height:1.1;
+  letter-spacing:-0.01em; color:var(--ink);
+}
+.comp-row .ticker{
+  font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em;
+  color:var(--ink-3);
+}
+.comp-row .bar-row{
+  margin-top:14px;
+  display:grid; grid-template-columns:48px 1fr 64px;
+  align-items:center; gap:10px;
+  font-family:var(--font-mono); font-size:10.5px; color:var(--ink-3);
+  letter-spacing:0.06em;
+}
+.comp-row .bar{
+  height:10px; background:var(--paper-3); position:relative; border-radius:1px;
+  overflow:hidden;
+}
+.comp-row .bar .fill{
+  position:absolute; left:0; top:0; bottom:0;
+  background:var(--ink-2);
+  transition:width 800ms var(--ease, cubic-bezier(.22,1,.36,1));
+}
+.comp-row.us .bar .fill{background:var(--signal)}
+.comp-row .v{font-family:var(--font-mono); font-size:11px; color:var(--ink); text-align:right}
+.comp-row .ydeltas{
+  display:flex; gap:14px; margin-top:10px;
+  font-family:var(--font-mono); font-size:11px; color:var(--ink-3);
+  letter-spacing:0.04em;
+}
+.comp-row .ydeltas span.neg{color:var(--signal)}
+.comp-row .ydeltas span.pos{color:#2BB673}
+.comp-row .desc{
+  margin-top:14px;
+  font-size:14px; line-height:1.5; color:var(--ink-2);
+  max-height:0; overflow:hidden; opacity:0;
+  transition:max-height 380ms var(--ease, cubic-bezier(.22,1,.36,1)), opacity 220ms ease, margin-top 380ms ease;
+  margin-top:0;
+}
+.comp-row.open .desc{
+  max-height:300px; opacity:1; margin-top:14px;
+}
+.comp-row .more{
+  margin-top:10px;
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em;
+  color:var(--signal); text-transform:uppercase;
+  display:flex; align-items:center; gap:6px;
+}
+.comp-row .more .arrow{transition:transform 220ms ease; display:inline-block}
+.comp-row.open .more .arrow{transform:rotate(90deg)}
+
+/* ---------- Closing ---------- */
+.close-section{padding-bottom:84px}
+.close-num{
+  font-family:var(--font-display);
+  font-size:118px; line-height:0.92;
+  letter-spacing:-0.03em;
+  color:var(--ink);
+}
+.close-num .sig{color:var(--signal); font-style:italic}
+.close-num .small{font-size:42px; color:var(--ink-3); font-style:italic}
+
+.colophon{
+  margin-top:60px;
+  padding-top:24px;
+  border-top:1px solid var(--line);
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--ink-4);
+}
+
+/* ---------- Reveal ---------- */
+.reveal{opacity:0; transform:translateY(14px); transition:opacity 600ms ease-out, transform 600ms cubic-bezier(.22,1,.36,1)}
+.reveal.in{opacity:1; transform:none}
+.reveal.delay-1{transition-delay:80ms}
+.reveal.delay-2{transition-delay:160ms}
+.reveal.delay-3{transition-delay:240ms}
+.reveal.delay-4{transition-delay:320ms}
+
+/* ---------- Tap targets ---------- */
+.tap-hint{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--ink-4);
+}
+</style>
+</head>
+<body>
+
+<div class="frame" id="frame">
+
+<!-- ====== STICKY CHROME ====== -->
+<header class="chrome" id="chrome">
+  <div class="chrome-row">
+    <div class="chrome-left">
+      <span class="tkr">MCHP<span class="dot">.</span></span>
+      <span class="cname">Microchip Technology</span>
+    </div>
+    <span class="recap-label">Recap · FY '25</span>
+  </div>
+  <div class="progress" id="progress"></div>
+</header>
+
+
+<!-- ====== HERO ====== -->
+<section class="hero" data-screen-label="01 Hero">
+
+  <div class="eyebrow reveal">Thesis · <span class="muted">100,000 customers</span></div>
+
+  <div class="hero-stage" id="heroStage" aria-hidden="true">
+    <svg viewBox="0 0 430 300" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+      <!-- Subtle grain -->
+      <defs>
+        <radialGradient id="dieGlow" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stop-color="#E4502E" stop-opacity="0.0"/>
+          <stop offset="55%" stop-color="#E4502E" stop-opacity="0.0"/>
+          <stop offset="100%" stop-color="#0B0E14" stop-opacity="0.0"/>
+        </radialGradient>
+        <linearGradient id="dieFace" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1F2937"/>
+          <stop offset="100%" stop-color="#0B0E14"/>
+        </linearGradient>
+        <pattern id="diePins" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+          <rect width="8" height="8" fill="transparent"/>
+          <rect x="3" y="3" width="2" height="2" fill="#9AA8B7" opacity="0.35"/>
+        </pattern>
+      </defs>
+
+      <!-- Background traces (board) -->
+      <g id="heroTraces" stroke="#CFCBC0" stroke-width="0.6" fill="none" opacity="0.7">
+        <!-- Drawn-on by JS -->
+      </g>
+
+      <!-- The die -->
+      <g id="heroDie" transform="translate(215 150)">
+        <!-- Outer pin pads -->
+        <g id="pins" stroke="#A4A29C" stroke-width="0.6">
+          <!-- top pins -->
+        </g>
+
+        <!-- die face -->
+        <rect x="-86" y="-58" width="172" height="116" fill="url(#dieFace)" rx="3"/>
+        <rect x="-86" y="-58" width="172" height="116" fill="url(#diePins)" rx="3"/>
+
+        <!-- internal blocks -->
+        <g stroke="#9AA8B7" stroke-width="0.5" fill="none" opacity="0.6">
+          <rect x="-72" y="-44" width="50" height="32" rx="1"/>
+          <rect x="-18" y="-44" width="40" height="20" rx="1"/>
+          <rect x="26" y="-44" width="46" height="32" rx="1"/>
+          <rect x="-72" y="-8" width="68" height="16" rx="1"/>
+          <rect x="0" y="-20" width="22" height="40" rx="1"/>
+          <rect x="26" y="-8" width="46" height="28" rx="1"/>
+          <rect x="-72" y="12" width="50" height="32" rx="1"/>
+          <rect x="-18" y="-20" width="14" height="14" rx="1"/>
+          <rect x="-18" y="2" width="14" height="22" rx="1"/>
+        </g>
+
+        <!-- glowing core -->
+        <rect id="dieCore" x="-9" y="-7" width="18" height="14" rx="1" fill="#E4502E" opacity="0.95"/>
+        <rect x="-9" y="-7" width="18" height="14" rx="1" fill="#E4502E" opacity="0" id="dieCorePulse"/>
+
+        <!-- "MCHP" etched on the die -->
+        <text x="0" y="-30" text-anchor="middle" font-family="Geist Mono, monospace" font-size="7" fill="#9AA8B7" letter-spacing="2" opacity="0.85">MCHP · MCU</text>
+      </g>
+
+      <!-- Floating labels -->
+      <g font-family="Geist Mono, monospace" font-size="8.5" fill="#6B6A65" letter-spacing="1.4" id="floatLabels" opacity="0.85">
+        <text x="22" y="42">CAR</text>
+        <text x="22" y="42" dy="11" font-size="6.5" fill="#A4A29C">automotive</text>
+
+        <text x="358" y="42">FACTORY</text>
+        <text x="358" y="42" dy="11" font-size="6.5" fill="#A4A29C">industrial</text>
+
+        <text x="22" y="252">DOOR</text>
+        <text x="22" y="252" dy="11" font-size="6.5" fill="#A4A29C">access</text>
+
+        <text x="358" y="252">FRIDGE</text>
+        <text x="358" y="252" dy="11" font-size="6.5" fill="#A4A29C">consumer</text>
+      </g>
+    </svg>
+  </div>
+
+  <h1 class="reveal">
+    Inside <span class="it">every</span> smart thing,<br/>
+    <span class="sig">a small chip thinking.</span>
+  </h1>
+
+  <p class="hero-sub reveal delay-1">
+    Microchip makes the embedded brains —  microcontrollers, analog, memory — for more than <strong>100,000 customers</strong>. From the door lock to the dashboard, MCHP is the part you don't see.
+  </p>
+
+  <div class="hero-meta reveal delay-2">
+    <span class="pulse"></span>
+    <span>FY 2025 · annual recap</span>
+  </div>
+
+</section>
+
+
+<!-- ====== RESET BEAT 1 ====== -->
+<div class="reset reveal" data-screen-label="02 Reset · A small business of small parts">
+  <p>
+    <span class="serif italic">A small business of small parts —</span> sold one chip at a time, into <span class="signal italic">a hundred thousand</span> different products.
+  </p>
+</div>
+
+
+<!-- ====== HOW IT MAKES MONEY ====== -->
+<section data-screen-label="03 How it makes money">
+  <div class="eyebrow reveal">The business · <span class="muted">$4.40B FY25</span></div>
+  <h2 class="display reveal" style="font-size:42px; margin-top:16px; max-width:14ch">
+    Two channels.<br/>
+    <span class="italic muted">One product line that runs everything.</span>
+  </h2>
+
+  <div class="flow-scene" id="flowScene" aria-hidden="true">
+    <svg viewBox="0 0 430 380" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <marker id="arrh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#E4502E"/>
+        </marker>
+      </defs>
+
+      <!-- Source: Microchip -->
+      <g id="srcChip" transform="translate(70 70)">
+        <rect x="-44" y="-26" width="88" height="52" fill="#0F0E0D" rx="3"/>
+        <rect x="-38" y="-20" width="76" height="40" fill="none" stroke="#3B3A37" stroke-width="0.6" rx="2"/>
+        <text x="0" y="2" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#FBFAF7" letter-spacing="2">MCHP</text>
+        <text x="0" y="14" text-anchor="middle" font-family="Geist Mono, monospace" font-size="6" fill="#8c8a84" letter-spacing="2">Chandler, AZ</text>
+      </g>
+
+      <!-- Channel A: direct → OEM -->
+      <g font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="1.5">
+        <text x="170" y="46" font-size="9">DIRECT SALES</text>
+      </g>
+      <path id="pathA" d="M115 65 C 175 65, 200 110, 280 110" stroke="#E4502E" stroke-width="1.4" fill="none" marker-end="url(#arrh)" stroke-dasharray="500" stroke-dashoffset="500" />
+
+      <!-- Channel B: distributors -->
+      <g font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="1.5">
+        <text x="170" y="240">DISTRIBUTORS</text>
+      </g>
+      <path id="pathB" d="M115 80 C 180 200, 200 230, 280 230" stroke="#E4502E" stroke-width="1.4" fill="none" marker-end="url(#arrh)" stroke-dasharray="500" stroke-dashoffset="500"/>
+
+      <!-- Distributor node -->
+      <g transform="translate(220 195)" id="distNode" opacity="0">
+        <rect x="-32" y="-14" width="64" height="28" fill="#FBFAF7" stroke="#CFCBC0" stroke-width="0.8" rx="2"/>
+        <text x="0" y="4" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#3B3A37" letter-spacing="1.5">DIST</text>
+      </g>
+
+      <!-- OEMs (dest) -->
+      <g id="oemGroup">
+        <!-- top: OEM directly -->
+        <g transform="translate(330 110)" class="oem">
+          <rect x="-44" y="-22" width="88" height="44" fill="#FBFAF7" stroke="#CFCBC0" stroke-width="0.8" rx="2"/>
+          <text x="0" y="-2" text-anchor="middle" font-family="Geist, sans-serif" font-size="10" fill="#141414" font-weight="500">OEM</text>
+          <text x="0" y="12" text-anchor="middle" font-family="Geist Mono, monospace" font-size="7" fill="#6B6A65" letter-spacing="1.4">automotive</text>
+        </g>
+        <!-- mid: Tech Licensing -->
+        <g transform="translate(330 170)" class="oem">
+          <rect x="-44" y="-22" width="88" height="44" fill="#FBFAF7" stroke="#CFCBC0" stroke-width="0.8" rx="2"/>
+          <text x="0" y="-2" text-anchor="middle" font-family="Geist, sans-serif" font-size="10" fill="#141414" font-weight="500">Licensee</text>
+          <text x="0" y="12" text-anchor="middle" font-family="Geist Mono, monospace" font-size="7" fill="#6B6A65" letter-spacing="1.4">SuperFlash</text>
+        </g>
+        <!-- bottom: OEM via distributor -->
+        <g transform="translate(330 230)" class="oem">
+          <rect x="-44" y="-22" width="88" height="44" fill="#FBFAF7" stroke="#CFCBC0" stroke-width="0.8" rx="2"/>
+          <text x="0" y="-2" text-anchor="middle" font-family="Geist, sans-serif" font-size="10" fill="#141414" font-weight="500">OEM</text>
+          <text x="0" y="12" text-anchor="middle" font-family="Geist Mono, monospace" font-size="7" fill="#6B6A65" letter-spacing="1.4">industrial / consumer</text>
+        </g>
+      </g>
+
+      <!-- Channel C: tech licensing (parallel revenue stream) -->
+      <path id="pathC" d="M115 72 C 200 72, 220 170, 280 170" stroke="#7B71F5" stroke-width="1.2" fill="none" marker-end="url(#arrh)" stroke-dasharray="500" stroke-dashoffset="500"/>
+      <text x="170" y="146" font-family="Geist Mono, monospace" font-size="9" fill="#5C50D9" letter-spacing="1.5">TECH LICENSING</text>
+
+      <!-- Bottom split bar: revenue mix -->
+      <g transform="translate(22 320)">
+        <text x="0" y="-8" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="1.4">REVENUE MIX</text>
+        <rect x="0" y="0" width="386" height="22" fill="#ECEAE3" rx="1"/>
+        <rect id="segSemi" x="0" y="0" width="0" height="22" fill="#E4502E" rx="1"/>
+        <rect id="segLic" x="0" y="0" width="0" height="22" fill="#7B71F5" rx="1"/>
+
+        <text x="0" y="42" font-family="Geist, sans-serif" font-size="11" fill="#141414" font-weight="500">Semiconductor Products</text>
+        <text x="0" y="56" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="1">DOMINANT</text>
+
+        <text x="386" y="42" text-anchor="end" font-family="Geist, sans-serif" font-size="11" fill="#141414" font-weight="500">Tech Licensing</text>
+        <text x="386" y="56" text-anchor="end" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="1">SUPERFLASH +</text>
+      </g>
+    </svg>
+  </div>
+
+  <p class="body reveal" style="margin-top:16px">
+    Microchip ships through two channels — <span class="italic serif">direct sellers</span> and <span class="italic serif">global distributors</span> — into more than 100,000 OEMs. A second segment, <span class="italic serif">technology licensing</span>, rents out SuperFlash and other embedded IP. The chip business does the heavy lifting.
+  </p>
+
+  <div class="cap reveal delay-1" style="margin-top:18px">MCU bit-architectures shipped</div>
+  <div class="mcu-stack" id="mcuStack">
+    <div class="mcu-bar"><span>8-bit</span><span class="b" data-w="92"></span><span class="pct">legacy</span></div>
+    <div class="mcu-bar"><span>16-bit</span><span class="b" data-w="68"></span><span class="pct"></span></div>
+    <div class="mcu-bar"><span>32-bit</span><span class="b" data-w="86"></span><span class="pct">core</span></div>
+    <div class="mcu-bar"><span>64-bit</span><span class="b" data-w="42"></span><span class="pct">new</span></div>
+  </div>
+  <p class="small reveal delay-2" style="margin-top:14px"><span class="italic serif">More than half</span> of revenue comes from MCUs alone — sold across 8-, 16-, 32-, and 64-bit architectures.</p>
+</section>
+
+
+<!-- ====== SCALE ====== -->
+<section class="sunken" data-screen-label="04 Scale">
+  <div class="eyebrow reveal">The Scale · <span class="muted">FY 2025</span></div>
+
+  <div class="reveal" style="margin-top:18px">
+    <div class="bignum">
+      $4.40<span class="small-it">B</span>
+    </div>
+    <div class="bignum-sub">Annual revenue · gross margin 56.1%</div>
+  </div>
+
+  <p class="body reveal delay-1" style="margin-top:24px; max-width:36ch">
+    A cyclical trough year. Operating margin compressed to <span class="italic serif">6.7%</span> as factories ran light and the inventory correction worked through. The most recent quarter <span class="italic serif">turned the corner</span>: <span class="signal serif italic">$1.19B</span> revenue, <span class="signal serif italic">$0.44</span> EPS.
+  </p>
+
+  <div class="stat-strip reveal delay-2">
+    <div class="stat-row">
+      <span class="lbl">Market Cap</span>
+      <span class="v">$42.62<span class="it">B</span></span>
+    </div>
+    <div class="stat-row">
+      <span class="lbl">Customers</span>
+      <span class="v sig">100K<span class="it">+</span></span>
+    </div>
+    <div class="stat-row">
+      <span class="lbl">Employees</span>
+      <span class="v">19,400</span>
+    </div>
+    <div class="stat-row">
+      <span class="lbl">Headquarters</span>
+      <span class="v" style="font-size:24px">Chandler, <span class="it muted">AZ</span></span>
+    </div>
+    <div class="stat-row">
+      <span class="lbl">Founded</span>
+      <span class="v">1987 <span class="it" style="font-size:22px">spun off</span></span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ====== RESET BEAT 2 ====== -->
+<div class="reset reveal">
+  <p>
+    Every dollar that comes in <span class="serif italic signal">leaves a paper trail.</span> Most of it goes to keeping the fabs lit.
+  </p>
+</div>
+
+
+<!-- ====== WHERE THE MONEY GOES — wafer scene ====== -->
+<section data-screen-label="05 Where the money goes">
+  <div class="eyebrow reveal">A hundred cents in · <span class="muted">cost mix</span></div>
+  <h2 class="display reveal" style="font-size:40px; margin-top:14px; max-width:13ch">
+    The <span class="italic">wafer</span> is the bill.
+  </h2>
+  <p class="body reveal delay-1" style="margin-top:14px; max-width:36ch">
+    Out of every dollar of revenue, this is roughly how the die is cut. <span class="italic serif">Cost of revenue</span> dominates — but the <span class="italic serif">amortized goodwill</span> from past acquisitions still sits on every chip.
+  </p>
+
+  <div class="wafer-wrap reveal delay-2">
+    <svg id="waferSvg" viewBox="0 0 380 380" width="100%" height="auto" aria-hidden="true">
+      <!-- Wafer disc background -->
+      <defs>
+        <radialGradient id="waferGrad" cx="50%" cy="40%" r="65%">
+          <stop offset="0%" stop-color="#FBFAF7"/>
+          <stop offset="100%" stop-color="#ECEAE3"/>
+        </radialGradient>
+        <clipPath id="waferClip">
+          <circle cx="190" cy="190" r="170"/>
+        </clipPath>
+      </defs>
+      <circle cx="190" cy="190" r="170" fill="url(#waferGrad)" stroke="#CFCBC0" stroke-width="1.2"/>
+      <!-- notch -->
+      <path d="M 175 22 L 205 22 L 200 36 L 180 36 Z" fill="#FBFAF7" stroke="#CFCBC0" stroke-width="1.2"/>
+
+      <!-- Die grid: each die colored by cost category, sized by % -->
+      <g id="dieGrid" clip-path="url(#waferClip)">
+        <!-- Built by JS -->
+      </g>
+
+      <!-- center label -->
+      <g>
+        <text x="190" y="186" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="2">$1.00</text>
+        <text x="190" y="200" text-anchor="middle" font-family="Geist Mono, monospace" font-size="7" fill="#A4A29C" letter-spacing="2">PER DOLLAR IN</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="wafer-legend reveal delay-3">
+    <div class="wafer-row"><span class="swatch" style="background:#4F86C6"></span><span class="lbl">Cost of revenue</span><span class="pct">44%</span></div>
+    <div class="wafer-row"><span class="swatch" style="background:#E8734A"></span><span class="lbl">R&amp;D</span><span class="pct">18%</span></div>
+    <div class="wafer-row"><span class="swatch" style="background:#A97DC9"></span><span class="lbl">Amortization of acquired intangibles</span><span class="pct">14%</span></div>
+    <div class="wafer-row"><span class="swatch" style="background:#6DBF82"></span><span class="lbl">SG&amp;A</span><span class="pct">9%</span></div>
+    <div class="wafer-row"><span class="swatch" style="background:#F2C94C"></span><span class="lbl">Restructuring &amp; other</span><span class="pct">4%</span></div>
+    <div class="wafer-row"><span class="swatch" style="background:#ECEAE3; border:1px solid #CFCBC0"></span><span class="lbl">Operating income &amp; below</span><span class="pct">11%</span></div>
+  </div>
+
+  <p class="small reveal delay-4" style="margin-top:22px"><span class="italic serif">Eleven cents</span> survive the wafer. After interest, taxes, and the long tail of acquisitions, the rest is operating income — the slice the dividend is cut from.</p>
+</section>
+
+
+<!-- ====== THE WEIGHT — DARK INTERLUDE ====== -->
+<section class="dark" data-screen-label="06 The Weight (dark)">
+  <div class="eyebrow dark reveal">The weight · <span class="muted">balance sheet</span></div>
+  <h2 class="display reveal" style="font-size:46px; line-height:0.98; margin-top:14px; max-width:13ch; color:#F0EDE6">
+    Microsemi <span class="italic">cost</span> something.
+  </h2>
+  <p class="body reveal delay-1" style="margin-top:18px; max-width:36ch; color:#C9C6BF">
+    In 2018, MCHP bought Microsemi. The strategy worked — the bill is still being paid. <span class="italic serif">Goodwill peaked above $13B in 2019;</span> a steady amortization since.
+  </p>
+
+  <div class="debt-stage reveal delay-2">
+    <svg viewBox="0 0 430 280" width="100%" height="auto" aria-hidden="true">
+      <defs>
+        <linearGradient id="debtGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#E4502E"/>
+          <stop offset="100%" stop-color="#A7311A"/>
+        </linearGradient>
+        <linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#3B3A37"/>
+          <stop offset="100%" stop-color="#1F2937"/>
+        </linearGradient>
+      </defs>
+
+      <!-- floor -->
+      <line x1="20" y1="240" x2="410" y2="240" stroke="#3B3A37" stroke-width="1"/>
+      <text x="20" y="258" font-family="Geist Mono, monospace" font-size="9" fill="#8c8a84" letter-spacing="1.5">CAPITAL STRUCTURE · $ BILLIONS</text>
+
+      <!-- Equity column -->
+      <g>
+        <rect id="eqBar" x="80" y="240" width="92" height="0" fill="url(#eqGrad)" rx="1"/>
+        <text id="eqLabel" x="126" y="240" text-anchor="middle" font-family="Geist, sans-serif" font-size="11" fill="#F0EDE6" font-weight="500">$7.08B</text>
+        <text x="126" y="225" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8.5" fill="#8c8a84" letter-spacing="1.6">EQUITY</text>
+      </g>
+
+      <!-- Debt column -->
+      <g>
+        <rect id="debtBar" x="186" y="240" width="92" height="0" fill="url(#debtGrad)" rx="1"/>
+        <text id="debtLabel" x="232" y="240" text-anchor="middle" font-family="Geist, sans-serif" font-size="11" fill="#F0EDE6" font-weight="500">$5.63B</text>
+        <text x="232" y="225" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8.5" fill="#E4502E" letter-spacing="1.6">DEBT</text>
+      </g>
+
+      <!-- Cash column -->
+      <g>
+        <rect id="cashBar" x="292" y="240" width="92" height="0" fill="#2BB673" opacity="0.9" rx="1"/>
+        <text id="cashLabel" x="338" y="240" text-anchor="middle" font-family="Geist, sans-serif" font-size="11" fill="#F0EDE6" font-weight="500">$0.77B</text>
+        <text x="338" y="225" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8.5" fill="#8c8a84" letter-spacing="1.6">CASH</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="scale-meta reveal delay-3">
+    <div class="col">
+      <div class="v">$898<span style="font-size:18px; font-style:italic; color:#8c8a84">M</span></div>
+      <div class="lbl">Operating cash flow</div>
+    </div>
+    <div class="col">
+      <div class="v">$772<span style="font-size:18px; font-style:italic; color:#8c8a84">M</span></div>
+      <div class="lbl">Free cash flow</div>
+    </div>
+    <div class="col">
+      <div class="v dim">$126<span style="font-size:18px; color:#5a5853">M</span></div>
+      <div class="lbl">Capex</div>
+    </div>
+    <div class="col">
+      <div class="v" style="color:#FF8B6A">$2.4<span style="font-size:18px; font-style:italic">B</span></div>
+      <div class="lbl">Of $4B buyback executed</div>
+    </div>
+  </div>
+
+  <p class="body reveal delay-4" style="margin-top:32px; max-width:36ch; color:#C9C6BF">
+    Cash conversion is <span class="italic serif">healthy</span> despite near-breakeven GAAP earnings. Management's plan, in their words: <span class="italic serif" style="color:#F0EDE6">balance-sheet strengthening alongside strategic growth.</span>
+  </p>
+</section>
+
+
+<!-- ====== RESET BEAT 3 — dark band into geo ====== -->
+<div class="reset dark-band reveal">
+  <p>
+    The bill is paid <span class="serif italic signal">in three currencies —</span> dollars, euros, and a great many <span class="serif italic">renminbi.</span>
+  </p>
+</div>
+
+
+<!-- ====== GEOGRAPHY ====== -->
+<section data-screen-label="07 Geography">
+  <div class="eyebrow reveal">Footprint · <span class="muted">FY '25 revenue</span></div>
+  <h2 class="display reveal" style="font-size:40px; margin-top:14px; max-width:13ch">
+    Asia is <span class="italic">the customer.</span>
+  </h2>
+
+  <!-- Continental flow viz: three "channels" weighted by revenue % -->
+  <div class="reveal delay-1" style="margin:24px -22px 0">
+    <svg viewBox="0 0 430 200" width="100%" height="auto" aria-hidden="true">
+      <defs>
+        <linearGradient id="apFlow" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#E4502E" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#E4502E" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="#E4502E" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="euFlow" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#7B71F5" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#7B71F5" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#7B71F5" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="amFlow" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#3B3A37" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#3B3A37" stop-opacity="0.75"/>
+          <stop offset="100%" stop-color="#3B3A37" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Continent labels -->
+      <g font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="1.6">
+        <text x="22" y="30">AMERICAS</text>
+        <text x="22" y="100">EUROPE</text>
+        <text x="22" y="170">ASIA-PACIFIC</text>
+
+        <text x="408" y="30" text-anchor="end" fill="#3B3A37">28%</text>
+        <text x="408" y="100" text-anchor="end" fill="#5C50D9">18%</text>
+        <text x="408" y="170" text-anchor="end" fill="#E4502E" font-size="11">54%</text>
+      </g>
+
+      <!-- Source dot for chip -->
+      <g transform="translate(40 100)" id="geoSrc">
+        <circle r="6" fill="#0F0E0D"/>
+      </g>
+
+      <!-- Three flow ribbons sized by % -->
+      <path id="amFlowPath" d="M40 100 C 130 60, 220 35, 405 35" stroke="url(#amFlow)" stroke-width="0" fill="none"/>
+      <path id="euFlowPath" d="M40 100 C 150 100, 250 102, 405 100" stroke="url(#euFlow)" stroke-width="0" fill="none"/>
+      <path id="apFlowPath" d="M40 100 C 130 145, 220 165, 405 165" stroke="url(#apFlow)" stroke-width="0" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="geo-rows reveal delay-2">
+    <div class="geo-row">
+      <span class="num sig">54<span style="font-style:italic">%</span></span>
+      <span class="right">
+        <span class="name">Asia-Pacific</span>
+        <span class="desc">Where most of the world's electronics are <span class="italic serif">finished</span>. The single largest market by revenue.</span>
+      </span>
+    </div>
+    <div class="geo-row">
+      <span class="num">28<span style="font-style:italic; color:var(--ink-3)">%</span></span>
+      <span class="right">
+        <span class="name">Americas</span>
+        <span class="desc">Home market. Industrial, defense, automotive design wins.</span>
+      </span>
+    </div>
+    <div class="geo-row">
+      <span class="num">18<span style="font-style:italic; color:var(--ink-3)">%</span></span>
+      <span class="right">
+        <span class="name">Europe</span>
+        <span class="desc">Industrial &amp; auto, where STMicro is fighting for the same sockets.</span>
+      </span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ====== DIVIDEND LADDER — MCHP signature stat ====== -->
+<section class="sunken" data-screen-label="08 Dividend">
+  <div class="eyebrow reveal">A signature · <span class="muted">capital return</span></div>
+  <h2 class="display reveal" style="font-size:42px; margin-top:14px; max-width:14ch">
+    Ninety-three quarters,<br/><span class="italic">in a row.</span>
+  </h2>
+  <p class="body reveal delay-1" style="margin-top:14px; max-width:36ch">
+    MCHP has paid a dividend every quarter for <span class="italic serif">93 consecutive periods</span>, and raised it for <span class="italic serif">22 consecutive years.</span> A streak built through cycles like this one.
+  </p>
+
+  <div class="ladder-wrap reveal delay-2">
+    <svg id="ladderSvg" viewBox="0 0 430 200" width="100%" height="auto" aria-hidden="true">
+      <defs>
+        <linearGradient id="ladderGrad" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stop-color="#E4502E" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="#E4502E" stop-opacity="0.85"/>
+        </linearGradient>
+      </defs>
+      <!-- baseline -->
+      <line x1="22" y1="170" x2="408" y2="170" stroke="#CFCBC0" stroke-width="0.6"/>
+      <!-- 93 ticks. Each tick = a paid quarter -->
+      <g id="ladderTicks"></g>
+
+      <!-- markers -->
+      <text x="22" y="194" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="1.4">Q1 · 23 yrs ago</text>
+      <text x="408" y="194" text-anchor="end" font-family="Geist Mono, monospace" font-size="9" fill="#E4502E" letter-spacing="1.4">Q93 · today</text>
+    </svg>
+  </div>
+
+  <p class="small reveal delay-3" style="margin-top:18px"><span class="italic serif">Capital return is the spine.</span> A $4.0B buyback runs alongside — about <span class="italic serif">$2.4B</span> already executed.</p>
+</section>
+
+
+<!-- ====== RESET BEAT 4 ====== -->
+<div class="reset reveal">
+  <p>
+    But MCHP is <span class="serif italic">not alone</span> in the embedded socket. Three rivals fight for the same <span class="serif italic signal">design wins.</span>
+  </p>
+</div>
+
+
+<!-- ====== COMPETITION ====== -->
+<section data-screen-label="09 Competition">
+  <div class="eyebrow reveal">The competition · <span class="muted">tap a row</span></div>
+  <h2 class="display reveal" style="font-size:40px; margin-top:14px; max-width:13ch">
+    Same sockets.<br/><span class="italic">Different scale.</span>
+  </h2>
+  <p class="body reveal delay-1" style="margin-top:14px; max-width:36ch">
+    Bars are scaled by market cap. Every rival is fighting the same cyclical headwind — <span class="italic serif">revenue down across the board.</span>
+  </p>
+
+  <div class="comp-list reveal delay-2" id="compList">
+    <div class="comp-row us" data-cap="42.62" data-rev="4.40" data-ydelta="-" data-pe="—" tabindex="0">
+      <div class="top">
+        <span class="name">Microchip <span class="italic" style="color:var(--signal)">·</span></span>
+        <span class="ticker">MCHP</span>
+      </div>
+      <div class="bar-row">
+        <span>CAP</span>
+        <span class="bar"><span class="fill" data-w="78"></span></span>
+        <span class="v">$42.62B</span>
+      </div>
+      <div class="ydeltas">
+        <span>REV $4.40B</span>
+        <span class="neg">CYCLICAL TROUGH</span>
+      </div>
+    </div>
+    <div class="comp-row" data-cap="54.59" data-rev="12.27" tabindex="0">
+      <div class="top">
+        <span class="name">NXP Semiconductors</span>
+        <span class="ticker">NXPI</span>
+      </div>
+      <div class="bar-row">
+        <span>CAP</span>
+        <span class="bar"><span class="fill" data-w="100"></span></span>
+        <span class="v">$54.59B</span>
+      </div>
+      <div class="ydeltas">
+        <span>REV $12.27B</span>
+        <span class="neg">YoY −2.74%</span>
+        <span>P/E 27.0</span>
+      </div>
+      <div class="more"><span class="arrow">›</span> Closest product-market rival</div>
+      <div class="desc">Direct competitor in automotive and industrial microcontrollers and mixed-signal ICs. Same cyclical headwinds in embedded control — but more than 2.5× MCHP's revenue.</div>
+    </div>
+    <div class="comp-row" data-cap="32.65" data-rev="6.00" tabindex="0">
+      <div class="top">
+        <span class="name">ON Semiconductor</span>
+        <span class="ticker">ON</span>
+      </div>
+      <div class="bar-row">
+        <span>CAP</span>
+        <span class="bar"><span class="fill" data-w="60"></span></span>
+        <span class="v">$32.65B</span>
+      </div>
+      <div class="ydeltas">
+        <span>REV $6.00B</span>
+        <span class="neg">YoY −15.35%</span>
+        <span>P/E 269.8</span>
+      </div>
+      <div class="more"><span class="arrow">›</span> Power &amp; analog overlap</div>
+      <div class="desc">Competes in power-management ICs, analog semiconductors, and automotive-grade embedded. A similarly challenged demand environment — and a P/E that says the market expects the recovery to do a lot of work.</div>
+    </div>
+    <div class="comp-row" data-cap="31.20" data-rev="3.19" tabindex="0">
+      <div class="top">
+        <span class="name">STMicroelectronics</span>
+        <span class="ticker">STM</span>
+      </div>
+      <div class="bar-row">
+        <span>CAP</span>
+        <span class="bar"><span class="fill" data-w="57"></span></span>
+        <span class="v">$31.20B</span>
+      </div>
+      <div class="ydeltas">
+        <span>REV $3.19B/Q</span>
+        <span class="neg">YoY −50.57%</span>
+        <span>P/E 40.5</span>
+      </div>
+      <div class="more"><span class="arrow">›</span> Direct rival in MCU sockets</div>
+      <div class="desc">A direct global rival in 8-bit and 32-bit microcontrollers, motor control ICs, and automotive embedded. Actively <span class="italic serif">displacing MCHP</span> in European industrial and automotive design wins, while navigating its own prolonged inventory correction.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ====== TAKEAWAY ====== -->
+<section class="close-section" data-screen-label="10 Takeaway">
+  <div class="eyebrow reveal">The takeaway · <span class="muted">restate</span></div>
+
+  <p class="body reveal delay-1" style="margin-top:18px; max-width:36ch">
+    The thesis opened with <span class="italic serif">a small chip thinking</span>, hidden inside a hundred thousand products. The recap closes on what survives the wafer:
+  </p>
+
+  <div class="reveal delay-2" style="margin-top:36px">
+    <div class="close-num">
+      11<span class="sig">¢</span><span class="small"> survive</span>
+    </div>
+    <div class="bignum-sub" style="margin-top:14px">Per dollar of revenue, after cost &amp; amortization · FY '25</div>
+  </div>
+
+  <p class="body reveal delay-3" style="margin-top:32px; max-width:36ch">
+    The chip is small. The bill from Microsemi is large. Cash flow is real, the <span class="italic serif signal">dividend has not missed in 23 years</span>, and the most recent quarter says the trough is behind them. Whatever the next cycle looks like, MCHP <span class="italic serif">keeps the lights on inside everything else.</span>
+  </p>
+
+  <div class="colophon reveal delay-4">
+    <span>MCHP · FY '25</span>
+    <span>Source · 10-K</span>
+  </div>
+</section>
+
+</div><!-- /frame -->
+
+
+<script>
+(function(){
+
+  // ====== Scroll progress ======
+  var progressEl = document.getElementById('progress');
+  var frameEl = document.getElementById('frame');
+  function onScroll(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    var p = h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0;
+    progressEl.style.setProperty('--p', (p*100).toFixed(2) + '%');
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  // ====== Reveal-on-scroll ======
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+      }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal').forEach(function(n){ io.observe(n); });
+
+  // ====== HERO: draw traces from die out to four corners ======
+  (function buildHeroTraces(){
+    var g = document.getElementById('heroTraces');
+    if(!g) return;
+    var paths = [
+      // top-left → die
+      "M 50 60 L 100 60 L 100 100 L 175 100 L 175 130",
+      "M 380 60 L 330 60 L 330 100 L 255 100 L 255 130",
+      "M 50 240 L 100 240 L 100 200 L 175 200 L 175 170",
+      "M 380 240 L 330 240 L 330 200 L 255 200 L 255 170",
+      // long traces
+      "M 16 150 L 90 150 L 95 158 L 175 158",
+      "M 414 150 L 340 150 L 335 158 L 255 158",
+    ];
+    paths.forEach(function(d, i){
+      var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', d);
+      p.setAttribute('stroke-dasharray', '500');
+      p.setAttribute('stroke-dashoffset', '500');
+      p.style.transition = 'stroke-dashoffset 1400ms cubic-bezier(.22,1,.36,1) ' + (i*120 + 200) + 'ms';
+      g.appendChild(p);
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){ p.setAttribute('stroke-dashoffset','0'); });
+      });
+    });
+
+    // Build pin pads around die
+    var pins = document.getElementById('pins');
+    if(pins){
+      var n = 14;
+      for (var i=0;i<n;i++){
+        var x = -86 + (172 * (i+0.5)/n);
+        var t = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        t.setAttribute('x', x.toFixed(1)); t.setAttribute('y','-66');
+        t.setAttribute('width','3'); t.setAttribute('height','8'); t.setAttribute('fill','#A4A29C');
+        pins.appendChild(t);
+        var b = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        b.setAttribute('x', x.toFixed(1)); b.setAttribute('y','58');
+        b.setAttribute('width','3'); b.setAttribute('height','8'); b.setAttribute('fill','#A4A29C');
+        pins.appendChild(b);
+      }
+      var ny = 8;
+      for (var j=0;j<ny;j++){
+        var y = -58 + (116 * (j+0.5)/ny);
+        var l = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        l.setAttribute('x','-94'); l.setAttribute('y', y.toFixed(1));
+        l.setAttribute('width','8'); l.setAttribute('height','3'); l.setAttribute('fill','#A4A29C');
+        pins.appendChild(l);
+        var r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        r.setAttribute('x','86'); r.setAttribute('y', y.toFixed(1));
+        r.setAttribute('width','8'); r.setAttribute('height','3'); r.setAttribute('fill','#A4A29C');
+        pins.appendChild(r);
+      }
+    }
+
+    // pulsing core
+    var pulse = document.getElementById('dieCorePulse');
+    if (pulse){
+      var t = 0;
+      function tick(){
+        t += 0.025;
+        pulse.setAttribute('opacity', (0.4 + 0.4 * Math.sin(t)).toFixed(3));
+        requestAnimationFrame(tick);
+      }
+      tick();
+    }
+  })();
+
+  // ====== FLOW SCENE: animate paths in once visible ======
+  var flowSeen = false;
+  var flowSec = document.getElementById('flowScene');
+  function animateFlow(){
+    if(flowSeen) return; flowSeen = true;
+    var pa = document.getElementById('pathA');
+    var pb = document.getElementById('pathB');
+    var pc = document.getElementById('pathC');
+    [pa, pb, pc].forEach(function(p, i){
+      if(!p) return;
+      var len = p.getTotalLength ? p.getTotalLength() : 500;
+      p.style.strokeDasharray = len + ' ' + len;
+      p.style.strokeDashoffset = len;
+      p.style.transition = 'stroke-dashoffset 1100ms cubic-bezier(.22,1,.36,1) ' + (i*180) + 'ms';
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){ p.style.strokeDashoffset = '0'; });
+      });
+    });
+    var d = document.getElementById('distNode');
+    if(d){
+      d.style.transition = 'opacity 380ms ease 700ms';
+      d.style.opacity = '1';
+    }
+    // Revenue mix bar segments
+    var semi = document.getElementById('segSemi');
+    var lic = document.getElementById('segLic');
+    if(semi && lic){
+      semi.style.transition = 'width 1200ms cubic-bezier(.22,1,.36,1) 600ms';
+      lic.style.transition = 'width 1200ms cubic-bezier(.22,1,.36,1) 1300ms';
+      // 92% / 8% of 386
+      requestAnimationFrame(function(){
+        semi.setAttribute('width', (386 * 0.92).toFixed(1));
+        lic.setAttribute('x', (386 * 0.92).toFixed(1));
+        lic.setAttribute('width', (386 * 0.08).toFixed(1));
+      });
+    }
+
+    // MCU bars
+    document.querySelectorAll('.mcu-bar .b').forEach(function(b, i){
+      var w = parseInt(b.getAttribute('data-w'),10) || 60;
+      b.style.width = '0%';
+      b.style.transition = 'width 900ms cubic-bezier(.22,1,.36,1) ' + (1100 + i*120) + 'ms';
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){ b.style.width = w + '%'; });
+      });
+    });
+  }
+  if (flowSec){
+    var fio = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting) animateFlow(); });
+    }, {threshold:0.25});
+    fio.observe(flowSec);
+  }
+
+  // ====== WAFER: build die grid ======
+  (function buildWafer(){
+    var g = document.getElementById('dieGrid');
+    if(!g) return;
+    var costs = [
+      {pct:44, color:'#4F86C6'},
+      {pct:18, color:'#E8734A'},
+      {pct:14, color:'#A97DC9'},
+      {pct:9,  color:'#6DBF82'},
+      {pct:4,  color:'#F2C94C'},
+      {pct:11, color:'#ECEAE3'} // operating income & below (residual)
+    ];
+    // 10x10 grid of dies, each = 1 cent. Wafer-clipped.
+    var size = 24;
+    var gap = 2;
+    var origin = 190 - (5*size + 4.5*gap);
+    var dies = [];
+    var idx = 0;
+    var run = []; // flat list of category for 100 cells
+    costs.forEach(function(c){
+      for (var i=0;i<c.pct;i++) run.push(c);
+    });
+    // Build cells row by row
+    for (var r=0;r<10;r++){
+      for (var col=0;col<10;col++){
+        var x = origin + col*(size+gap);
+        var y = origin + r*(size+gap);
+        var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        rect.setAttribute('x', x.toFixed(1));
+        rect.setAttribute('y', y.toFixed(1));
+        rect.setAttribute('width', size);
+        rect.setAttribute('height', size);
+        rect.setAttribute('rx', '1');
+        var c = run[idx];
+        rect.setAttribute('fill', c.color);
+        if (c.color === '#ECEAE3'){
+          rect.setAttribute('stroke', '#CFCBC0');
+          rect.setAttribute('stroke-width','0.6');
+        }
+        rect.setAttribute('opacity', '0');
+        rect.style.transition = 'opacity 350ms ease ' + (idx*8) + 'ms';
+        g.appendChild(rect);
+        dies.push(rect);
+        idx++;
+      }
+    }
+    // animate when wafer comes into view
+    var w = document.getElementById('waferSvg');
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          dies.forEach(function(d){ d.setAttribute('opacity','0.92'); });
+          io.disconnect();
+        }
+      });
+    }, {threshold:0.2});
+    io.observe(w);
+  })();
+
+  // ====== DEBT bars ======
+  (function debtBars(){
+    var section = document.querySelector('section.dark');
+    if(!section) return;
+    var eq = document.getElementById('eqBar');
+    var debt = document.getElementById('debtBar');
+    var cash = document.getElementById('cashBar');
+    var eqL = document.getElementById('eqLabel');
+    var debtL = document.getElementById('debtLabel');
+    var cashL = document.getElementById('cashLabel');
+    // Map values to heights, max ~200px for $7.08B
+    var maxV = 7.08;
+    var maxH = 200;
+    function setBar(rect, label, val, baseY){
+      var h = val/maxV * maxH;
+      var y = baseY - h;
+      rect.style.transition = 'y 1200ms cubic-bezier(.22,1,.36,1), height 1200ms cubic-bezier(.22,1,.36,1)';
+      label.style.transition = 'y 1200ms cubic-bezier(.22,1,.36,1)';
+      requestAnimationFrame(function(){
+        rect.setAttribute('y', y.toFixed(1));
+        rect.setAttribute('height', h.toFixed(1));
+        label.setAttribute('y', (y - 8).toFixed(1));
+      });
+    }
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          setBar(eq, eqL, 7.08, 240);
+          setBar(debt, debtL, 5.63, 240);
+          setBar(cash, cashL, 0.77, 240);
+          io.disconnect();
+        }
+      });
+    }, {threshold:0.3});
+    io.observe(section);
+  })();
+
+  // ====== GEO flows ======
+  (function geoFlow(){
+    var ap = document.getElementById('apFlowPath');
+    var eu = document.getElementById('euFlowPath');
+    var am = document.getElementById('amFlowPath');
+    if(!ap) return;
+    var section = ap.closest('section');
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          [{p:am, w:0.28*40+4}, {p:eu, w:0.18*40+3}, {p:ap, w:0.54*40+6}].forEach(function(o,i){
+            o.p.style.transition = 'stroke-width 1100ms cubic-bezier(.22,1,.36,1) ' + (i*180) + 'ms';
+            requestAnimationFrame(function(){
+              o.p.setAttribute('stroke-width', o.w.toFixed(1));
+            });
+          });
+          io.disconnect();
+        }
+      });
+    }, {threshold:0.2});
+    io.observe(section);
+  })();
+
+  // ====== Dividend ladder ======
+  (function ladder(){
+    var g = document.getElementById('ladderTicks');
+    if(!g) return;
+    var n = 93;
+    var x0 = 26, x1 = 404, baseY = 170;
+    for (var i=0;i<n;i++){
+      var x = x0 + (x1-x0) * (i/(n-1));
+      // Slight upward drift: dividend grew over 22 years
+      var growth = i/(n-1); // 0..1
+      var h = 8 + growth * 36; // 8 -> 44 px
+      // Subtle variance for realism
+      var jitter = (Math.sin(i*1.3) * 0.5 + Math.cos(i*0.7)*0.4) * 1.5;
+      h += jitter;
+      var y = baseY - h;
+      var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1', x.toFixed(1));
+      line.setAttribute('x2', x.toFixed(1));
+      line.setAttribute('y1', baseY);
+      line.setAttribute('y2', baseY);
+      line.setAttribute('stroke', i === n-1 ? '#E4502E' : '#3B3A37');
+      line.setAttribute('stroke-width', i === n-1 ? '1.6' : '1');
+      line.setAttribute('opacity', i === n-1 ? '1' : '0.6');
+      line.style.transition = 'y2 700ms cubic-bezier(.22,1,.36,1) ' + (i*9) + 'ms';
+      g.appendChild(line);
+      // store target
+      line.dataset.y2 = y.toFixed(1);
+    }
+    var section = g.closest('section');
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          g.querySelectorAll('line').forEach(function(l){
+            requestAnimationFrame(function(){ l.setAttribute('y2', l.dataset.y2); });
+          });
+          io.disconnect();
+        }
+      });
+    }, {threshold:0.25});
+    io.observe(section);
+  })();
+
+  // ====== Competitor bars ======
+  (function compBars(){
+    var list = document.getElementById('compList');
+    if(!list) return;
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          list.querySelectorAll('.fill').forEach(function(f, i){
+            var w = parseInt(f.getAttribute('data-w'),10) || 50;
+            f.style.transition = 'width 900ms cubic-bezier(.22,1,.36,1) ' + (i*120) + 'ms';
+            requestAnimationFrame(function(){ f.style.width = w + '%'; });
+          });
+          io.disconnect();
+        }
+      });
+    }, {threshold:0.2});
+    io.observe(list);
+
+    // Tap-to-expand on rows that have descriptions
+    list.querySelectorAll('.comp-row').forEach(function(row){
+      var hasMore = row.querySelector('.desc');
+      if(!hasMore) return;
+      function toggle(){ row.classList.toggle('open'); }
+      row.addEventListener('click', toggle);
+      row.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); }
+      });
+    });
+  })();
+
+})();
+</script>
+
+</body>
+</html>

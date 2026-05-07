@@ -1,0 +1,1438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=420, initial-scale=1, viewport-fit=cover" />
+<title>PKG · Recap</title>
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  /* ============================================================
+     PKG — kraft / corrugated palette
+     Built on the Zair design system (paper + serif/sans/mono).
+     Brand-adaptive layer: warm kraft browns + ink, ink-on-kraft
+     stamps, corrugated flute textures, manila interludes.
+     ============================================================ */
+  :root {
+    /* kraft tonal range — derived from the box itself */
+    --kraft-50:  #F4ECDB;
+    --kraft-100: #E9DCBE;
+    --kraft-200: #D9C293;
+    --kraft-300: #C5A26B;
+    --kraft-400: #A87C4A;
+    --kraft-500: #855B30;
+    --kraft-600: #5E3F22;
+    --kraft-700: #3C2916;
+    --kraft-800: #241810;
+
+    /* manila — interlude band */
+    --manila:    #E7D7AE;
+    --manila-2:  #D8C28A;
+
+    /* deep ink — overprint feel */
+    --print-ink: #1B1814;
+    --print-mute: #5A4F40;
+    --print-line: #B69C70;
+
+    /* signal — kept neutral; we lean into kraft itself */
+    --signal:    #C13B1F;     /* shipping-stamp red */
+    --stamp-blue:#1F4E8A;     /* USPS-ish ink */
+
+    /* page rhythm */
+    --pad-x: 24px;
+    --pad-x-tight: 18px;
+    --col: 392px;             /* mobile content width */
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--kraft-50);
+    color: var(--print-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    font-feature-settings: "ss01" on, "cv11" on;
+  }
+
+  /* base type overrides for kraft material */
+  h1, h2, h3, h4 { color: var(--print-ink); }
+  p { color: var(--print-mute); }
+
+  /* ---------- LAYOUT SHELL ---------- */
+  .page {
+    width: 100%;
+    max-width: var(--col);
+    margin: 0 auto;
+    position: relative;
+    background: var(--kraft-50);
+    overflow: hidden;
+  }
+
+  /* faint paper grain overlay */
+  .page::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(rgba(60,41,22,0.05) 1px, transparent 1px),
+      radial-gradient(rgba(60,41,22,0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ---------- STICKY CHROME ---------- */
+  .chrome {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(244, 236, 219, 0.78);
+    backdrop-filter: saturate(1.3) blur(14px);
+    -webkit-backdrop-filter: saturate(1.3) blur(14px);
+    border-bottom: 1px solid rgba(60,41,22,0.12);
+  }
+  .chrome-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px var(--pad-x) 11px;
+  }
+  .chrome-mark {
+    width: 22px; height: 22px;
+    border: 1.5px solid var(--print-ink);
+    border-radius: 3px;
+    position: relative;
+    flex: 0 0 auto;
+    background: var(--kraft-100);
+  }
+  .chrome-mark::before, .chrome-mark::after {
+    content: ""; position: absolute; left: 2px; right: 2px;
+    height: 1px; background: var(--print-ink); opacity: 0.55;
+  }
+  .chrome-mark::before { top: 7px; }
+  .chrome-mark::after  { top: 13px; }
+  .chrome-tic {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--print-ink);
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    color: var(--print-mute);
+    letter-spacing: -0.005em;
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .chrome-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--print-mute);
+    border: 1px solid rgba(60,41,22,0.2);
+    padding: 3px 7px 2px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+  .chrome-bar {
+    height: 1.5px;
+    background: rgba(60,41,22,0.08);
+    position: relative;
+  }
+  .chrome-bar > span {
+    display: block;
+    height: 100%;
+    width: var(--p, 0%);
+    background: var(--print-ink);
+    transition: width 80ms linear;
+  }
+
+  /* ---------- common atoms ---------- */
+  .eye {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--print-mute);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eye::before {
+    content: "";
+    width: 18px; height: 1px; background: var(--print-mute);
+    display: inline-block;
+  }
+  .eye .num { color: var(--print-ink); font-weight: 500; }
+
+  .display-xl {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    color: var(--print-ink);
+  }
+  .display-it { font-style: italic; }
+  .signal { color: var(--signal); }
+  .ink    { color: var(--print-ink); }
+  .mute   { color: var(--print-mute); }
+
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  section { position: relative; z-index: 2; }
+
+  /* ---------- 1. HERO ---------- */
+  .hero {
+    padding: 28px var(--pad-x) 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-stamp {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 10px 4px;
+    border: 1.5px solid var(--signal);
+    color: var(--signal);
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transform: rotate(-3deg);
+    margin-bottom: 22px;
+    background: rgba(193,59,31,0.04);
+  }
+  .hero-stamp .dot {
+    width: 6px; height: 6px; border-radius: 999px; background: var(--signal);
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    font-weight: 400;
+    margin: 0;
+    color: var(--print-ink);
+  }
+  .hero h1 em { font-style: italic; color: var(--kraft-500); }
+  .hero-sub {
+    margin-top: 18px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--print-mute);
+    max-width: 30ch;
+  }
+  .hero-sub em { font-family: var(--font-display); font-style: italic; color: var(--print-ink); font-size: 17px; }
+
+  .hero-meta {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 14px;
+    border-top: 1px solid rgba(60,41,22,0.18);
+    padding-top: 18px;
+  }
+  .hero-meta .k { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; color: var(--print-mute); text-transform: uppercase; margin-bottom: 6px; }
+  .hero-meta .v { font-family: var(--font-display); font-size: 26px; line-height: 1; color: var(--print-ink); letter-spacing: -0.01em; }
+  .hero-meta .v small { font-family: var(--font-mono); font-size: 11px; color: var(--print-mute); letter-spacing: 0.05em; margin-left: 4px; }
+
+  /* corrugated stack illustration anchored bottom-right of hero */
+  .hero-corr {
+    position: absolute;
+    right: -28px; bottom: -10px;
+    width: 280px;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  /* ---------- 2. RESET BEAT ---------- */
+  .reset {
+    padding: 38px var(--pad-x);
+    background: var(--kraft-100);
+    border-top: 1px solid rgba(60,41,22,0.12);
+    border-bottom: 1px solid rgba(60,41,22,0.12);
+    position: relative;
+  }
+  .reset p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 24px;
+    line-height: 1.2;
+    color: var(--print-ink);
+    letter-spacing: -0.005em;
+    margin: 0;
+  }
+  .reset p .dim { color: var(--kraft-500); font-style: italic; }
+  .reset .by {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    color: var(--print-mute);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  /* manila variant */
+  .reset.manila { background: var(--manila); }
+  .reset.dark   { background: var(--print-ink); }
+  .reset.dark p, .reset.dark .by { color: var(--kraft-100); }
+  .reset.dark p .dim { color: var(--kraft-300); }
+
+  /* ---------- 3. SECTION SCAFFOLD ---------- */
+  .beat {
+    padding: 56px var(--pad-x) 56px;
+  }
+  .beat .h-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 22px; }
+  .beat h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 1.0;
+    letter-spacing: -0.018em;
+    color: var(--print-ink);
+    margin: 12px 0 0;
+  }
+  .beat h2 em { font-style: italic; }
+  .beat .lede {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--print-mute);
+    margin-top: 16px;
+    max-width: 34ch;
+  }
+  .beat .lede em { font-family: var(--font-display); font-style: italic; color: var(--print-ink); font-size: 16px; }
+
+  /* ---------- BUSINESS METAPHOR (mill-to-box) ---------- */
+  .pipe {
+    margin-top: 34px;
+    position: relative;
+  }
+  .pipe-step {
+    display: flex; gap: 16px; align-items: flex-start;
+    position: relative; padding: 12px 0 22px;
+  }
+  .pipe-step .num {
+    flex: 0 0 38px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--print-mute);
+    text-align: right;
+    padding-top: 6px;
+  }
+  .pipe-step .glyph {
+    flex: 0 0 60px; height: 60px;
+    border: 1.5px solid var(--print-ink);
+    border-radius: 4px;
+    background: var(--kraft-100);
+    display: grid; place-items: center;
+    position: relative;
+  }
+  .pipe-step .body { flex: 1; padding-top: 4px; }
+  .pipe-step .body .t {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1.05;
+    color: var(--print-ink);
+  }
+  .pipe-step .body .t em { font-style: italic; color: var(--kraft-500); }
+  .pipe-step .body .d {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--print-mute);
+    margin-top: 6px;
+  }
+  /* connector line between steps */
+  .pipe-step::after {
+    content: "";
+    position: absolute;
+    left: 68px; /* 38 + 16 + 14 */
+    top: 78px;
+    bottom: -10px;
+    width: 1.5px;
+    background: repeating-linear-gradient(to bottom, var(--print-ink) 0 4px, transparent 4px 8px);
+    opacity: 0.4;
+  }
+  .pipe-step:last-child::after { display: none; }
+
+  .seg-bar {
+    margin-top: 30px;
+    border-top: 1px solid rgba(60,41,22,0.18);
+    padding-top: 22px;
+  }
+  .seg-bar .row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .seg-bar .row .lab { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--print-mute); text-transform: uppercase; width: 76px; }
+  .seg-bar .row .bar {
+    flex: 1; height: 22px; background: var(--kraft-100);
+    border: 1px solid var(--print-line);
+    position: relative; overflow: hidden;
+  }
+  .seg-bar .row .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--print-ink);
+    width: 0;
+    transition: width 1100ms var(--ease-out);
+  }
+  .seg-bar .row.paper .fill { background: var(--kraft-500); }
+  .seg-bar .row .pct { font-family: var(--font-display); font-size: 22px; color: var(--print-ink); width: 56px; text-align: right; }
+
+  /* ---------- SCALE BEAT ---------- */
+  .scale-grid {
+    margin-top: 22px;
+  }
+  .scale-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    border-top: 1px solid rgba(60,41,22,0.2);
+    padding: 22px 0 20px;
+    position: relative;
+  }
+  .scale-row:last-child { border-bottom: 1px solid rgba(60,41,22,0.2); }
+  .scale-row .top { display: flex; justify-content: space-between; align-items: baseline; }
+  .scale-row .lab { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--print-mute); }
+  .scale-row .unit { font-family: var(--font-mono); font-size: 11px; color: var(--print-mute); }
+  .scale-row .big {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.95;
+    color: var(--print-ink);
+    letter-spacing: -0.02em;
+    margin-top: 2px;
+  }
+  .scale-row .big em { font-style: italic; color: var(--kraft-500); }
+  .scale-row .note {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    color: var(--print-mute);
+    margin-top: 4px;
+  }
+  .scale-row .note em { font-family: var(--font-display); font-style: italic; color: var(--print-ink); font-size: 14px; }
+
+  /* growth tick visualization */
+  .growth-vis { margin-top: 14px; height: 56px; }
+
+  /* ---------- COSTS BEAT — folded box ---------- */
+  .costs-wrap { margin-top: 26px; }
+  .costs-svg { width: 100%; height: auto; display: block; }
+
+  .cost-list { margin-top: 22px; display: flex; flex-direction: column; gap: 12px; }
+  .cost-item {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(60,41,22,0.15);
+  }
+  .cost-item:first-child { border-top: 1px solid rgba(60,41,22,0.3); }
+  .cost-item .swatch {
+    width: 14px; height: 14px; border-radius: 2px;
+    border: 1px solid rgba(20,20,20,0.15);
+  }
+  .cost-item .lab { font-family: var(--font-sans); font-size: 13.5px; color: var(--print-ink); }
+  .cost-item .lab small { display:block; font-family: var(--font-mono); font-size: 10px; color: var(--print-mute); letter-spacing: 0.06em; margin-top: 2px; }
+  .cost-item .pct { font-family: var(--font-display); font-size: 24px; color: var(--print-ink); letter-spacing: -0.01em; }
+
+  .cost-totals {
+    margin-top: 14px;
+    padding: 16px 0 0;
+    border-top: 2px solid var(--print-ink);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .cost-totals .left { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--print-mute); text-transform: uppercase; }
+  .cost-totals .right { font-family: var(--font-display); font-size: 28px; color: var(--print-ink); }
+  .cost-totals .right em { font-style: italic; color: var(--signal); }
+
+  /* ---------- FOOTPRINT BEAT ---------- */
+  .footprint {
+    margin-top: 26px;
+    background: var(--kraft-100);
+    border: 1px solid var(--print-line);
+    padding: 24px 20px 22px;
+    border-radius: 6px;
+    position: relative;
+  }
+  .footprint::before {
+    /* postal-stamp perforated edge feel — top */
+    content: "";
+    position: absolute; left: 12px; right: 12px; top: -1px;
+    height: 1px; background: repeating-linear-gradient(to right, var(--print-line) 0 4px, transparent 4px 8px);
+  }
+  .map-svg { width: 100%; height: auto; display: block; }
+  .map-legend { margin-top: 18px; display: flex; gap: 18px; align-items: center; }
+  .map-legend .item { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--print-ink); letter-spacing: 0.04em; }
+  .map-legend .swatch { width: 12px; height: 12px; border-radius: 2px; }
+
+  /* ---------- BET BEAT (DARK) ---------- */
+  .bet-wrap {
+    background: var(--print-ink);
+    color: var(--kraft-100);
+    margin: 0;
+    padding: 60px var(--pad-x) 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bet-wrap::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 4px 4px;
+    pointer-events: none;
+  }
+  .bet-wrap .eye { color: rgba(255,255,255,0.55); }
+  .bet-wrap .eye::before { background: rgba(255,255,255,0.4); }
+  .bet-wrap h2 { color: var(--kraft-50); }
+  .bet-wrap h2 em { color: var(--kraft-300); }
+  .bet-wrap .lede { color: rgba(244,236,219,0.7); }
+  .bet-wrap .lede em { color: var(--kraft-100); }
+
+  .bet-stack {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .bet-card {
+    background: rgba(244,236,219,0.04);
+    border: 1px solid rgba(244,236,219,0.18);
+    border-radius: 6px;
+    padding: 16px 16px 18px;
+    position: relative;
+  }
+  .bet-card .tag {
+    font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.18em; color: var(--kraft-300); text-transform: uppercase;
+  }
+  .bet-card .v {
+    font-family: var(--font-display); font-size: 38px; line-height: 1; color: var(--kraft-50); margin-top: 6px; letter-spacing: -0.02em;
+  }
+  .bet-card .v em { font-style: italic; color: var(--kraft-300); }
+  .bet-card .d {
+    font-family: var(--font-sans); font-size: 12.5px; line-height: 1.5; color: rgba(244,236,219,0.65); margin-top: 8px;
+  }
+  .bet-card .d em { font-family: var(--font-display); font-style: italic; color: var(--kraft-100); font-size: 14px; }
+
+  .bet-bar {
+    margin-top: 24px;
+    border-top: 1px solid rgba(244,236,219,0.18);
+    padding-top: 18px;
+  }
+  .bet-bar .row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+  .bet-bar .row .l { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(244,236,219,0.55); }
+  .bet-bar .row .v { font-family: var(--font-display); font-size: 18px; color: var(--kraft-100); }
+  .bet-bar .track {
+    height: 4px; background: rgba(244,236,219,0.1);
+    position: relative; border-radius: 2px; overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .bet-bar .track .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--kraft-300); width: 0; transition: width 1200ms var(--ease-out);
+  }
+
+  /* ---------- COMPETITION BEAT ---------- */
+  .compet { margin-top: 28px; }
+  .comp-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 22px 0 22px;
+    border-top: 1px solid rgba(60,41,22,0.2);
+    cursor: pointer;
+    position: relative;
+  }
+  .comp-row:last-child { border-bottom: 1px solid rgba(60,41,22,0.2); }
+  .comp-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .comp-head .name {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1;
+    color: var(--print-ink);
+    letter-spacing: -0.01em;
+  }
+  .comp-head .name em { font-style: italic; color: var(--kraft-500); }
+  .comp-head .tic {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--print-mute);
+    border: 1px solid var(--print-line);
+    padding: 3px 7px 2px;
+    border-radius: 3px;
+  }
+  .comp-bar-wrap {
+    margin-top: 16px;
+    height: 28px;
+    position: relative;
+    background: var(--kraft-100);
+    border: 1px solid var(--print-line);
+    overflow: hidden;
+  }
+  .comp-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: var(--print-ink);
+    width: 0;
+    transition: width 1100ms var(--ease-out);
+  }
+  .comp-bar.us { background: var(--signal); }
+  .comp-bar.lt-pkg { background: var(--kraft-500); }
+  .comp-bar-wrap .label {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    font-family: var(--font-mono); font-size: 11px; color: var(--print-ink);
+    letter-spacing: 0.04em;
+    z-index: 2;
+  }
+  .comp-meta {
+    margin-top: 10px;
+    display: flex; gap: 16px;
+    font-family: var(--font-mono); font-size: 10.5px; color: var(--print-mute); letter-spacing: 0.04em;
+  }
+  .comp-meta .pos { color: var(--print-ink); }
+  .comp-meta .neg { color: var(--signal); }
+  .comp-desc {
+    margin-top: 12px;
+    max-height: 0; overflow: hidden;
+    font-family: var(--font-sans);
+    font-size: 13px; line-height: 1.55; color: var(--print-mute);
+    transition: max-height 320ms var(--ease-out), margin-top 320ms var(--ease-out);
+  }
+  .comp-desc em { font-family: var(--font-display); font-style: italic; color: var(--print-ink); font-size: 14.5px; }
+  .comp-row.open .comp-desc { max-height: 240px; margin-top: 14px; }
+  .comp-row .toggle {
+    position: absolute; right: 0; top: 22px;
+    width: 20px; height: 20px;
+    display: grid; place-items: center;
+    color: var(--print-mute);
+    transition: transform 220ms var(--ease-out);
+  }
+  .comp-row.open .toggle { transform: rotate(45deg); }
+  .comp-row .toggle::before, .comp-row .toggle::after {
+    content: ""; position: absolute; background: currentColor;
+  }
+  .comp-row .toggle::before { width: 12px; height: 1.5px; }
+  .comp-row .toggle::after  { width: 1.5px; height: 12px; }
+
+  /* ---------- CLOSING BEAT ---------- */
+  .close {
+    padding: 64px var(--pad-x) 80px;
+    background: var(--kraft-50);
+    position: relative;
+    text-align: left;
+  }
+  .close .ribbon {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--signal);
+    border: 1.5px solid var(--signal);
+    padding: 5px 10px 4px;
+    border-radius: 3px;
+    margin-bottom: 24px;
+    transform: rotate(-2deg);
+  }
+  .close h2 {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.95;
+    color: var(--print-ink);
+    letter-spacing: -0.022em;
+    font-weight: 400;
+    margin: 0;
+  }
+  .close h2 em { font-style: italic; color: var(--kraft-500); }
+  .close .resolve {
+    margin-top: 26px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.25;
+    color: var(--print-mute);
+  }
+  .close .resolve b { font-style: normal; font-family: var(--font-sans); font-weight: 500; color: var(--print-ink); }
+
+  .close .div-grid {
+    margin-top: 36px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--print-line);
+    border: 1px solid var(--print-line);
+  }
+  .close .div-grid .cell {
+    background: var(--kraft-50);
+    padding: 18px 16px 16px;
+  }
+  .close .div-grid .k { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.16em; color: var(--print-mute); text-transform: uppercase; }
+  .close .div-grid .v { font-family: var(--font-display); font-size: 28px; line-height: 1; color: var(--print-ink); margin-top: 6px; letter-spacing: -0.01em; }
+  .close .div-grid .v em { font-style: italic; color: var(--kraft-500); }
+
+  .colophon {
+    margin-top: 60px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(60,41,22,0.2);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--print-mute);
+    line-height: 1.7;
+    text-transform: uppercase;
+  }
+  .colophon .row { display: flex; justify-content: space-between; }
+
+  /* ---------- HERO COUNT-UP ---------- */
+  .countup { font-variant-numeric: tabular-nums; }
+
+  /* ---------- subtle SVG strokes default ---------- */
+  svg { display: block; }
+</style>
+</head>
+<body>
+
+<div class="page" id="page">
+
+  <!-- ============= STICKY CHROME ============= -->
+  <header class="chrome" role="banner">
+    <div class="chrome-inner">
+      <div class="chrome-mark" aria-hidden="true"></div>
+      <div class="chrome-tic">PKG</div>
+      <div class="chrome-name">Packaging Corp. of America</div>
+      <div class="chrome-label">Recap · FY '25</div>
+    </div>
+    <div class="chrome-bar" aria-hidden="true"><span id="progress"></span></div>
+  </header>
+
+  <!-- ============= 1. THESIS / HERO ============= -->
+  <section class="hero" id="s-hero" data-screen-label="01 Thesis">
+    <span class="hero-stamp"><span class="dot"></span> NYSE · LISTED</span>
+
+    <h1>
+      Every <em>fourth</em><br>
+      box in<br>
+      America.<sup style="font-family:var(--font-display); font-size:0.4em; color:var(--signal); vertical-align:top; margin-left:4px;">*</sup>
+    </h1>
+
+    <p class="hero-sub">
+      Roughly. Ten percent of the country's containerboard moves through PKG's mills — <em>quietly, vertically, by the truckload.</em>
+    </p>
+
+    <div class="hero-meta">
+      <div>
+        <div class="k">Market cap</div>
+        <div class="v countup" data-target="18.12" data-prefix="$" data-suffix="B" data-decimals="2">$0.00B</div>
+      </div>
+      <div>
+        <div class="k">FY '25 revenue</div>
+        <div class="v countup" data-target="8.99" data-prefix="$" data-suffix="B" data-decimals="2">$0.00B</div>
+      </div>
+      <div>
+        <div class="k">Domestic share</div>
+        <div class="v countup" data-target="10" data-suffix="%" data-decimals="0">0%</div>
+      </div>
+      <div>
+        <div class="k">Employees</div>
+        <div class="v countup" data-target="16800" data-decimals="0" data-format="comma">0</div>
+      </div>
+    </div>
+
+    <!-- corrugated stack motif -->
+    <svg class="hero-corr" viewBox="0 0 280 220" aria-hidden="true">
+      <defs>
+        <pattern id="flute" width="6" height="220" patternUnits="userSpaceOnUse">
+          <rect width="6" height="220" fill="#D9C293"/>
+          <path d="M3 0 q3 3 0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6 t0 6" stroke="#A87C4A" stroke-width="1" fill="none" opacity="0.7"/>
+        </pattern>
+      </defs>
+      <!-- box 3 (back) -->
+      <g transform="translate(110 30)">
+        <path d="M0 30 L80 0 L160 30 L80 60 Z" fill="#C5A26B" stroke="#5E3F22" stroke-width="1.2"/>
+        <path d="M0 30 L0 90 L80 120 L80 60 Z" fill="#A87C4A" stroke="#5E3F22" stroke-width="1.2"/>
+        <path d="M80 60 L80 120 L160 90 L160 30 Z" fill="#855B30" stroke="#5E3F22" stroke-width="1.2"/>
+        <!-- flute hint on side -->
+        <g opacity="0.5">
+          <line x1="10" y1="42" x2="10" y2="96" stroke="#5E3F22" stroke-width="0.5"/>
+          <line x1="20" y1="46" x2="20" y2="100" stroke="#5E3F22" stroke-width="0.5"/>
+          <line x1="30" y1="50" x2="30" y2="104" stroke="#5E3F22" stroke-width="0.5"/>
+          <line x1="40" y1="54" x2="40" y2="108" stroke="#5E3F22" stroke-width="0.5"/>
+          <line x1="50" y1="58" x2="50" y2="112" stroke="#5E3F22" stroke-width="0.5"/>
+          <line x1="60" y1="62" x2="60" y2="116" stroke="#5E3F22" stroke-width="0.5"/>
+          <line x1="70" y1="66" x2="70" y2="120" stroke="#5E3F22" stroke-width="0.5"/>
+        </g>
+      </g>
+      <!-- box 2 (mid) -->
+      <g transform="translate(60 90)">
+        <path d="M0 30 L80 0 L160 30 L80 60 Z" fill="#D9C293" stroke="#5E3F22" stroke-width="1.2"/>
+        <path d="M0 30 L0 90 L80 120 L80 60 Z" fill="#C5A26B" stroke="#5E3F22" stroke-width="1.2"/>
+        <path d="M80 60 L80 120 L160 90 L160 30 Z" fill="#A87C4A" stroke="#5E3F22" stroke-width="1.2"/>
+        <text x="20" y="90" font-family="Geist Mono" font-size="8" fill="#3C2916" letter-spacing="1" opacity="0.7">PKG · 36×24×18</text>
+        <!-- tape -->
+        <line x1="0" y1="44" x2="80" y2="14" stroke="#3C2916" stroke-width="2" opacity="0.18"/>
+      </g>
+    </svg>
+  </section>
+
+  <!-- ============= RESET BEAT 1 ============= -->
+  <section class="reset" data-screen-label="02 Interlude · the math">
+    <p>
+      <span class="dim">The math is plain.</span> Seven mills feed eighty-five plants feed a country that won't stop ordering.
+    </p>
+  </section>
+
+  <!-- ============= 2. THE BUSINESS ============= -->
+  <section class="beat" id="s-business" data-screen-label="03 The business">
+    <span class="eye"><span class="num">02</span> The business</span>
+    <h2>Mill to <em>box</em>,<br>vertically.</h2>
+    <p class="lede">
+      Trees in, cartons out. PKG owns the chain — the part most box buyers <em>never see</em>.
+    </p>
+
+    <div class="pipe">
+      <div class="pipe-step reveal">
+        <div class="num">01</div>
+        <div class="glyph">
+          <!-- mill stack -->
+          <svg viewBox="0 0 40 40" width="34" height="34">
+            <rect x="6" y="14" width="8" height="24" fill="none" stroke="#1B1814" stroke-width="1.5"/>
+            <rect x="16" y="8" width="8" height="30" fill="none" stroke="#1B1814" stroke-width="1.5"/>
+            <rect x="26" y="18" width="8" height="20" fill="none" stroke="#1B1814" stroke-width="1.5"/>
+            <path d="M20 8 q-2 -3 0 -5 q2 3 4 0 q-1 4 1 4" fill="none" stroke="#1B1814" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="t"><em>Seven</em> containerboard mills.</div>
+          <div class="d">Pulp the wood, press the fiber, roll the linerboard. The capital lives here.</div>
+        </div>
+      </div>
+
+      <div class="pipe-step reveal">
+        <div class="num">02</div>
+        <div class="glyph">
+          <!-- corrugated wave -->
+          <svg viewBox="0 0 40 40" width="36" height="36">
+            <path d="M4 14 q4 -6 8 0 t8 0 t8 0 t8 0" fill="none" stroke="#1B1814" stroke-width="1.4"/>
+            <line x1="4" y1="20" x2="36" y2="20" stroke="#1B1814" stroke-width="1.4"/>
+            <path d="M4 26 q4 -6 8 0 t8 0 t8 0 t8 0" fill="none" stroke="#1B1814" stroke-width="1.4"/>
+            <line x1="4" y1="32" x2="36" y2="32" stroke="#1B1814" stroke-width="1.4"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="t">Glue, flute, <em>laminate.</em></div>
+          <div class="d">Two flat sheets sandwich a wave. Cardboard becomes corrugated — strong, light, cheap.</div>
+        </div>
+      </div>
+
+      <div class="pipe-step reveal">
+        <div class="num">03</div>
+        <div class="glyph">
+          <!-- die-cut box -->
+          <svg viewBox="0 0 40 40" width="34" height="34">
+            <rect x="6" y="6" width="28" height="28" fill="none" stroke="#1B1814" stroke-width="1.5"/>
+            <line x1="20" y1="6" x2="20" y2="34" stroke="#1B1814" stroke-width="1" stroke-dasharray="2 2"/>
+            <line x1="6" y1="20" x2="34" y2="20" stroke="#1B1814" stroke-width="1" stroke-dasharray="2 2"/>
+            <circle cx="13" cy="13" r="1.5" fill="#1B1814"/>
+            <circle cx="27" cy="13" r="1.5" fill="#1B1814"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="t"><em>85+</em> converting plants.</div>
+          <div class="d">Print, score, die-cut, fold. The box arrives stamped with someone else's brand.</div>
+        </div>
+      </div>
+
+      <div class="pipe-step reveal">
+        <div class="num">04</div>
+        <div class="glyph">
+          <!-- truck -->
+          <svg viewBox="0 0 40 40" width="36" height="36">
+            <rect x="4" y="14" width="20" height="14" fill="none" stroke="#1B1814" stroke-width="1.5"/>
+            <path d="M24 18 L32 18 L36 22 L36 28 L24 28 Z" fill="none" stroke="#1B1814" stroke-width="1.5"/>
+            <circle cx="11" cy="30" r="3" fill="none" stroke="#1B1814" stroke-width="1.5"/>
+            <circle cx="29" cy="30" r="3" fill="none" stroke="#1B1814" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="t">Direct sales, <em>direct ship.</em></div>
+          <div class="d">No distributors between mill and dock. The margin lives in the integration.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- segment bar: packaging vs paper -->
+    <div class="seg-bar">
+      <div class="row" data-fill="93">
+        <div class="lab">Packaging</div>
+        <div class="bar"><div class="fill"></div></div>
+        <div class="pct">93<span style="font-family:var(--font-mono); font-size:11px; color:var(--print-mute);">%</span></div>
+      </div>
+      <div class="row paper" data-fill="7">
+        <div class="lab">Paper</div>
+        <div class="bar"><div class="fill"></div></div>
+        <div class="pct">7<span style="font-family:var(--font-mono); font-size:11px; color:var(--print-mute);">%</span></div>
+      </div>
+      <div style="font-family:var(--font-mono); font-size:10px; color:var(--print-mute); letter-spacing:0.08em; margin-top:8px;">
+        SHARE OF NET SALES · BOISE PAPER IS THE OTHER 7
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= RESET BEAT 2 (manila) ============= -->
+  <section class="reset manila" data-screen-label="04 Interlude · scale">
+    <div class="by">Resetting the camera</div>
+    <p>
+      You don't notice the box. <span class="dim">That's the trick.</span>
+      Eight-point-nine billion dollars hides inside it.
+    </p>
+  </section>
+
+  <!-- ============= 3. THE SCALE ============= -->
+  <section class="beat" id="s-scale" data-screen-label="05 The scale">
+    <span class="eye"><span class="num">03</span> The scale</span>
+    <h2>Eight point<br>nine, <em>annual.</em></h2>
+    <p class="lede">
+      A quarter into the new year and the run-rate is already <em>2.37 billion</em>. Boxes don't go out of style.
+    </p>
+
+    <div class="scale-grid">
+
+      <div class="scale-row">
+        <div class="top">
+          <div class="lab">FY '25 net sales</div>
+          <div class="unit">USD</div>
+        </div>
+        <div class="big countup" data-target="8.99" data-prefix="$" data-suffix="B" data-decimals="2">$0.00B</div>
+        <div class="note">The capital-intensive mill-to-box engine, <em>full year.</em></div>
+      </div>
+
+      <div class="scale-row">
+        <div class="top">
+          <div class="lab">Q1 '26 revenue</div>
+          <div class="unit">USD · LATEST</div>
+        </div>
+        <div class="big countup" data-target="2.37" data-prefix="$" data-suffix="B" data-decimals="2">$0.00B</div>
+        <div class="note">Adjusted EPS of <em>$2.40</em>. Pricing held; Greif came online.</div>
+      </div>
+
+      <div class="scale-row">
+        <div class="top">
+          <div class="lab">Operating margin</div>
+          <div class="unit">FY '25</div>
+        </div>
+        <div class="big countup" data-target="12.3" data-suffix="%" data-decimals="1">0.0%</div>
+        <div class="note">Gross 21.0% becomes <em>12.3%</em> by the time overhead's paid.</div>
+        <svg class="growth-vis" viewBox="0 0 360 56" preserveAspectRatio="none" aria-hidden="true">
+          <!-- gross to op margin funnel -->
+          <line x1="0" y1="20" x2="360" y2="20" stroke="#B69C70" stroke-dasharray="2 4" stroke-width="1"/>
+          <line x1="0" y1="44" x2="360" y2="44" stroke="#B69C70" stroke-dasharray="2 4" stroke-width="1"/>
+          <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="#5A4F40" letter-spacing="1">GROSS · 21.0%</text>
+          <text x="0" y="56" font-family="Geist Mono" font-size="9" fill="#5A4F40" letter-spacing="1">OPERATING · 12.3%</text>
+          <path d="M0 20 L360 20 L360 44 L0 44 Z" fill="#1B1814" opacity="0.06"/>
+          <path d="M0 20 L0 44 M360 20 L360 44" stroke="#1B1814" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <div class="scale-row">
+        <div class="top">
+          <div class="lab">Footprint, in plants</div>
+          <div class="unit">FACILITIES</div>
+        </div>
+        <div class="big"><span class="countup" data-target="7" data-decimals="0">0</span> mills · <span class="countup" data-target="85" data-decimals="0">0</span><em>+</em> plants</div>
+        <div class="note">Roughly <em>16,800 people</em> turning fiber into freight.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============= 4. WHERE THE MONEY GOES (folded box) ============= -->
+  <section class="beat" id="s-costs" data-screen-label="06 Where the money goes">
+    <span class="eye"><span class="num">04</span> Where the dollar goes</span>
+    <h2>A hundred<br>cents <em>in.</em></h2>
+    <p class="lede">
+      Cost of revenue alone — the wood, the energy, the labor in the mill — eats <em>seventy-nine cents</em> before anyone gets paid.
+    </p>
+
+    <!-- folded-box dollar grid: 10×10 = 100 cells, colored by share -->
+    <div class="costs-wrap">
+      <svg class="costs-svg" viewBox="0 0 360 250" aria-hidden="true">
+        <defs>
+          <linearGradient id="boxshade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#0F0E0D" stop-opacity="0"/>
+            <stop offset="1" stop-color="#0F0E0D" stop-opacity="0.08"/>
+          </linearGradient>
+        </defs>
+
+        <!-- top flap shadow (paper depth) -->
+        <path d="M14 14 L346 14 L346 24 L14 24 Z" fill="url(#boxshade)"/>
+
+        <!-- 100-cent grid background (kraft) -->
+        <g id="penny-grid"></g>
+
+        <!-- box edges -->
+        <rect x="14" y="14" width="332" height="220" fill="none" stroke="#1B1814" stroke-width="1.5"/>
+        <line x1="180" y1="14" x2="180" y2="234" stroke="#1B1814" stroke-width="1" stroke-dasharray="3 3" opacity="0.45"/>
+        <line x1="14" y1="124" x2="346" y2="124" stroke="#1B1814" stroke-width="1" stroke-dasharray="3 3" opacity="0.45"/>
+
+        <!-- "$1.00" stamp top-left -->
+        <g transform="translate(22 28)">
+          <text font-family="Geist Mono" font-size="9" fill="#5A4F40" letter-spacing="2">PKG · FY '25</text>
+          <text y="14" font-family="Instrument Serif" font-size="22" fill="#1B1814">$1.00</text>
+          <text y="28" font-family="Geist Mono" font-size="8" fill="#5A4F40" letter-spacing="2">PER DOLLAR IN</text>
+        </g>
+
+        <!-- "9¢" survives stamp bottom-right rotated like a postal mark -->
+        <g transform="translate(290 198) rotate(-6)">
+          <rect x="-22" y="-18" width="58" height="36" fill="none" stroke="#C13B1F" stroke-width="1.5"/>
+          <text x="-16" y="-2" font-family="Geist Mono" font-size="8" fill="#C13B1F" letter-spacing="2">SURVIVES</text>
+          <text x="-15" y="14" font-family="Instrument Serif" font-size="22" fill="#C13B1F" font-style="italic">9¢</text>
+        </g>
+      </svg>
+
+      <div class="cost-list">
+        <div class="cost-item">
+          <span class="swatch" style="background:#2E86AB"></span>
+          <div class="lab">Cost of revenue<small>FIBER · ENERGY · MILL LABOR</small></div>
+          <div class="pct">79<span style="font-family:var(--font-mono); font-size:13px; color:var(--print-mute);">¢</span></div>
+        </div>
+        <div class="cost-item">
+          <span class="swatch" style="background:#E84855"></span>
+          <div class="lab">Selling, general & admin<small>SG&A · OVERHEAD</small></div>
+          <div class="pct">5<span style="font-family:var(--font-mono); font-size:13px; color:var(--print-mute);">¢</span></div>
+        </div>
+        <div class="cost-item">
+          <span class="swatch" style="background:#F4A261"></span>
+          <div class="lab">Depreciation & amortization<small>D&A · CAPITAL WEAR</small></div>
+          <div class="pct">4<span style="font-family:var(--font-mono); font-size:13px; color:var(--print-mute);">¢</span></div>
+        </div>
+        <div class="cost-item">
+          <span class="swatch" style="background:#6A4C93"></span>
+          <div class="lab">Maintenance & outage<small>MILL DOWNTIME · UPKEEP</small></div>
+          <div class="pct">3<span style="font-family:var(--font-mono); font-size:13px; color:var(--print-mute);">¢</span></div>
+        </div>
+      </div>
+
+      <div class="cost-totals">
+        <div class="left">What's left, before tax & interest</div>
+        <div class="right"><em>9¢</em></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= RESET BEAT 3 ============= -->
+  <section class="reset" data-screen-label="07 Interlude · footprint">
+    <p>
+      <span class="dim">Ninety-five out of a hundred boxes</span> stay home. The American supply chain is also a customer list.
+    </p>
+  </section>
+
+  <!-- ============= 5. FOOTPRINT ============= -->
+  <section class="beat" id="s-footprint" data-screen-label="08 Footprint">
+    <span class="eye"><span class="num">05</span> Footprint</span>
+    <h2>An <em>American</em><br>operation.</h2>
+    <p class="lede">
+      Lake Forest, Illinois — thirty miles north of Chicago. From there, <em>95%</em> of the revenue stays inside US borders.
+    </p>
+
+    <div class="footprint">
+      <svg class="map-svg" viewBox="0 0 320 200" aria-hidden="true">
+        <!-- Stylized US silhouette (simplified, kraft-stamp feel) -->
+        <defs>
+          <pattern id="kraft-grain" width="3" height="3" patternUnits="userSpaceOnUse">
+            <rect width="3" height="3" fill="#D9C293"/>
+            <circle cx="1" cy="1" r="0.4" fill="#A87C4A" opacity="0.4"/>
+          </pattern>
+        </defs>
+
+        <!-- US (heavy fill) -->
+        <path d="
+          M30 80
+          L48 70 L70 64 L100 60 L140 56 L180 54 L220 56 L250 60 L270 64 L286 72
+          L290 86 L286 100 L286 116 L280 126 L260 136 L240 142 L220 148
+          L196 154 L170 156 L156 160 L140 158 L120 152 L100 148 L82 144 L66 138
+          L52 130 L42 120 L36 106 L30 92 Z"
+          fill="url(#kraft-grain)" stroke="#3C2916" stroke-width="1.4"/>
+
+        <!-- Florida nub -->
+        <path d="M210 148 L222 154 L228 168 L226 178 L218 178 L214 168 L210 156 Z" fill="url(#kraft-grain)" stroke="#3C2916" stroke-width="1.4"/>
+
+        <!-- HQ marker — Lake Forest, IL -->
+        <g transform="translate(168 88)">
+          <circle r="14" fill="none" stroke="#C13B1F" stroke-width="1" opacity="0.5">
+            <animate attributeName="r" from="6" to="18" dur="2.4s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" from="0.6" to="0" dur="2.4s" repeatCount="indefinite"/>
+          </circle>
+          <circle r="5" fill="#C13B1F"/>
+          <circle r="2" fill="#FBFAF7"/>
+        </g>
+        <text x="178" y="84" font-family="Geist Mono" font-size="8" fill="#1B1814" letter-spacing="1">LAKE FOREST · IL</text>
+        <text x="178" y="94" font-family="Geist Mono" font-size="7" fill="#5A4F40" letter-spacing="1">HQ · 1959</text>
+
+        <!-- Mill markers (representative dots) -->
+        <g fill="#1B1814">
+          <circle cx="80" cy="98" r="2.5"/>
+          <circle cx="116" cy="84" r="2.5"/>
+          <circle cx="146" cy="118" r="2.5"/>
+          <circle cx="194" cy="106" r="2.5"/>
+          <circle cx="218" cy="130" r="2.5"/>
+          <circle cx="252" cy="98" r="2.5"/>
+          <circle cx="232" cy="78" r="2.5"/>
+        </g>
+        <text x="80" y="112" font-family="Geist Mono" font-size="7" fill="#5A4F40" letter-spacing="1">MILL × 7</text>
+
+        <!-- Export shadow off the coast -->
+        <g opacity="0.45">
+          <path d="M298 90 L312 84 L316 96 L308 102 Z" fill="none" stroke="#3C2916" stroke-width="0.8" stroke-dasharray="2 2"/>
+          <text x="298" y="80" font-family="Geist Mono" font-size="7" fill="#5A4F40" letter-spacing="1">EXPORT · 5%</text>
+        </g>
+
+        <!-- 95 stamp top-left -->
+        <g transform="translate(20 30) rotate(-4)">
+          <text font-family="Instrument Serif" font-style="italic" font-size="48" fill="#1B1814">95<tspan font-size="22">%</tspan></text>
+          <text y="14" font-family="Geist Mono" font-size="8" fill="#5A4F40" letter-spacing="2">DOMESTIC</text>
+        </g>
+      </svg>
+
+      <div class="map-legend">
+        <div class="item"><span class="swatch" style="background:#1B1814"></span> Mill (7)</div>
+        <div class="item"><span class="swatch" style="background:#C13B1F"></span> HQ</div>
+        <div class="item"><span class="swatch" style="background:#A87C4A"></span> 95% domestic</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 6. THE BET (DARK INTERLUDE) ============= -->
+  <section class="bet-wrap" id="s-bet" data-screen-label="09 The bet">
+    <span class="eye"><span class="num">06</span> The bet</span>
+    <h2>Bought <em>Greif.</em><br>Modernized<br>the rest.</h2>
+    <p class="lede">
+      August 2025: PKG closed a <em>$1.8 billion</em> acquisition of Greif's containerboard business. The capital plan otherwise: keep the mills running.
+    </p>
+
+    <div class="bet-stack">
+      <div class="bet-card">
+        <div class="tag">Capital allocation · FY '25</div>
+        <div class="v countup" data-target="1.8" data-prefix="$" data-suffix="B" data-decimals="1">$0.0B</div>
+        <div class="d">Greif containerboard, closed <em>August 2025.</em> The company swallowed a competitor and added flute capacity in one line item.</div>
+      </div>
+
+      <div class="bet-card">
+        <div class="tag">CapEx · FY '25</div>
+        <div class="v"><span class="countup" data-target="828.9" data-prefix="$" data-suffix="M" data-decimals="1">$0.0M</span></div>
+        <div class="d">Mill modernization, on guidance. <em>Boring on purpose</em> — the kind of spend that keeps a paper machine alive for another decade.</div>
+      </div>
+
+      <div class="bet-card">
+        <div class="tag">Returned to shareholders</div>
+        <div class="v"><span class="countup" data-target="449.6" data-prefix="$" data-suffix="M" data-decimals="1">$0.0M</span></div>
+        <div class="d"><em>$1.25</em> a share, every quarter. Buybacks paused while Greif gets digested; <em>$530M+</em> repurchased back in '22.</div>
+      </div>
+    </div>
+
+    <div class="bet-bar">
+      <div class="row"><span class="l">Operating cash flow</span><span class="v">$1.56B</span></div>
+      <div class="track"><div class="fill" data-fill="100"></div></div>
+
+      <div class="row"><span class="l">CapEx</span><span class="v">$828.9M</span></div>
+      <div class="track"><div class="fill" data-fill="53"></div></div>
+
+      <div class="row"><span class="l">Free cash flow</span><span class="v">$728.6M</span></div>
+      <div class="track"><div class="fill" data-fill="47"></div></div>
+
+      <div class="row"><span class="l">Dividends paid</span><span class="v">$449.6M</span></div>
+      <div class="track"><div class="fill" data-fill="29"></div></div>
+    </div>
+
+    <div style="margin-top:30px; padding:18px 0 0; border-top: 1px solid rgba(244,236,219,0.18); display:flex; justify-content:space-between; align-items:baseline;">
+      <span style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; color:rgba(244,236,219,0.55); text-transform:uppercase;">Total debt / equity</span>
+      <span style="font-family:var(--font-display); font-size:22px; color:var(--kraft-100);">$3.97B <span style="color:var(--kraft-300); font-style:italic;">/</span> $4.60B</span>
+    </div>
+    <div style="margin-top:6px; font-family:var(--font-sans); font-size:12.5px; color:rgba(244,236,219,0.6); line-height:1.55;">
+      Cash on hand: <em style="font-family:var(--font-display); font-style:italic; color:var(--kraft-100); font-size:14px;">$529M</em>. Leverage manageable for the sector — the cycle is the variable, not the balance sheet.
+    </div>
+  </section>
+
+  <!-- ============= RESET BEAT 4 ============= -->
+  <section class="reset manila" data-screen-label="10 Interlude · the field">
+    <div class="by">Resetting the camera · ii</div>
+    <p>
+      <span class="dim">Three competitors loom.</span> Two are bigger. One is sharper. PKG is the third, and it's content with that.
+    </p>
+  </section>
+
+  <!-- ============= 7. COMPETITION ============= -->
+  <section class="beat" id="s-comp" data-screen-label="11 Competition">
+    <span class="eye"><span class="num">07</span> The competition</span>
+    <h2>Two giants.<br>One <em>insurgent.</em></h2>
+    <p class="lede">
+      Sized by annual revenue. <em>Tap a name</em> to read the relationship.
+    </p>
+
+    <div class="compet">
+      <!-- Smurfit Westrock — biggest -->
+      <div class="comp-row" data-toggle>
+        <div class="comp-head">
+          <div class="name">Smurfit <em>WestRock</em></div>
+          <div class="tic">SW</div>
+        </div>
+        <div class="comp-bar-wrap">
+          <div class="comp-bar lt-pkg" data-w="100" style="background:var(--kraft-500);"></div>
+          <span class="label">$31.18B · rev</span>
+        </div>
+        <div class="comp-meta">
+          <span>Mkt cap · $22.08B</span>
+          <span class="neg">YoY −1.80%</span>
+        </div>
+        <div class="comp-desc">
+          The <em>2024 merger</em> of WestRock and Smurfit Kappa created a global packaging giant — head-on competition in U.S. corrugated and containerboard. P/E TTM 31.58.
+        </div>
+        <div class="toggle"></div>
+      </div>
+
+      <!-- International Paper -->
+      <div class="comp-row" data-toggle>
+        <div class="comp-head">
+          <div class="name">International <em>Paper</em></div>
+          <div class="tic">IP</div>
+        </div>
+        <div class="comp-bar-wrap">
+          <div class="comp-bar lt-pkg" data-w="76" style="background:var(--kraft-500);"></div>
+          <span class="label">$23.63B · rev</span>
+        </div>
+        <div class="comp-meta">
+          <span>Mkt cap · $19.66B</span>
+          <span class="pos">YoY +0.30%</span>
+        </div>
+        <div class="comp-desc">
+          PKG's most direct large-scale rival — overlapping <em>industrial and consumer end markets</em> across North America. The shape of competition, in plain form.
+        </div>
+        <div class="toggle"></div>
+      </div>
+
+      <!-- PKG itself -->
+      <div class="comp-row" data-toggle>
+        <div class="comp-head">
+          <div class="name signal" style="color:var(--signal);">PKG <em style="color:var(--signal);">(us)</em></div>
+          <div class="tic" style="border-color:var(--signal); color:var(--signal);">PKG</div>
+        </div>
+        <div class="comp-bar-wrap">
+          <div class="comp-bar us" data-w="29"></div>
+          <span class="label">$8.99B · rev</span>
+        </div>
+        <div class="comp-meta">
+          <span>Mkt cap · $18.12B</span>
+          <span class="pos">10% domestic share</span>
+        </div>
+        <div class="comp-desc">
+          Smaller revenue, comparable market cap. The <em>premium</em> is what the market pays for vertical integration and disciplined capital.
+        </div>
+        <div class="toggle"></div>
+      </div>
+
+      <!-- Graphic Packaging -->
+      <div class="comp-row" data-toggle>
+        <div class="comp-head">
+          <div class="name">Graphic <em>Packaging</em></div>
+          <div class="tic">GPK</div>
+        </div>
+        <div class="comp-bar-wrap">
+          <div class="comp-bar lt-pkg" data-w="28"></div>
+          <span class="label">$8.62B · rev</span>
+        </div>
+        <div class="comp-meta">
+          <span>Mkt cap · $2.91B</span>
+          <span class="neg">YoY −2.16%</span>
+        </div>
+        <div class="comp-desc">
+          The <em>insurgent.</em> Aggressively converting consumer brands from corrugated and plastic to <em>fiber-based paperboard</em> — targeting the same food, beverage, and e-commerce dollar. P/E TTM 6.55.
+        </div>
+        <div class="toggle"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 8. THE TAKEAWAY (CLOSE — inverts the open) ============= -->
+  <section class="close" id="s-close" data-screen-label="12 Takeaway">
+    <span class="ribbon">RECAP · CLOSE</span>
+    <h2>
+      Every dollar in.<br>
+      <em>Nine cents</em><br>
+      out.
+    </h2>
+    <div class="resolve">
+      The hero stat said <b>every fourth box</b>. The page closes on what the box is <em>worth</em> — after fiber, energy, machine wear, and overhead, the math leaves <b>nine cents</b> on the dollar to defend a <b>$18.12B</b> market cap.
+    </div>
+
+    <div class="div-grid">
+      <div class="cell">
+        <div class="k">Operating margin</div>
+        <div class="v"><em>12.3%</em></div>
+      </div>
+      <div class="cell">
+        <div class="k">FCF · FY '25</div>
+        <div class="v">$728.6M</div>
+      </div>
+      <div class="cell">
+        <div class="k">Quarterly dividend</div>
+        <div class="v">$1.25 <span style="font-family:var(--font-mono); font-size:11px; color:var(--print-mute);">/ sh</span></div>
+      </div>
+      <div class="cell">
+        <div class="k">Greif close</div>
+        <div class="v"><em>Aug '25</em></div>
+      </div>
+    </div>
+
+    <div class="colophon">
+      <div class="row"><span>PKG · NYSE</span><span>FY '25 RECAP</span></div>
+      <div class="row"><span>HQ · Lake Forest, IL</span><span>FOUNDED 1959</span></div>
+      <div class="row"><span>SOURCE · COMPANY FILINGS</span><span>END</span></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  /* ===========================================================
+     Penny grid for the cost section — 100 cells, share-colored
+     =========================================================== */
+  (function buildPennyGrid(){
+    var g = document.getElementById('penny-grid');
+    if (!g) return;
+    // grid area: x 14..346 (332w), y 14..234 (220h) → 10 cols × 10 rows of squares
+    var cols = 10, rows = 10;
+    var cellW = 332/cols, cellH = 220/rows;
+    // assign 100 cells in reading order: row by row, fill colors per cost
+    // 79 cost-of-rev (#2E86AB), 5 SGA (#E84855), 4 D&A (#F4A261), 3 maint (#6A4C93), 9 surplus (kraft)
+    var assignments = [];
+    function push(n, color){ for (var i=0;i<n;i++) assignments.push(color); }
+    push(79, '#2E86AB');
+    push(5, '#E84855');
+    push(4, '#F4A261');
+    push(3, '#6A4C93');
+    push(9, 'kraft'); // surplus cells
+
+    var ns = 'http://www.w3.org/2000/svg';
+    // we want the surplus 9 to be visually distinct and located bottom-right (so it reads as "what survives")
+    // Reorder: keep first 91 in reading order, last 9 as surplus already at end → that places them in last row
+    for (var i=0;i<100;i++){
+      var r = Math.floor(i/cols), c = i%cols;
+      var x = 14 + c*cellW;
+      var y = 14 + r*cellH;
+      var rect = document.createElementNS(ns, 'rect');
+      rect.setAttribute('x', x+1.5);
+      rect.setAttribute('y', y+1.5);
+      rect.setAttribute('width', cellW-3);
+      rect.setAttribute('height', cellH-3);
+      var fill = assignments[i];
+      if (fill === 'kraft'){
+        rect.setAttribute('fill', '#E9DCBE');
+        rect.setAttribute('stroke', '#C13B1F');
+        rect.setAttribute('stroke-width', '0.6');
+        rect.setAttribute('stroke-dasharray', '2 2');
+      } else {
+        rect.setAttribute('fill', fill);
+        rect.setAttribute('opacity', '0.9');
+      }
+      rect.setAttribute('data-i', i);
+      // start hidden for animation
+      rect.style.opacity = 0;
+      rect.style.transition = 'opacity 18ms linear';
+      g.appendChild(rect);
+    }
+  })();
+
+  /* ===========================================================
+     Scroll-driven niceties
+     - sticky chrome progress bar
+     - reveal on intersection
+     - count-ups when in view
+     - segment / bet bars fill when in view
+     - costs penny-grid sweep when in view
+     =========================================================== */
+  var progress = document.getElementById('progress');
+  function updateProgress(){
+    var doc = document.documentElement;
+    var max = (doc.scrollHeight - window.innerHeight) || 1;
+    var p = Math.min(1, Math.max(0, window.scrollY / max));
+    progress.style.setProperty('--p', (p*100).toFixed(2)+'%');
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  /* count-up helper */
+  function easeOut(t){ return 1 - Math.pow(1-t, 3); }
+  function commaFmt(n){ return n.toLocaleString('en-US'); }
+  function runCountup(el){
+    if (el.dataset.done) return;
+    el.dataset.done = '1';
+    var target = parseFloat(el.dataset.target);
+    var prefix = el.dataset.prefix || '';
+    var suffix = el.dataset.suffix || '';
+    var decimals = parseInt(el.dataset.decimals || '0', 10);
+    var format = el.dataset.format;
+    var dur = 1100 + Math.random()*250;
+    var start = performance.now();
+    function tick(now){
+      var t = Math.min(1, (now - start) / dur);
+      var v = target * easeOut(t);
+      var out;
+      if (format === 'comma') out = commaFmt(Math.round(v));
+      else out = v.toFixed(decimals);
+      el.textContent = prefix + out + suffix;
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  /* generic IO that handles reveals + special triggers */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var el = e.target;
+
+      if (el.classList.contains('reveal')) el.classList.add('in');
+
+      if (el.classList.contains('countup')) runCountup(el);
+
+      if (el.matches('.seg-bar .row')){
+        var pct = parseFloat(el.dataset.fill);
+        var fill = el.querySelector('.fill');
+        if (fill) requestAnimationFrame(function(){ fill.style.width = pct + '%'; });
+      }
+      if (el.matches('.bet-bar .fill')){
+        var pct2 = parseFloat(el.dataset.fill);
+        requestAnimationFrame(function(){ el.style.width = pct2 + '%'; });
+      }
+      if (el.matches('.comp-bar')){
+        var w = parseFloat(el.dataset.w);
+        requestAnimationFrame(function(){ el.style.width = w + '%'; });
+      }
+      if (el.id === 's-costs'){
+        // sweep penny grid
+        var rects = document.querySelectorAll('#penny-grid rect');
+        rects.forEach(function(r, i){
+          setTimeout(function(){ r.style.opacity = 1; }, i * 14);
+        });
+      }
+
+      io.unobserve(el);
+    });
+  }, { threshold: 0.25, rootMargin: '0px 0px -10% 0px' });
+
+  document.querySelectorAll('.reveal, .countup, .seg-bar .row, .bet-bar .fill, .comp-bar, #s-costs')
+    .forEach(function(el){ io.observe(el); });
+
+  /* tap-to-deepen for competitor rows */
+  document.querySelectorAll('.comp-row[data-toggle]').forEach(function(row){
+    row.addEventListener('click', function(){ row.classList.toggle('open'); });
+  });
+
+  /* parallax: hero corrugated drifts down on scroll */
+  var hero = document.querySelector('.hero-corr');
+  window.addEventListener('scroll', function(){
+    if (!hero) return;
+    var y = window.scrollY;
+    var t = Math.min(1, y / 600);
+    hero.style.transform = 'translateY(' + (t*30) + 'px) rotate(' + (-t*2) + 'deg)';
+  }, { passive: true });
+</script>
+</body>
+</html>

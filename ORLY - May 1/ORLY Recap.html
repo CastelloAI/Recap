@@ -1,0 +1,1510 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ORLY · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS (subset of Zair Naqvi DS, tuned for ORLY) ============ */
+:root {
+  /* Garage-editorial palette: manila paper, ledger ink, brake-light coral */
+  --paper:       #F2EEE4;     /* manila/shop-floor cream */
+  --paper-2:     #EAE4D5;     /* raised manila */
+  --paper-3:     #DED6C2;     /* deep manila / divider */
+  --ink:         #16110C;     /* ledger ink */
+  --ink-2:       #3A332A;
+  --ink-3:       #6B6358;
+  --ink-4:       #A39B8E;
+  --line:        #D9D2C0;
+  --line-strong: #BFB6A0;
+
+  /* Signal — ORLY brake-light coral (DS coral, slightly hotter) */
+  --signal:      #E5482A;
+  --signal-soft: #F7C9BC;
+  --signal-50:   #FBE3DB;
+
+  /* Dark interlude (the "weight" beat) */
+  --night:       #0E0B08;
+  --night-2:     #1A1611;
+
+  /* Cost-stack hex (from JSON, honored verbatim) */
+  --c-cor:  #E05C5C;
+  --c-sga:  #5B8FF9;
+  --c-da:   #5AD8A6;
+  --c-int:  #F6BD16;
+  --c-cap:  #9B59B6;
+
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+
+  --maxw: 440px;
+  --pad: 22px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+html, body { margin: 0; padding: 0; background: #1c1916; }
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* The page is the design — sized for mobile. On wider screens it sits centered on a dim canvas. */
+.shell {
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  /* subtle paper grain */
+  background-image:
+    radial-gradient(rgba(20,16,12,0.025) 1px, transparent 1px),
+    radial-gradient(rgba(20,16,12,0.018) 1px, transparent 1px);
+  background-size: 3px 3px, 7px 7px;
+  background-position: 0 0, 1px 2px;
+}
+
+/* ============ PERSISTENT CHROME ============ */
+.chrome {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(242, 238, 228, 0.78);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border-bottom: 1px solid var(--line);
+}
+.chrome-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px var(--pad) 10px;
+}
+.chrome-ticker {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.chrome-ticker::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 0 3px var(--signal-50);
+}
+.chrome-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.chrome-label {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.progress {
+  height: 1.5px;
+  background: var(--line);
+  position: relative;
+}
+.progress-fill {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  background: var(--signal);
+  width: 0%;
+  transition: width 60ms linear;
+}
+
+/* ============ TYPE HELPERS ============ */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+.eyebrow .dot { color: var(--signal); }
+.eyebrow .accent { color: var(--ink); }
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.italic { font-family: var(--font-display); font-style: italic; font-weight: 400; }
+
+p.body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0;
+  text-wrap: pretty;
+}
+.body em, .body i { font-family: var(--font-display); font-style: italic; font-weight: 400; }
+.body .sig { color: var(--signal); }
+
+.kicker { /* small mono caption */
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.kicker .num { color: var(--ink); font-weight: 500; }
+
+/* ============ SECTION BASE ============ */
+section { padding: 64px var(--pad); position: relative; }
+section.tight { padding: 40px var(--pad); }
+.beat-eyebrow { margin-bottom: 22px; }
+
+/* ============ 1 — HERO / THESIS ============ */
+.hero {
+  padding-top: 28px;
+  padding-bottom: 56px;
+  position: relative;
+  min-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.hero-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 36px;
+}
+.hero-meta .left { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+.hero-meta .right { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); }
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 80px;
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+  font-weight: 400;
+}
+.hero h1 .number { display: block; }
+.hero h1 .number .digit { color: var(--ink); }
+.hero h1 .label-line { display: block; font-style: italic; color: var(--ink-2); font-size: 38px; line-height: 1.05; margin-top: 14px; letter-spacing: -0.01em; }
+.hero h1 .label-line .sig { color: var(--signal); }
+
+.hero-sub {
+  margin-top: 28px;
+  max-width: 32ch;
+  font-size: 15.5px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+/* ledger gridlines on the hero (the "shop floor") */
+.shop-floor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  background-image:
+    linear-gradient(to right, rgba(22,17,12,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(22,17,12,0.06) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 80%, transparent 100%);
+}
+
+/* hero stat row at bottom */
+.hero-stats {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 28px;
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+}
+.hero-stat .v {
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.hero-stat .v .small { font-size: 18px; vertical-align: 4px; color: var(--ink-3); }
+.hero-stat .l {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ticker tape across hero — gentle scrolling row above the headline */
+.tape {
+  position: relative;
+  height: 28px;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 36px;
+  background: rgba(255,255,255,0.35);
+}
+.tape-track {
+  position: absolute;
+  top: 0; left: 0;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  height: 100%;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+  animation: tape 60s linear infinite;
+}
+.tape-item .up { color: #1f8a4f; }
+.tape-item .down { color: var(--signal); }
+.tape-item .sym { color: var(--ink); font-weight: 500; }
+@keyframes tape { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ============ RESET BEAT ============ */
+.reset-beat {
+  padding: 56px var(--pad);
+  background: var(--paper-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.reset-beat p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -0.005em;
+  max-width: 28ch;
+}
+.reset-beat p .sig { color: var(--signal); font-style: italic; }
+.reset-beat .num { font-family: var(--font-mono); font-style: normal; font-size: 11px; letter-spacing: 0.18em; color: var(--ink-3); display: block; margin-bottom: 18px; text-transform: uppercase; }
+
+/* ============ 2 — THE BUSINESS (dual-channel scale) ============ */
+.scale-stage {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.scale-stage svg { width: 100%; height: auto; }
+.dual-labels {
+  margin-top: 18px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.dual-labels .v { color: var(--ink); font-size: 13px; letter-spacing: 0.04em; display: block; margin-top: 4px; font-weight: 500; }
+
+/* ============ 3 — THE SCALE (count-up giant) ============ */
+.scale-section h2 {
+  font-family: var(--font-display);
+  font-size: 110px;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  margin: 0;
+  font-weight: 400;
+  font-feature-settings: "tnum";
+}
+.scale-section h2 .pre { display: block; font-size: 28px; font-style: italic; color: var(--ink-2); margin-bottom: 8px; letter-spacing: -0.01em; }
+.scale-section h2 .b { color: var(--signal); }
+.scale-section h2 .yoy { display: block; font-size: 20px; font-style: italic; color: var(--ink-3); margin-top: 18px; letter-spacing: 0; }
+
+.scale-bars {
+  margin-top: 36px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 140px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 4px;
+}
+.scale-bars .bar {
+  flex: 1;
+  background: var(--ink);
+  border-radius: 2px 2px 0 0;
+  position: relative;
+  transition: height 600ms var(--ease-out);
+}
+.scale-bars .bar.now { background: var(--signal); }
+.scale-bars .bar .yr {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  color: var(--ink-3);
+}
+.scale-bars-caption {
+  margin-top: 36px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ============ 4 — DOLLAR BREAKDOWN ============ */
+.dollar-section {
+  background: var(--paper);
+}
+.dollar-stage {
+  margin-top: 28px;
+  position: relative;
+}
+.dollar-bill {
+  width: 100%;
+  height: 90px;
+  border-radius: 6px;
+  display: flex;
+  overflow: hidden;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.5) inset,
+    0 -1px 0 rgba(0,0,0,0.08) inset,
+    0 6px 18px -8px rgba(20,16,12,0.15);
+  border: 1px solid var(--line);
+}
+.dollar-bill .seg {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 8px 4px;
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.95);
+  text-shadow: 0 1px 1px rgba(0,0,0,0.15);
+  transition: flex-grow 800ms var(--ease-out);
+  flex: 0 0 0;
+}
+.dollar-bill .seg.lit { flex-grow: var(--g, 1); }
+.dollar-bill .seg .pct { display: block; line-height: 1; }
+.dollar-legend {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.dollar-row {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  gap: 14px;
+  align-items: baseline;
+}
+.dollar-row .swatch {
+  width: 12px; height: 12px; border-radius: 3px; align-self: center;
+}
+.dollar-row .label { font-family: var(--font-sans); font-size: 14.5px; color: var(--ink); }
+.dollar-row .label .sub { display: block; font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+.dollar-row .pct {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--ink);
+}
+.dollar-row .pct .c { font-size: 14px; color: var(--ink-3); font-style: italic; }
+
+.survives {
+  margin-top: 36px;
+  padding: 22px 0 0 0;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+.survives .big {
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--signal);
+}
+.survives .big .c { font-size: 26px; color: var(--ink); }
+.survives .label {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.2;
+  color: var(--ink-2);
+  max-width: 18ch;
+}
+
+/* ============ 5 — FOOTPRINT ============ */
+.footprint-section {
+  background: var(--paper);
+}
+.map-stage {
+  margin-top: 28px;
+  position: relative;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 16px 14px;
+}
+.map-stage svg { width: 100%; height: auto; display: block; }
+.map-legend {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.map-legend .cell {
+  border-top: 1px solid var(--line-strong);
+  padding-top: 8px;
+}
+.map-legend .v { font-family: var(--font-display); font-size: 28px; line-height: 1; color: var(--ink); }
+.map-legend .v .pct { font-size: 16px; color: var(--ink-3); }
+.map-legend .l { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-top: 6px; }
+
+.footprint-figs {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+}
+.fpfig .v {
+  font-family: var(--font-display);
+  font-size: 38px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.fpfig .v .u { font-size: 16px; color: var(--ink-3); }
+.fpfig .l {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--ink-2);
+  margin-top: 6px;
+  line-height: 1.35;
+}
+
+/* ============ 6 — THE BET (DARK INTERLUDE) ============ */
+.bet-section {
+  background: var(--night);
+  color: #EAE4D5;
+  padding-top: 80px;
+  padding-bottom: 80px;
+  position: relative;
+}
+.bet-section .eyebrow { color: rgba(234,228,213,0.55); }
+.bet-section .eyebrow .dot { color: var(--signal); }
+.bet-section h2 {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: #F4EFDF;
+  margin: 18px 0 0;
+  font-weight: 400;
+}
+.bet-section h2 .sig { color: var(--signal); font-style: italic; }
+.bet-section .sub {
+  margin-top: 22px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(234,228,213,0.72);
+  max-width: 36ch;
+}
+.bet-section .sub em { font-family: var(--font-display); font-style: italic; color: #F4EFDF; }
+.bet-stage {
+  margin-top: 38px;
+  background: var(--night-2);
+  border: 1px solid rgba(234,228,213,0.08);
+  border-radius: 14px;
+  padding: 22px 20px;
+}
+.bet-stage svg { width: 100%; height: auto; display: block; }
+.bet-stage .axis-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: rgba(234,228,213,0.5);
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+.bet-stack {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+}
+.bet-fig .v {
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1;
+  color: #F4EFDF;
+  letter-spacing: -0.01em;
+}
+.bet-fig .v.sig { color: var(--signal); }
+.bet-fig .v .u { font-size: 16px; color: rgba(234,228,213,0.55); }
+.bet-fig .l { margin-top: 6px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(234,228,213,0.55); }
+
+.no-div {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px dashed rgba(234,228,213,0.2);
+  border-radius: 10px;
+}
+.no-div .stamp {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--signal);
+  border: 1px solid var(--signal);
+  padding: 4px 8px;
+  border-radius: 3px;
+  transform: rotate(-3deg);
+  flex-shrink: 0;
+}
+.no-div .txt {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.25;
+  color: #EAE4D5;
+}
+.no-div .txt .sig { color: var(--signal); }
+
+/* ============ 7 — COMPETITION ============ */
+.compete-section h2 {
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+  font-weight: 400;
+}
+.compete-section h2 em { font-style: italic; color: var(--signal); }
+.compete-rows {
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+.compete-row {
+  position: relative;
+}
+.compete-row .head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 10px;
+}
+.compete-row .name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.compete-row .name .ticker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  margin-left: 6px;
+}
+.compete-row .mc {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.compete-row .bar-wrap {
+  position: relative;
+  height: 28px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.compete-row .bar {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: 0%;
+  transition: width 900ms var(--ease-out);
+  background: var(--ink);
+}
+.compete-row.us .bar { background: var(--signal); }
+.compete-row .bar.threat {
+  background: repeating-linear-gradient(45deg, var(--ink), var(--ink) 4px, #2a221a 4px, #2a221a 8px);
+}
+.compete-row .meta-row {
+  margin-top: 8px;
+  display: flex;
+  gap: 18px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.compete-row .meta-row b { color: var(--ink); font-weight: 500; }
+.compete-row .desc {
+  margin-top: 8px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.compete-row .desc em { font-family: var(--font-display); font-style: italic; color: var(--ink); }
+.compete-row .desc .sig { color: var(--signal); font-family: var(--font-display); font-style: italic; }
+.compete-row .tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 3px;
+  margin-left: 6px;
+  vertical-align: 2px;
+}
+.compete-row .tag.us { background: var(--signal); color: white; }
+.compete-row .tag.rival { background: var(--ink); color: var(--paper); }
+.compete-row .tag.threat { background: transparent; color: var(--signal); border: 1px solid var(--signal); }
+
+/* ============ 8 — TAKEAWAY ============ */
+.takeaway-section {
+  padding-top: 80px;
+  padding-bottom: 100px;
+  position: relative;
+}
+.takeaway-section .display-line {
+  font-family: var(--font-display);
+  font-size: 88px;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin-top: 18px;
+}
+.takeaway-section .display-line em { font-style: italic; }
+.takeaway-section .display-line .sig { color: var(--signal); font-style: italic; }
+.streak-stage {
+  margin-top: 36px;
+  position: relative;
+}
+.streak-stage svg { width: 100%; height: auto; display: block; }
+.streak-bottom {
+  margin-top: 28px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.takeaway-coda {
+  margin-top: 56px;
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+}
+.takeaway-coda p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.3;
+  color: var(--ink-2);
+  margin: 0;
+  max-width: 30ch;
+}
+.takeaway-coda p .sig { color: var(--signal); }
+.takeaway-foot {
+  margin-top: 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ============ REVEAL UTILITIES ============ */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+/* SVG count-up classes — controlled by JS */
+.count[data-target] { font-variant-numeric: tabular-nums; }
+
+/* the merger-arrow line for GPC etc., hidden helper */
+@media (max-width: 360px) {
+  .hero h1 { font-size: 64px; }
+  .scale-section h2 { font-size: 88px; }
+  .takeaway-section .display-line { font-size: 72px; }
+}
+
+/* ensure the wider-than-mobile preview canvas isn't pure black */
+@media (min-width: 600px) {
+  body { background: linear-gradient(180deg, #1c1916, #0e0c0a); padding: 24px 0; }
+  .shell { box-shadow: 0 30px 80px -30px rgba(0,0,0,0.7); border-radius: 12px; }
+}
+
+/* tap-deepen: the swatch row in dollar legend can flip */
+.dollar-row { cursor: default; }
+</style>
+</head>
+<body>
+
+<div class="shell" id="shell">
+
+  <!-- =================== PERSISTENT CHROME =================== -->
+  <header class="chrome">
+    <div class="chrome-inner">
+      <span class="chrome-ticker">ORLY</span>
+      <span class="chrome-name">O'Reilly Automotive</span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progress"></div></div>
+  </header>
+
+  <!-- =================== 1 · HERO / THESIS =================== -->
+  <section class="hero">
+    <div class="shop-floor"></div>
+
+    <div>
+      <div class="hero-meta">
+        <span class="left">NASDAQ · ORLY</span>
+        <span class="right">FY 2025 · CL $78.41B</span>
+      </div>
+
+      <div class="tape">
+        <div class="tape-track" id="tape"></div>
+      </div>
+
+      <h1>
+        <span class="number"><span class="digit" id="storeCount">6,483</span></span>
+        <span class="label-line"><em>parts counters.</em><br>One <span class="sig">streak.</span></span>
+      </h1>
+
+      <p class="hero-sub">
+        Sixty‑eight years from a single Springfield, Missouri storefront to <em>forty‑eight states,</em> Mexico, Canada, Puerto Rico — and <em>thirty‑three</em> straight years of positive same‑store growth.
+      </p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="v">$<span class="count" data-target="17.78" data-decimals="2">0.00</span><span class="small">B</span></div>
+        <div class="l">FY '25 Revenue · +6.42% YoY</div>
+      </div>
+      <div class="hero-stat">
+        <div class="v"><span class="count" data-target="93">0</span>k</div>
+        <div class="l">Team members</div>
+      </div>
+      <div class="hero-stat">
+        <div class="v"><span class="count" data-target="33">0</span></div>
+        <div class="l">Years comp. growth</div>
+      </div>
+      <div class="hero-stat">
+        <div class="v"><span class="count" data-target="48">0</span></div>
+        <div class="l">U.S. states</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 1 =================== -->
+  <div class="reset-beat">
+    <span class="num">§ I · The business</span>
+    <p>The car breaks down. The phone rings. <span class="sig">Either way</span>, the part comes from O'Reilly.</p>
+  </div>
+
+  <!-- =================== 2 · THE BUSINESS — DUAL CHANNEL =================== -->
+  <section>
+    <div class="eyebrow beat-eyebrow"><span class="accent">The dual counter</span> <span class="dot">·</span> DIY / DIFM</div>
+    <p class="body">
+      A single segment, two doorways. <em>One side,</em> the weekend mechanic with a wrench and a hunch. <em>The other,</em> the shop foreman who needs a rotor by 11. Both channels feed the same shelf — and the shelf is what compounds.
+    </p>
+
+    <div class="scale-stage">
+      <!-- The dual-counter SVG: two figures meeting at a service counter, with a fulcrum -->
+      <svg viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- ground -->
+        <line x1="20" y1="200" x2="340" y2="200" stroke="#16110C" stroke-width="1" opacity="0.3"/>
+
+        <!-- DIY side: a person with a wrench -->
+        <g id="diy">
+          <!-- head -->
+          <circle cx="70" cy="120" r="13" fill="none" stroke="#16110C" stroke-width="1.5"/>
+          <!-- body -->
+          <path d="M70 133 L70 175 M70 175 L58 200 M70 175 L82 200" stroke="#16110C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <!-- arm with wrench -->
+          <path d="M70 145 L98 152" stroke="#16110C" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M98 152 l8 -3 l4 4 l-3 8 l-8 -1 z" fill="#E5482A" stroke="#E5482A"/>
+          <!-- label -->
+          <text x="70" y="218" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9.5" letter-spacing="1.3" fill="#6B6358">DIY</text>
+        </g>
+
+        <!-- The counter / shelf in the middle -->
+        <g id="counter">
+          <!-- shelf top -->
+          <line x1="130" y1="155" x2="230" y2="155" stroke="#16110C" stroke-width="2"/>
+          <!-- shelf legs -->
+          <line x1="138" y1="155" x2="138" y2="200" stroke="#16110C" stroke-width="1.2"/>
+          <line x1="222" y1="155" x2="222" y2="200" stroke="#16110C" stroke-width="1.2"/>
+          <!-- box of parts on top -->
+          <rect x="148" y="138" width="22" height="17" fill="none" stroke="#16110C" stroke-width="1.2"/>
+          <rect x="172" y="132" width="18" height="23" fill="#E5482A" opacity="0.9"/>
+          <rect x="192" y="142" width="22" height="13" fill="none" stroke="#16110C" stroke-width="1.2"/>
+          <!-- shelves below -->
+          <line x1="138" y1="170" x2="222" y2="170" stroke="#16110C" stroke-width="0.8" opacity="0.5"/>
+          <line x1="138" y1="185" x2="222" y2="185" stroke="#16110C" stroke-width="0.8" opacity="0.5"/>
+          <!-- small parts -->
+          <circle cx="148" cy="178" r="3" fill="#16110C" opacity="0.45"/>
+          <circle cx="160" cy="178" r="3" fill="#16110C" opacity="0.45"/>
+          <rect x="180" y="174" width="12" height="8" fill="#16110C" opacity="0.45"/>
+          <circle cx="208" cy="178" r="3" fill="#16110C" opacity="0.45"/>
+          <circle cx="148" cy="193" r="2.5" fill="#16110C" opacity="0.25"/>
+          <rect x="160" y="190" width="14" height="6" fill="#16110C" opacity="0.25"/>
+          <rect x="190" y="190" width="22" height="6" fill="#16110C" opacity="0.25"/>
+          <text x="180" y="218" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9.5" letter-spacing="1.3" fill="#6B6358">THE SHELF</text>
+        </g>
+
+        <!-- DIFM side: a pro with a clipboard -->
+        <g id="difm">
+          <!-- head with cap -->
+          <circle cx="290" cy="120" r="13" fill="none" stroke="#16110C" stroke-width="1.5"/>
+          <path d="M278 117 L302 117 L302 110 Q290 106 278 110 Z" fill="#16110C"/>
+          <!-- body -->
+          <path d="M290 133 L290 175 M290 175 L278 200 M290 175 L302 200" stroke="#16110C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <!-- arm with clipboard -->
+          <path d="M290 148 L266 154" stroke="#16110C" stroke-width="1.5" stroke-linecap="round"/>
+          <rect x="252" y="148" width="14" height="18" fill="white" stroke="#16110C" stroke-width="1.2"/>
+          <line x1="255" y1="153" x2="263" y2="153" stroke="#16110C" stroke-width="0.8"/>
+          <line x1="255" y1="157" x2="263" y2="157" stroke="#16110C" stroke-width="0.8"/>
+          <line x1="255" y1="161" x2="261" y2="161" stroke="#16110C" stroke-width="0.8"/>
+          <text x="290" y="218" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9.5" letter-spacing="1.3" fill="#6B6358">DIFM</text>
+        </g>
+
+        <!-- arrows from each into the shelf -->
+        <path d="M86 150 Q 110 140 130 152" stroke="#E5482A" stroke-width="1.2" fill="none" marker-end="url(#arrow)" stroke-dasharray="2 3" opacity="0.7"/>
+        <path d="M274 150 Q 250 140 230 152" stroke="#E5482A" stroke-width="1.2" fill="none" marker-end="url(#arrow)" stroke-dasharray="2 3" opacity="0.7"/>
+
+        <defs>
+          <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0 L8 4 L0 8 z" fill="#E5482A"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </section>
+
+  <!-- =================== 3 · THE SCALE (count-up giant) =================== -->
+  <section class="scale-section" style="border-top: 1px solid var(--line);">
+    <div class="eyebrow beat-eyebrow"><span class="accent">The scale</span> <span class="dot">·</span> FY '25 revenue</div>
+
+    <h2>
+      <span class="pre">A year in the parts aisle:</span>
+      $<span class="b count" data-target="17.78" data-decimals="2" data-duration="1600">0.00</span><span style="font-size:62px; font-style:italic; color:var(--ink-2);">B</span>
+      <span class="yoy">— up <span style="color: var(--signal); font-style: italic;">$1.07B</span> on '24, the 33rd straight year up.</span>
+    </h2>
+
+    <!-- 5-year mini-bars (ratios estimated to communicate the streak) -->
+    <div class="scale-bars" id="scaleBars" aria-hidden="true">
+      <div class="bar" style="height: 0%" data-h="58"><span class="yr">'21</span></div>
+      <div class="bar" style="height: 0%" data-h="68"><span class="yr">'22</span></div>
+      <div class="bar" style="height: 0%" data-h="78"><span class="yr">'23</span></div>
+      <div class="bar" style="height: 0%" data-h="89"><span class="yr">'24</span></div>
+      <div class="bar now" style="height: 0%" data-h="100"><span class="yr">'25</span></div>
+    </div>
+
+    <div class="scale-bars-caption">5-year revenue · directionally up · every bar</div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 22px 24px; margin-top: 56px;">
+      <div>
+        <div class="display" style="font-size: 38px; color: var(--ink);">51.6<span style="font-size:18px; color: var(--ink-3);">%</span></div>
+        <div class="kicker" style="margin-top: 6px;">Gross margin</div>
+      </div>
+      <div>
+        <div class="display" style="font-size: 38px; color: var(--ink);">19.5<span style="font-size:18px; color: var(--ink-3);">%</span></div>
+        <div class="kicker" style="margin-top: 6px;">Operating margin</div>
+      </div>
+      <div>
+        <div class="display" style="font-size: 38px; color: var(--ink);">$2.97</div>
+        <div class="kicker" style="margin-top: 6px;">Diluted EPS · FY</div>
+      </div>
+      <div>
+        <div class="display" style="font-size: 38px; color: var(--ink);">$4.41<span style="font-size:18px; color: var(--ink-3);">B</span></div>
+        <div class="kicker" style="margin-top: 6px;">Q4 '25 revenue</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 2 =================== -->
+  <div class="reset-beat">
+    <span class="num">§ II · A hundred cents in</span>
+    <p>For every <span class="sig">dollar</span> rung at the counter, the question is what makes it back out.</p>
+  </div>
+
+  <!-- =================== 4 · THE DOLLAR =================== -->
+  <section class="dollar-section">
+    <div class="eyebrow beat-eyebrow"><span class="accent">Where the dollar goes</span> <span class="dot">·</span> $1.00 of revenue</div>
+
+    <p class="body" style="margin-bottom: 22px;">
+      Read left to right: <em>cost of revenue</em> swallows the first half. <em>SG&A</em> takes the next third. The rest — <em>D&A,</em> interest, and the <span class="sig">capex</span> that paves new asphalt for store #6,484 — leaves a thin margin <em>that survives.</em>
+    </p>
+
+    <div class="dollar-stage">
+      <!-- The dollar bill: 5 segments scaled by pct, lit on enter -->
+      <div class="dollar-bill" id="dollarBill">
+        <div class="seg" style="background: var(--c-cor); --g: 48;"><span class="pct">48¢</span></div>
+        <div class="seg" style="background: var(--c-sga); --g: 32;"><span class="pct">32¢</span></div>
+        <div class="seg" style="background: var(--c-da);  --g: 3;"><span class="pct">3</span></div>
+        <div class="seg" style="background: var(--c-int); --g: 1;"><span class="pct">1</span></div>
+        <div class="seg" style="background: var(--c-cap); --g: 7;"><span class="pct">7¢</span></div>
+        <!-- "what's left" — lights coral, the operating margin remainder ~9c -->
+        <div class="seg" style="background: var(--signal); --g: 9;"><span class="pct">9¢</span></div>
+      </div>
+
+      <!-- legend -->
+      <div class="dollar-legend">
+        <div class="dollar-row">
+          <div class="swatch" style="background: var(--c-cor);"></div>
+          <div class="label">Cost of revenue<span class="sub">Parts on the shelf</span></div>
+          <div class="pct">48<span class="c">¢</span></div>
+        </div>
+        <div class="dollar-row">
+          <div class="swatch" style="background: var(--c-sga);"></div>
+          <div class="label">Selling, general & admin<span class="sub">93k team members · 31 DCs</span></div>
+          <div class="pct">32<span class="c">¢</span></div>
+        </div>
+        <div class="dollar-row">
+          <div class="swatch" style="background: var(--c-da);"></div>
+          <div class="label">Depreciation & amortization<span class="sub">13.1M sq ft, well loved</span></div>
+          <div class="pct">3<span class="c">¢</span></div>
+        </div>
+        <div class="dollar-row">
+          <div class="swatch" style="background: var(--c-int);"></div>
+          <div class="label">Interest expense<span class="sub">EBIT covers ~15×</span></div>
+          <div class="pct">1<span class="c">¢</span></div>
+        </div>
+        <div class="dollar-row">
+          <div class="swatch" style="background: var(--c-cap);"></div>
+          <div class="label">Capital expenditures<span class="sub">$1.17B reinvested in '25</span></div>
+          <div class="pct">7<span class="c">¢</span></div>
+        </div>
+      </div>
+
+      <!-- what survives -->
+      <div class="survives">
+        <div class="big">9<span class="c">¢</span></div>
+        <div class="label">survive to <em>operating</em> profit. <em>The rest</em> built the next store.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 3 =================== -->
+  <div class="reset-beat">
+    <span class="num">§ III · Footprint</span>
+    <p>Almost <span class="sig">all of it</span> is American — but the map is no longer flat.</p>
+  </div>
+
+  <!-- =================== 5 · FOOTPRINT =================== -->
+  <section class="footprint-section">
+    <div class="eyebrow beat-eyebrow"><span class="accent">The map</span> <span class="dot">·</span> 6,483 stores · 31 DCs</div>
+
+    <div class="map-stage">
+      <!-- North America abstract map. Stylized blob shapes for US/Mexico/Canada/PR. Dots scaled by pct. -->
+      <svg viewBox="0 0 380 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- Canada -->
+        <path d="M40 30 Q120 10 200 22 Q280 14 340 30 L340 75 Q280 70 220 78 Q160 82 100 78 Q70 80 40 75 Z"
+              fill="#DED6C2" stroke="#BFB6A0" stroke-width="0.6"/>
+        <!-- US -->
+        <path d="M40 80 Q90 76 150 80 Q220 78 290 82 Q320 84 340 88 L340 145 Q310 158 280 156 Q250 162 220 158 Q180 168 140 162 Q100 168 70 158 Q50 152 40 148 Z"
+              fill="#16110C" stroke="#16110C" stroke-width="0.6"/>
+        <!-- Mexico -->
+        <path d="M120 162 Q160 165 200 165 Q240 168 270 162 Q260 195 240 210 Q220 220 200 215 Q180 218 160 205 Q140 195 120 180 Z"
+              fill="#DED6C2" stroke="#BFB6A0" stroke-width="0.6"/>
+        <!-- Puerto Rico -->
+        <ellipse cx="345" cy="178" rx="14" ry="5" fill="#DED6C2" stroke="#BFB6A0" stroke-width="0.6"/>
+
+        <!-- US store dots — 95% of revenue. Scatter coral dots inside US shape -->
+        <g id="us-dots" fill="#E5482A">
+          <!-- east cluster -->
+          <circle cx="280" cy="98" r="2"/><circle cx="290" cy="105" r="2.4"/><circle cx="275" cy="112" r="1.8"/>
+          <circle cx="295" cy="120" r="2.2"/><circle cx="285" cy="128" r="2"/><circle cx="270" cy="120" r="1.6"/>
+          <circle cx="262" cy="108" r="1.6"/><circle cx="305" cy="115" r="1.8"/><circle cx="298" cy="135" r="2"/>
+          <circle cx="278" cy="140" r="1.8"/><circle cx="312" cy="125" r="1.4"/>
+          <!-- midwest cluster (Springfield HQ) — slightly larger anchor -->
+          <circle cx="200" cy="118" r="3.2" stroke="#FBE3DB" stroke-width="3"/>
+          <circle cx="180" cy="105" r="2"/><circle cx="190" cy="112" r="2.2"/><circle cx="210" cy="108" r="1.8"/>
+          <circle cx="220" cy="118" r="2"/><circle cx="195" cy="128" r="2.4"/><circle cx="215" cy="135" r="2"/>
+          <circle cx="175" cy="120" r="1.6"/><circle cx="230" cy="128" r="1.8"/><circle cx="245" cy="118" r="1.6"/>
+          <circle cx="205" cy="142" r="1.8"/><circle cx="225" cy="148" r="1.6"/>
+          <!-- texas / south -->
+          <circle cx="170" cy="148" r="2.4"/><circle cx="158" cy="142" r="1.8"/><circle cx="148" cy="135" r="1.6"/>
+          <circle cx="185" cy="150" r="2"/><circle cx="195" cy="152" r="1.6"/>
+          <!-- west cluster -->
+          <circle cx="80" cy="115" r="2.4"/><circle cx="92" cy="120" r="2"/><circle cx="70" cy="125" r="1.8"/>
+          <circle cx="100" cy="130" r="2.2"/><circle cx="85" cy="135" r="1.8"/><circle cx="65" cy="140" r="1.6"/>
+          <circle cx="110" cy="118" r="1.6"/><circle cx="115" cy="142" r="1.6"/><circle cx="125" cy="125" r="1.4"/>
+          <circle cx="60" cy="120" r="1.4"/><circle cx="135" cy="138" r="1.6"/>
+          <!-- north -->
+          <circle cx="155" cy="100" r="1.6"/><circle cx="140" cy="98" r="1.6"/><circle cx="240" cy="100" r="1.4"/>
+        </g>
+
+        <!-- Mexico dots — sparse, 3% -->
+        <g id="mx-dots" fill="#E5482A" opacity="0.85">
+          <circle cx="180" cy="180" r="1.6"/>
+          <circle cx="200" cy="190" r="1.6"/>
+          <circle cx="220" cy="180" r="1.4"/>
+        </g>
+
+        <!-- Canada/PR — 2% -->
+        <g fill="#E5482A" opacity="0.85">
+          <circle cx="140" cy="48" r="1.6"/>
+          <circle cx="200" cy="50" r="1.4"/>
+          <circle cx="345" cy="178" r="1.4"/>
+        </g>
+
+        <!-- Springfield HQ marker label -->
+        <g font-family="Geist Mono, monospace" font-size="8" fill="#16110C" letter-spacing="1">
+          <line x1="200" y1="118" x2="218" y2="92" stroke="#16110C" stroke-width="0.5"/>
+          <text x="222" y="91">SPRINGFIELD, MO · HQ</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="map-legend">
+      <div class="cell">
+        <div class="v">95<span class="pct">%</span></div>
+        <div class="l">United States</div>
+      </div>
+      <div class="cell">
+        <div class="v">3<span class="pct">%</span></div>
+        <div class="l">Mexico</div>
+      </div>
+      <div class="cell">
+        <div class="v">2<span class="pct">%</span></div>
+        <div class="l">Canada · PR</div>
+      </div>
+    </div>
+
+    <div class="footprint-figs">
+      <div class="fpfig">
+        <div class="v">31</div>
+        <div class="l">Distribution centers feeding the network</div>
+      </div>
+      <div class="fpfig">
+        <div class="v">13.1<span class="u">M</span></div>
+        <div class="l">Operating square feet across the system</div>
+      </div>
+      <div class="fpfig">
+        <div class="v">93<span class="u">k</span></div>
+        <div class="l">Team members on the floor and in transit</div>
+      </div>
+      <div class="fpfig">
+        <div class="v">68</div>
+        <div class="l">Years since the first Springfield store, 1957</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 4 — sets up the dark interlude =================== -->
+  <div class="reset-beat" style="background: var(--paper-3); border-top-color: var(--line-strong);">
+    <span class="num">§ IV · The bet</span>
+    <p>No dividend. <span class="sig">No apology.</span> Capital comes back the same way every quarter — by the share.</p>
+  </div>
+
+  <!-- =================== 6 · THE BET (DARK) =================== -->
+  <section class="bet-section">
+    <div class="eyebrow"><span style="color: rgba(234,228,213,0.85);">$26.59B returned</span> <span class="dot">·</span> Buybacks since 2011</div>
+
+    <h2>The company has been quietly <span class="sig">erasing itself</span> from the share count for fourteen years.</h2>
+
+    <p class="sub">
+      <em>$2.1B</em> of stock retired in FY '25 alone. <em>Negative book equity</em> on paper, paid for by <em>$2.76B</em> of operating cash flow and <em>$1.59B</em> of free cash. <em>EBIT covers interest ~15×</em>; the leverage is a strategy, not a strain.
+    </p>
+
+    <!-- Buyback timeline: 2011 → 2025, cumulative coral fill -->
+    <div class="bet-stage">
+      <svg viewBox="0 0 360 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- baseline -->
+        <line x1="20" y1="130" x2="340" y2="130" stroke="rgba(234,228,213,0.2)" stroke-width="1"/>
+        <!-- year ticks -->
+        <g font-family="Geist Mono, monospace" font-size="8" fill="rgba(234,228,213,0.5)" letter-spacing="0.5">
+          <text x="20" y="148">2011</text>
+          <text x="100" y="148">'15</text>
+          <text x="180" y="148">'18</text>
+          <text x="260" y="148">'22</text>
+          <text x="320" y="148">'25</text>
+        </g>
+
+        <!-- cumulative area: monotonic curve climbing to ~$26.59B -->
+        <defs>
+          <linearGradient id="betFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E5482A" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="#E5482A" stop-opacity="0.05"/>
+          </linearGradient>
+        </defs>
+
+        <path id="betArea"
+              d="M20 130 Q60 128 90 122 Q120 116 150 105 Q180 92 210 76 Q240 60 270 48 Q300 36 340 24 L340 130 Z"
+              fill="url(#betFill)" />
+        <path id="betLine"
+              d="M20 130 Q60 128 90 122 Q120 116 150 105 Q180 92 210 76 Q240 60 270 48 Q300 36 340 24"
+              fill="none" stroke="#E5482A" stroke-width="1.8" stroke-linecap="round"/>
+
+        <!-- end label -->
+        <g>
+          <line x1="340" y1="24" x2="340" y2="20" stroke="#E5482A" stroke-width="1"/>
+          <text x="335" y="14" text-anchor="end" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#F4EFDF">$26.59B</text>
+        </g>
+
+        <!-- start label -->
+        <text x="22" y="124" font-family="Geist Mono, monospace" font-size="8" fill="rgba(234,228,213,0.55)">$0</text>
+      </svg>
+      <div class="axis-label">
+        <span>Cumulative buybacks</span>
+        <span>+14 years · monotonic</span>
+      </div>
+    </div>
+
+    <div class="bet-stack">
+      <div class="bet-fig">
+        <div class="v sig">$2.1<span class="u">B</span></div>
+        <div class="l">Repurchased · FY '25</div>
+      </div>
+      <div class="bet-fig">
+        <div class="v">$6.02<span class="u">B</span></div>
+        <div class="l">Total debt</div>
+      </div>
+      <div class="bet-fig">
+        <div class="v">$2.76<span class="u">B</span></div>
+        <div class="l">Operating cash flow</div>
+      </div>
+      <div class="bet-fig">
+        <div class="v">$1.59<span class="u">B</span></div>
+        <div class="l">Free cash flow</div>
+      </div>
+      <div class="bet-fig">
+        <div class="v">~15×</div>
+        <div class="l">EBIT interest coverage</div>
+      </div>
+      <div class="bet-fig">
+        <div class="v">−$763<span class="u">M</span></div>
+        <div class="l">Book equity · by design</div>
+      </div>
+    </div>
+
+    <div class="no-div">
+      <div class="stamp">No&nbsp;Div.</div>
+      <div class="txt">Every dollar of capital return rides on <span class="sig">the buyback.</span></div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 5 =================== -->
+  <div class="reset-beat">
+    <span class="num">§ V · The block</span>
+    <p>Three rivals on the same street. <span class="sig">One</span> is bigger. <span class="sig">One</span> is older. <span class="sig">One</span> is something new.</p>
+  </div>
+
+  <!-- =================== 7 · COMPETITION =================== -->
+  <section class="compete-section">
+    <div class="eyebrow beat-eyebrow"><span class="accent">The block</span> <span class="dot">·</span> Sized by market cap</div>
+
+    <h2>O'Reilly versus <em>the lot</em>.</h2>
+
+    <div class="compete-rows">
+
+      <!-- ORLY (us) -->
+      <div class="compete-row us">
+        <div class="head">
+          <div class="name">O'Reilly <span class="ticker">ORLY</span> <span class="tag us">Us</span></div>
+          <div class="mc">$78.41B</div>
+        </div>
+        <div class="bar-wrap"><div class="bar" data-w="92"></div></div>
+        <div class="meta-row">
+          <span>Rev <b>$17.78B</b></span>
+          <span>YoY <b style="color:#1f8a4f;">+6.42%</b></span>
+        </div>
+      </div>
+
+      <!-- AZO -->
+      <div class="compete-row">
+        <div class="head">
+          <div class="name">AutoZone <span class="ticker">AZO</span> <span class="tag rival">Rival</span></div>
+          <div class="mc">$58.86B</div>
+        </div>
+        <div class="bar-wrap"><div class="bar" data-w="69"></div></div>
+        <div class="meta-row">
+          <span>Rev <b>$18.94B</b></span>
+          <span>YoY <b style="color:#1f8a4f;">+5.02%</b></span>
+          <span>P/E <b>24.07</b></span>
+        </div>
+        <p class="desc">Same shelves, more of them. <em>7,000+ stores</em> across the U.S., Mexico, Brazil — the closest mirror, the steady benchmark.</p>
+      </div>
+
+      <!-- GPC -->
+      <div class="compete-row">
+        <div class="head">
+          <div class="name">Genuine Parts <span class="ticker">GPC</span> <span class="tag rival">Rival</span></div>
+          <div class="mc">$15.88B</div>
+        </div>
+        <div class="bar-wrap"><div class="bar" data-w="19"></div></div>
+        <div class="meta-row">
+          <span>Rev <b>$24.30B</b></span>
+          <span>YoY <b style="color:#1f8a4f;">+3.46%</b></span>
+          <span>P/E <b>240.77</b></span>
+        </div>
+        <p class="desc">Bigger top line, smaller cap. NAPA's network owns the <em>professional</em> shop — same customer, different doorway.</p>
+      </div>
+
+      <!-- CVNA — the threat, dashed -->
+      <div class="compete-row">
+        <div class="head">
+          <div class="name">Carvana <span class="ticker">CVNA</span> <span class="tag threat">Threat</span></div>
+          <div class="mc">$84.91B</div>
+        </div>
+        <div class="bar-wrap"><div class="bar threat" data-w="100"></div></div>
+        <div class="meta-row">
+          <span>Rev <b>$20.32B</b></span>
+          <span>YoY <b style="color:var(--signal);">+48.63%</b></span>
+          <span>P/E <b>60.35</b></span>
+        </div>
+        <p class="desc">Not a parts store. As Carvana <em>internalizes</em> reconditioning, every wrench it spins in‑house is <span class="sig">one not turned</span> at an independent shop — O'Reilly's professional channel.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 6 (final) =================== -->
+  <div class="reset-beat">
+    <span class="num">§ VI · The streak</span>
+    <p>Open with the stores. <span class="sig">Close with the streak.</span></p>
+  </div>
+
+  <!-- =================== 8 · TAKEAWAY =================== -->
+  <section class="takeaway-section">
+    <div class="eyebrow beat-eyebrow"><span class="accent">The takeaway</span> <span class="dot">·</span> What survives</div>
+
+    <p class="body">Every other recap leads with the sticker price. Here, what compounds is <em>the run</em> — not a quarter, not a fiscal year, but <em>thirty‑three of them, in a row.</em></p>
+
+    <div class="display-line">
+      <span>33</span><br>
+      <em>straight years.</em><br>
+      <span class="sig">One streak.</span>
+    </div>
+
+    <div class="streak-stage">
+      <!-- 33 vertical strokes — the streak as a tally. The 33rd is coral, taller. -->
+      <svg viewBox="0 0 380 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g id="streak">
+          <!-- generated by JS to keep this readable -->
+        </g>
+        <!-- Year labels -->
+        <text x="0" y="105" font-family="Geist Mono, monospace" font-size="9" fill="#6B6358" letter-spacing="0.5">1993</text>
+        <text x="380" y="105" text-anchor="end" font-family="Geist Mono, monospace" font-size="9" fill="#6B6358" letter-spacing="0.5">2025</text>
+        <line x1="0" y1="92" x2="380" y2="92" stroke="#D9D2C0" stroke-width="0.8"/>
+      </svg>
+    </div>
+
+    <div class="streak-bottom">
+      <span>Comparable store sales · <b style="color: var(--ink);">positive</b></span>
+      <span>33 / 33</span>
+    </div>
+
+    <div class="takeaway-coda">
+      <p>
+        Six thousand four hundred eighty‑three counters. Ninety‑three thousand pairs of hands. <span class="sig">One thin nine‑cent margin</span> that built every one of them.
+      </p>
+    </div>
+
+    <div class="takeaway-foot">
+      <span>ORLY · NASDAQ</span>
+      <span>FY '25 RECAP</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============ TICKER TAPE ============ */
+(function(){
+  const items = [
+    ['ORLY', '$1,210.42', '+0.84%', 'up'],
+    ['AZO',  '$3,612.10', '+0.21%', 'up'],
+    ['GPC',  '$118.04',   '−0.42%', 'down'],
+    ['CVNA', '$401.66',   '+2.18%', 'up'],
+    ['SPX',  '5,912',     '+0.10%', 'up'],
+    ['DJI',  '42,118',    '−0.05%', 'down'],
+    ['WTI',  '$76.20',    '+0.31%', 'up'],
+  ];
+  const track = document.getElementById('tape');
+  if (!track) return;
+  const html = items.map(([s,p,c,d])=>`<span class="tape-item"><span class="sym">${s}</span> ${p} <span class="${d}">${c}</span></span>`).join(' &nbsp; · &nbsp; ');
+  // duplicate for seamless loop
+  track.innerHTML = html + ' &nbsp; · &nbsp; ' + html;
+})();
+
+/* ============ STREAK SVG (33 ticks) ============ */
+(function(){
+  const g = document.getElementById('streak');
+  if (!g) return;
+  const N = 33;
+  const startX = 6, endX = 374;
+  const step = (endX - startX) / (N - 1);
+  let svg = '';
+  for (let i=0; i<N; i++){
+    const x = startX + i*step;
+    const isLast = i === N-1;
+    const h = isLast ? 70 : (40 + (i*1.0)); // slowly grows for visual rhythm
+    const y2 = 92;
+    const y1 = y2 - h;
+    const stroke = isLast ? '#E5482A' : '#16110C';
+    const sw = isLast ? 3.2 : 1.4;
+    svg += `<line class="tick" data-i="${i}" x1="${x.toFixed(1)}" y1="${y2}" x2="${x.toFixed(1)}" y2="${y2}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" data-y1="${y1.toFixed(1)}"/>`;
+  }
+  g.innerHTML = svg;
+})();
+
+/* ============ SCROLL: progress bar + reveal triggers ============ */
+(function(){
+  const progress = document.getElementById('progress');
+  const shell = document.getElementById('shell');
+
+  // Mark common reveal targets
+  const reveals = document.querySelectorAll(
+    'section, .reset-beat, .scale-bars, .dollar-bill, .dollar-row, .compete-row, .bet-stage, .bet-fig, .map-stage, .footprint-figs .fpfig, .hero-stat, .takeaway-coda'
+  );
+  reveals.forEach(el => el.classList.add('reveal'));
+
+  function onScroll(){
+    // progress
+    const sh = document.documentElement.scrollHeight - window.innerHeight;
+    const p = sh > 0 ? Math.min(1, Math.max(0, window.scrollY / sh)) : 0;
+    progress.style.width = (p*100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // IntersectionObserver for reveals + count-ups + bar fills + streak draws
+  const seen = new WeakSet();
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || seen.has(e.target)) return;
+      seen.add(e.target);
+      e.target.classList.add('in');
+
+      // count-ups inside this element
+      e.target.querySelectorAll('.count').forEach(animateCount);
+
+      // scale bars
+      if (e.target.id === 'scaleBars' || e.target.querySelector?.('#scaleBars')) {
+        const bars = (e.target.id === 'scaleBars' ? e.target : e.target.querySelector('#scaleBars')).querySelectorAll('.bar');
+        bars.forEach((b, i) => {
+          const h = b.getAttribute('data-h') || '50';
+          setTimeout(() => { b.style.height = h + '%'; }, 80 + i*120);
+        });
+      }
+
+      // competitor bars
+      e.target.querySelectorAll('.bar-wrap > .bar').forEach((b, i) => {
+        const w = b.getAttribute('data-w') || '0';
+        setTimeout(() => { b.style.width = w + '%'; }, 100 + i*100);
+      });
+
+      // streak: animate ticks growing
+      if (e.target.classList.contains('streak-stage') || e.target.querySelector?.('#streak')) {
+        const ticks = document.querySelectorAll('#streak line');
+        ticks.forEach((tk, i) => {
+          const y1 = tk.getAttribute('data-y1');
+          setTimeout(() => {
+            tk.style.transition = 'all 320ms cubic-bezier(0.22, 1, 0.36, 1)';
+            tk.setAttribute('y1', y1);
+          }, 30 + i*22);
+        });
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -40px 0px' });
+
+  reveals.forEach(el => io.observe(el));
+
+  // Specifically observe streak svg + scaleBars even if not in reveals list
+  const streakStage = document.querySelector('.streak-stage');
+  if (streakStage) io.observe(streakStage);
+  const scaleBars = document.getElementById('scaleBars');
+  if (scaleBars) io.observe(scaleBars);
+
+  function animateCount(node){
+    const target = parseFloat(node.getAttribute('data-target') || '0');
+    const decimals = parseInt(node.getAttribute('data-decimals') || '0', 10);
+    const dur = parseInt(node.getAttribute('data-duration') || '1200', 10);
+    const t0 = performance.now();
+    const start = 0;
+    function tick(t){
+      const k = Math.min(1, (t - t0) / dur);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - k, 3);
+      const v = start + (target - start) * eased;
+      node.textContent = decimals ? v.toFixed(decimals) : Math.round(v).toLocaleString();
+      if (k < 1) requestAnimationFrame(tick);
+      else node.textContent = decimals ? target.toFixed(decimals) : Math.round(target).toLocaleString();
+    }
+    requestAnimationFrame(tick);
+  }
+})();
+
+/* ============ TAP-DEEPEN: dollar legend rows reveal a tiny "source" line ============ */
+(function(){
+  document.querySelectorAll('.dollar-row').forEach(row => {
+    row.addEventListener('click', () => {
+      row.classList.toggle('expanded');
+      const sub = row.querySelector('.label .sub');
+      if (sub) sub.style.color = row.classList.contains('expanded') ? 'var(--signal)' : '';
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>TYL · RECAP · FY '25</title>
+<link rel="stylesheet" href="design-system/colors_and_type.css" />
+<style>
+  /* ============================================================
+     Tyler Technologies — Stock Recap
+     Civic-institutional editorial. Mobile-only artifact.
+     ============================================================ */
+
+  :root {
+    /* Tyler-specific palette: civic blue, ledger ink, official-stamp red */
+    --tyl-blue:        #2C4F77;     /* deeper than the chart blue — courthouse */
+    --tyl-blue-2:      #4F86C6;     /* the chart blue from data */
+    --tyl-blue-soft:   #DFE7F1;
+    --tyl-blue-pale:   #EFF3F8;
+    --tyl-stamp:       #B33A2A;     /* official red, oxidized */
+    --tyl-ledger:      #F7F3E8;     /* aged paper for the ledger interlude */
+    --tyl-ledger-line: #D9CFB3;     /* ledger ruling */
+    --tyl-ink:         #14171C;
+    --tyl-ink-2:       #3A4049;
+    --tyl-ink-3:       #6F7682;
+    --tyl-rule:        #D8D4CB;
+    --tyl-paper:       #FBFAF5;
+    --tyl-paper-warm:  #F2EEE3;
+    --tyl-dark:        #0E1218;
+    --tyl-dark-2:      #181E27;
+
+    /* Cost-breakdown colors are pre-supplied — keep exact */
+    --cost-cor:    #4F86C6;
+    --cost-rd:     #F4A261;
+    --cost-sga:    #2A9D8F;
+    --cost-amort:  #E76F51;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--tyl-paper);
+    color: var(--tyl-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    /* Mobile artifact: ~390px wide, centered on desktop */
+    max-width: 414px;
+    margin: 0 auto;
+    position: relative;
+    overflow-x: hidden;
+    /* faint warm vignette to keep the artifact from looking webpage-y on desktop */
+    box-shadow: 0 0 0 1px rgba(20,20,20,0.04), 0 24px 80px -24px rgba(20,20,20,0.18);
+    min-height: 100vh;
+  }
+
+  /* ---------- PERSISTENT CHROME ---------- */
+  .chrome {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    background: rgba(251,250,245,0.78);
+    border-bottom: 1px solid rgba(20,20,20,0.06);
+  }
+  .chrome-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 10px;
+  }
+  .chrome-left { display: flex; align-items: baseline; gap: 10px; }
+  .chrome-tick {
+    font-family: var(--font-mono);
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--tyl-ink);
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 13px; font-weight: 500;
+    color: var(--tyl-ink-2);
+    letter-spacing: -0.01em;
+  }
+  .chrome-label {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.18em;
+    color: var(--tyl-ink-3);
+    text-transform: uppercase;
+  }
+  /* Scroll-progress hairline */
+  .progress {
+    height: 1px;
+    background: rgba(20,20,20,0.05);
+    position: relative;
+  }
+  .progress-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 0%;
+    background: var(--tyl-blue);
+    transition: width 80ms linear;
+  }
+  .progress-fill::after {
+    content: ""; position: absolute; right: -1px; top: -1px; bottom: -1px;
+    width: 2px; background: var(--tyl-blue-2);
+  }
+
+  /* ---------- COMMON ---------- */
+  section { position: relative; padding: 64px 28px; }
+  .eyebrow-row {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--tyl-ink-3);
+    margin-bottom: 28px;
+  }
+  .eyebrow-row .dot {
+    width: 5px; height: 5px; border-radius: 99px;
+    background: var(--tyl-blue);
+  }
+  .eyebrow-row .num {
+    color: var(--tyl-blue);
+    font-weight: 500;
+  }
+  .display-serif {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    color: var(--tyl-ink);
+  }
+  .italic { font-style: italic; }
+  .signal { color: var(--tyl-blue); }
+  .stamp-color { color: var(--tyl-stamp); }
+  .body-text {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--tyl-ink-2);
+    text-wrap: pretty;
+  }
+  .caption {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tyl-ink-3);
+  }
+
+  /* ---------- 1. HERO / THESIS ---------- */
+  .hero {
+    padding: 32px 28px 80px;
+    background: var(--tyl-paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-meta {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.18em;
+    color: var(--tyl-ink-3);
+    text-transform: uppercase;
+    margin-top: 28px;
+  }
+  .hero-meta .pip {
+    width: 6px; height: 6px; background: var(--tyl-stamp);
+    border-radius: 99px;
+    box-shadow: 0 0 0 4px rgba(179,58,42,0.12);
+  }
+  .hero-thesis {
+    margin-top: 36px;
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    color: var(--tyl-ink);
+    text-wrap: balance;
+  }
+  .hero-thesis .num {
+    font-style: italic;
+    color: var(--tyl-blue);
+  }
+  .hero-sub {
+    margin-top: 20px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--tyl-ink-2);
+    max-width: 320px;
+  }
+  .hero-sub em { font-family: var(--font-display); font-style: italic; font-size: 16px; color: var(--tyl-blue); }
+
+  /* US map of installations */
+  .us-map-wrap {
+    margin: 44px -28px 0;
+    position: relative;
+  }
+  .us-map { width: 100%; display: block; }
+  .us-map .land {
+    fill: none;
+    stroke: var(--tyl-blue);
+    stroke-width: 0.6;
+    opacity: 0;
+    stroke-dasharray: 1500;
+    stroke-dashoffset: 1500;
+    transition: stroke-dashoffset 1800ms var(--ease-out), opacity 600ms ease-out;
+  }
+  .us-map.in .land { opacity: 0.55; stroke-dashoffset: 0; }
+  .us-map .dot {
+    fill: var(--tyl-blue);
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(0);
+    transition: opacity 400ms ease-out, transform 400ms var(--ease-spring);
+  }
+  .us-map.in .dot { opacity: 0.85; transform: scale(1); }
+  .us-map .stamp-dot { fill: var(--tyl-stamp); }
+
+  .map-meta {
+    display: flex; justify-content: space-between;
+    padding: 12px 28px 0;
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tyl-ink-3);
+  }
+  .map-meta strong { color: var(--tyl-ink); font-weight: 500; }
+
+  /* ---------- RESET BEAT ---------- */
+  .reset-beat {
+    background: var(--tyl-ledger);
+    padding: 56px 28px;
+    border-top: 1px solid var(--tyl-ledger-line);
+    border-bottom: 1px solid var(--tyl-ledger-line);
+    position: relative;
+  }
+  .reset-beat::before, .reset-beat::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: var(--tyl-ledger-line);
+  }
+  .reset-beat::before { top: 6px; }
+  .reset-beat::after { bottom: 6px; }
+  .reset-beat .copy {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--tyl-ink);
+    text-wrap: pretty;
+  }
+  .reset-beat .copy .hit { color: var(--tyl-blue); font-style: italic; }
+  .reset-beat .stamp {
+    margin-top: 18px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--tyl-stamp);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .reset-beat .stamp::before {
+    content: ""; width: 18px; height: 1px; background: var(--tyl-stamp);
+  }
+
+  /* ---------- 2. THE BUSINESS — three revenue columns ---------- */
+  .biz {
+    padding-top: 72px;
+    padding-bottom: 80px;
+  }
+  .biz-lede {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1.08;
+    color: var(--tyl-ink);
+    letter-spacing: -0.01em;
+    margin-bottom: 36px;
+    text-wrap: balance;
+  }
+  .biz-lede em { font-style: italic; color: var(--tyl-blue); }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    align-items: end;
+    height: 320px;
+    margin-top: 24px;
+    border-bottom: 1px solid var(--tyl-rule);
+    padding-bottom: 12px;
+  }
+  .col {
+    position: relative;
+    height: 100%;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .col-fill {
+    width: 100%;
+    background: var(--tyl-blue);
+    height: 0%;
+    transition: height 1400ms var(--ease-out);
+    position: relative;
+    overflow: hidden;
+  }
+  .col-fill::before {
+    /* ledger horizontal lines inside the fill */
+    content: "";
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 13px,
+      rgba(255,255,255,0.10) 13px,
+      rgba(255,255,255,0.10) 14px
+    );
+    pointer-events: none;
+  }
+  .col-fill.fill-1 { background: var(--tyl-blue); }
+  .col-fill.fill-2 { background: var(--tyl-blue-2); }
+  .col-fill.fill-3 { background: #7AA8D4; }
+  .col-cap {
+    position: absolute;
+    top: -56px; left: 0; right: 0;
+    text-align: left;
+  }
+  .col-cap .num {
+    font-family: var(--font-display);
+    font-size: 30px;
+    color: var(--tyl-ink);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .col-cap .num em { font-style: italic; color: var(--tyl-blue); font-size: 14px; margin-left: 4px; vertical-align: 4px; font-family: var(--font-mono); letter-spacing: 0.04em; font-style: normal; }
+  .col-foot {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--tyl-ink-3);
+    line-height: 1.4;
+  }
+  .col-foot strong { color: var(--tyl-ink); font-weight: 500; }
+
+  .biz-foot {
+    margin-top: 28px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tyl-ink-3);
+  }
+  .biz-foot .total {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--tyl-ink);
+    letter-spacing: -0.02em;
+    text-transform: none;
+  }
+  .biz-foot .total em { font-style: italic; color: var(--tyl-blue); }
+
+  /* recurring revenue — bar within bar */
+  .recurring {
+    margin-top: 56px;
+  }
+  .recurring-bar {
+    height: 22px;
+    background: var(--tyl-paper-warm);
+    border: 1px solid var(--tyl-rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .recurring-bar .fill {
+    position: absolute; inset: 0;
+    background: var(--tyl-blue);
+    width: 0%;
+    transition: width 1600ms var(--ease-out);
+  }
+  .recurring-bar .label {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    left: 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: white;
+    z-index: 2;
+    mix-blend-mode: difference;
+    /* fixes mix-blend in safari */
+  }
+  .recurring-cap {
+    margin-top: 10px;
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tyl-ink-3);
+  }
+  .recurring-cap strong { color: var(--tyl-ink); font-weight: 500; }
+
+  /* ---------- 3. THE SCALE — big editorial numerals ---------- */
+  .scale {
+    padding-top: 88px;
+    padding-bottom: 88px;
+    background: linear-gradient(to bottom, var(--tyl-paper), var(--tyl-paper-warm));
+  }
+  .scale-lede {
+    font-family: var(--font-display);
+    font-size: 22px; line-height: 1.3;
+    color: var(--tyl-ink-2);
+    letter-spacing: -0.005em;
+    max-width: 320px;
+  }
+  .scale-lede em { font-style: italic; color: var(--tyl-blue); }
+  .scale-grid {
+    margin-top: 40px;
+    display: flex; flex-direction: column; gap: 32px;
+    border-top: 1px solid var(--tyl-rule);
+    padding-top: 28px;
+  }
+  .scale-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 16px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--tyl-rule);
+  }
+  .scale-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .scale-num {
+    font-family: var(--font-display);
+    font-size: 78px;
+    line-height: 0.92;
+    color: var(--tyl-ink);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .scale-num em { font-style: italic; color: var(--tyl-blue); }
+  .scale-num .unit {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--tyl-ink-3);
+    font-style: italic;
+    margin-left: 2px;
+    letter-spacing: -0.01em;
+  }
+  .scale-meta {
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tyl-ink-3);
+    line-height: 1.5;
+    max-width: 130px;
+  }
+  .scale-meta strong { color: var(--tyl-ink); font-weight: 500; display: block; }
+  .scale-meta .delta {
+    color: var(--tyl-blue); font-family: var(--font-mono);
+  }
+
+  /* ---------- 4. WHERE THE DOLLAR GOES — 100-cent grid ---------- */
+  .dollar {
+    padding-top: 80px;
+    padding-bottom: 88px;
+  }
+  .dollar-lede {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1.08;
+    color: var(--tyl-ink);
+    margin-bottom: 12px;
+    letter-spacing: -0.015em;
+  }
+  .dollar-lede em { font-style: italic; color: var(--tyl-blue); }
+  .dollar-sub {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--tyl-ink-3);
+    margin-bottom: 32px;
+    max-width: 300px;
+  }
+  .cents-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px;
+    margin-bottom: 28px;
+  }
+  .cent {
+    aspect-ratio: 1 / 1;
+    background: var(--tyl-paper-warm);
+    border: 1px solid var(--tyl-rule);
+    border-radius: 99px;
+    position: relative;
+    transform: scale(0.85);
+    opacity: 0.5;
+    transition: background 360ms ease-out, transform 360ms var(--ease-spring), opacity 360ms ease-out, border-color 360ms ease-out;
+  }
+  .cent.lit {
+    transform: scale(1);
+    opacity: 1;
+    border-color: transparent;
+  }
+  .cent.lit.cor    { background: var(--cost-cor); }
+  .cent.lit.rd     { background: var(--cost-rd); }
+  .cent.lit.sga    { background: var(--cost-sga); }
+  .cent.lit.amort  { background: var(--cost-amort); }
+  .cent.lit.surv   { background: var(--tyl-ink); }
+  .cent.lit.surv::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border-radius: 99px;
+    border: 1px solid var(--tyl-paper);
+  }
+
+  .legend {
+    display: flex; flex-direction: column; gap: 10px;
+    border-top: 1px solid var(--tyl-rule);
+    padding-top: 18px;
+  }
+  .legend-row {
+    display: grid;
+    grid-template-columns: 12px 1fr auto;
+    gap: 12px;
+    align-items: center;
+  }
+  .legend-swatch {
+    width: 12px; height: 12px;
+    border-radius: 99px;
+  }
+  .legend-label {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--tyl-ink);
+  }
+  .legend-pct {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--tyl-ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .legend-row.surv .legend-label { font-style: italic; font-family: var(--font-display); font-size: 17px; }
+  .legend-row.surv .legend-pct { color: var(--tyl-ink); font-weight: 500; }
+
+  /* ---------- 5. FOOTPRINT — geographic horizon ---------- */
+  .footprint {
+    padding-top: 80px; padding-bottom: 80px;
+    background: var(--tyl-blue-pale);
+    position: relative;
+  }
+  .footprint-lede {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1.1;
+    color: var(--tyl-ink);
+    letter-spacing: -0.015em;
+    margin-bottom: 32px;
+  }
+  .footprint-lede em { font-style: italic; color: var(--tyl-blue); }
+
+  .horizon {
+    display: flex; align-items: stretch;
+    height: 220px;
+    border: 1px solid var(--tyl-blue);
+    background: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .horizon-us {
+    background: var(--tyl-blue);
+    color: white;
+    width: 96%;
+    transition: width 1800ms var(--ease-out);
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 14px;
+    position: relative;
+  }
+  .horizon-us.start { width: 0%; }
+  .horizon-ca {
+    background: white;
+    color: var(--tyl-blue);
+    flex: 1;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 14px;
+    border-left: 1px solid var(--tyl-blue);
+    overflow: hidden;
+    min-width: 0;
+  }
+  .horizon-pct {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+  }
+  .horizon-ca .horizon-pct { font-size: 28px; }
+  .horizon-pct em { font-style: italic; }
+  .horizon-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+  .horizon-ca .horizon-label { white-space: nowrap; }
+  .horizon-foot {
+    margin-top: 18px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tyl-ink-3);
+    text-align: center;
+  }
+  .horizon-foot em { font-family: var(--font-display); font-size: 14px; font-style: italic; color: var(--tyl-blue); text-transform: none; letter-spacing: 0; }
+
+  /* ---------- 6. THE BET — capital allocation as stamped ledger ---------- */
+  .bet {
+    background: var(--tyl-dark);
+    color: var(--tyl-paper);
+    padding-top: 88px; padding-bottom: 96px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bet::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 20% 0%, rgba(79,134,198,0.18), transparent 60%);
+    pointer-events: none;
+  }
+  .bet .eyebrow-row { color: rgba(244,242,237,0.5); }
+  .bet .eyebrow-row .dot { background: var(--tyl-blue-2); }
+  .bet .eyebrow-row .num { color: var(--tyl-blue-2); }
+  .bet-lede {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1.05;
+    color: var(--tyl-paper);
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .bet-lede em { font-style: italic; color: var(--tyl-blue-2); }
+  .bet-sub {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: rgba(244,242,237,0.62);
+    margin-bottom: 36px;
+    max-width: 320px;
+  }
+
+  .ledger {
+    border-top: 1px solid rgba(244,242,237,0.12);
+    margin-top: 8px;
+  }
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    padding: 22px 0;
+    border-bottom: 1px solid rgba(244,242,237,0.10);
+    gap: 16px;
+  }
+  .ledger-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(244,242,237,0.55);
+  }
+  .ledger-label .desc {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    text-transform: none;
+    letter-spacing: 0;
+    color: rgba(244,242,237,0.85);
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+  .ledger-num {
+    font-family: var(--font-display);
+    font-size: 36px;
+    color: var(--tyl-paper);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    line-height: 0.95;
+  }
+  .ledger-num em { font-style: italic; color: var(--tyl-blue-2); }
+  .ledger-num .unit { font-size: 16px; color: rgba(244,242,237,0.5); margin-left: 2px; font-family: var(--font-mono); letter-spacing: 0.04em; }
+
+  .stamp-block {
+    margin-top: 36px;
+    border: 2px solid var(--tyl-stamp);
+    padding: 16px 18px;
+    transform: rotate(-1.6deg);
+    background: rgba(179,58,42,0.04);
+    position: relative;
+  }
+  .stamp-block::before {
+    content: "";
+    position: absolute; inset: -4px;
+    border: 1px dashed rgba(179,58,42,0.4);
+    pointer-events: none;
+  }
+  .stamp-block .stamp-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--tyl-stamp);
+    margin-bottom: 6px;
+  }
+  .stamp-block .stamp-num {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    color: var(--tyl-paper);
+  }
+  .stamp-block .stamp-num em { font-style: italic; color: var(--tyl-stamp); }
+  .stamp-block .stamp-foot {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(244,242,237,0.5);
+    margin-top: 8px;
+  }
+  .bet-no-divs {
+    margin-top: 36px;
+    font-family: var(--font-display);
+    font-size: 22px; line-height: 1.3;
+    color: rgba(244,242,237,0.85);
+    font-style: italic;
+    border-left: 2px solid var(--tyl-blue-2);
+    padding-left: 16px;
+  }
+  .bet-no-divs strong { color: var(--tyl-paper); font-weight: 400; font-style: italic; }
+
+  /* ---------- 7. THE COMPETITION ---------- */
+  .compete {
+    padding-top: 88px;
+    padding-bottom: 80px;
+  }
+  .compete-lede {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1.1;
+    color: var(--tyl-ink);
+    letter-spacing: -0.015em;
+    margin-bottom: 28px;
+  }
+  .compete-lede em { font-style: italic; color: var(--tyl-blue); }
+
+  .compete-axis {
+    margin-top: 12px;
+    margin-bottom: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tyl-ink-3);
+    display: flex; justify-content: space-between;
+  }
+
+  .compete-stack {
+    display: flex; flex-direction: column; gap: 18px;
+    margin-top: 8px;
+  }
+  .compete-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .compete-row .head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 12px;
+  }
+  .compete-row .name {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--tyl-ink);
+    letter-spacing: -0.01em;
+  }
+  .compete-row .name em { font-style: italic; }
+  .compete-row .ticker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--tyl-ink-3);
+  }
+  .compete-row .bar-wrap {
+    height: 14px;
+    background: var(--tyl-paper-warm);
+    position: relative;
+    border: 1px solid var(--tyl-rule);
+    overflow: hidden;
+  }
+  .compete-row .bar {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 0%;
+    transition: width 1400ms var(--ease-out);
+  }
+  .compete-row.tyl .bar { background: var(--tyl-blue); }
+  .compete-row .bar.alt { background: var(--tyl-ink-3); opacity: 0.85; }
+  .compete-row .meta {
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--tyl-ink-3);
+    margin-top: 4px;
+  }
+  .compete-row .meta strong { color: var(--tyl-ink); font-weight: 500; }
+  .compete-row .why {
+    margin-top: 8px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--tyl-ink-2);
+    line-height: 1.5;
+  }
+  .compete-row .why em { font-family: var(--font-display); font-style: italic; color: var(--tyl-blue); font-size: 14px; }
+  .compete-row.tyl .name { color: var(--tyl-blue); }
+
+  .compete-foot {
+    margin-top: 32px;
+    border-top: 1px solid var(--tyl-rule);
+    padding-top: 20px;
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--tyl-ink);
+    font-style: italic;
+  }
+  .compete-foot .signal { color: var(--tyl-blue); }
+
+  /* ---------- 8. TAKEAWAY — close inverts open ---------- */
+  .close {
+    background: var(--tyl-paper-warm);
+    padding-top: 96px; padding-bottom: 80px;
+    border-top: 1px solid var(--tyl-rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .close-mark {
+    width: 88px; height: 88px;
+    border: 1.5px solid var(--tyl-stamp);
+    border-radius: 99px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--tyl-stamp);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-align: center;
+    transform: rotate(-6deg);
+    margin-bottom: 36px;
+    position: relative;
+    line-height: 1.2;
+  }
+  .close-mark span { display: block; }
+  .close-mark::before {
+    content: "";
+    position: absolute; inset: 4px;
+    border: 1px dashed var(--tyl-stamp);
+    border-radius: 99px;
+    opacity: 0.45;
+  }
+  .close-headline {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    color: var(--tyl-ink);
+    text-wrap: balance;
+  }
+  .close-headline em { font-style: italic; color: var(--tyl-blue); }
+  .close-sub {
+    margin-top: 28px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--tyl-ink-2);
+    max-width: 320px;
+  }
+  .close-sub em { font-family: var(--font-display); font-style: italic; color: var(--tyl-blue); font-size: 17px; }
+
+  .colophon {
+    margin-top: 64px;
+    border-top: 1px solid var(--tyl-rule);
+    padding-top: 24px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tyl-ink-3);
+  }
+  .colophon strong { color: var(--tyl-ink); font-weight: 500; }
+
+  /* ---------- SCROLL-REVEAL UTILITY ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+  }
+  .reveal.in {
+    opacity: 1; transform: translateY(0);
+  }
+  .reveal.d-1 { transition-delay: 80ms; }
+  .reveal.d-2 { transition-delay: 160ms; }
+  .reveal.d-3 { transition-delay: 240ms; }
+  .reveal.d-4 { transition-delay: 320ms; }
+
+  /* count-up wrapper */
+  .countup { font-variant-numeric: tabular-nums; }
+
+  /* ---------- FONT SMOOTHING ON DARK ---------- */
+  .bet, .bet * { -webkit-font-smoothing: antialiased; }
+
+</style>
+</head>
+<body>
+
+<!-- ========== PERSISTENT CHROME ========== -->
+<header class="chrome" data-screen-label="00 Chrome">
+  <div class="chrome-inner">
+    <div class="chrome-left">
+      <span class="chrome-tick">TYL</span>
+      <span class="chrome-name">Tyler Technologies</span>
+    </div>
+    <span class="chrome-label">RECAP · FY '25</span>
+  </div>
+  <div class="progress"><div class="progress-fill" id="progress"></div></div>
+</header>
+
+<!-- ========== 1. HERO / THESIS ========== -->
+<section class="hero" data-screen-label="01 Thesis">
+  <div class="hero-meta">
+    <span class="pip"></span>
+    <span>NYSE · Plano, TX · Founded 1966</span>
+  </div>
+  <h1 class="hero-thesis reveal">
+    The software running <em class="num countup" data-target="13000" data-format="comma">13,000</em>
+    American <span class="italic signal">governments.</span>
+  </h1>
+  <p class="hero-sub reveal d-2">
+    Courts. Police. Permits. Property records. Public schools. <em>If it's run by your county, it's likely running on Tyler.</em>
+  </p>
+
+  <!-- US installations map — drawn here as a stylized SVG -->
+  <div class="us-map-wrap">
+    <svg class="us-map" id="usmap" viewBox="0 0 414 230" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <!-- Stylized US contiguous outline (simplified, evocative not geographically exact). -->
+      <path class="land" d="
+        M 38 96
+        Q 30 88 32 78
+        Q 42 70 56 70
+        L 78 56
+        Q 96 50 116 54
+        L 142 48
+        Q 168 44 196 50
+        L 226 46
+        Q 254 42 284 50
+        L 312 46
+        Q 338 48 358 60
+        Q 374 70 380 88
+        Q 384 102 374 116
+        L 360 132
+        Q 350 144 348 158
+        L 338 172
+        Q 320 184 296 184
+        L 268 188
+        Q 240 192 214 188
+        L 188 192
+        Q 162 196 134 190
+        L 108 192
+        Q 82 192 64 178
+        Q 50 166 46 148
+        L 40 128
+        Q 34 112 38 96 Z
+      "/>
+      <!-- Florida tail -->
+      <path class="land" d="M 318 174 Q 332 192 348 198 Q 360 200 358 188 L 348 178 Q 336 174 318 174 Z" />
+      <!-- Texas suggestion -->
+      <path class="land" d="M 200 162 Q 198 184 212 198 Q 224 204 232 190 L 230 174 Q 218 168 200 162 Z" />
+      <!-- Northeast hook -->
+      <path class="land" d="M 350 80 Q 364 78 374 84 Q 376 92 366 96 L 354 90 Z" />
+
+      <!-- Installation dots (clustered to suggest density). 60 dots. -->
+      <g id="dots"></g>
+    </svg>
+    <div class="map-meta">
+      <span><strong>45,000+</strong> installations</span>
+      <span>50 states · <strong>13,000</strong> locations</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== RESET BEAT 1 ========== -->
+<section class="reset-beat" data-screen-label="02 Reset · The plumbing">
+  <div class="caption stamp">FY '25 · §01</div>
+  <p class="copy reveal">
+    The plumbing of American government is not glamorous. <span class="hit italic">It is, however,
+    almost entirely subscribed.</span>
+  </p>
+</section>
+
+<!-- ========== 3. THE BUSINESS ========== -->
+<section class="biz" data-screen-label="03 The business">
+  <div class="eyebrow-row">
+    <span class="dot"></span>
+    <span class="num">02</span>
+    <span>· How it makes money</span>
+  </div>
+
+  <h2 class="biz-lede reveal">Three <em>columns</em> hold up the ledger.</h2>
+
+  <div class="columns" id="biz-columns">
+    <div class="col">
+      <div class="col-cap">
+        <div class="num">$777.8<em>M</em></div>
+      </div>
+      <div class="col-fill fill-1" data-h="62"></div>
+      <div class="col-foot">
+        <strong>SaaS</strong><br/>
+        +20.6% YoY
+      </div>
+    </div>
+    <div class="col">
+      <div class="col-cap">
+        <div class="num">$808.4<em>M</em></div>
+      </div>
+      <div class="col-fill fill-2" data-h="64"></div>
+      <div class="col-foot">
+        <strong>Transactions</strong><br/>
+        +15.8% YoY
+      </div>
+    </div>
+    <div class="col">
+      <div class="col-cap">
+        <div class="num">~$745<em>M</em></div>
+      </div>
+      <div class="col-fill fill-3" data-h="56"></div>
+      <div class="col-foot">
+        <strong>Maintenance<br/>+ services</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="biz-foot">
+    <span>FY 2025 · Total revenue</span>
+    <span class="total"><em>$2.33B</em></span>
+  </div>
+
+  <div class="recurring reveal">
+    <div class="recurring-bar">
+      <div class="fill" data-w="89"></div>
+      <span class="label">89% recurring · Q4 '25</span>
+    </div>
+    <div class="recurring-cap">
+      <span>The other <strong>11%</strong> is professional services.</span>
+      <span>ARR <strong>$2.1B</strong> · +10.9%</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 4. THE SCALE ========== -->
+<section class="scale" data-screen-label="04 The scale">
+  <div class="eyebrow-row">
+    <span class="dot"></span>
+    <span class="num">03</span>
+    <span>· The scale</span>
+  </div>
+
+  <p class="scale-lede reveal">
+    What does it look like to be the <em>dominant pure-play</em> vendor in a sleepy, sticky, multi-decade market?
+  </p>
+
+  <div class="scale-grid">
+    <div class="scale-row reveal">
+      <div class="scale-num"><em>$2.33</em><span class="unit">B</span></div>
+      <div class="scale-meta">
+        <strong>Total revenue</strong>
+        <span class="delta">FY 2025</span>
+      </div>
+    </div>
+    <div class="scale-row reveal d-1">
+      <div class="scale-num"><em>$2.1</em><span class="unit">B</span></div>
+      <div class="scale-meta">
+        <strong>ARR</strong>
+        <span class="delta">+10.9% YoY</span>
+      </div>
+    </div>
+    <div class="scale-row reveal d-2">
+      <div class="scale-num"><em>$14.55</em><span class="unit">B</span></div>
+      <div class="scale-meta">
+        <strong>Market cap</strong>
+        <span>S&P 500</span>
+      </div>
+    </div>
+    <div class="scale-row reveal d-3">
+      <div class="scale-num"><em>7,500</em></div>
+      <div class="scale-meta">
+        <strong>Employees</strong>
+        <span>Plano, TX</span>
+      </div>
+    </div>
+    <div class="scale-row reveal d-4">
+      <div class="scale-num"><em>45,000</em><span class="unit">+</span></div>
+      <div class="scale-meta">
+        <strong>Installations</strong>
+        <span>~13,000 locations</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== RESET BEAT 2 ========== -->
+<section class="reset-beat" data-screen-label="05 Reset · A hundred cents in">
+  <div class="caption stamp">§02 · A hundred cents in</div>
+  <p class="copy reveal">
+    A subscription business is, in the end, an arithmetic problem. <span class="hit italic">A dollar comes in.
+    Where does it go?</span>
+  </p>
+</section>
+
+<!-- ========== 5. WHERE THE DOLLAR GOES ========== -->
+<section class="dollar" data-screen-label="06 The dollar">
+  <div class="eyebrow-row">
+    <span class="dot"></span>
+    <span class="num">04</span>
+    <span>· Where the money goes</span>
+  </div>
+
+  <h2 class="dollar-lede reveal">A hundred cents in. <em>Nineteen</em> survive.</h2>
+  <p class="dollar-sub reveal d-1">
+    Cost of revenue dominates — software you sell to courts and police needs people to install it. R&D is leaner than a typical software firm. The rest is overhead.
+  </p>
+
+  <div class="cents-grid" id="cents"></div>
+
+  <div class="legend">
+    <div class="legend-row">
+      <span class="legend-swatch" style="background: var(--cost-cor)"></span>
+      <span class="legend-label">Cost of revenue</span>
+      <span class="legend-pct">54¢</span>
+    </div>
+    <div class="legend-row">
+      <span class="legend-swatch" style="background: var(--cost-sga)"></span>
+      <span class="legend-label">SG&amp;A</span>
+      <span class="legend-pct">12¢</span>
+    </div>
+    <div class="legend-row">
+      <span class="legend-swatch" style="background: var(--cost-rd)"></span>
+      <span class="legend-label">R&amp;D</span>
+      <span class="legend-pct">9¢</span>
+    </div>
+    <div class="legend-row">
+      <span class="legend-swatch" style="background: var(--cost-amort)"></span>
+      <span class="legend-label">Amortization of intangibles</span>
+      <span class="legend-pct">6¢</span>
+    </div>
+    <div class="legend-row surv">
+      <span class="legend-swatch" style="background: var(--tyl-ink)"></span>
+      <span class="legend-label"><em>What survives</em></span>
+      <span class="legend-pct">~19¢</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 6. FOOTPRINT ========== -->
+<section class="footprint" data-screen-label="07 Footprint">
+  <div class="eyebrow-row">
+    <span class="dot"></span>
+    <span class="num">05</span>
+    <span>· Footprint</span>
+  </div>
+
+  <h2 class="footprint-lede reveal">Almost <em>entirely</em> domestic. By design.</h2>
+
+  <div class="horizon" id="horizon">
+    <div class="horizon-us start" data-w="96">
+      <div class="horizon-label">United States</div>
+      <div class="horizon-pct"><em>96</em>%</div>
+    </div>
+    <div class="horizon-ca">
+      <div class="horizon-label">Canada<br/>+ Int'l</div>
+      <div class="horizon-pct"><em>4</em>%</div>
+    </div>
+  </div>
+
+  <div class="horizon-foot">
+    Tyler sells to <em>U.S. public sector</em>. <br/>The water doesn't cross the border.
+  </div>
+</section>
+
+<!-- ========== RESET BEAT 3 ========== -->
+<section class="reset-beat" data-screen-label="08 Reset · The bet">
+  <div class="caption stamp">§03 · Capital, deployed</div>
+  <p class="copy reveal">
+    Tyler does not pay a dividend. <span class="hit italic">It buys back its own shares, and it buys other companies — quietly, in fours and fives.</span>
+  </p>
+</section>
+
+<!-- ========== 7. THE BET ========== -->
+<section class="bet" data-screen-label="09 The bet">
+  <div class="eyebrow-row">
+    <span class="dot"></span>
+    <span class="num">06</span>
+    <span>· The bet</span>
+  </div>
+
+  <h2 class="bet-lede reveal">The cash machine, <em>spent on itself.</em></h2>
+  <p class="bet-sub reveal d-1">
+    $653.5M in operating cash flow. Almost none goes to plant or property. So where does it go?
+  </p>
+
+  <div class="ledger">
+    <div class="ledger-row reveal">
+      <div class="ledger-label">
+        Free cash flow
+        <span class="desc">Operating cash less capex of just $16M.</span>
+      </div>
+      <div class="ledger-num"><em>$637.5</em><span class="unit">M</span></div>
+    </div>
+    <div class="ledger-row reveal d-1">
+      <div class="ledger-label">
+        Buybacks · FY '25
+        <span class="desc">Shrinking the share count, not paying out.</span>
+      </div>
+      <div class="ledger-num"><em>$175</em><span class="unit">M</span></div>
+    </div>
+    <div class="ledger-row reveal d-2">
+      <div class="ledger-label">
+        Tuck-ins · FY '25
+        <span class="desc">Four. Including CloudGavel and Edulink for ~$54M in Q4.</span>
+      </div>
+      <div class="ledger-num"><em>4</em><span class="unit">×</span></div>
+    </div>
+    <div class="ledger-row reveal d-3">
+      <div class="ledger-label">
+        Capex
+        <span class="desc">The asset-light SaaS model in one number.</span>
+      </div>
+      <div class="ledger-num"><em>$16</em><span class="unit">M</span></div>
+    </div>
+  </div>
+
+  <div class="stamp-block reveal d-4">
+    <div class="stamp-label">Authorized · Q1 2026</div>
+    <div class="stamp-num"><em>$1.0B</em> repurchase program</div>
+    <div class="stamp-foot">"Strong confidence in ongoing free cash flow."</div>
+  </div>
+
+  <p class="bet-no-divs reveal d-4">
+    No dividend.<br/><strong>The bet is on TYL itself.</strong>
+  </p>
+</section>
+
+<!-- ========== 8. THE COMPETITION ========== -->
+<section class="compete" data-screen-label="10 Competition">
+  <div class="eyebrow-row">
+    <span class="dot"></span>
+    <span class="num">07</span>
+    <span>· The competition</span>
+  </div>
+
+  <h2 class="compete-lede reveal">No one else sells <em>only</em> to government.</h2>
+  <p class="body-text reveal d-1" style="margin-bottom: 28px;">
+    Tyler's rivals overlap in <em style="font-family:var(--font-display);font-style:italic;color:var(--tyl-blue);">slices</em>. None of them have built their whole company around the public sector.
+  </p>
+
+  <div class="compete-axis">
+    <span>Market cap</span>
+    <span>$0 — $20B</span>
+  </div>
+
+  <div class="compete-stack" id="compete">
+    <div class="compete-row tyl">
+      <div class="head">
+        <span class="name"><em>Tyler</em> Technologies</span>
+        <span class="ticker">TYL · $14.55B</span>
+      </div>
+      <div class="bar-wrap"><div class="bar" data-w="73"></div></div>
+      <div class="meta">
+        <span>Pure-play U.S. public sector</span>
+        <span><strong>$2.33B</strong> rev</span>
+      </div>
+    </div>
+
+    <div class="compete-row">
+      <div class="head">
+        <span class="name">Trimble</span>
+        <span class="ticker">TRMB · $16.21B</span>
+      </div>
+      <div class="bar-wrap"><div class="bar alt" data-w="81"></div></div>
+      <div class="meta">
+        <span>Cityworks · permitting · GIS</span>
+        <span><strong>$3.59B</strong> rev · +3%</span>
+      </div>
+      <div class="why">Overlaps in <em>land records, property, and permitting</em>. But Trimble's center of gravity is hardware and construction, not the courthouse.</div>
+    </div>
+
+    <div class="compete-row">
+      <div class="head">
+        <span class="name">Okta</span>
+        <span class="ticker">OKTA · $12.78B</span>
+      </div>
+      <div class="bar-wrap"><div class="bar alt" data-w="64"></div></div>
+      <div class="meta">
+        <span>Identity · FedRAMP</span>
+        <span><strong>$2.92B</strong> rev · +12%</span>
+      </div>
+      <div class="why">Threatens Tyler's <em>Platform Technologies</em> identity stack as agencies pick a horizontal IDP. Doesn't touch courts or appraisal.</div>
+    </div>
+
+    <div class="compete-row">
+      <div class="head">
+        <span class="name">Granicus</span>
+        <span class="ticker">GRNS · private</span>
+      </div>
+      <div class="bar-wrap"><div class="bar alt" data-w="22"></div></div>
+      <div class="meta">
+        <span>Civic engagement · GovTech IT</span>
+        <span><strong>—</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <p class="compete-foot reveal">
+    Each rival owns a <span class="signal">slice</span>. <br/>Tyler owns the <span class="signal">whole department.</span>
+  </p>
+</section>
+
+<!-- ========== 9. CLOSE / TAKEAWAY ========== -->
+<section class="close" data-screen-label="11 Takeaway">
+  <div class="close-mark">
+    <span>FY '25</span>
+    <span>RECAP</span>
+    <span>· TYL ·</span>
+  </div>
+
+  <div class="eyebrow-row">
+    <span class="dot"></span>
+    <span class="num">08</span>
+    <span>· The takeaway</span>
+  </div>
+
+  <h2 class="close-headline reveal">
+    13,000 places.<br/>
+    <em>One vendor.</em>
+  </h2>
+
+  <p class="close-sub reveal d-2">
+    Tyler opened FY '25 selling subscriptions to American government. It closes the year with <em>89% recurring revenue</em>, $2.1B in ARR, and a billion-dollar permission slip to keep buying back its own stock.
+    <br/><br/>
+    The plumbing keeps subscribing.
+  </p>
+
+  <div class="colophon">
+    <span><strong>TYL</strong> · NYSE</span>
+    <span>Recap · FY '25 · v2</span>
+  </div>
+</section>
+
+<script>
+  /* ============================================================
+     SCROLL CHOREOGRAPHY
+     ============================================================ */
+
+  // Progress hairline
+  const progress = document.getElementById('progress');
+  const onScroll = () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const p = h > 0 ? (window.scrollY / h) * 100 : 0;
+    progress.style.width = Math.min(100, Math.max(0, p)) + '%';
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ---- Generic IntersectionObserver for .reveal & data-* triggers ---- */
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const el = e.target;
+      el.classList.add('in');
+
+      // Column heights (data-h attribute, % of container)
+      if (el.dataset.h) el.style.height = el.dataset.h + '%';
+      // Bar widths (data-w attribute)
+      if (el.dataset.w) el.style.width = el.dataset.w + '%';
+
+      // Count-ups
+      if (el.classList.contains('countup') && !el.dataset.done) {
+        el.dataset.done = '1';
+        countUp(el);
+      }
+
+      // Cents grid
+      if (el.id === 'cents') lightCents();
+
+      // US map
+      if (el.id === 'usmap') { /* class added below via observe target */ }
+
+      io.unobserve(el);
+    }
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+
+  document.querySelectorAll('.reveal, .col-fill, .recurring-bar .fill, .compete-row .bar, .horizon-us, .countup')
+    .forEach(el => io.observe(el));
+
+  // Map: trigger when its wrapper is visible
+  const usmap = document.getElementById('usmap');
+  const usmapIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        usmap.classList.add('in');
+        usmapIO.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+  usmapIO.observe(usmap);
+
+  // Horizon US bar special case (it lives inside .horizon and animates width)
+  const horizonUS = document.querySelector('.horizon-us');
+  const horizonIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        horizonUS.classList.remove('start');
+        horizonIO.disconnect();
+      }
+    });
+  }, { threshold: 0.4 });
+  horizonIO.observe(horizonUS);
+
+  /* ---- Generate map dots, weighted toward eastern/midwest density ---- */
+  (() => {
+    const dots = document.getElementById('dots');
+    // bounding-box-ish points across the simplified land outline
+    // cluster more along east coast + midwest, fewer in west
+    const seedPoints = [
+      // East coast cluster
+      [340,82,1],[332,90,1],[346,98,1],[324,104,1],[336,114,1],[326,124,1],[348,132,1],[340,148,1],[332,160,1],
+      // Mid-Atlantic / Northeast
+      [310,86,1],[300,98,1],[314,108,1],[286,98,1],[294,118,1],[308,128,1],
+      // Southeast
+      [320,148,1],[332,160,1],[326,170,1],[342,176,1],[306,162,1],[290,160,1],[300,144,1],
+      // Florida tail
+      [336,186,2],[348,194,2],
+      // Midwest density
+      [248,98,1],[260,108,1],[244,118,1],[268,124,1],[256,134,1],[270,138,1],[280,128,1],[252,148,1],[238,140,1],[228,118,1],
+      // Texas
+      [212,170,2],[222,184,2],[210,158,1],[200,176,2],
+      // Plains / South
+      [200,128,1],[214,138,1],[224,150,1],[182,148,1],[170,158,1],[156,140,1],[174,128,1],
+      // Mountain west (sparse)
+      [134,114,1],[120,124,1],[110,138,1],[100,118,1],[88,134,1],
+      // Pacific (sparse)
+      [62,108,1],[58,128,1],[50,140,1],[46,116,1],[70,148,1],
+      // Northern tier
+      [180,90,1],[200,84,1],[222,82,1],[250,80,1],[156,86,1],[130,88,1],[100,94,1],[78,88,1],
+    ];
+    const frag = document.createDocumentFragment();
+    seedPoints.forEach(([x,y,kind], i) => {
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', x);
+      c.setAttribute('cy', y);
+      c.setAttribute('r', kind === 2 ? 2.2 : 1.6);
+      c.classList.add('dot');
+      // Plano, TX-ish gets stamp red
+      if (Math.abs(x - 212) < 4 && Math.abs(y - 170) < 4) c.classList.add('stamp-dot');
+      // staggered delay
+      c.style.transitionDelay = (300 + i * 22) + 'ms';
+      frag.appendChild(c);
+    });
+    // Plus a marked HQ pip
+    const hq = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    hq.setAttribute('cx', 214); hq.setAttribute('cy', 168);
+    hq.setAttribute('r', 4);
+    hq.classList.add('dot', 'stamp-dot');
+    hq.style.transitionDelay = '1700ms';
+    frag.appendChild(hq);
+    dots.appendChild(frag);
+  })();
+
+  /* ---- Cents grid ---- */
+  function lightCents() {
+    const grid = document.getElementById('cents');
+    if (grid.dataset.done) return;
+    grid.dataset.done = '1';
+    // Order matters: by category, in reading order
+    // 54 cor, 12 sga, 9 rd, 6 amort, 19 surv = 100
+    const layout = []
+      .concat(Array(54).fill('cor'))
+      .concat(Array(12).fill('sga'))
+      .concat(Array(9).fill('rd'))
+      .concat(Array(6).fill('amort'))
+      .concat(Array(19).fill('surv'));
+    layout.forEach((cls, i) => {
+      const cent = document.createElement('div');
+      cent.className = 'cent';
+      cent.dataset.cls = cls;
+      grid.appendChild(cent);
+    });
+    // Stagger lighting
+    requestAnimationFrame(() => {
+      const cells = grid.querySelectorAll('.cent');
+      cells.forEach((c, i) => {
+        setTimeout(() => {
+          c.classList.add('lit', c.dataset.cls);
+        }, 180 + i * 14);
+      });
+    });
+  }
+
+  /* ---- Count-ups ---- */
+  function countUp(el) {
+    const target = parseInt(el.dataset.target, 10);
+    const fmt = el.dataset.format;
+    const dur = 1400;
+    const t0 = performance.now();
+    const ease = (t) => 1 - Math.pow(1 - t, 3);
+    function frame(now) {
+      const k = Math.min(1, (now - t0) / dur);
+      const v = Math.round(ease(k) * target);
+      el.textContent = fmt === 'comma' ? v.toLocaleString('en-US') : v;
+      if (k < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+</script>
+
+</body>
+</html>

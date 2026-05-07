@@ -1,0 +1,1119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GEN · Recap FY '25</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  /* ---------- page-local tokens ---------- */
+  :root{
+    --signal: #5C50D9;        /* iris-500 — primary signal */
+    --signal-soft: #7B71F5;
+    --signal-tint: #EEEBFF;
+    --safe: #2BB673;
+    --warn: #E89B2F;
+    --threat: #F25A37;
+    --night: #0B0B12;          /* near-black, slightly cool — for the debt beat */
+    --night-2: #16161F;
+    --paper-warm: #FBFAF7;
+    --paper-cool: #F4F4F8;     /* sub-cool tonal interlude */
+    --hairline: #E4E1D9;
+  }
+
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{ margin:0; padding:0; background: var(--night-2); }
+  body{
+    font-family: var(--font-sans);
+    color: var(--ink);
+    overflow-x: hidden;
+    font-feature-settings: "ss01","cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ----------- Mobile stage (centered "page is the design") ----------- */
+  .stage{
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    background: var(--paper-warm);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 80px rgba(0,0,0,0.35);
+  }
+
+  /* ----------- Persistent chrome ----------- */
+  .chrome{
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    background: rgba(251,250,247,0.78);
+    border-bottom: 1px solid rgba(228,225,217,0.6);
+  }
+  .chrome-row{
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 20px 12px;
+  }
+  .ticker-mono{
+    font-family: var(--font-mono); font-size: 13px; font-weight: 500;
+    letter-spacing: 0.04em; color: var(--ink);
+    background: var(--ink); color: var(--paper-warm);
+    padding: 4px 8px; border-radius: 4px;
+  }
+  .chrome-name{ font-size: 14px; font-weight: 500; color: var(--ink); }
+  .chrome-name .dot{ display:inline-block; width:6px; height:6px; border-radius:50%; background: var(--signal); margin: 0 7px 1px; vertical-align: middle; animation: pulse 2.4s var(--ease-out) infinite; }
+  .chrome-label{ margin-left: auto; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em; color: var(--ink-3); text-transform: uppercase; }
+  .progress{ height: 1.5px; background: transparent; position: relative; overflow: hidden; }
+  .progress-fill{ position:absolute; left:0; top:0; bottom:0; width: 0%; background: var(--signal); transition: width 80ms linear; }
+
+  @keyframes pulse{
+    0%,100%{ box-shadow: 0 0 0 0 rgba(92,80,217,0.6); }
+    50%{ box-shadow: 0 0 0 6px rgba(92,80,217,0); }
+  }
+
+  /* ----------- Section primitives ----------- */
+  section{ position: relative; padding: 64px 24px; }
+  .eyebrow{
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--signal-500, var(--signal));
+    margin-bottom: 22px; display: flex; align-items: center; gap: 8px;
+  }
+  .eyebrow .tick{ width: 16px; height: 1px; background: currentColor; opacity: 0.6; }
+
+  .display-xl{ font-family: var(--font-display); font-weight: 400; line-height: 0.94; letter-spacing: -0.025em; color: var(--ink); }
+  .it{ font-style: italic; }
+  .sig{ color: var(--signal); }
+  .threat-c{ color: var(--threat); }
+  .safe-c{ color: var(--safe); }
+
+  p.lede{ font-family: var(--font-sans); font-size: 16.5px; line-height: 1.55; color: var(--ink-2); }
+  p.lede em{ font-family: var(--font-display); font-style: italic; font-size: 18px; color: var(--signal); }
+
+  /* ----------- Reset beats (italic-serif interludes) ----------- */
+  .reset{
+    background: var(--paper-cool);
+    padding: 56px 28px;
+    border-top: 1px solid rgba(0,0,0,0.04);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+  }
+  .reset p{
+    font-family: var(--font-display); font-style: italic;
+    font-size: 26px; line-height: 1.2; color: var(--ink-2);
+    letter-spacing: -0.01em; margin: 0;
+    text-wrap: pretty;
+  }
+  .reset p em{ font-style: italic; color: var(--signal); }
+  .reset .tag{
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink-3); margin-bottom: 18px;
+  }
+
+  /* ----------- Hero ----------- */
+  .hero{
+    padding: 40px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-eye{ font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 28px; display:flex; align-items: center; gap: 8px; }
+  .hero-eye .pip{ width:6px; height:6px; border-radius: 50%; background: var(--signal); animation: pulse 2.4s infinite; }
+  .hero h1{
+    font-family: var(--font-display); font-weight: 400;
+    font-size: 56px; line-height: 0.96; letter-spacing: -0.025em;
+    color: var(--ink); margin: 0;
+    text-wrap: balance;
+  }
+  .hero h1 .big{ font-size: 64px; }
+  .hero .sub{
+    margin-top: 26px;
+    font-size: 15.5px; line-height: 1.55; color: var(--ink-2);
+    max-width: 30ch;
+  }
+  .hero .sub em{ font-family: var(--font-display); font-style: italic; color: var(--signal); font-size: 17px; }
+
+  /* perimeter scene */
+  .perimeter{
+    position: relative;
+    height: 280px;
+    margin: 38px auto 0;
+  }
+  .perimeter svg{ width:100%; height:100%; display:block; overflow: visible; }
+
+  .stat-strip{
+    margin-top: 48px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    border-top: 1px solid var(--hairline);
+  }
+  .stat{
+    padding: 18px 4px 4px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .stat:nth-child(odd){ border-right: 1px solid var(--hairline); padding-right: 12px; }
+  .stat:nth-child(even){ padding-left: 14px; }
+  .stat .num{ font-family: var(--font-display); font-size: 38px; line-height: 1; color: var(--ink); letter-spacing: -0.02em; }
+  .stat .num .it{ font-style: italic; color: var(--signal); }
+  .stat .lab{ font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-top: 8px; }
+
+  /* ----------- The business — revenue split ----------- */
+  .biz{ padding: 72px 24px; }
+  .biz h2{ font-family: var(--font-display); font-size: 38px; line-height: 1.02; letter-spacing: -0.02em; color: var(--ink); margin: 0 0 22px; }
+  .biz h2 em{ font-style: italic; color: var(--signal); }
+  .split-svg{ width: 100%; height: auto; display:block; margin: 22px 0 6px; }
+  .split-row{ display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--hairline); align-items: baseline; }
+  .split-row:last-child{ border-bottom: 0; }
+  .split-row .pct{ font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); letter-spacing: 0.04em; }
+  .split-row .name{ font-family: var(--font-sans); font-size: 14.5px; color: var(--ink); }
+  .split-row .name em{ font-family: var(--font-display); font-style: italic; color: var(--signal); }
+  .split-row .name small{ display:block; color: var(--ink-3); font-size: 12.5px; margin-top: 3px; line-height: 1.4; }
+  .split-row .bar{ width: 80px; height: 6px; border-radius: 3px; background: var(--paper-3); position: relative; overflow: hidden; }
+  .split-row .bar i{ position:absolute; left:0; top:0; bottom:0; background: var(--signal); border-radius: 3px; }
+
+  /* ----------- Scale section — 500M shield grid ----------- */
+  .scale{ padding: 72px 0 80px; }
+  .scale-inner{ padding: 0 24px; }
+  .scale h2{ font-family: var(--font-display); font-size: 42px; line-height: 0.98; letter-spacing: -0.02em; color: var(--ink); margin: 0 0 14px; }
+  .scale h2 em{ font-style: italic; color: var(--signal); }
+  .grid-scene{
+    position: relative; margin: 30px 0;
+    aspect-ratio: 1 / 1;
+    background: var(--ink);
+    overflow: hidden;
+  }
+  .grid-scene svg{ width:100%; height:100%; display:block; }
+  .grid-cap{
+    padding: 0 24px;
+    margin-top: 18px;
+    font-family: var(--font-display); font-size: 22px; line-height: 1.25; color: var(--ink); font-style: italic;
+  }
+  .grid-cap .num{ font-style: normal; color: var(--ink); font-family: var(--font-display); }
+  .brands-row{
+    display:flex; gap: 8px; flex-wrap: wrap;
+    margin-top: 22px;
+  }
+  .brand-pill{
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 6px 10px; border: 1px solid var(--hairline); border-radius: 999px; color: var(--ink-2);
+    background: var(--paper-warm);
+  }
+  .brand-pill.pri{ background: var(--ink); color: var(--paper-warm); border-color: var(--ink); }
+
+  /* ----------- Where the money goes — dollar grid ----------- */
+  .costs{ padding: 80px 24px 88px; background: linear-gradient(to bottom, var(--paper-warm) 0%, var(--paper-warm) 80%, var(--paper-cool) 100%); }
+  .costs h2{ font-family: var(--font-display); font-size: 40px; line-height: 1; letter-spacing: -0.02em; margin: 0 0 18px; }
+  .costs h2 em{ font-style: italic; color: var(--signal); }
+  .dollar{ width:100%; aspect-ratio: 1 / 0.96; margin: 14px 0 6px; }
+  .dollar svg{ width:100%; height:100%; display:block; overflow: visible; }
+  .legend{ margin-top: 18px; }
+  .lg-row{ display: grid; grid-template-columns: 14px 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--hairline); }
+  .lg-row:last-child{ border-bottom:0; }
+  .sw{ width:14px; height:14px; border-radius:3px; }
+  .lg-name{ font-size: 14px; color: var(--ink); }
+  .lg-pct{ font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-2); letter-spacing: 0.02em; }
+  .residual{
+    margin-top: 20px;
+    padding: 18px 18px;
+    background: var(--ink);
+    color: var(--paper-warm);
+    border-radius: 12px;
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .residual .l{ font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(244,242,237,0.65); }
+  .residual .v{ font-family: var(--font-display); font-style: italic; font-size: 36px; color: #B5F5C8; line-height: 1; }
+
+  /* ----------- Footprint — radar ----------- */
+  .geo{ padding: 80px 24px 80px; }
+  .geo h2{ font-family: var(--font-display); font-size: 40px; line-height: 1; letter-spacing: -0.02em; margin: 0 0 12px; }
+  .geo h2 em{ font-style: italic; color: var(--signal); }
+  .geo p.l{ font-size: 15px; color: var(--ink-2); line-height: 1.55; max-width: 32ch; }
+  .geo p.l em{ font-family: var(--font-display); font-style: italic; color: var(--signal); font-size: 16.5px; }
+  .radar{ width: 100%; aspect-ratio: 1; margin: 28px 0 0; }
+  .radar svg{ width:100%; height:100%; }
+
+  .geo-rows{ margin-top: 22px; }
+  .geo-row{ display:grid; grid-template-columns: 26px 1fr auto; gap: 12px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--hairline); }
+  .geo-row:last-child{ border-bottom: 0; }
+  .geo-row .idx{ font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.06em; }
+  .geo-row .reg{ font-size: 14.5px; color: var(--ink); }
+  .geo-row .pct{ font-family: var(--font-display); font-size: 28px; line-height: 1; color: var(--ink); letter-spacing: -0.02em; }
+  .geo-row.lead .pct{ color: var(--signal); font-style: italic; }
+
+  /* ----------- The bet (M&A) — vault scene ----------- */
+  .bet{ padding: 84px 24px 84px; background: var(--paper-cool); }
+  .bet h2{ font-family: var(--font-display); font-size: 40px; line-height: 1; letter-spacing: -0.02em; margin: 0 0 12px; }
+  .bet h2 em{ font-style: italic; color: var(--signal); }
+  .bet p.l{ font-size: 15px; line-height: 1.55; color: var(--ink-2); max-width: 34ch; }
+  .timeline{ margin: 30px 0 0; position: relative; padding-left: 28px; }
+  .timeline::before{
+    content:""; position:absolute; left: 9px; top: 8px; bottom: 8px;
+    width: 1.5px; background: linear-gradient(to bottom, var(--hairline) 0%, var(--signal) 30%, var(--signal) 70%, var(--hairline) 100%);
+  }
+  .tl-item{ position: relative; padding: 0 0 28px; }
+  .tl-item:last-child{ padding-bottom: 0; }
+  .tl-item::before{
+    content:""; position:absolute; left: -23px; top: 6px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--paper-warm); border: 2px solid var(--signal);
+  }
+  .tl-item.pulse::before{
+    background: var(--signal);
+    box-shadow: 0 0 0 6px rgba(92,80,217,0.18);
+  }
+  .tl-year{ font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+  .tl-title{ font-family: var(--font-display); font-size: 24px; line-height: 1.18; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.01em; }
+  .tl-title em{ font-style: italic; color: var(--signal); }
+  .tl-body{ font-size: 13.5px; line-height: 1.5; color: var(--ink-2); max-width: 36ch; }
+
+  /* ----------- DEBT — dark interlude ----------- */
+  .debt{
+    background: var(--night);
+    color: #E8E6E1;
+    padding: 96px 24px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  .debt::before{
+    content:""; position:absolute; inset:0;
+    background-image: radial-gradient(circle at 50% 30%, rgba(92,80,217,0.16) 0%, transparent 60%);
+    pointer-events:none;
+  }
+  .debt .eyebrow{ color: rgba(155,148,239,0.95); }
+  .debt h2{
+    font-family: var(--font-display); font-size: 44px; line-height: 0.98; letter-spacing: -0.025em;
+    color: #F4F2ED; margin: 0 0 16px;
+    position: relative;
+  }
+  .debt h2 em{ font-style: italic; color: #B6AEFF; }
+  .debt p.l{ font-size: 15px; color: rgba(232,230,225,0.7); line-height: 1.55; max-width: 34ch; position: relative; }
+  .debt p.l em{ font-family: var(--font-display); font-style: italic; color: #FFB29A; font-size: 17px; }
+  .scales{ margin: 36px 0 12px; width:100%; aspect-ratio: 1.3 / 1; position: relative; }
+  .scales svg{ width:100%; height:100%; }
+  .debt-stats{
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin-top: 30px; position: relative;
+  }
+  .debt-stats .s{
+    padding: 18px 8px 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .debt-stats .s:nth-child(odd){ border-right: 1px solid rgba(255,255,255,0.08); padding-right: 14px; }
+  .debt-stats .s:nth-child(even){ padding-left: 14px; }
+  .debt-stats .num{ font-family: var(--font-display); font-size: 32px; line-height: 1; letter-spacing: -0.02em; color:#F4F2ED; }
+  .debt-stats .num em{ font-style: italic; color: #B6AEFF; }
+  .debt-stats .lab{ font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(232,230,225,0.55); margin-top: 8px; }
+
+  /* ----------- Competition — three figures ----------- */
+  .comp{ padding: 86px 24px 80px; }
+  .comp h2{ font-family: var(--font-display); font-size: 40px; line-height: 1; letter-spacing: -0.02em; margin: 0 0 14px; }
+  .comp h2 em{ font-style: italic; color: var(--threat); }
+  .comp p.l{ font-size: 15px; color: var(--ink-2); line-height: 1.55; max-width: 32ch; }
+  .field{ width: 100%; aspect-ratio: 1 / 0.95; margin: 30px 0 8px; }
+  .field svg{ width: 100%; height: 100%; overflow: visible; }
+  .rivals{ margin-top: 20px; }
+  .rival{ padding: 18px 0; border-bottom: 1px solid var(--hairline); }
+  .rival:last-child{ border-bottom: 0; }
+  .rival-head{ display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .rival-name{ font-family: var(--font-display); font-size: 24px; line-height: 1; letter-spacing: -0.01em; color: var(--ink); }
+  .rival-name em{ font-style: italic; }
+  .rival-name.threat em{ color: var(--threat); }
+  .rival-tk{ font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.08em; }
+  .rival-stats{ display: flex; gap: 16px; flex-wrap: wrap; margin: 6px 0 8px; }
+  .rs{ display: flex; flex-direction: column; }
+  .rs .k{ font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+  .rs .v{ font-family: var(--font-display); font-size: 20px; color: var(--ink); line-height: 1.1; letter-spacing: -0.01em; }
+  .rs.threat .v{ color: var(--threat); font-style: italic; }
+  .rival-note{ font-size: 13.5px; line-height: 1.5; color: var(--ink-2); max-width: 38ch; }
+  .rival-note em{ font-family: var(--font-display); font-style: italic; }
+
+  /* ----------- Closing thesis ----------- */
+  .close{
+    padding: 110px 24px 100px;
+    background: linear-gradient(to bottom, var(--paper-warm) 0%, var(--paper-cool) 100%);
+    text-align: left;
+    position: relative;
+  }
+  .close .eyebrow{ color: var(--signal); }
+  .close h2{
+    font-family: var(--font-display); font-size: 50px; line-height: 0.98; letter-spacing: -0.025em;
+    color: var(--ink); margin: 0 0 26px;
+    text-wrap: balance;
+  }
+  .close h2 em{ font-style: italic; color: var(--signal); }
+  .close .sig-num{
+    font-family: var(--font-display); font-style: italic;
+    font-size: 92px; line-height: 1; color: var(--signal);
+    letter-spacing: -0.03em;
+    margin: 16px 0 14px;
+    display: block;
+  }
+  .close p{ font-size: 15px; color: var(--ink-2); line-height: 1.6; max-width: 34ch; }
+  .close p em{ font-family: var(--font-display); font-style: italic; color: var(--signal); font-size: 17px; }
+
+  /* ----------- footer ----------- */
+  .footer{
+    padding: 30px 24px 50px;
+    background: var(--paper-cool);
+    border-top: 1px solid var(--hairline);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .footer .pip{ width:5px; height:5px; border-radius:50%; background: var(--signal); display: inline-block; margin-right: 8px; vertical-align: middle; }
+
+  /* ---------- Reveal ---------- */
+  .rev{ opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
+  .rev.on{ opacity: 1; transform: translateY(0); }
+  .rev.d1{ transition-delay: 80ms; }
+  .rev.d2{ transition-delay: 160ms; }
+  .rev.d3{ transition-delay: 240ms; }
+
+  /* tiny: avoid blue tap highlight */
+  a{ color: inherit; }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- ============== Persistent chrome ============== -->
+  <div class="chrome">
+    <div class="chrome-row">
+      <span class="ticker-mono">GEN</span>
+      <span class="chrome-name">Gen Digital<span class="dot"></span></span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="progress"><div class="progress-fill" id="prog"></div></div>
+  </div>
+
+  <!-- ============== HERO — thesis ============== -->
+  <section class="hero">
+    <div class="hero-eye"><span class="pip"></span> 01 · Thesis</div>
+
+    <h1 class="rev on">
+      Five hundred million people&nbsp;
+      <span class="it sig">trust</span>
+      a brand they've forgotten the name of.
+    </h1>
+
+    <p class="sub rev d1 on">
+      Norton. Avast. LifeLock. AVG. CCleaner. <em>One company.</em>
+      Founded 1982 as Symantec, rebranded 2022 as Gen Digital — quietly the largest pure-play in consumer cybersecurity.
+    </p>
+
+    <!-- perimeter scene -->
+    <div class="perimeter">
+      <svg viewBox="0 0 360 280" aria-hidden="true">
+        <defs>
+          <radialGradient id="pglow" cx="50%" cy="55%" r="55%">
+            <stop offset="0%" stop-color="#7B71F5" stop-opacity="0.25"/>
+            <stop offset="60%" stop-color="#7B71F5" stop-opacity="0.06"/>
+            <stop offset="100%" stop-color="#7B71F5" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="pcore" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#5C50D9"/>
+            <stop offset="100%" stop-color="#3B33A0"/>
+          </radialGradient>
+          <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="0.4"/>
+          </filter>
+        </defs>
+
+        <!-- glow -->
+        <circle cx="180" cy="155" r="160" fill="url(#pglow)"/>
+
+        <!-- 4 pulsing rings -->
+        <g fill="none" stroke="#5C50D9" stroke-opacity="0.2" stroke-width="1">
+          <circle cx="180" cy="155" r="60"  class="ring r1"/>
+          <circle cx="180" cy="155" r="92"  class="ring r2"/>
+          <circle cx="180" cy="155" r="124" class="ring r3"/>
+          <circle cx="180" cy="155" r="156" class="ring r4"/>
+        </g>
+
+        <!-- ring ticks -->
+        <g stroke="#5C50D9" stroke-width="1" stroke-opacity="0.45" id="ticks"></g>
+
+        <!-- shield -->
+        <g transform="translate(180,155)">
+          <path d="M0 -42 L36 -28 L36 8 C36 30 18 44 0 50 C-18 44 -36 30 -36 8 L-36 -28 Z"
+                fill="url(#pcore)"/>
+          <path d="M0 -34 L28 -23 L28 6 C28 24 14 36 0 40 C-14 36 -28 24 -28 6 L-28 -23 Z"
+                fill="none" stroke="#FBFAF7" stroke-opacity="0.18" stroke-width="1"/>
+          <path d="M-10 -2 L-2 8 L14 -10" stroke="#FBFAF7" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+
+        <!-- floating threat dots that get caught -->
+        <g id="threats"></g>
+
+        <!-- caption -->
+        <text x="20" y="270" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#6B6A65">PERIMETER · 500,000,000</text>
+        <text x="340" y="270" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#6B6A65" text-anchor="end">150+ COUNTRIES</text>
+      </svg>
+    </div>
+
+    <div class="stat-strip">
+      <div class="stat rev">
+        <div class="num">$3.94<span class="it">B</span></div>
+        <div class="lab">FY25 Revenue</div>
+      </div>
+      <div class="stat rev d1">
+        <div class="num">$12.19<span class="it">B</span></div>
+        <div class="lab">Market cap</div>
+      </div>
+      <div class="stat rev d2">
+        <div class="num">40.9<span class="it">%</span></div>
+        <div class="lab">Operating margin</div>
+      </div>
+      <div class="stat rev d3">
+        <div class="num">~3.5K</div>
+        <div class="lab">Employees</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Reset beat #1 ============== -->
+  <div class="reset">
+    <div class="tag">— a digression</div>
+    <p>You can't see the work. <em>That's the work.</em> A subscription that runs in the background of half a billion devices, and only ever shows up when something is wrong.</p>
+  </div>
+
+  <!-- ============== THE BUSINESS ============== -->
+  <section class="biz">
+    <div class="eyebrow"><span class="tick"></span> 02 · The business</div>
+
+    <h2 class="rev">
+      <em>Two halves</em> of one wallet — recurring, almost entirely.
+    </h2>
+    <p class="lede rev d1" style="margin-top: 16px; max-width: 34ch;">
+      Roughly <em>90%</em> of revenue is subscription. The rest is partner channels and one-time SKUs. The split that matters is what's protected.
+    </p>
+
+    <!-- Split scene: a barred bracket -->
+    <svg class="split-svg rev d2" viewBox="0 0 360 96" aria-hidden="true">
+      <defs>
+        <linearGradient id="cybGrad" x1="0" x2="1">
+          <stop offset="0" stop-color="#5C50D9"/>
+          <stop offset="1" stop-color="#7B71F5"/>
+        </linearGradient>
+        <linearGradient id="idGrad" x1="0" x2="1">
+          <stop offset="0" stop-color="#9E97FF"/>
+          <stop offset="1" stop-color="#C4C0FF"/>
+        </linearGradient>
+      </defs>
+      <!-- Cyber Safety bar (63%) -->
+      <rect x="0" y="34" width="226.8" height="30" rx="4" fill="url(#cybGrad)"/>
+      <!-- Identity (36%) -->
+      <rect x="230" y="34" width="129.6" height="30" rx="4" fill="url(#idGrad)"/>
+      <!-- ticks -->
+      <g font-family="Geist Mono" font-size="10" fill="#6B6A65" letter-spacing="1">
+        <text x="0" y="22">CYBER SAFETY · 63%</text>
+        <text x="232" y="22">IDENTITY · 36%</text>
+      </g>
+      <g font-family="Geist Mono" font-size="9" fill="#A4A29C" letter-spacing="1">
+        <text x="0" y="84">$2.48B</text>
+        <text x="232" y="84">$1.42B</text>
+        <text x="358" y="84" text-anchor="end">FY25</text>
+      </g>
+    </svg>
+
+    <div class="split-row">
+      <div class="pct">63%</div>
+      <div class="name">
+        Cyber Safety
+        <small>Norton 360 · Avast One · AVG · Avira · CCleaner — devices, browsers, networks.</small>
+      </div>
+      <div class="bar"><i style="width: 63%; background: #5C50D9"></i></div>
+    </div>
+    <div class="split-row">
+      <div class="pct">36%</div>
+      <div class="name">
+        <em>Identity</em> & Information
+        <small>LifeLock and friends — credit, dark web, breach response.</small>
+      </div>
+      <div class="bar"><i style="width: 36%; background: #9E97FF"></i></div>
+    </div>
+    <div class="split-row">
+      <div class="pct">~90%</div>
+      <div class="name">
+        Recurring of total
+        <small>Direct, freemium-to-paid, partner. Capital-light at <em>80.3%</em> gross margin.</small>
+      </div>
+      <div class="bar"><i style="width: 90%; background: #2BB673"></i></div>
+    </div>
+  </section>
+
+  <!-- ============== SCALE ============== -->
+  <section class="scale">
+    <div class="scale-inner">
+      <div class="eyebrow"><span class="tick"></span> 03 · The scale</div>
+      <h2 class="rev">
+        <em>500M</em> protected.<br>
+        <span style="font-family: var(--font-mono); font-size: 16px; letter-spacing: 0.04em; color: var(--ink-3); font-weight: 400; display:inline-block; margin-top: 14px;">
+          75M+ paying.
+        </span>
+      </h2>
+      <p class="lede rev d1" style="margin-top: 14px; max-width: 34ch;">
+        One dot for every two million users. The dim ones are free. The lit ones pay.
+      </p>
+    </div>
+
+    <div class="grid-scene">
+      <svg viewBox="0 0 360 360" aria-hidden="true">
+        <defs>
+          <radialGradient id="darkBg" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stop-color="#1F1E2A"/>
+            <stop offset="100%" stop-color="#0F0E14"/>
+          </radialGradient>
+        </defs>
+        <rect width="360" height="360" fill="url(#darkBg)"/>
+        <!-- 250 dots = 500M (one dot per 2M) -->
+        <g id="userdots"></g>
+        <!-- caption inside scene -->
+        <text x="20" y="332" font-family="Instrument Serif" font-style="italic" font-size="18" fill="#F4F2ED">
+          Every dot, two million people.
+        </text>
+        <text x="20" y="350" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#9E97FF">
+          PAID 75M / FREE 425M · 150+ COUNTRIES
+        </text>
+      </svg>
+    </div>
+
+    <div class="scale-inner">
+      <div class="brands-row rev">
+        <span class="brand-pill pri">Norton</span>
+        <span class="brand-pill pri">Avast</span>
+        <span class="brand-pill pri">LifeLock</span>
+        <span class="brand-pill">Avira</span>
+        <span class="brand-pill">AVG</span>
+        <span class="brand-pill">CCleaner</span>
+        <span class="brand-pill">ReputationDefender</span>
+        <span class="brand-pill">MoneyLion</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Reset beat #2 ============== -->
+  <div class="reset">
+    <div class="tag">— a counting</div>
+    <p>For every dollar in the door, <em>fifteen cents survive</em> to the bottom line. The other eighty-five buy the next subscriber.</p>
+  </div>
+
+  <!-- ============== WHERE THE MONEY GOES ============== -->
+  <section class="costs">
+    <div class="eyebrow"><span class="tick"></span> 04 · Where it goes</div>
+    <h2 class="rev">
+      A <em>dollar</em>, in five bites.
+    </h2>
+    <p class="lede rev d1" style="margin-top: 14px; max-width: 34ch;">
+      Cost of revenue, marketing, R&D, G&A, amortization. The rest survives.
+    </p>
+
+    <!-- 100-cent dollar grid: 10x10 = 100 cells; we color cells per cost -->
+    <div class="dollar rev d2">
+      <svg viewBox="0 0 360 346" aria-hidden="true">
+        <g id="centsGrid"></g>
+        <!-- caption brackets -->
+        <g font-family="Geist Mono" font-size="9" fill="#6B6A65" letter-spacing="1.5">
+          <text x="0" y="338">100¢ IN</text>
+          <text x="360" y="338" text-anchor="end">~15¢ OUT (NET)</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="legend">
+      <div class="lg-row"><div class="sw" style="background:#4F86C6"></div><div class="lg-name">Cost of revenue</div><div class="lg-pct">20¢</div></div>
+      <div class="lg-row"><div class="sw" style="background:#E8734A"></div><div class="lg-name">Sales & marketing</div><div class="lg-pct">18¢</div></div>
+      <div class="lg-row"><div class="sw" style="background:#F2C14E"></div><div class="lg-name">Amortization of intangibles</div><div class="lg-pct">8¢</div></div>
+      <div class="lg-row"><div class="sw" style="background:#57B894"></div><div class="lg-name">Research & development</div><div class="lg-pct">8¢</div></div>
+      <div class="lg-row"><div class="sw" style="background:#A66CBA"></div><div class="lg-name">General & administrative</div><div class="lg-pct">5¢</div></div>
+    </div>
+
+    <div class="residual">
+      <div class="l">What survives</div>
+      <div class="v">~41¢ <span style="font-size: 13px; color: rgba(244,242,237,0.55); letter-spacing: 0.1em; font-family: var(--font-mono); font-style: normal;">OP MARGIN</span></div>
+    </div>
+  </section>
+
+  <!-- ============== FOOTPRINT ============== -->
+  <section class="geo">
+    <div class="eyebrow"><span class="tick"></span> 05 · Footprint</div>
+    <h2 class="rev">A <em>signal</em>, three hemispheres deep.</h2>
+    <p class="l rev d1" style="margin-top: 12px;">
+      Two-thirds <em>Americas</em>. The rest, where the rest of the internet lives.
+    </p>
+
+    <div class="radar rev d2">
+      <svg viewBox="0 0 360 360" aria-hidden="true">
+        <defs>
+          <radialGradient id="rcore" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#7B71F5" stop-opacity="0.18"/>
+            <stop offset="60%" stop-color="#7B71F5" stop-opacity="0.04"/>
+            <stop offset="100%" stop-color="#7B71F5" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="180" cy="180" r="170" fill="url(#rcore)"/>
+
+        <!-- concentric rings for percentages -->
+        <g fill="none" stroke="#E4E1D9" stroke-width="1">
+          <circle cx="180" cy="180" r="50"/>
+          <circle cx="180" cy="180" r="100"/>
+          <circle cx="180" cy="180" r="150"/>
+        </g>
+
+        <!-- meridians -->
+        <g stroke="#E4E1D9" stroke-width="1" stroke-dasharray="2 4">
+          <line x1="180" y1="20" x2="180" y2="340"/>
+          <line x1="20" y1="180" x2="340" y2="180"/>
+        </g>
+
+        <!-- region wedges/arcs sized by pct (66/24/10) -->
+        <!-- Americas (66%) — large filled arc on the left -->
+        <path id="ameriArc" d="M180,180 L180,30 A150,150 0 1 0 30,180 Z"
+              fill="#5C50D9" fill-opacity="0.78"/>
+        <!-- EMEA (24%) — top-right wedge -->
+        <path id="emeaArc" d="M180,180 L180,30 A150,150 0 0 1 305,116 Z"
+              fill="#9E97FF" fill-opacity="0.85"/>
+        <!-- APAC (10%) — small bottom-right wedge -->
+        <path id="apacArc" d="M180,180 L305,116 A150,150 0 0 1 305,244 Z"
+              fill="#C4C0FF" fill-opacity="0.95"/>
+
+        <!-- center dot -->
+        <circle cx="180" cy="180" r="4" fill="#FBFAF7" stroke="#5C50D9" stroke-width="1.5"/>
+
+        <!-- callouts -->
+        <g font-family="Geist Mono" font-size="9" letter-spacing="1.5" fill="#6B6A65">
+          <text x="180" y="360" text-anchor="middle">SIGNAL ORIGIN · TEMPE / PRAGUE</text>
+        </g>
+
+        <!-- region labels -->
+        <g font-family="Instrument Serif" font-style="italic" font-size="22" fill="#FBFAF7">
+          <text x="100" y="190">Americas</text>
+        </g>
+        <g font-family="Instrument Serif" font-style="italic" font-size="14" fill="#FBFAF7">
+          <text x="222" y="105">EMEA</text>
+        </g>
+        <g font-family="Geist Mono" font-size="9" letter-spacing="1.5" fill="#5C50D9">
+          <text x="285" y="190">APAC</text>
+        </g>
+
+        <g font-family="Geist Mono" font-size="9" letter-spacing="1.5" fill="#FBFAF7">
+          <text x="100" y="208">66%</text>
+        </g>
+        <g font-family="Geist Mono" font-size="8" letter-spacing="1.5" fill="#FBFAF7">
+          <text x="222" y="120">24%</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="geo-rows">
+      <div class="geo-row lead"><div class="idx">01</div><div class="reg">Americas</div><div class="pct">66%</div></div>
+      <div class="geo-row"><div class="idx">02</div><div class="reg">Europe, Middle East &amp; Africa</div><div class="pct">24%</div></div>
+      <div class="geo-row"><div class="idx">03</div><div class="reg">Asia-Pacific</div><div class="pct">10%</div></div>
+    </div>
+  </section>
+
+  <!-- ============== Reset beat #3 ============== -->
+  <div class="reset">
+    <div class="tag">— a digression on M&amp;A</div>
+    <p>You don't get to half a billion users <em>organically</em>. You buy them — and you keep buying them.</p>
+  </div>
+
+  <!-- ============== THE BET ============== -->
+  <section class="bet">
+    <div class="eyebrow"><span class="tick"></span> 06 · The bet</div>
+    <h2 class="rev">A company <em>assembled</em>, brand by brand.</h2>
+    <p class="l rev d1" style="margin-top: 12px;">
+      Three names, four decades, one thesis: own the consumer's digital perimeter — antivirus, identity, now financial wellness.
+    </p>
+
+    <div class="timeline">
+      <div class="tl-item rev">
+        <div class="tl-year">1982</div>
+        <div class="tl-title">Founded as <em>Symantec</em></div>
+        <div class="tl-body">A four-decade head start in consumer security software.</div>
+      </div>
+      <div class="tl-item rev d1">
+        <div class="tl-year">Nov 2022 · $8.1B</div>
+        <div class="tl-title">Merger with <em>Avast</em></div>
+        <div class="tl-body">Symantec → Gen Digital. The all-cash deal that doubled the user base and lit up the debt ledger.</div>
+      </div>
+      <div class="tl-item pulse rev d2">
+        <div class="tl-year">Apr 2025 · ~$1.0B</div>
+        <div class="tl-title">Acquires <em>MoneyLion</em></div>
+        <div class="tl-body">A bolt-on into financial wellness. Cross-sell across <em>75M+</em> paying customers — and a new word, <em>fintech,</em> stapled to the deck.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== DEBT — dark interlude ============== -->
+  <section class="debt">
+    <div class="eyebrow"><span class="tick"></span> 07 · The bill</div>
+    <h2>
+      Half a billion <em>users</em> — and a <em class="threat-c" style="color:#FFB29A;">$7.97B</em> bill from the last shopping trip.
+    </h2>
+    <p class="l">
+      Total debt of <em>$7.97B</em> sits across $2.27B in equity and $1.01B in cash. A leveraged perch — kept aloft by <em>$1.21B</em> in free cash flow.
+    </p>
+
+    <div class="scales">
+      <svg viewBox="0 0 360 280" aria-hidden="true">
+        <!-- pivot -->
+        <defs>
+          <linearGradient id="beam" x1="0" x2="1">
+            <stop offset="0" stop-color="#3B33A0"/>
+            <stop offset="1" stop-color="#7B71F5"/>
+          </linearGradient>
+        </defs>
+        <!-- floor -->
+        <line x1="40" y1="248" x2="320" y2="248" stroke="#2A2A38" stroke-width="1"/>
+        <!-- pillar -->
+        <rect x="174" y="60" width="12" height="190" fill="#2A2A38"/>
+        <polygon points="180,46 192,68 168,68" fill="#7B71F5"/>
+
+        <!-- beam tilted toward debt (left dips) -->
+        <g transform="translate(180 70) rotate(-9)">
+          <rect x="-130" y="-3" width="260" height="6" rx="2" fill="url(#beam)"/>
+          <!-- left chains -->
+          <line x1="-110" y1="3" x2="-110" y2="46" stroke="#5C50D9" stroke-width="1.5"/>
+          <line x1="110"  y1="3" x2="110"  y2="46" stroke="#5C50D9" stroke-width="1.5"/>
+        </g>
+
+        <!-- LEFT pan: debt (heavy) -->
+        <g transform="translate(54 144)">
+          <path d="M0 0 L120 0 L106 56 L14 56 Z" fill="#16161F" stroke="#3B33A0" stroke-width="1"/>
+          <text x="60" y="22" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="34" fill="#B6AEFF">$7.97B</text>
+          <text x="60" y="44" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#8C8A84">DEBT</text>
+        </g>
+
+        <!-- RIGHT pan: equity + cash (lighter) -->
+        <g transform="translate(218 96)">
+          <path d="M0 0 L88 0 L78 40 L10 40 Z" fill="#1A1A24" stroke="#3B33A0" stroke-width="1" opacity="0.95"/>
+          <text x="44" y="18" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#F4F2ED">$2.27B</text>
+          <text x="44" y="32" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="2" fill="#8C8A84">EQUITY</text>
+          <text x="44" y="56" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="1.5" fill="#9B94EF">+ $1.01B CASH</text>
+        </g>
+
+        <!-- caption -->
+        <text x="180" y="270" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#6B6A65">A LEVERAGED BALANCE · CASH-GENERATIVE</text>
+      </svg>
+    </div>
+
+    <div class="debt-stats">
+      <div class="s"><div class="num"><em>$1.21B</em></div><div class="lab">Free cash flow</div></div>
+      <div class="s"><div class="num">$313M</div><div class="lab">Dividends paid</div></div>
+      <div class="s"><div class="num">$272M</div><div class="lab">Buybacks</div></div>
+      <div class="s"><div class="num">$15M</div><div class="lab">Capex (FY25)</div></div>
+    </div>
+  </section>
+
+  <!-- ============== Reset beat #4 ============== -->
+  <div class="reset">
+    <div class="tag">— a digression on rivals</div>
+    <p>The dangerous competitor isn't the one who looks like you. <em>It's the one bundled for free.</em></p>
+  </div>
+
+  <!-- ============== COMPETITION ============== -->
+  <section class="comp">
+    <div class="eyebrow"><span class="tick"></span> 08 · The field</div>
+    <h2 class="rev">Two near-peers, and <em>one shadow.</em></h2>
+    <p class="l rev d1" style="margin-top: 12px;">
+      Sized by market cap. The shadow is bigger than the chart can hold.
+    </p>
+
+    <div class="field rev d2">
+      <svg viewBox="0 0 360 342" aria-hidden="true">
+        <!-- Microsoft "shadow" — looms at top -->
+        <defs>
+          <radialGradient id="shadowG" cx="50%" cy="20%" r="80%">
+            <stop offset="0%" stop-color="#F25A37" stop-opacity="0.18"/>
+            <stop offset="40%" stop-color="#F25A37" stop-opacity="0.06"/>
+            <stop offset="100%" stop-color="#F25A37" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- shadow halo -->
+        <ellipse cx="180" cy="50" rx="220" ry="80" fill="url(#shadowG)"/>
+
+        <!-- Microsoft monolith — clipped at top, runs off the canvas -->
+        <g>
+          <rect x="50" y="0" width="260" height="60" fill="#0F0E0D" />
+          <text x="180" y="28" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#F25A37">$3.14T</text>
+          <text x="180" y="48" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#A4A29C">MICROSOFT · MSFT — OFF-SCALE</text>
+          <!-- arrow up -->
+          <line x1="180" y1="64" x2="180" y2="82" stroke="#F25A37" stroke-width="1"/>
+          <polygon points="176,68 180,60 184,68" fill="#F25A37"/>
+        </g>
+
+        <!-- shelf line -->
+        <line x1="20" y1="280" x2="340" y2="280" stroke="#E4E1D9" stroke-width="1"/>
+
+        <!-- GEN bar (12.19) -->
+        <g>
+          <rect x="60" y="120" width="60" height="160" fill="#5C50D9"/>
+          <rect x="60" y="120" width="60" height="6" fill="#7B71F5"/>
+          <text x="90" y="115" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#0F0E0D">$12.19B</text>
+          <text x="90" y="298" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#0F0E0D">GEN</text>
+          <text x="90" y="312" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="1.5" fill="#6B6A65">$3.94B REV</text>
+        </g>
+
+        <!-- OKTA bar (12.78) -->
+        <g>
+          <rect x="150" y="116" width="60" height="164" fill="#9E97FF"/>
+          <rect x="150" y="116" width="60" height="6" fill="#C4C0FF"/>
+          <text x="180" y="111" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="20" fill="#0F0E0D">$12.78B</text>
+          <text x="180" y="298" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#0F0E0D">OKTA</text>
+          <text x="180" y="312" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="1.5" fill="#6B6A65">$2.92B REV</text>
+        </g>
+
+        <!-- GDDY bar (11.43) -->
+        <g>
+          <rect x="240" y="124" width="60" height="156" fill="#C4C0FF"/>
+          <rect x="240" y="124" width="60" height="6" fill="#E2E0FF"/>
+          <text x="270" y="119" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="20" fill="#0F0E0D">$11.43B</text>
+          <text x="270" y="298" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#0F0E0D">GDDY</text>
+          <text x="270" y="312" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="1.5" fill="#6B6A65">$4.95B REV</text>
+        </g>
+
+        <!-- caption -->
+        <text x="20" y="334" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#6B6A65">MARKET CAP · APR '26</text>
+        <text x="340" y="334" text-anchor="end" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#F25A37">↑ 257× GEN</text>
+      </svg>
+    </div>
+
+    <div class="rivals">
+      <div class="rival">
+        <div class="rival-head">
+          <div class="rival-name">Okta <em class="sig">·</em></div>
+          <div class="rival-tk">OKTA</div>
+        </div>
+        <div class="rival-stats">
+          <div class="rs"><div class="k">Mkt cap</div><div class="v">$12.78B</div></div>
+          <div class="rs"><div class="k">Revenue</div><div class="v">$2.92B</div></div>
+          <div class="rs"><div class="k">YoY</div><div class="v">+11.84%</div></div>
+        </div>
+        <div class="rival-note">Workforce identity drifting toward consumer territory — both companies competing for <em>identity wallet share</em>.</div>
+      </div>
+      <div class="rival">
+        <div class="rival-head">
+          <div class="rival-name">GoDaddy <em class="sig">·</em></div>
+          <div class="rival-tk">GDDY</div>
+        </div>
+        <div class="rival-stats">
+          <div class="rs"><div class="k">Mkt cap</div><div class="v">$11.43B</div></div>
+          <div class="rs"><div class="k">Revenue</div><div class="v">$4.95B</div></div>
+          <div class="rs"><div class="k">YoY</div><div class="v">+8.26%</div></div>
+        </div>
+        <div class="rival-note">SSL, email protection, small-business security — fishing in the same value-conscious pond as Norton and Avast.</div>
+      </div>
+      <div class="rival">
+        <div class="rival-head">
+          <div class="rival-name threat">Microsoft <em>· the shadow</em></div>
+          <div class="rival-tk threat-c">MSFT</div>
+        </div>
+        <div class="rival-stats">
+          <div class="rs threat"><div class="k">Mkt cap</div><div class="v">$3.14T</div></div>
+          <div class="rs"><div class="k">Revenue</div><div class="v">$281.72B</div></div>
+          <div class="rs"><div class="k">YoY</div><div class="v">+16.67%</div></div>
+        </div>
+        <div class="rival-note">The non-obvious threat. <em>Defender ships free with Windows.</em> Every preinstalled antivirus is one fewer Norton renewal.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== CLOSE — restated thesis ============== -->
+  <section class="close">
+    <div class="eyebrow"><span class="tick"></span> 09 · The takeaway</div>
+
+    <h2 class="rev">
+      The opening line was <em>five hundred million.</em><br>
+      The closing line is <em>this:</em>
+    </h2>
+
+    <span class="sig-num rev d1">$1.21B</span>
+    <p class="rev d2" style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 18px;">
+      FREE CASH FLOW · FY25
+    </p>
+
+    <p class="rev d2">
+      Half a billion devices generate <em>one and a fifth billion</em> in cash a year, and the company spends most of it servicing the price of getting here — buying the next brand, paying down the next note, sending the next dividend.
+    </p>
+    <p class="rev d3" style="margin-top: 18px;">
+      The thesis isn't growth. <em>It's persistence.</em> A subscription that runs in the background of half a billion devices — and a balance sheet that asks, every quarter, whether the perimeter still pays.
+    </p>
+  </section>
+
+  <!-- ============== footer ============== -->
+  <div class="footer">
+    <div><span class="pip"></span>END · GEN · FY '25</div>
+    <div>SOURCE · COMPANY FILINGS</div>
+  </div>
+
+</div>
+
+<script>
+  // ---------- Scroll progress hairline ----------
+  const stage = document.getElementById('stage');
+  const prog = document.getElementById('prog');
+  function onScroll(){
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = total > 0 ? Math.min(1, Math.max(0, window.scrollY / total)) : 0;
+    prog.style.width = (pct * 100) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ---------- IntersectionObserver reveals ----------
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){
+        e.target.classList.add('on');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.rev').forEach(el => io.observe(el));
+
+  // ---------- HERO: ring ticks (procedural) ----------
+  (function(){
+    const g = document.getElementById('ticks');
+    if(!g) return;
+    const cx=180, cy=155;
+    function tickRing(r, count){
+      for(let i=0;i<count;i++){
+        const a = (i/count) * Math.PI*2;
+        const x1 = cx + Math.cos(a)*(r-2);
+        const y1 = cy + Math.sin(a)*(r-2);
+        const x2 = cx + Math.cos(a)*(r+2);
+        const y2 = cy + Math.sin(a)*(r+2);
+        const ln = document.createElementNS('http://www.w3.org/2000/svg','line');
+        ln.setAttribute('x1',x1); ln.setAttribute('y1',y1);
+        ln.setAttribute('x2',x2); ln.setAttribute('y2',y2);
+        ln.setAttribute('stroke-opacity', (0.05 + (i%3===0?0.4:0.15)).toFixed(2) );
+        g.appendChild(ln);
+      }
+    }
+    tickRing(60, 24);
+    tickRing(92, 32);
+    tickRing(124, 40);
+    tickRing(156, 48);
+  })();
+
+  // ---------- HERO: floating threats arcing toward shield ----------
+  (function(){
+    const g = document.getElementById('threats');
+    if(!g) return;
+    const NS = 'http://www.w3.org/2000/svg';
+    const N = 18;
+    for(let i=0;i<N;i++){
+      const ang = (i/N) * Math.PI*2 + Math.random()*0.4;
+      const r = 130 + Math.random()*30;
+      const x = 180 + Math.cos(ang)*r;
+      const y = 155 + Math.sin(ang)*r;
+      const c = document.createElementNS(NS,'circle');
+      c.setAttribute('cx', x);
+      c.setAttribute('cy', y);
+      c.setAttribute('r', 1.4 + Math.random()*0.8);
+      c.setAttribute('fill', '#FF7A57');
+      c.setAttribute('opacity', (0.4 + Math.random()*0.4).toFixed(2));
+      const a = document.createElementNS(NS,'animate');
+      a.setAttribute('attributeName','opacity');
+      a.setAttribute('values','0;0.85;0');
+      a.setAttribute('dur', (2 + Math.random()*2).toFixed(2)+'s');
+      a.setAttribute('begin', (Math.random()*2).toFixed(2)+'s');
+      a.setAttribute('repeatCount','indefinite');
+      c.appendChild(a);
+      g.appendChild(c);
+    }
+  })();
+
+  // ---------- SCALE: dot grid (250 dots, 75 lit = paid) ----------
+  (function(){
+    const g = document.getElementById('userdots');
+    if(!g) return;
+    const NS = 'http://www.w3.org/2000/svg';
+    const cols = 25, rows = 10;   // 250 dots
+    const padX = 30, padY = 90;
+    const w = 360 - padX*2;
+    const h = 220;
+    const stepX = w / (cols-1);
+    const stepY = h / (rows-1);
+    // Build a shuffled list, mark first 75/2=37.5≈38 as paid, but distribute pretty
+    const cells = [];
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        cells.push({r,c});
+      }
+    }
+    // Pick 38 random "paid" using deterministic-ish seed
+    const paid = new Set();
+    let seed = 7;
+    while(paid.size < 38){
+      seed = (seed*9301 + 49297) % 233280;
+      paid.add(Math.floor(seed/233280 * cells.length));
+    }
+    cells.forEach((cell, idx) => {
+      const x = padX + cell.c * stepX;
+      const y = padY + cell.r * stepY;
+      const d = document.createElementNS(NS,'circle');
+      d.setAttribute('cx', x.toFixed(1));
+      d.setAttribute('cy', y.toFixed(1));
+      const isPaid = paid.has(idx);
+      d.setAttribute('r', isPaid ? 2.6 : 1.6);
+      d.setAttribute('fill', isPaid ? '#7B71F5' : '#3B3A52');
+      d.setAttribute('opacity', isPaid ? '1' : '0.7');
+      if(isPaid){
+        const a = document.createElementNS(NS,'animate');
+        a.setAttribute('attributeName','opacity');
+        a.setAttribute('values','0.55;1;0.55');
+        a.setAttribute('dur', (2.4 + (idx%5)*0.3).toFixed(2)+'s');
+        a.setAttribute('repeatCount','indefinite');
+        d.appendChild(a);
+      }
+      g.appendChild(d);
+    });
+  })();
+
+  // ---------- COSTS: 100-cent grid ----------
+  (function(){
+    const g = document.getElementById('centsGrid');
+    if(!g) return;
+    const NS = 'http://www.w3.org/2000/svg';
+    const cols = 10, rows = 10;
+    const cell = 28;
+    const totalW = cols * cell + (cols-1)*4;
+    const startX = (360 - totalW)/2;
+    const startY = 14;
+
+    // Fill order: cost segments (largest first), then residual fills the rest
+    const segs = [
+      { color: '#4F86C6', n: 20 },   // Cost of revenue
+      { color: '#E8734A', n: 18 },   // Sales & marketing
+      { color: '#F2C14E', n: 8  },   // Amortization
+      { color: '#57B894', n: 8  },   // R&D
+      { color: '#A66CBA', n: 5  },   // G&A
+    ];
+    const flat = [];
+    segs.forEach(s => { for(let i=0;i<s.n;i++) flat.push(s.color); });
+    while(flat.length < 100) flat.push('residual'); // remaining = profit/other
+
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const idx = r*cols + c;
+        const x = startX + c*(cell+4);
+        const y = startY + r*(cell+4);
+        const rect = document.createElementNS(NS,'rect');
+        rect.setAttribute('x', x); rect.setAttribute('y', y);
+        rect.setAttribute('width', cell); rect.setAttribute('height', cell);
+        rect.setAttribute('rx', 3);
+        const v = flat[idx];
+        if (v === 'residual'){
+          rect.setAttribute('fill', '#0F0E0D');
+          rect.setAttribute('opacity', '0.92');
+        } else {
+          rect.setAttribute('fill', v);
+        }
+        // tiny inner cent glyph for visual texture
+        g.appendChild(rect);
+      }
+    }
+  })();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1611 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>CNC · Recap FY '25</title>
+<link rel="stylesheet" href="styles/tokens.css" />
+<style>
+  /* ============================================================
+     CENTENE — STOCK RECAP (mobile)
+     Dominant metaphor: the dollar that almost doesn't make it.
+     Material: clinical paper, ledger ink, one signal red.
+     ============================================================ */
+
+  :root {
+    /* Centene-specific signal palette (overrides scope) */
+    --cnc-paper:  #F6F4EE;       /* slightly warmer than DS paper */
+    --cnc-paper-2:#EDEAE2;
+    --cnc-card:   #FFFFFF;
+    --cnc-ink:    #14140F;
+    --cnc-ink-2:  #3A3935;
+    --cnc-ink-3:  #6E6C66;
+    --cnc-rule:   #DCD7CB;
+    --cnc-rule-2: #C7C2B5;
+
+    /* The signal color — Centene's "claim red".
+       Not the DS coral; this is more clinical, ledger-warning. */
+    --signal:     #D8442C;
+    --signal-2:   #B5331E;
+    --signal-soft:#FBE3DC;
+
+    /* Cost-band hexes — pinned by the brief */
+    --cost-medical: #E05C5C;
+    --cost-sga:     #5B8FD4;
+    --cost-tax:     #F4A940;
+    --cost-cogs:    #6DBF8A;
+    --cost-da:      #A97DC9;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--cnc-paper);
+    color: var(--cnc-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* The whole artifact is mobile-sized.
+     We center it on larger viewports against a soft surround. */
+  html { background: #2A2826; }
+  .page {
+    width: 100%;
+    max-width: 440px;
+    min-height: 100vh;
+    margin: 0 auto;
+    background: var(--cnc-paper);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ---------- Persistent chrome ---------- */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(246,244,238,0.78);
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    border-bottom: 1px solid var(--cnc-rule);
+  }
+  .chrome-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px 10px;
+  }
+  .chrome-ticker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    color: var(--cnc-ink);
+  }
+  .chrome-tick-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--signal);
+    margin: 0 8px 1.5px;
+    vertical-align: middle;
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--cnc-ink-2);
+    font-weight: 400;
+  }
+  .chrome-spacer { flex: 1; }
+  .chrome-recap {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cnc-ink-3);
+  }
+  .chrome-progress {
+    height: 1.5px;
+    background: transparent;
+    position: relative;
+  }
+  .chrome-progress::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--scroll-pct, 0%);
+    background: linear-gradient(90deg, var(--signal-2), var(--signal));
+    transition: width 60ms linear;
+  }
+
+  /* ---------- Section primitives ---------- */
+  .beat {
+    position: relative;
+    padding: 84px 24px 72px;
+  }
+  .beat--tight { padding-top: 56px; padding-bottom: 56px; }
+  .beat--airy  { padding-top: 110px; padding-bottom: 100px; }
+  .beat--dark {
+    background: #0E0D0B;
+    color: #ECEAE3;
+  }
+  .beat--paper-2 { background: var(--cnc-paper-2); }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--cnc-ink-3);
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 22px;
+  }
+  .eyebrow .dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--signal);
+  }
+  .beat--dark .eyebrow { color: #8B8985; }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+  }
+  .italic { font-family: var(--font-display); font-style: italic; }
+  .signal { color: var(--signal); }
+
+  /* ---------- Reset beats ---------- */
+  .reset {
+    padding: 56px 32px;
+    background: #1B1A17;
+    color: #D9D5CB;
+  }
+  .reset.light {
+    background: var(--cnc-paper-2);
+    color: var(--cnc-ink-2);
+  }
+  .reset p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .reset p .em { color: var(--signal); font-style: italic; }
+
+  /* ============================================================
+     1. HERO
+     ============================================================ */
+  .hero {
+    padding: 36px 24px 84px;
+    position: relative;
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cnc-ink-3);
+    margin-bottom: 32px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hero-eyebrow .pulse {
+    display: inline-block;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--signal);
+    box-shadow: 0 0 0 0 rgba(216,68,44,0.5);
+    animation: pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(216,68,44,0.45); }
+    70%  { box-shadow: 0 0 0 14px rgba(216,68,44,0); }
+    100% { box-shadow: 0 0 0 0 rgba(216,68,44,0); }
+  }
+
+  .hero-headline {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--cnc-ink);
+  }
+  .hero-headline .line2 { font-style: italic; color: var(--cnc-ink-2); }
+  .hero-headline .num { color: var(--cnc-ink); }
+  .hero-headline .sub-num {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cnc-ink-3);
+    margin-top: 22px;
+    font-style: normal;
+  }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--cnc-rule);
+    padding-top: 18px;
+    margin-top: 36px;
+  }
+  .hero-meta > div { padding-right: 12px; }
+  .hero-meta > div + div { border-left: 1px solid var(--cnc-rule); padding-left: 12px; }
+  .hero-meta .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cnc-ink-3);
+    margin-bottom: 6px;
+  }
+  .hero-meta .v {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .hero-meta .v.neg { color: var(--signal); }
+
+  /* Pulse-line motif behind hero — the heart-rate metaphor */
+  .hero-ekg {
+    position: absolute;
+    inset: auto 0 36% 0;
+    height: 80px;
+    pointer-events: none;
+    opacity: 0.55;
+  }
+
+  /* ============================================================
+     2. BUSINESS — premiums in / claims out
+     ============================================================ */
+  .business {
+    padding-top: 70px;
+  }
+  .premium-flow {
+    margin: 28px -24px 0;
+    padding: 0 24px;
+    position: relative;
+  }
+  .premium-flow svg { display: block; width: 100%; height: auto; }
+  .premium-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 14px;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--cnc-rule);
+  }
+  .pl-row .pl-pct {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .pl-row .pl-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cnc-ink-3);
+    margin-top: 8px;
+  }
+  .pl-row .pl-growth {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--cnc-ink-2);
+    margin-top: 4px;
+  }
+  .pl-row .pl-growth.up { color: #1F7A4D; }
+
+  /* ============================================================
+     3. SCALE
+     ============================================================ */
+  .scale {
+    padding: 90px 24px 80px;
+  }
+  .scale-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    margin-top: 32px;
+  }
+  .scale-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 22px;
+    align-items: end;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--cnc-rule);
+  }
+  .scale-row:last-child { border-bottom: none; }
+  .scale-num {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.9;
+    letter-spacing: -0.025em;
+  }
+  .scale-num .unit {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--cnc-ink-3);
+    margin-left: 4px;
+    letter-spacing: 0.04em;
+  }
+  .scale-cap {
+    text-align: right;
+    padding-bottom: 8px;
+  }
+  .scale-cap .lab {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cnc-ink-3);
+  }
+  .scale-cap .desc {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--cnc-ink-2);
+    line-height: 1.45;
+    margin-top: 6px;
+    max-width: 22ch;
+    margin-left: auto;
+  }
+
+  /* People metaphor — 27.6M dots */
+  .members-grid {
+    margin: 18px -4px 0;
+    height: 96px;
+    position: relative;
+  }
+  .members-grid svg { width: 100%; height: 100%; display: block; }
+
+  /* ============================================================
+     4. THE DOLLAR — cost breakdown
+     ============================================================ */
+  .dollar {
+    background: var(--cnc-paper-2);
+    padding: 90px 24px 84px;
+  }
+  .dollar-head {
+    margin-bottom: 36px;
+  }
+  .dollar-head h2 {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .dollar-head .sub {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--cnc-ink-2);
+    margin-top: 16px;
+    max-width: 30ch;
+  }
+
+  /* The 100-cent grid */
+  .cents {
+    --col: 10;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 3px;
+    background: transparent;
+    padding: 0;
+    margin: 0 0 24px;
+  }
+  .cent {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: #DCD7CB;
+    transition: background var(--dur-base) var(--ease-out), transform 200ms;
+  }
+
+  .cents-legend {
+    display: grid;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .cents-legend .row {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--cnc-rule);
+  }
+  .cents-legend .row:last-child { border-bottom: none; }
+  .cents-legend .swatch {
+    width: 18px; height: 18px; border-radius: 3px;
+  }
+  .cents-legend .lab {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--cnc-ink);
+    line-height: 1.3;
+  }
+  .cents-legend .pct {
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+  .cents-legend .pct .small {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--cnc-ink-3);
+    margin-left: 2px;
+    letter-spacing: 0.06em;
+  }
+
+  .dollar-survives {
+    margin-top: 28px;
+    padding: 18px 18px;
+    background: var(--cnc-card);
+    border: 1px solid var(--cnc-rule);
+    border-radius: 12px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: center;
+  }
+  .dollar-survives .big {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 0.95;
+    color: var(--signal);
+    letter-spacing: -0.02em;
+  }
+  .dollar-survives .small {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--cnc-ink-2);
+  }
+  .dollar-survives .small em { font-family: var(--font-display); font-style: italic; color: var(--cnc-ink); }
+
+  /* ============================================================
+     5. FOOTPRINT
+     ============================================================ */
+  .footprint {
+    padding: 90px 0 80px;
+  }
+  .footprint .pad { padding: 0 24px; }
+  .footprint .map-wrap {
+    margin: 32px 0 0;
+    padding: 0 12px;
+  }
+  .footprint svg { display: block; width: 100%; height: auto; }
+  .footprint .map-cap {
+    margin-top: 22px;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .footprint .map-cap .num {
+    font-family: var(--font-display);
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .footprint .map-cap .lab {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cnc-ink-3);
+    margin-top: 8px;
+  }
+
+  /* ============================================================
+     6. THE WEIGHT — dark goodwill impairment
+     ============================================================ */
+  .weight {
+    background: #0E0D0B;
+    color: #ECEAE3;
+    padding: 110px 24px 110px;
+    position: relative;
+    overflow: hidden;
+  }
+  .weight .eyebrow { color: #8B8985; }
+  .weight h2 {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    margin: 0;
+  }
+  .weight .body {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.55;
+    color: #B6B3AB;
+    margin-top: 22px;
+    max-width: 32ch;
+  }
+  .weight .body em {
+    font-family: var(--font-display); font-style: italic;
+    color: #ECEAE3;
+  }
+
+  .impairment-bars {
+    margin: 44px 0 32px;
+    display: grid;
+    gap: 14px;
+  }
+  .imp-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 12px;
+    align-items: center;
+  }
+  .imp-row .label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8B8985;
+  }
+  .imp-bar {
+    height: 26px;
+    background: #1A1916;
+    position: relative;
+    overflow: hidden;
+    border-radius: 1px;
+  }
+  .imp-bar .fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--signal);
+    width: 0;
+    transition: width 800ms var(--ease-out);
+  }
+  .imp-bar.gain .fill { background: #5B8FD4; }
+  .imp-bar .num {
+    position: absolute;
+    right: 8px; top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #ECEAE3;
+    letter-spacing: 0.04em;
+  }
+
+  .weight-footnote {
+    border-top: 1px solid #2A2826;
+    padding-top: 18px;
+    margin-top: 18px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: #8B8985;
+    line-height: 1.5;
+  }
+
+  /* ============================================================
+     7. COMPETITION
+     ============================================================ */
+  .competition {
+    padding: 90px 24px 70px;
+  }
+  .comp-head h2 {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .comp-head .sub {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--cnc-ink-2);
+    margin-top: 16px;
+    max-width: 32ch;
+  }
+
+  .comp-stack {
+    margin-top: 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .comp-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 22px 0;
+    border-top: 1px solid var(--cnc-rule);
+    cursor: pointer;
+    transition: background 200ms;
+  }
+  .comp-row:last-child { border-bottom: 1px solid var(--cnc-rule); }
+  .comp-row.cnc {
+    border-top: 2px solid var(--signal);
+    border-bottom: 2px solid var(--signal);
+  }
+  .comp-row.cnc + .comp-row { border-top: none; }
+  .comp-top {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .comp-name {
+    font-family: var(--font-display);
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .comp-tick {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--cnc-ink-3);
+  }
+  .comp-cap {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--cnc-ink);
+    text-align: right;
+  }
+  .comp-cap .lab {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: var(--cnc-ink-3);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  /* Revenue bars — visual scaling */
+  .comp-bar {
+    margin-top: 14px;
+    height: 6px;
+    background: var(--cnc-rule);
+    position: relative;
+    overflow: hidden;
+    border-radius: 999px;
+  }
+  .comp-bar .fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--cnc-ink);
+    width: 0;
+    transition: width 900ms var(--ease-out);
+    border-radius: 999px;
+  }
+  .comp-row.cnc .comp-bar .fill { background: var(--signal); }
+  .comp-foot {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    color: var(--cnc-ink-3);
+  }
+  .comp-foot .rev {
+    color: var(--cnc-ink);
+  }
+  .comp-desc {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 380ms var(--ease-out), margin-top 380ms;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--cnc-ink-2);
+  }
+  .comp-row.open .comp-desc {
+    max-height: 280px;
+    margin-top: 14px;
+  }
+  .comp-tag {
+    display: inline-flex;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cnc-ink-3);
+  }
+  .comp-toggle {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--cnc-ink-3);
+    transition: transform 240ms;
+    margin-left: 6px;
+  }
+  .comp-row.open .comp-toggle { transform: rotate(45deg); color: var(--signal); }
+
+  /* ============================================================
+     8. THE BET — capital allocation
+     ============================================================ */
+  .bet {
+    padding: 90px 24px 80px;
+    background: var(--cnc-paper-2);
+  }
+  .bet h2 {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+  .bet .lede {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--cnc-ink-2);
+    margin-top: 18px;
+    max-width: 32ch;
+  }
+  .scale-balance {
+    margin-top: 40px;
+    height: 200px;
+    position: relative;
+  }
+  .scale-balance svg { width: 100%; height: 100%; display: block; }
+  .balance-cap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 8px;
+    text-align: center;
+  }
+  .balance-cap .num {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .balance-cap .num.signal { color: var(--signal); }
+  .balance-cap .lab {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cnc-ink-3);
+    margin-top: 6px;
+  }
+  .bet-foot {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--cnc-rule);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .bet-foot .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cnc-ink-3);
+    margin-bottom: 6px;
+  }
+  .bet-foot .v {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .bet-foot .vn {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--cnc-ink-2);
+    margin-top: 6px;
+  }
+
+  /* ============================================================
+     9. CLOSE — thesis inversion
+     ============================================================ */
+  .close {
+    padding: 110px 24px 130px;
+    position: relative;
+  }
+  .close-head {
+    font-family: var(--font-display);
+    font-size: 60px;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+  }
+  .close-head .em {
+    color: var(--signal);
+    font-style: italic;
+  }
+  .close-body {
+    margin-top: 32px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--cnc-ink-2);
+    max-width: 36ch;
+  }
+  .close-body em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--cnc-ink);
+  }
+  .close-foot {
+    margin-top: 64px;
+    padding-top: 22px;
+    border-top: 1px solid var(--cnc-rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cnc-ink-3);
+  }
+
+  /* ---------- Reveal-on-scroll ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* ---------- Tap-to-deepen affordance: stat source pop ---------- */
+  .src {
+    border-bottom: 1px dotted currentColor;
+    cursor: pointer;
+    position: relative;
+  }
+  .src::after {
+    content: attr(data-src);
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 6px);
+    transform: translate(-50%, -4px);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cnc-ink-3);
+    background: var(--cnc-card);
+    border: 1px solid var(--cnc-rule);
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 200ms;
+    z-index: 2;
+  }
+  .src.show::after { opacity: 1; transform: translate(-50%, 0); }
+
+  /* Selection */
+  ::selection { background: var(--signal); color: white; }
+
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <!-- ============================================================
+       PERSISTENT CHROME
+       ============================================================ -->
+  <header class="chrome">
+    <div class="chrome-row">
+      <span class="chrome-ticker">CNC<span class="chrome-tick-dot"></span></span>
+      <span class="chrome-name">Centene</span>
+      <span class="chrome-spacer"></span>
+      <span class="chrome-recap">Recap · FY '25</span>
+    </div>
+    <div class="chrome-progress" id="progress"></div>
+  </header>
+
+  <!-- ============================================================
+       1. HERO
+       ============================================================ -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div>
+      <div class="hero-eyebrow">
+        <span class="pulse"></span>
+        <span>The plumbing of public healthcare</span>
+      </div>
+
+      <h1 class="hero-headline reveal">
+        <span class="num"><span class="src" data-src="JSON · about">27.6&nbsp;million</span></span><br/>
+        <span class="line2">Americans whose</span><br/>
+        <span class="line2">healthcare flows</span><br/>
+        <span class="line2">through one door<span class="signal">.</span></span>
+        <span class="sub-num">Centene · NYSE: CNC · FY '25</span>
+      </h1>
+    </div>
+
+    <!-- EKG line motif -->
+    <svg class="hero-ekg" viewBox="0 0 440 80" preserveAspectRatio="none" aria-hidden="true">
+      <path id="ekg" d="M0 40 L80 40 L96 40 L104 28 L112 56 L120 12 L128 60 L136 40 L200 40 L220 40 L228 30 L236 50 L244 40 L440 40"
+            fill="none" stroke="#D8442C" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+    </svg>
+
+    <div class="hero-meta reveal">
+      <div>
+        <div class="k">Premiums in</div>
+        <div class="v">$174.6B</div>
+      </div>
+      <div>
+        <div class="k">Net result</div>
+        <div class="v neg">–$6.67B</div>
+      </div>
+      <div>
+        <div class="k">Market cap</div>
+        <div class="v">$18.8B</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reset beat -->
+  <div class="reset light">
+    <p><span class="italic">A health insurer</span> doesn't sell a product. It sells <span class="em">a promise</span> — to take a dollar in this month and pay a hospital bill the next.</p>
+  </div>
+
+  <!-- ============================================================
+       2. THE BUSINESS — premiums in / claims out
+       ============================================================ -->
+  <section class="business beat" data-screen-label="02 Business">
+    <div class="eyebrow"><span class="dot"></span><span>The flow · who pays whom</span></div>
+    <h2 class="display" style="font-size:44px;">Premiums <span class="italic">in</span>.<br/>Claims <span class="italic signal">out</span>.</h2>
+    <p style="font-family:var(--font-sans); font-size:14px; line-height:1.55; color:var(--cnc-ink-2); margin-top:18px; max-width:32ch;">
+      Government writes the check. Centene takes a slice for administering it. The rest flows through to doctors, hospitals, and pharmacies.
+    </p>
+
+    <div class="premium-flow">
+      <svg viewBox="0 0 392 360" aria-hidden="true">
+        <defs>
+          <linearGradient id="flowGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#D8442C" stop-opacity="0.05"/>
+            <stop offset="1" stop-color="#D8442C" stop-opacity="0.55"/>
+          </linearGradient>
+          <linearGradient id="seg-mcd" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D8442C"/><stop offset="1" stop-color="#B5331E"/></linearGradient>
+        </defs>
+
+        <!-- Source -->
+        <text x="196" y="22" text-anchor="middle" font-family="Geist Mono" font-size="10" letter-spacing="2" fill="#6E6C66">SOURCE · GOVERNMENT &amp; ACA</text>
+
+        <!-- Top bar = total premium revenue -->
+        <rect x="20" y="36" width="352" height="22" rx="2" fill="#14140F"/>
+        <text x="196" y="51" text-anchor="middle" font-family="Instrument Serif" font-size="14" fill="#F6F4EE">$174.58B</text>
+
+        <!-- Segment splits -->
+        <!-- Medicaid 57% -->
+        <path d="M20 58 L20 110 L220 156 L220 130 Z" fill="#D8442C" opacity="0.92" class="flow-seg" data-delay="0"/>
+        <!-- Commercial 21% -->
+        <path d="M220 58 L220 110 L300 156 L300 130 Z" fill="#F4A940" opacity="0.92" class="flow-seg" data-delay="120"/>
+        <!-- Medicare 19% -->
+        <path d="M300 58 L300 110 L360 156 L360 130 Z" fill="#5B8FD4" opacity="0.92" class="flow-seg" data-delay="240"/>
+        <!-- Other 3% -->
+        <path d="M360 58 L360 110 L372 156 L372 130 Z" fill="#6DBF8A" opacity="0.92" class="flow-seg" data-delay="360"/>
+
+        <!-- Routing channels -->
+        <rect x="20"  y="156" width="200" height="20" fill="#D8442C"/>
+        <rect x="220" y="156" width="80"  height="20" fill="#F4A940"/>
+        <rect x="300" y="156" width="60"  height="20" fill="#5B8FD4"/>
+        <rect x="360" y="156" width="12"  height="20" fill="#6DBF8A"/>
+
+        <!-- Big claims pour-out -->
+        <text x="196" y="200" text-anchor="middle" font-family="Geist Mono" font-size="10" letter-spacing="2" fill="#6E6C66">CLAIMS PAID OUT</text>
+
+        <!-- 91.9% claim sluice -->
+        <path d="M20 210 L372 210 L325 290 L67 290 Z" fill="url(#flowGrad)"/>
+        <path d="M20 210 L372 210 L325 290 L67 290 Z" fill="none" stroke="#D8442C" stroke-width="1"/>
+
+        <!-- Big % -->
+        <text x="196" y="262" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="68" fill="#D8442C">91.9%</text>
+        <text x="196" y="284" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#6E6C66">HEALTH BENEFITS RATIO · FY'25</text>
+
+        <!-- Drips -->
+        <circle cx="120" cy="320" r="3" fill="#D8442C"/>
+        <circle cx="196" cy="332" r="4" fill="#D8442C"/>
+        <circle cx="272" cy="318" r="2.5" fill="#D8442C"/>
+      </svg>
+    </div>
+
+    <div class="premium-legend">
+      <div class="pl-row">
+        <div class="pl-pct" style="color:#D8442C">57%</div>
+        <div class="pl-label">Medicaid</div>
+        <div class="pl-growth up">+8% YoY</div>
+      </div>
+      <div class="pl-row">
+        <div class="pl-pct" style="color:#F4A940">21%</div>
+        <div class="pl-label">Commercial · ACA</div>
+        <div class="pl-growth up">+25% YoY</div>
+      </div>
+      <div class="pl-row">
+        <div class="pl-pct" style="color:#5B8FD4">19%</div>
+        <div class="pl-label">Medicare</div>
+        <div class="pl-growth up">+62% YoY</div>
+      </div>
+      <div class="pl-row">
+        <div class="pl-pct" style="color:#6DBF8A">3%</div>
+        <div class="pl-label">Other</div>
+        <div class="pl-growth">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       3. SCALE
+       ============================================================ -->
+  <section class="scale beat" data-screen-label="03 Scale">
+    <div class="eyebrow"><span class="dot"></span><span>The reach · who is on the rolls</span></div>
+    <h2 class="display" style="font-size:44px;">A country-sized<br/><span class="italic">membership.</span></h2>
+
+    <!-- 27.6M members visualized as a dot field -->
+    <div class="members-grid">
+      <svg viewBox="0 0 392 96" preserveAspectRatio="none" id="members-dots"></svg>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:6px;">
+      <div style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; color:var(--cnc-ink-3); text-transform:uppercase;">Each dot · ~85,000 members</div>
+      <div style="font-family:var(--font-display); font-size:30px; line-height:1;">27.6M</div>
+    </div>
+
+    <div class="scale-stack" style="margin-top:48px;">
+      <div class="scale-row">
+        <div class="scale-num"><span class="counter" data-to="50">0</span><span class="unit">states</span></div>
+        <div class="scale-cap">
+          <div class="lab">Coverage</div>
+          <div class="desc">All 50, plus a sliver of international.</div>
+        </div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-num"><span class="counter" data-to="60500" data-format="comma">0</span></div>
+        <div class="scale-cap">
+          <div class="lab">Employees</div>
+          <div class="desc">Working out of St.&nbsp;Louis and regional brands.</div>
+        </div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-num">#<span class="counter" data-to="1">0</span></div>
+        <div class="scale-cap">
+          <div class="lab">Largest U.S. Medicaid MCO</div>
+          <div class="desc">And the largest stand-alone Medicare Part D sponsor.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reset beat -->
+  <div class="reset">
+    <p>The business is simple. Take in <span class="em italic">a hundred cents.</span> Send <span class="em italic">ninety-two</span> back out the door as someone else's medical bill.</p>
+  </div>
+
+  <!-- ============================================================
+       4. THE DOLLAR — cost breakdown
+       ============================================================ -->
+  <section class="dollar beat" data-screen-label="04 The Dollar">
+    <div class="eyebrow"><span class="dot"></span><span>A hundred cents in</span></div>
+    <div class="dollar-head">
+      <h2>What happens to <span class="italic">one premium dollar.</span></h2>
+      <div class="sub">Most of it doesn't stay. It moves through Centene to the people delivering care.</div>
+    </div>
+
+    <!-- 100-cent grid; built in JS to honor exact pcts -->
+    <div class="cents" id="cents"></div>
+
+    <div class="cents-legend" id="cents-legend">
+      <!-- Filled by JS to keep colors in sync -->
+    </div>
+
+    <div class="dollar-survives">
+      <div class="big">~–4¢</div>
+      <div class="small">Operating margin in <em>FY '25.</em> Heavy medical costs and ACA risk-adjustment pressure pushed the dollar past break-even.</div>
+    </div>
+  </section>
+
+  <!-- Reset beat (light) -->
+  <div class="reset light">
+    <p><span class="italic">Ninety-nine percent</span> of that flow happens inside one country — and it shows.</p>
+  </div>
+
+  <!-- ============================================================
+       5. FOOTPRINT
+       ============================================================ -->
+  <section class="footprint beat" data-screen-label="05 Footprint">
+    <div class="pad">
+      <div class="eyebrow"><span class="dot"></span><span>The map · where the dollars land</span></div>
+      <h2 class="display" style="font-size:44px;">Domestic by <span class="italic">design.</span></h2>
+      <p style="font-family:var(--font-sans); font-size:14px; line-height:1.55; color:var(--cnc-ink-2); margin-top:16px; max-width:32ch;">
+        Centene runs on state contracts. State by state, RFP by RFP, the membership compounds.
+      </p>
+    </div>
+
+    <div class="map-wrap">
+      <!-- Hand-built abstracted US silhouette + dot field -->
+      <svg viewBox="0 0 416 240" aria-hidden="true">
+        <defs>
+          <pattern id="dots" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1.1" fill="#D8442C" opacity="0.62"/>
+          </pattern>
+        </defs>
+        <!-- Stylized US lower-48 -->
+        <path id="us"
+          d="M30 110
+             L70 92 L110 84 L150 80 L188 76 L222 74 L262 72 L300 78 L340 80 L380 88 L390 102
+             L380 122 L386 138 L380 152 L368 168 L344 178 L320 188 L298 196 L268 200 L240 198
+             L222 204 L200 208 L182 206 L168 200 L150 198 L132 204 L116 198 L100 192 L84 184
+             L66 172 L52 158 L40 142 L32 126 Z"
+          fill="url(#dots)"
+          stroke="#14140F"
+          stroke-width="1.2"
+          stroke-linejoin="round"/>
+
+        <!-- Florida hook -->
+        <path d="M310 196 L320 210 L330 222 L324 226 L316 218 L308 206 Z"
+              fill="url(#dots)" stroke="#14140F" stroke-width="1.2" stroke-linejoin="round"/>
+
+        <!-- Annotation lines -->
+        <line x1="60"  y1="60"  x2="60"  y2="92"  stroke="#14140F" stroke-width="0.6"/>
+        <text x="60" y="50" font-family="Geist Mono" font-size="9" fill="#14140F" letter-spacing="1">50 STATES</text>
+
+        <line x1="380" y1="50" x2="380" y2="86" stroke="#14140F" stroke-width="0.6"/>
+        <text x="380" y="40" font-family="Geist Mono" font-size="9" fill="#14140F" letter-spacing="1" text-anchor="end">99% U.S.</text>
+
+        <!-- HQ marker -->
+        <circle cx="218" cy="138" r="4" fill="#14140F"/>
+        <circle cx="218" cy="138" r="9" fill="none" stroke="#14140F" stroke-width="0.8" stroke-dasharray="2 2"/>
+        <text x="218" y="160" font-family="Geist Mono" font-size="9" fill="#14140F" letter-spacing="1" text-anchor="middle">HQ · ST. LOUIS</text>
+      </svg>
+    </div>
+
+    <div class="map-cap">
+      <div>
+        <div class="num">99%</div>
+        <div class="lab">United States</div>
+      </div>
+      <div>
+        <div class="num">1%</div>
+        <div class="lab">International</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       6. THE WEIGHT — dark goodwill impairment beat
+       ============================================================ -->
+  <section class="weight beat--dark" data-screen-label="06 Weight">
+    <div class="eyebrow"><span class="dot"></span><span>The bill · Q3 2025</span></div>
+    <h2>A <span class="italic signal">$6.72B</span><br/>non-cash<br/>writedown.</h2>
+    <p class="body">
+      Triggered by a <em>declining stock price</em> and policy uncertainty, Centene wrote down goodwill in Q3. It didn't move cash — but it <em>flipped the year red.</em>
+    </p>
+
+    <div class="impairment-bars" id="imp-bars">
+      <div class="imp-row">
+        <div class="label">Operating CF</div>
+        <div class="imp-bar gain"><div class="fill" data-w="56%"></div><div class="num">+$5.09B</div></div>
+      </div>
+      <div class="imp-row">
+        <div class="label">Free CF</div>
+        <div class="imp-bar gain"><div class="fill" data-w="48%"></div><div class="num">+$4.32B</div></div>
+      </div>
+      <div class="imp-row">
+        <div class="label">Goodwill imp.</div>
+        <div class="imp-bar"><div class="fill" data-w="74%"></div><div class="num">–$6.72B</div></div>
+      </div>
+      <div class="imp-row">
+        <div class="label">Net loss</div>
+        <div class="imp-bar"><div class="fill" data-w="73%"></div><div class="num">–$6.67B</div></div>
+      </div>
+    </div>
+
+    <div class="weight-footnote">
+      Q4 '25 EPS landed at <span style="color:#ECEAE3; font-family:var(--font-mono);">–$1.19</span> on $49.73B of revenue. Buybacks slowed sharply; management guided to debt reduction in 2026.
+    </div>
+  </section>
+
+  <!-- Reset beat -->
+  <div class="reset">
+    <p>The peers are circling — <span class="em italic">smaller, leaner, faster.</span></p>
+  </div>
+
+  <!-- ============================================================
+       7. COMPETITION
+       ============================================================ -->
+  <section class="competition beat" data-screen-label="07 Competition">
+    <div class="comp-head">
+      <div class="eyebrow"><span class="dot"></span><span>Competition · revenue at scale</span></div>
+      <h2>Big in revenue.<br/><span class="italic">Pinned</span> at the cap.</h2>
+      <div class="sub">Centene's revenue is multiples of its rivals'. Its market cap, less so. Tap a row to expand.</div>
+    </div>
+
+    <div class="comp-stack" id="comp-stack">
+      <!-- CNC -->
+      <div class="comp-row cnc" data-open="0">
+        <div class="comp-top">
+          <div>
+            <div class="comp-name">Centene</div>
+            <div class="comp-tick">NYSE · CNC</div>
+          </div>
+          <div></div>
+          <div class="comp-cap">
+            <span class="lab">Mkt Cap</span>
+            $18.77B
+          </div>
+        </div>
+        <div class="comp-bar"><div class="fill" data-w="100%"></div></div>
+        <div class="comp-foot">
+          <span>Revenue</span>
+          <span class="rev">$174.58B<span class="comp-toggle">+</span></span>
+        </div>
+        <div class="comp-desc">
+          <div class="comp-tag">Largest U.S. Medicaid MCO · Largest stand-alone Medicare Part D sponsor</div>
+          <p style="margin-top:10px;">27.6M members across 50 states. Operating margin –4.4% in FY '25 after the goodwill writedown. Net loss $6.67B.</p>
+        </div>
+      </div>
+
+      <!-- MOH -->
+      <div class="comp-row" data-open="0">
+        <div class="comp-top">
+          <div>
+            <div class="comp-name">Molina</div>
+            <div class="comp-tick">NYSE · MOH</div>
+          </div>
+          <div></div>
+          <div class="comp-cap">
+            <span class="lab">Mkt Cap</span>
+            $7.97B
+          </div>
+        </div>
+        <div class="comp-bar"><div class="fill" data-w="26%"></div></div>
+        <div class="comp-foot">
+          <span>Revenue</span>
+          <span class="rev">$45.43B<span class="comp-toggle">+</span></span>
+        </div>
+        <div class="comp-desc">
+          <div class="comp-tag">Direct rival · Medicaid &amp; Marketplace</div>
+          <p style="margin-top:10px;">Smaller and more focused — competes for the same state RFPs that drive Centene's core. P/E 16.89×. Revenue +11.75% YoY.</p>
+        </div>
+      </div>
+
+      <!-- THC -->
+      <div class="comp-row" data-open="0">
+        <div class="comp-top">
+          <div>
+            <div class="comp-name">Tenet</div>
+            <div class="comp-tick">NYSE · THC</div>
+          </div>
+          <div></div>
+          <div class="comp-cap">
+            <span class="lab">Mkt Cap</span>
+            $17.10B
+          </div>
+        </div>
+        <div class="comp-bar"><div class="fill" data-w="12%"></div></div>
+        <div class="comp-foot">
+          <span>Revenue</span>
+          <span class="rev">$21.31B<span class="comp-toggle">+</span></span>
+        </div>
+        <div class="comp-desc">
+          <div class="comp-tag">Provider tension · hospitals &amp; outpatient</div>
+          <p style="margin-top:10px;">On the other side of the contracting table — network-adequacy and provider-rate friction with Centene's vertical-care push. P/E 12.15×. Revenue +3.12% YoY.</p>
+        </div>
+      </div>
+
+      <!-- LH -->
+      <div class="comp-row" data-open="0">
+        <div class="comp-top">
+          <div>
+            <div class="comp-name">Labcorp</div>
+            <div class="comp-tick">NYSE · LH</div>
+          </div>
+          <div></div>
+          <div class="comp-cap">
+            <span class="lab">Mkt Cap</span>
+            $22.30B
+          </div>
+        </div>
+        <div class="comp-bar"><div class="fill" data-w="8%"></div></div>
+        <div class="comp-foot">
+          <span>Revenue</span>
+          <span class="rev">$13.95B<span class="comp-toggle">+</span></span>
+        </div>
+        <div class="comp-desc">
+          <div class="comp-tag">Specialty &amp; clinical · diagnostics</div>
+          <p style="margin-top:10px;">Competes with Centene's specialty, diagnostics, and value-based-care analytics across its Medicaid and Medicare base. P/E 25.45×. Revenue +7.25% YoY.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       8. THE BET — capital allocation
+       ============================================================ -->
+  <section class="bet beat" data-screen-label="08 The Bet">
+    <div class="eyebrow"><span class="dot"></span><span>The bet · capital allocation</span></div>
+    <h2>The <span class="italic">balance</span> sheet,<br/>literally.</h2>
+    <div class="lede">$17.35B of debt against $19.95B of equity — and $17.89B of cash sitting next to a $4B undrawn credit line.</div>
+
+    <!-- Balance scale -->
+    <div class="scale-balance">
+      <svg id="balance" viewBox="0 0 392 200" aria-hidden="true">
+        <!-- Base -->
+        <rect x="180" y="180" width="32" height="6" fill="#14140F"/>
+        <rect x="170" y="186" width="52" height="4" fill="#14140F"/>
+        <!-- Pole -->
+        <rect x="194" y="48" width="4" height="134" fill="#14140F"/>
+        <!-- Beam -->
+        <g id="beam" style="transform-origin: 196px 50px; transition: transform 1.4s var(--ease-spring);">
+          <rect x="60" y="48" width="272" height="3" fill="#14140F"/>
+          <!-- Left chain & pan: equity (slightly heavier) -->
+          <line x1="80" y1="51" x2="80" y2="100" stroke="#14140F" stroke-width="1"/>
+          <rect x="40" y="100" width="80" height="6" fill="#14140F"/>
+          <text x="80" y="92" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#14140F">$19.95B</text>
+          <text x="80" y="124" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#6E6C66" letter-spacing="2">EQUITY</text>
+
+          <!-- Right chain & pan: debt -->
+          <line x1="312" y1="51" x2="312" y2="100" stroke="#14140F" stroke-width="1"/>
+          <rect x="272" y="100" width="80" height="6" fill="#14140F"/>
+          <text x="312" y="92" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#D8442C">$17.35B</text>
+          <text x="312" y="124" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#6E6C66" letter-spacing="2">DEBT</text>
+        </g>
+        <!-- Pivot -->
+        <circle cx="196" cy="50" r="4" fill="#D8442C"/>
+      </svg>
+    </div>
+
+    <div class="bet-foot">
+      <div>
+        <div class="k">Cash on hand</div>
+        <div class="v">$17.89B</div>
+        <div class="vn">+ $4.0B undrawn revolver</div>
+      </div>
+      <div>
+        <div class="k">Capex · FY '25</div>
+        <div class="v">$767M</div>
+        <div class="vn">Free cash flow $4.32B</div>
+      </div>
+      <div>
+        <div class="k">Buybacks · TTM</div>
+        <div class="v">$737M</div>
+        <div class="vn">Slowed sharply in '25</div>
+      </div>
+      <div>
+        <div class="k">Dividend</div>
+        <div class="v">—</div>
+        <div class="vn">Doesn't pay one</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reset beat -->
+  <div class="reset light">
+    <p>You started at <span class="italic em">a hundred cents</span>. Here is where the year ends.</p>
+  </div>
+
+  <!-- ============================================================
+       9. CLOSE — thesis inversion
+       ============================================================ -->
+  <section class="close" data-screen-label="09 Close">
+    <div class="eyebrow"><span class="dot"></span><span>The takeaway</span></div>
+    <h2 class="close-head">
+      $174.58B in.<br/>
+      <span class="em">Less than zero</span><br/>
+      out, this year<span class="signal">.</span>
+    </h2>
+    <p class="close-body">
+      The plumbing still works. The pipes still carry the dollars of <em>27.6 million</em> Americans through to the people who treat them. What 2025 took was the <em>margin</em>, and a writedown of the patience the market once had.
+      <br/><br/>
+      2026 is about <em>getting the dollar back above zero.</em>
+    </p>
+
+    <div class="close-foot">
+      <span>NYSE · CNC</span>
+      <span>Recap · FY '25</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ============================================================
+  // SCROLL PROGRESS + REVEALS
+  // ============================================================
+  const progress = document.getElementById('progress');
+  const updateProgress = () => {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    progress.style.setProperty('--scroll-pct', pct + '%');
+  };
+  window.addEventListener('scroll', updateProgress, {passive:true});
+  updateProgress();
+
+  // Reveal-on-scroll (and trigger animations)
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        // counters
+        if (e.target.dataset && e.target.dataset.to) animateCounter(e.target);
+        // bars
+        if (e.target.classList.contains('imp-row')) {
+          const fill = e.target.querySelector('.fill');
+          if (fill) fill.style.width = fill.dataset.w;
+        }
+        if (e.target.classList.contains('comp-row')) {
+          const fill = e.target.querySelector('.comp-bar .fill');
+          if (fill) fill.style.width = fill.dataset.w;
+        }
+        if (e.target.id === 'cents') buildCents();
+        if (e.target.id === 'balance-trigger') triggerBalance();
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold: 0.2});
+
+  document.querySelectorAll('.reveal, .imp-row, .comp-row, [data-to], #cents').forEach(el => io.observe(el));
+
+  // ============================================================
+  // COUNTERS
+  // ============================================================
+  function animateCounter(el) {
+    const to = parseFloat(el.dataset.to);
+    const fmt = el.dataset.format;
+    const dur = 1400;
+    const start = performance.now();
+    const ease = (t) => 1 - Math.pow(1 - t, 3);
+    function step(now) {
+      const t = Math.min(1, (now - start) / dur);
+      const v = to * ease(t);
+      let out;
+      if (fmt === 'comma') out = Math.round(v).toLocaleString();
+      else out = Math.round(v);
+      el.textContent = out;
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  // Manually trigger counters that aren't .reveal
+  document.querySelectorAll('[data-to]').forEach(el => {
+    el.dataset.to && el.classList.add('counter-target');
+  });
+
+  // ============================================================
+  // 27.6M MEMBERS DOTGRID
+  // 325 dots ~ 85k each
+  // ============================================================
+  (function members() {
+    const svg = document.getElementById('members-dots');
+    if (!svg) return;
+    const cols = 26, rows = 13;
+    const w = 392, h = 96;
+    const dx = w / cols, dy = h / rows;
+    let html = '';
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = c * dx + dx / 2 + (r % 2 ? dx * 0.15 : 0);
+        const y = r * dy + dy / 2;
+        html += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.6" fill="#14140F" opacity="${0.55 + Math.random() * 0.4}"/>`;
+      }
+    }
+    svg.innerHTML = html;
+  })();
+
+  // ============================================================
+  // 100-CENT GRID
+  // ============================================================
+  const COSTS = [
+    { pct: 84, color: '#E05C5C', label: 'Medical Costs (Health Benefits)' },
+    { pct: 7,  color: '#5B8FD4', label: 'SG&A' },
+    { pct: 3,  color: '#F4A940', label: 'Premium Tax & Pass-Through' },
+    { pct: 2,  color: '#6DBF8A', label: 'Cost of Revenue' },
+    { pct: 1,  color: '#A97DC9', label: 'Depreciation & Amortization' }
+  ];
+  // remaining 3¢ accounts for slight rounding / margin recovery — left neutral
+
+  function buildCents() {
+    const grid = document.getElementById('cents');
+    if (!grid || grid.children.length) return;
+    // 100 cells
+    const cells = [];
+    for (let i = 0; i < 100; i++) {
+      const div = document.createElement('div');
+      div.className = 'cent';
+      grid.appendChild(div);
+      cells.push(div);
+    }
+    // assign colors with stagger
+    let idx = 0;
+    COSTS.forEach((c, ci) => {
+      for (let k = 0; k < c.pct; k++) {
+        const cell = cells[idx];
+        const localIdx = idx;
+        setTimeout(() => {
+          cell.style.background = c.color;
+          cell.style.transform = 'scale(1.06)';
+          setTimeout(() => cell.style.transform = '', 220);
+        }, 200 + localIdx * 18);
+        idx++;
+      }
+    });
+
+    // Build legend
+    const legend = document.getElementById('cents-legend');
+    legend.innerHTML = '';
+    COSTS.forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <div class="swatch" style="background:${c.color}"></div>
+        <div class="lab">${c.label}</div>
+        <div class="pct">${c.pct}<span class="small">¢</span></div>
+      `;
+      legend.appendChild(row);
+    });
+  }
+
+  // ============================================================
+  // BALANCE SCALE — slight asymmetric tilt
+  // ============================================================
+  const beam = document.getElementById('beam');
+  const balanceEl = document.querySelector('.scale-balance');
+  if (balanceEl && beam) {
+    const obs = new IntersectionObserver((es) => {
+      es.forEach(e => {
+        if (e.isIntersecting) {
+          // Tilt slightly toward equity (heavier left)
+          beam.style.transform = 'rotate(-3deg)';
+          setTimeout(() => beam.style.transform = 'rotate(-1.5deg)', 1500);
+          obs.unobserve(e.target);
+        }
+      });
+    }, {threshold: 0.4});
+    obs.observe(balanceEl);
+  }
+
+  // ============================================================
+  // COMPETITORS — tap to expand
+  // ============================================================
+  document.querySelectorAll('.comp-row').forEach(row => {
+    row.addEventListener('click', () => {
+      row.classList.toggle('open');
+    });
+  });
+
+  // ============================================================
+  // SOURCE CHIPS — tap to reveal
+  // ============================================================
+  document.querySelectorAll('.src').forEach(s => {
+    s.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      document.querySelectorAll('.src.show').forEach(x => x !== s && x.classList.remove('show'));
+      s.classList.toggle('show');
+      setTimeout(() => s.classList.remove('show'), 2400);
+    });
+  });
+
+  // ============================================================
+  // EKG line subtle scroll-coupled scale
+  // ============================================================
+  const ekg = document.getElementById('ekg');
+  if (ekg) {
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      // small phase shift
+      ekg.setAttribute('stroke-dasharray', '4 ' + (1 + (y % 30) * 0.04));
+    }, {passive: true});
+  }
+</script>
+</body>
+</html>

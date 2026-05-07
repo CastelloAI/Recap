@@ -1,0 +1,1613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>FDS · Recap FY '25</title>
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  /* ============================================================
+     FactSet recap — mobile-width long-form scroll artifact.
+     Frame is the page. No phone bezel.
+     ============================================================ */
+
+  :root {
+    /* FactSet's signal isn't coral — it's a workstation blue.
+       We keep the design-system tokens but introduce a tuned signal
+       just for this recap. */
+    --signal:      #1F4F8B;   /* deep workstation ink-blue */
+    --signal-soft: #DCE6F2;
+    --signal-glow: #4F86C6;   /* echoes biggest_costs[0].color */
+    --rule:        #DCD8CD;
+    --paper-warm:  #F7F4EC;
+    --grid-line:   rgba(20,20,20,0.06);
+    --num-pos:     #2BB673;
+    --num-neg:     #D94F3D;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #2A2826;            /* dark gutter outside the page */
+    font-family: var(--font-sans);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* The page itself — mobile width, paper background, no device frame */
+  .page {
+    max-width: 430px;
+    margin: 0 auto;
+    background: var(--paper);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ───────────────── Persistent chrome ───────────────── */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    background: rgba(251,250,247,0.78);
+    border-bottom: 1px solid var(--line);
+  }
+  .chrome-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 20px 12px;
+  }
+  .chrome-ticker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    padding: 3px 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    background: var(--bg-raised);
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .chrome-spacer { flex: 1; }
+  .chrome-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+  }
+  .chrome-progress {
+    height: 1.5px;
+    background: var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .chrome-progress-fill {
+    position: absolute; inset: 0 100% 0 0;
+    background: var(--signal);
+    transform-origin: left;
+    transition: right 80ms linear;
+  }
+  .chrome-quote {
+    display: flex; align-items: baseline; gap: 8px;
+    padding: 0 20px 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--line);
+  }
+  .chrome-quote .px { color: var(--ink); font-weight: 500; }
+  .chrome-quote .chg { color: var(--num-pos); }
+  .chrome-quote .dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 999px;
+    background: var(--num-pos);
+    animation: pulse 2.4s ease-in-out infinite;
+    margin-right: 2px;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  /* ───────────────── Section primitives ───────────────── */
+  section {
+    position: relative;
+    padding: 56px 24px;
+  }
+  section.tight { padding: 40px 24px; }
+  section.flush { padding: 0; }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 500;
+    color: var(--signal);
+    display: inline-flex; align-items: center; gap: 8px;
+    margin: 0 0 18px;
+  }
+  .eyebrow .num {
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+  }
+  .eyebrow .bar {
+    width: 24px; height: 1.5px; background: var(--signal); display: inline-block;
+  }
+
+  h1.thesis, h2.beat {
+    font-family: var(--font-display);
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: -0.018em;
+    margin: 0;
+  }
+  h1.thesis { font-size: 56px; line-height: 0.96; }
+  h2.beat   { font-size: 38px; line-height: 1.02; }
+  h2.beat em, h1.thesis em { font-style: italic; }
+  .signal { color: var(--signal); }
+  .signal-glow { color: var(--signal-glow); }
+  .ital { font-style: italic; font-family: var(--font-display); }
+
+  p.body {
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 36ch;
+    text-wrap: pretty;
+  }
+  p.body em { font-style: italic; font-family: var(--font-display); font-size: 17px; color: var(--signal); letter-spacing: -0.005em; }
+  p.body strong { color: var(--ink); font-weight: 500; }
+
+  .caption {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+  }
+
+  /* ───────────────── Reset beats ───────────────── */
+  .reset {
+    background: var(--paper-warm);
+    padding: 36px 28px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .reset::before {
+    content: "";
+    position: absolute;
+    left: 28px; top: 18px;
+    width: 18px; height: 1.5px;
+    background: var(--signal);
+  }
+  .reset p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.28;
+    color: var(--ink-2);
+    margin: 14px 0 0;
+    letter-spacing: -0.01em;
+    max-width: 30ch;
+  }
+  .reset p em { color: var(--signal); font-style: italic; }
+  .reset .meta-tag {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+  }
+
+  /* ============================================================
+     1. THESIS / HERO
+     A workstation grid: 12×N cells of monospace numbers,
+     one cell at center holds the headline.
+     ============================================================ */
+  .hero {
+    padding: 72px 0 64px;
+    position: relative;
+    overflow: hidden;
+    background: var(--paper);
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: 35.83px 28px;  /* 12 cols across 430px */
+    pointer-events: none;
+    mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+  }
+  /* live ticker tape across the top of the hero */
+  .ticker-tape {
+    position: relative;
+    overflow: hidden;
+    height: 22px;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .ticker-tape-track {
+    display: inline-flex;
+    white-space: nowrap;
+    animation: tape 50s linear infinite;
+    padding-top: 4px;
+  }
+  .ticker-tape-track span {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    margin: 0 18px;
+    letter-spacing: 0.04em;
+  }
+  .ticker-tape-track span b {
+    font-weight: 500;
+    color: var(--ink);
+    margin-right: 6px;
+  }
+  .ticker-tape-track span i.up   { font-style: normal; color: var(--num-pos); }
+  .ticker-tape-track span i.down { font-style: normal; color: var(--num-neg); }
+  @keyframes tape {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  .hero-inner {
+    position: relative;
+    padding: 56px 24px 0;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 28px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hero-eyebrow .pill {
+    border: 1px solid var(--signal);
+    color: var(--signal);
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: 60px;
+    line-height: 0.94;
+    font-weight: 400;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    margin: 0 0 24px;
+  }
+  .hero h1 .accent { color: var(--signal); }
+  .hero h1 em { font-style: italic; }
+  .hero-sub {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 34ch;
+    margin: 0 0 36px;
+  }
+  .hero-sub em {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--signal);
+  }
+  .hero-meta {
+    display: flex; gap: 20px;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .hero-meta .cell {
+    flex: 1;
+  }
+  .hero-meta .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-3);
+    margin-bottom: 6px;
+  }
+  .hero-meta .v {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .hero-meta .v small {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    margin-left: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ============================================================
+     2. THE BUSINESS — workstation cell that renders ASV pulse
+     ============================================================ */
+  .pulse-stage {
+    margin: 28px -4px 0;
+    background: #0E1A2C;
+    color: #E8EEF6;
+    border-radius: var(--r-md);
+    padding: 22px 18px 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 24px 48px -28px rgba(31, 79, 139, 0.45);
+  }
+  .pulse-stage::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 14px 14px;
+    pointer-events: none;
+  }
+  .pulse-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(232,238,246,0.55);
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .pulse-head .live {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--signal-glow);
+  }
+  .pulse-head .live::before {
+    content: ""; width: 6px; height: 6px; border-radius: 999px;
+    background: var(--signal-glow);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .pulse-svg { width: 100%; height: 110px; display: block; position: relative; }
+  .pulse-readout {
+    display: flex; gap: 16px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+  }
+  .pulse-readout .cell { flex: 1; }
+  .pulse-readout .k {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(232,238,246,0.5);
+    margin-bottom: 4px;
+  }
+  .pulse-readout .v {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1;
+    color: #E8EEF6;
+    letter-spacing: -0.01em;
+  }
+  .pulse-readout .v small {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--signal-glow);
+    margin-left: 3px;
+  }
+
+  /* ============================================================
+     3. THE SCALE — counters + comparative geometry
+     ============================================================ */
+  .scale-figs {
+    display: flex; flex-direction: column; gap: 26px;
+    margin-top: 24px;
+  }
+  .scale-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 12px;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 22px;
+  }
+  .scale-row:last-child { border-bottom: none; }
+  .scale-label {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.35;
+    max-width: 22ch;
+  }
+  .scale-label small {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 4px;
+  }
+  .scale-fig {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.92;
+    color: var(--ink);
+    letter-spacing: -0.022em;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .scale-fig sub {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    margin-left: 4px;
+    vertical-align: 6px;
+  }
+  .scale-fig em {
+    font-style: italic;
+    color: var(--signal);
+  }
+  /* Bar showing relative scale (svg) */
+  .scale-bar {
+    grid-column: 1 / -1;
+    height: 4px;
+    background: var(--line);
+    margin-top: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .scale-bar > i {
+    position: absolute; inset: 0 100% 0 0;
+    background: linear-gradient(90deg, var(--signal-glow), var(--signal));
+    transition: right 1.2s var(--ease-out);
+  }
+
+  /* ============================================================
+     4. WHERE THE MONEY GOES — dollar broken into 100 cells.
+     Honors the supplied biggest_costs hex colors.
+     ============================================================ */
+  .dollar-grid {
+    --cell: 30px;
+    width: calc(var(--cell) * 10);
+    margin: 28px auto 0;
+    display: grid;
+    grid-template-columns: repeat(10, var(--cell));
+    grid-template-rows: repeat(10, var(--cell));
+    gap: 2px;
+    position: relative;
+  }
+  .dollar-grid .c {
+    background: var(--paper-2);
+    transition: background 320ms var(--ease-out), transform 320ms var(--ease-out);
+    border-radius: 1px;
+  }
+  .dollar-grid .c.lit {
+    transform: scale(1);
+  }
+  .dollar-grid .c.left {
+    background: var(--paper-warm);
+    position: relative;
+  }
+  .dollar-grid .c.left::after {
+    content: "";
+    position: absolute; inset: 0;
+    border: 1px solid rgba(31,79,139,0.18);
+    border-radius: 1px;
+  }
+  .dollar-legend {
+    display: flex; flex-direction: column; gap: 6px;
+    margin-top: 28px;
+  }
+  .dollar-legend .row {
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-2);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .dollar-legend .row:last-child { border-bottom: none; }
+  .dollar-legend .swatch {
+    width: 14px; height: 14px; border-radius: 3px;
+  }
+  .dollar-legend .pct {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+  }
+  .dollar-cap {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 19px;
+    color: var(--ink);
+    margin-top: 22px;
+    line-height: 1.35;
+  }
+  .dollar-cap em { color: var(--signal); }
+
+  /* ============================================================
+     5. FOOTPRINT — three concentric arcs, not a real map
+     ============================================================ */
+  .globe-wrap {
+    margin-top: 24px;
+    background: #F2EFE6;
+    padding: 28px 18px 22px;
+    border-radius: var(--r-md);
+    position: relative;
+    overflow: hidden;
+  }
+  .globe-svg { width: 100%; height: 230px; display: block; }
+  .globe-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .globe-legend .cell {
+    border-top: 1px solid var(--line-strong);
+    padding-top: 10px;
+  }
+  .globe-legend .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 4px;
+  }
+  .globe-legend .v {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .globe-legend .v small {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    margin-left: 2px;
+  }
+
+  /* ============================================================
+     6. THE BET — capital allocation timeline
+     ============================================================ */
+  .bet-section {
+    background: #0E1A2C;
+    color: #E8EEF6;
+    padding: 64px 24px;
+    margin: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .bet-section::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 80% 10%, rgba(79,134,198,0.22), transparent 50%),
+      linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 14px 14px, 14px 14px;
+    pointer-events: none;
+  }
+  .bet-section .eyebrow { color: var(--signal-glow); position: relative; }
+  .bet-section h2 { color: #F4F2ED; font-family: var(--font-display); font-size: 38px; line-height: 1.02; font-weight: 400; letter-spacing: -0.02em; margin: 0 0 16px; position: relative; }
+  .bet-section h2 em { font-style: italic; color: var(--signal-glow); }
+  .bet-section p.body { color: rgba(232,238,246,0.7); position: relative; }
+  .bet-section p.body em { color: var(--signal-glow); font-family: var(--font-display); font-style: italic; }
+  .bet-section p.body strong { color: #F4F2ED; font-weight: 500; }
+
+  .timeline {
+    margin-top: 32px;
+    position: relative;
+    padding-left: 22px;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 5px; top: 6px; bottom: 6px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--signal-glow), rgba(79,134,198,0.1));
+  }
+  .timeline-item {
+    position: relative;
+    padding: 0 0 26px;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -22px; top: 6px;
+    width: 11px; height: 11px;
+    border-radius: 999px;
+    background: #0E1A2C;
+    border: 2px solid var(--signal-glow);
+  }
+  .timeline-item.big::before {
+    width: 13px; height: 13px;
+    left: -23px; top: 5px;
+    background: var(--signal-glow);
+    box-shadow: 0 0 0 4px rgba(79,134,198,0.18);
+  }
+  .timeline-item .when {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(232,238,246,0.5);
+    margin-bottom: 6px;
+  }
+  .timeline-item .what {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1.18;
+    color: #F4F2ED;
+    letter-spacing: -0.01em;
+  }
+  .timeline-item .what em { color: var(--signal-glow); font-style: italic; }
+  .timeline-item .why {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: rgba(232,238,246,0.62);
+    line-height: 1.5;
+    margin-top: 6px;
+    max-width: 32ch;
+  }
+
+  .bet-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 36px;
+    padding-top: 26px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+  }
+  .bet-stats .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(232,238,246,0.5);
+    margin-bottom: 4px;
+  }
+  .bet-stats .v {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+    color: #F4F2ED;
+    letter-spacing: -0.01em;
+  }
+  .bet-stats .v small {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--signal-glow);
+    margin-left: 3px;
+  }
+
+  /* ============================================================
+     7. COMPETITION — three cards built from market-cap rectangles
+     ============================================================ */
+  .compete {
+    margin-top: 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .compete-row {
+    border-top: 1px solid var(--line-strong);
+    padding-top: 18px;
+  }
+  .compete-row .head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .compete-row .name {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .compete-row .ticker {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .compete-bar-wrap {
+    position: relative;
+    height: 38px;
+    margin: 14px 0 8px;
+  }
+  .compete-bar {
+    position: absolute; left: 0; top: 14px;
+    height: 10px;
+    background: var(--paper-3);
+    border-radius: 1px;
+  }
+  .compete-bar.them {
+    height: 10px;
+    background: var(--signal);
+    top: 0;
+  }
+  .compete-bar.us {
+    height: 10px;
+    background: var(--ink);
+    top: 14px;
+  }
+  .compete-bar-tag {
+    position: absolute;
+    top: -2px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .compete-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .compete-stats .cell {
+    border-left: 1px solid var(--line);
+    padding-left: 10px;
+  }
+  .compete-stats .cell:first-child { border-left: none; padding-left: 0; }
+  .compete-stats .k {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 4px;
+  }
+  .compete-stats .v {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.005em;
+  }
+  .compete-row p.note {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    margin-top: 12px;
+  }
+  .compete-row p.note em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--signal);
+    font-size: 14.5px;
+  }
+
+  /* ============================================================
+     8. THE TAKEAWAY — closing thesis inverted
+     ============================================================ */
+  .close {
+    padding: 88px 24px 64px;
+    background: var(--paper);
+  }
+  .close .eyebrow { color: var(--signal); }
+  .close h2 {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.96;
+    font-weight: 400;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .close h2 em { font-style: italic; color: var(--signal); }
+  .close .restate {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.45;
+    color: var(--ink-2);
+    margin: 28px 0 0;
+    max-width: 32ch;
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+  }
+  .close .restate em { color: var(--signal); }
+  .close-fig {
+    margin-top: 36px;
+    display: flex; align-items: baseline; gap: 14px;
+  }
+  .close-fig .num {
+    font-family: var(--font-display);
+    font-size: 92px;
+    line-height: 0.86;
+    color: var(--signal);
+    letter-spacing: -0.025em;
+  }
+  .close-fig .num em { font-style: italic; }
+  .close-fig .frame {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: var(--ink-3);
+    max-width: 16ch;
+  }
+
+  .footer {
+    padding: 28px 24px 40px;
+    border-top: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .footer p {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    line-height: 1.7;
+  }
+
+  /* Reveal-on-scroll utility */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* The hero number that counts up */
+  .countup { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="page" data-screen-label="01 FactSet recap">
+
+  <!-- ───────── Persistent chrome ───────── -->
+  <header class="chrome">
+    <div class="chrome-row">
+      <div class="chrome-ticker">FDS</div>
+      <div class="chrome-name">FactSet Research Systems</div>
+      <div class="chrome-spacer"></div>
+      <div class="chrome-label">Recap · FY '25</div>
+    </div>
+    <div class="chrome-quote">
+      <span class="dot"></span>
+      <span class="px">$8.48B</span>
+      <span>mcap</span>
+      <span style="margin-left:auto"></span>
+      <span>EPS</span>
+      <span class="px">$4.46</span>
+      <span class="chg">Q2 '26</span>
+    </div>
+    <div class="chrome-progress"><div class="chrome-progress-fill" id="progressFill"></div></div>
+  </header>
+
+  <!-- ───────── 1. HERO / THESIS ───────── -->
+  <section class="hero" data-screen-label="02 Thesis">
+    <div class="hero-grid"></div>
+
+    <div class="ticker-tape">
+      <div class="ticker-tape-track">
+        <span><b>FDS</b> 217.34 <i class="up">▲ 0.42%</i></span>
+        <span><b>MSCI</b> 543.10 <i class="down">▼ 0.18%</i></span>
+        <span><b>MORN</b> 308.55 <i class="up">▲ 0.91%</i></span>
+        <span><b>JHG</b> 47.21 <i class="up">▲ 1.20%</i></span>
+        <span><b>SPX</b> 5,812 <i class="up">▲ 0.34%</i></span>
+        <span><b>FDS</b> 217.34 <i class="up">▲ 0.42%</i></span>
+        <span><b>MSCI</b> 543.10 <i class="down">▼ 0.18%</i></span>
+        <span><b>MORN</b> 308.55 <i class="up">▲ 0.91%</i></span>
+        <span><b>JHG</b> 47.21 <i class="up">▲ 1.20%</i></span>
+        <span><b>SPX</b> 5,812 <i class="up">▲ 0.34%</i></span>
+      </div>
+    </div>
+
+    <div class="hero-inner">
+      <div class="hero-eyebrow">
+        <span class="pill">CHAPTER 01</span>
+        <span>The thesis</span>
+      </div>
+      <h1>
+        Hundreds of databases.<br/>
+        <em class="accent">One</em> workstation.
+      </h1>
+      <p class="hero-sub">
+        Since 1978, FactSet has aggregated the world's market data into a single screen — and rented that screen, year after year, to the people who move money. <em>Subscriptions, not transactions.</em>
+      </p>
+
+      <div class="hero-meta">
+        <div class="cell">
+          <div class="k">Clients</div>
+          <div class="v"><span class="countup" data-to="9000" data-suffix="">9,000</span></div>
+        </div>
+        <div class="cell">
+          <div class="k">Users</div>
+          <div class="v"><span class="countup" data-to="237" data-suffix="K">237K</span></div>
+        </div>
+        <div class="cell">
+          <div class="k">Countries</div>
+          <div class="v">20<small>+</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── Reset beat A ───────── -->
+  <div class="reset" data-screen-label="03 Reset A">
+    <div class="meta-tag">Interlude · I</div>
+    <p>The product is the screen. The <em>moat is the cadence</em> — every September, the renewal arrives.</p>
+  </div>
+
+  <!-- ───────── 2. HOW IT MAKES MONEY — ASV pulse ───────── -->
+  <section data-screen-label="04 The business">
+    <div class="eyebrow">
+      <span class="bar"></span>
+      <span class="num">02</span>
+      <span>The business · ASV</span>
+    </div>
+    <h2 class="beat">Recurring, by <em>design.</em></h2>
+    <p class="body" style="margin-top:18px">
+      Nearly every dollar of FactSet's <strong>$2.32B</strong> in FY2025 revenue is recurring — booked under <em>Annual Subscription Value</em>, the contract metric that anchors the business. Workstations, portfolio analytics, data feeds, managed services. <strong>95%+</strong> of clients renew.
+    </p>
+
+    <div class="pulse-stage">
+      <div class="pulse-head">
+        <span>ASV pulse · trailing twelve</span>
+        <span class="live">Live</span>
+      </div>
+      <svg class="pulse-svg" id="pulseSvg" viewBox="0 0 380 110" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="pulseFill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#4F86C6" stop-opacity="0.45"/>
+            <stop offset="100%" stop-color="#4F86C6" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- horizontal grid -->
+        <g stroke="rgba(255,255,255,0.06)" stroke-width="1">
+          <line x1="0" y1="22" x2="380" y2="22"/>
+          <line x1="0" y1="55" x2="380" y2="55"/>
+          <line x1="0" y1="88" x2="380" y2="88"/>
+        </g>
+        <path id="pulseFillPath" d="" fill="url(#pulseFill)"/>
+        <path id="pulsePath" d="" fill="none" stroke="#4F86C6" stroke-width="1.5" stroke-linejoin="round"/>
+        <circle id="pulseDot" cx="0" cy="55" r="3.5" fill="#4F86C6">
+          <animate attributeName="r" values="3.5;5;3.5" dur="1.6s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+      <div class="pulse-readout">
+        <div class="cell">
+          <div class="k">Revenue · FY25</div>
+          <div class="v">$2.32B</div>
+        </div>
+        <div class="cell">
+          <div class="k">Q2 '26 rev</div>
+          <div class="v">$611M</div>
+        </div>
+        <div class="cell">
+          <div class="k">Op margin</div>
+          <div class="v">32.2<small>%</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── 3. THE SCALE ───────── -->
+  <section class="tight" data-screen-label="05 The scale">
+    <div class="eyebrow">
+      <span class="bar"></span>
+      <span class="num">03</span>
+      <span>The scale · what 47 years bought</span>
+    </div>
+    <h2 class="beat">From <em>two founders</em><br/>to twelve thousand.</h2>
+    <p class="body" style="margin-top:18px">
+      Howard Wille and Chuck Snyder started FactSet in 1978 with a single product: cleaner data, faster. Forty-seven years later, the workstation has scaled into a global infrastructure — <em>six continents, ledgered.</em>
+    </p>
+
+    <div class="scale-figs">
+      <div class="scale-row">
+        <div class="scale-label"><small>Annual revenue · FY25</small>The subscription book, in dollars</div>
+        <div class="scale-fig">$<span class="countup" data-to="2.32" data-decimals="2">2.32</span><sub>B</sub></div>
+        <div class="scale-bar"><i style="right: 0%"></i></div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-label"><small>Market cap</small>What the public market pays for that book</div>
+        <div class="scale-fig">$<span class="countup" data-to="8.48" data-decimals="2">8.48</span><sub>B</sub></div>
+        <div class="scale-bar"><i style="right: 0%" data-fill="0"></i></div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-label"><small>Headcount · Aug '25</small>Across six continents</div>
+        <div class="scale-fig"><span class="countup" data-to="12.8" data-decimals="1">12.8</span><sub>K</sub></div>
+        <div class="scale-bar"><i style="right: 0%" data-fill="0"></i></div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-label"><small>Client retention · ASV</small>Renewals, year over year</div>
+        <div class="scale-fig"><em>95</em><sub>%+</sub></div>
+        <div class="scale-bar"><i style="right: 0%" data-fill="0"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── Reset beat B ───────── -->
+  <div class="reset" data-screen-label="06 Reset B">
+    <div class="meta-tag">Interlude · II</div>
+    <p>A subscription book is a beautiful thing. <em>Until you look at what it costs to keep it running.</em></p>
+  </div>
+
+  <!-- ───────── 4. WHERE THE MONEY GOES ───────── -->
+  <section data-screen-label="07 Where the money goes">
+    <div class="eyebrow">
+      <span class="bar"></span>
+      <span class="num">04</span>
+      <span>A hundred cents in</span>
+    </div>
+    <h2 class="beat">Of every <em>dollar</em><br/>billed to clients —</h2>
+    <p class="body" style="margin-top:18px">
+      Cost of revenue alone eats <strong>47 cents</strong>. People take another twenty. Tech, amortization, and overhead claim the rest. <em>What survives</em> is the operating margin.
+    </p>
+
+    <div class="dollar-grid" id="dollarGrid"></div>
+
+    <div class="dollar-legend" id="dollarLegend"></div>
+
+    <p class="dollar-cap">
+      And the <em>~12 cents that remain</em> are what FactSet sends to the bottom of the page.
+    </p>
+  </section>
+
+  <!-- ───────── 5. FOOTPRINT ───────── -->
+  <section style="background: var(--paper-warm);" data-screen-label="08 Footprint">
+    <div class="eyebrow">
+      <span class="bar"></span>
+      <span class="num">05</span>
+      <span>The footprint · three segments</span>
+    </div>
+    <h2 class="beat">Two-thirds <em>American.</em></h2>
+    <p class="body" style="margin-top:18px">
+      FactSet reports through three geographies. The Americas anchor the business; EMEA holds the second tier; Asia Pacific is the smallest — and the steepest <em>growth lever.</em>
+    </p>
+
+    <div class="globe-wrap">
+      <svg class="globe-svg" viewBox="0 0 380 230">
+        <defs>
+          <linearGradient id="ringGrad1" x1="0" x2="1">
+            <stop offset="0%" stop-color="#1F4F8B"/>
+            <stop offset="100%" stop-color="#4F86C6"/>
+          </linearGradient>
+        </defs>
+        <!-- background longitude/latitude lines (very subtle) -->
+        <g stroke="rgba(31,79,139,0.10)" stroke-width="1" fill="none">
+          <ellipse cx="190" cy="115" rx="170" ry="100"/>
+          <ellipse cx="190" cy="115" rx="130" ry="80"/>
+          <ellipse cx="190" cy="115" rx="90" ry="56"/>
+          <ellipse cx="190" cy="115" rx="50" ry="32"/>
+          <line x1="20" y1="115" x2="360" y2="115"/>
+          <line x1="190" y1="15" x2="190" y2="215"/>
+        </g>
+
+        <!-- Three concentric arcs sized to share -->
+        <!-- Americas — 65%, biggest, dark -->
+        <g id="arcAmericas">
+          <circle cx="190" cy="115" r="92" fill="none" stroke="#1F4F8B" stroke-width="14"
+                  stroke-dasharray="0 99999" pathLength="100"
+                  data-pct="65" transform="rotate(-90 190 115)" stroke-linecap="butt"/>
+        </g>
+        <!-- EMEA — 25%, mid -->
+        <g id="arcEmea">
+          <circle cx="190" cy="115" r="68" fill="none" stroke="#4F86C6" stroke-width="14"
+                  stroke-dasharray="0 99999" pathLength="100"
+                  data-pct="25" transform="rotate(-90 190 115)" stroke-linecap="butt"/>
+        </g>
+        <!-- APAC — 10%, smallest -->
+        <g id="arcApac">
+          <circle cx="190" cy="115" r="44" fill="none" stroke="#A8C4E1" stroke-width="14"
+                  stroke-dasharray="0 99999" pathLength="100"
+                  data-pct="10" transform="rotate(-90 190 115)" stroke-linecap="butt"/>
+        </g>
+
+        <!-- Center label -->
+        <text x="190" y="112" text-anchor="middle" font-family="Instrument Serif, serif" font-size="34" fill="#141414" letter-spacing="-0.02em">3</text>
+        <text x="190" y="130" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#6B6A65" letter-spacing="0.18em">SEGMENTS</text>
+
+        <!-- Pointer labels around the arcs -->
+        <g font-family="Geist Mono, monospace" fill="#3B3A37" font-size="10" letter-spacing="0.08em">
+          <text x="20" y="34">AMERICAS</text>
+          <text x="20" y="48" font-size="14" font-family="Instrument Serif, serif" fill="#1F4F8B" letter-spacing="-0.01em">65%</text>
+
+          <text x="290" y="34">EMEA</text>
+          <text x="290" y="48" font-size="14" font-family="Instrument Serif, serif" fill="#1F4F8B" letter-spacing="-0.01em">25%</text>
+
+          <text x="290" y="200">APAC</text>
+          <text x="290" y="214" font-size="14" font-family="Instrument Serif, serif" fill="#1F4F8B" letter-spacing="-0.01em">10%</text>
+        </g>
+      </svg>
+
+      <div class="globe-legend">
+        <div class="cell">
+          <div class="k">Americas</div>
+          <div class="v">65<small>%</small></div>
+        </div>
+        <div class="cell">
+          <div class="k">EMEA</div>
+          <div class="v">25<small>%</small></div>
+        </div>
+        <div class="cell">
+          <div class="k">Asia Pac</div>
+          <div class="v">10<small>%</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── Reset beat C ───────── -->
+  <div class="reset" data-screen-label="09 Reset C">
+    <div class="meta-tag">Interlude · III</div>
+    <p>To grow a workstation business, <em>you buy other workstations.</em> Or the data inside them.</p>
+  </div>
+
+  <!-- ───────── 6. THE BET — dark interlude ───────── -->
+  <section class="bet-section" data-screen-label="10 The bet">
+    <div class="eyebrow">
+      <span style="display:inline-block;width:24px;height:1.5px;background:var(--signal-glow);vertical-align:middle;margin-right:8px"></span>
+      <span style="color: rgba(232,238,246,0.5)">06</span>
+      &nbsp;<span>The bet · capital allocation</span>
+    </div>
+    <h2>How FactSet <em>spends</em> its surplus.</h2>
+    <p class="body">
+      <strong>$617M</strong> of free cash flow in FY25, deployed three ways: <em>acquisitions</em> that add new data assets, <em>buybacks</em> that compound per-share value, and a steady <em>dividend.</em> The leverage ratio is the cost of doing it all at once.
+    </p>
+
+    <div class="timeline">
+      <div class="timeline-item big">
+        <div class="when">2022</div>
+        <div class="what"><em>CUSIP Global Services</em> — the security-identifier monopoly.</div>
+        <div class="why">Financed primarily through new debt; the reason the balance sheet now carries $1.37B in total borrowings.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="when">Feb 2025</div>
+        <div class="what"><em>LiquidityBook</em> — order &amp; execution data.</div>
+        <div class="why">$246.5M acquisition; intangibles amortized straight-line over a ~30-year useful life.</div>
+      </div>
+      <div class="timeline-item big">
+        <div class="when">Sep 2025</div>
+        <div class="what"><em>$400M</em> share repurchase, fresh authorization.</div>
+        <div class="why">Valid through September 2026. Management already deployed $300M+ year-to-date through Q2 FY2026.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="when">FY '25 · ongoing</div>
+        <div class="what"><em>$160M</em> in dividends paid.</div>
+        <div class="why">A predictable cash return on top of the buyback engine.</div>
+      </div>
+    </div>
+
+    <div class="bet-stats">
+      <div class="cell">
+        <div class="k">Free cash flow</div>
+        <div class="v">$617M</div>
+      </div>
+      <div class="cell">
+        <div class="k">Operating CF</div>
+        <div class="v">$726M</div>
+      </div>
+      <div class="cell">
+        <div class="k">Capex</div>
+        <div class="v">$109M</div>
+      </div>
+      <div class="cell">
+        <div class="k">Cash on hand</div>
+        <div class="v">$338M</div>
+      </div>
+      <div class="cell">
+        <div class="k">Total debt</div>
+        <div class="v">$1.37B</div>
+      </div>
+      <div class="cell">
+        <div class="k">Equity</div>
+        <div class="v">$2.19B</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── 7. COMPETITION ───────── -->
+  <section data-screen-label="11 Competition">
+    <div class="eyebrow">
+      <span class="bar"></span>
+      <span class="num">07</span>
+      <span>The competition · weighed</span>
+    </div>
+    <h2 class="beat">Same buy-side, <em>different shape.</em></h2>
+    <p class="body" style="margin-top:18px">
+      Two direct competitors selling adjacent workstations and data feeds. One asset manager whose <em>in-housing</em> reflex is the structural threat — when clients build, they stop renewing.
+    </p>
+
+    <div class="compete">
+
+      <!-- MSCI -->
+      <div class="compete-row">
+        <div class="head">
+          <div class="name">MSCI</div>
+          <div class="ticker">MSCI · $43.0B</div>
+        </div>
+        <!-- bars: FDS = 8.48 vs MSCI 43.03; max width corresponds to MSCI -->
+        <div class="compete-bar-wrap">
+          <span class="compete-bar-tag" style="left:0">FDS · $8.48B</span>
+          <span class="compete-bar-tag" style="left:0; top: 16px">MSCI · $43.03B</span>
+          <div class="compete-bar them" style="width: 100%; top: 22px"></div>
+          <div class="compete-bar us"   style="width: 19.7%; top: 22px; background: var(--ink)"></div>
+        </div>
+        <div class="compete-stats">
+          <div class="cell">
+            <div class="k">Revenue</div>
+            <div class="v">$3.13B</div>
+          </div>
+          <div class="cell">
+            <div class="k">Growth YoY</div>
+            <div class="v">9.8%</div>
+          </div>
+          <div class="cell">
+            <div class="k">P/E TTM</div>
+            <div class="v">35.8</div>
+          </div>
+        </div>
+        <p class="note">Direct rival in <em>portfolio analytics, risk models, and indices</em> — sold to the same buy-side ASV that drives FactSet's growth.</p>
+      </div>
+
+      <!-- Morningstar -->
+      <div class="compete-row">
+        <div class="head">
+          <div class="name">Morningstar</div>
+          <div class="ticker">MORN · $7.29B</div>
+        </div>
+        <div class="compete-bar-wrap">
+          <span class="compete-bar-tag" style="left:0">FDS · $8.48B</span>
+          <span class="compete-bar-tag" style="left:0; top: 16px">MORN · $7.29B</span>
+          <div class="compete-bar us"   style="width: 100%;  top: 22px; background: var(--ink)"></div>
+          <div class="compete-bar them" style="width: 86%;   top: 22px"></div>
+        </div>
+        <div class="compete-stats">
+          <div class="cell">
+            <div class="k">Revenue</div>
+            <div class="v">$2.45B</div>
+          </div>
+          <div class="cell">
+            <div class="k">Growth YoY</div>
+            <div class="v">7.5%</div>
+          </div>
+          <div class="cell">
+            <div class="k">P/E TTM</div>
+            <div class="v">19.5</div>
+          </div>
+        </div>
+        <p class="note">Overlaps across <em>research, data feeds, and wealth-advisor workstations</em>. Closest peer by shape and size.</p>
+      </div>
+
+      <!-- Janus Henderson -->
+      <div class="compete-row">
+        <div class="head">
+          <div class="name">Janus Henderson</div>
+          <div class="ticker">JHG · $7.94B</div>
+        </div>
+        <div class="compete-bar-wrap">
+          <span class="compete-bar-tag" style="left:0">FDS · $8.48B</span>
+          <span class="compete-bar-tag" style="left:0; top: 16px">JHG · $7.94B</span>
+          <div class="compete-bar us"   style="width: 100%; top: 22px; background: var(--ink)"></div>
+          <div class="compete-bar them" style="width: 93.6%; top: 22px"></div>
+        </div>
+        <div class="compete-stats">
+          <div class="cell">
+            <div class="k">Revenue</div>
+            <div class="v">$3.10B</div>
+          </div>
+          <div class="cell">
+            <div class="k">Growth YoY</div>
+            <div class="v">24.7%</div>
+          </div>
+          <div class="cell">
+            <div class="k">P/E TTM</div>
+            <div class="v">9.7</div>
+          </div>
+        </div>
+        <p class="note">Not a workstation rival — an asset manager. The threat is <em>in-housing:</em> large actives building proprietary analytics and dropping third-party seats.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ───────── 8. THE TAKEAWAY ───────── -->
+  <section class="close" data-screen-label="12 Takeaway">
+    <div class="eyebrow">
+      <span class="bar"></span>
+      <span class="num">08</span>
+      <span>The takeaway</span>
+    </div>
+    <h2>
+      Hundreds of databases.<br/>
+      <em>One subscription line.</em>
+    </h2>
+
+    <div class="close-fig">
+      <div class="num">~12<em>¢</em></div>
+      <div class="frame">
+        of every dollar booked makes it to operating income — once the workstation, the people, and the acquisitions are paid for.
+      </div>
+    </div>
+
+    <p class="restate">
+      The opening said the product is the <em>screen.</em> The close says the product is the <em>renewal.</em> Forty-seven years on, FactSet is still selling that September.
+    </p>
+  </section>
+
+  <footer class="footer">
+    <p>Sources · 10-K FY '25 · 10-Q Q2 FY '26<br/>Recap generated for retail investors · figures in USD</p>
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================
+   Scroll progress + reveals + count-ups + scrubbed pulse
+   ============================================================ */
+(function() {
+  const page = document.querySelector('.page');
+  const progress = document.getElementById('progressFill');
+
+  // ───── Scroll progress ─────
+  function onScroll() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    progress.style.right = (100 - pct * 100) + '%';
+    updatePulseDot(pct);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+
+  // ───── Build the dollar grid ─────
+  const COSTS = [
+    { pct: 47, color: '#4F86C6', label: 'Cost of Revenue' },
+    { pct: 20, color: '#E8834E', label: 'Employee Comp & Benefits' },
+    { pct: 8,  color: '#6DBF8A', label: 'Technology & Infrastructure' },
+    { pct: 7,  color: '#B57BCC', label: 'Amortization of Intangibles' },
+    { pct: 6,  color: '#F2C94C', label: 'Selling, General & Admin' }
+  ];
+  const grid = document.getElementById('dollarGrid');
+  const legend = document.getElementById('dollarLegend');
+  const cells = [];
+  for (let i = 0; i < 100; i++) {
+    const c = document.createElement('div');
+    c.className = 'c left';
+    grid.appendChild(c);
+    cells.push(c);
+  }
+  // assign colors by walking row-major; reserve last cells for "what survives"
+  let idx = 0;
+  COSTS.forEach((cost) => {
+    for (let i = 0; i < cost.pct; i++) {
+      if (idx >= 100) break;
+      const cell = cells[idx++];
+      cell.classList.remove('left');
+      cell.dataset.color = cost.color;
+    }
+  });
+  // Mark the remaining cells (operating income, ~12 cents)
+  for (let j = idx; j < 100; j++) {
+    cells[j].classList.add('survives');
+  }
+
+  // legend
+  COSTS.forEach((cost) => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `
+      <span class="swatch" style="background:${cost.color}"></span>
+      <span>${cost.label}</span>
+      <span class="pct">${cost.pct}¢</span>
+    `;
+    legend.appendChild(row);
+  });
+  // Add the "survives" row
+  const survivesRow = document.createElement('div');
+  survivesRow.className = 'row';
+  survivesRow.innerHTML = `
+    <span class="swatch" style="background:transparent;border:1px dashed #1F4F8B"></span>
+    <span><em style="font-family:var(--font-display);font-style:italic;color:#1F4F8B">What survives</em></span>
+    <span class="pct">~12¢</span>
+  `;
+  legend.appendChild(survivesRow);
+
+  // ───── Reveal cells when grid enters viewport, with stagger ─────
+  const dollarObs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        cells.forEach((cell, i) => {
+          setTimeout(() => {
+            if (cell.dataset.color) {
+              cell.style.background = cell.dataset.color;
+            } else if (cell.classList.contains('survives')) {
+              cell.style.background = 'transparent';
+              cell.style.border = '1px dashed #1F4F8B';
+            }
+          }, i * 14);
+        });
+        dollarObs.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+  dollarObs.observe(grid);
+
+  // ───── Donut arcs (footprint) ─────
+  function animateArc(circle, finalPct) {
+    let current = 0;
+    const start = performance.now();
+    const dur = 1100;
+    function step(now) {
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      current = eased * finalPct;
+      circle.setAttribute('stroke-dasharray', `${current} ${100 - current}`);
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  const globe = document.querySelector('.globe-svg');
+  if (globe) {
+    const globeObs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          globe.querySelectorAll('circle[data-pct]').forEach((c, i) => {
+            setTimeout(() => animateArc(c, +c.dataset.pct), i * 180);
+          });
+          globeObs.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+    globeObs.observe(globe);
+  }
+
+  // ───── Scale bars ─────
+  const scaleObs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        const fills = e.target.querySelectorAll('.scale-bar > i');
+        // values: revenue 2.32, mcap 8.48, headcount 12.8 (k), retention 95
+        // normalize to 100 for bar widths within section
+        const widths = [
+          (2.32 / 12.8) * 100,
+          (8.48 / 12.8) * 100,
+          100,
+          95
+        ];
+        fills.forEach((f, i) => {
+          setTimeout(() => { f.style.right = (100 - widths[i]) + '%'; }, 200 + i * 180);
+        });
+        scaleObs.disconnect();
+      }
+    });
+  }, { threshold: 0.35 });
+  const scaleSection = document.querySelector('.scale-figs');
+  if (scaleSection) scaleObs.observe(scaleSection);
+
+  // ───── Count-ups ─────
+  function runCountup(el) {
+    const to = parseFloat(el.dataset.to);
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    const suffix = el.dataset.suffix || '';
+    const dur = 1200;
+    const start = performance.now();
+    function step(now) {
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const val = to * eased;
+      let text;
+      if (decimals > 0) {
+        text = val.toFixed(decimals);
+      } else if (to >= 1000) {
+        text = Math.round(val).toLocaleString('en-US');
+      } else {
+        text = Math.round(val).toString();
+      }
+      el.textContent = text + suffix;
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  document.querySelectorAll('.countup').forEach((el) => {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          runCountup(el);
+          obs.disconnect();
+        }
+      });
+    }, { threshold: 0.6 });
+    obs.observe(el);
+  });
+
+  // ───── ASV pulse — generated path ─────
+  // Build a deterministic "pulse-like" curve that gently trends upward,
+  // suggesting ASV growth + quarterly cadence beats.
+  const pulseSvg = document.getElementById('pulseSvg');
+  const pulsePath = document.getElementById('pulsePath');
+  const pulseFill = document.getElementById('pulseFillPath');
+  const pulseDot = document.getElementById('pulseDot');
+  const W = 380, H = 110;
+  const N = 72;
+  const points = [];
+  for (let i = 0; i < N; i++) {
+    const x = (i / (N - 1)) * W;
+    // gentle upward trend + 4 quarterly "beats" (revenue recognition pulse)
+    const trend = 80 - (i / N) * 50;            // moves from y=80 down to y=30 (= up visually)
+    const beat  = Math.sin((i / N) * Math.PI * 8) * 4;
+    const wobble = Math.sin((i / N) * Math.PI * 22) * 1.4;
+    points.push({ x, y: trend + beat + wobble });
+  }
+  function pathFrom(pts) {
+    let d = `M ${pts[0].x},${pts[0].y}`;
+    for (let i = 1; i < pts.length; i++) {
+      const p = pts[i], pp = pts[i - 1];
+      const cx = (p.x + pp.x) / 2;
+      d += ` Q ${pp.x},${pp.y} ${cx},${(p.y + pp.y) / 2}`;
+    }
+    d += ` T ${pts[pts.length - 1].x},${pts[pts.length - 1].y}`;
+    return d;
+  }
+  pulsePath.setAttribute('d', pathFrom(points));
+  pulseFill.setAttribute('d', pathFrom(points) + ` L ${W},${H} L 0,${H} Z`);
+
+  function updatePulseDot(scrollPct) {
+    // The dot tracks scroll progress across the chart only while the ASV section is in view.
+    const stage = document.querySelector('.pulse-stage');
+    if (!stage) return;
+    const rect = stage.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const visible = Math.max(0, Math.min(1, 1 - rect.top / vh));
+    const idx = Math.min(N - 1, Math.floor(visible * N));
+    const p = points[idx];
+    pulseDot.setAttribute('cx', p.x);
+    pulseDot.setAttribute('cy', p.y);
+  }
+
+  // ───── Generic reveal ─────
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        revealObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('section, .reset').forEach((el) => {
+    el.classList.add('reveal');
+    revealObs.observe(el);
+  });
+
+  onScroll();
+})();
+</script>
+</body>
+</html>

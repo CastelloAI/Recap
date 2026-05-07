@@ -1,0 +1,1922 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>FSLR · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* First Solar palette — desert + dusk + module */
+  --bone:        #F4EFE6;   /* bone paper, hot-pressed */
+  --bone-2:      #ECE5D7;   /* sand */
+  --bone-3:      #E1D8C5;   /* deeper sand */
+  --dusk:        #14181F;   /* near-black dusk */
+  --dusk-2:      #1E2530;   /* raised on dusk */
+  --ink:         #1A1F28;   /* primary text */
+  --ink-2:       #4A5160;
+  --ink-3:       #7A8090;
+  --line:        #D9D0BC;
+  --line-2:      #C5BBA3;
+
+  --sun:         #E8A03A;   /* sun-amber, the signal color */
+  --sun-2:       #F2B651;
+  --sun-3:       #C4801E;
+  --cdte:        #B8431F;   /* cadmium-telluride orange-red */
+  --panel:       #2C5180;   /* panel blue (deep, not sky) */
+  --panel-2:     #3A6BA8;
+  --panel-3:     #6C90C0;
+  --glass:       #88A8C8;   /* pale module glass */
+  --grid-green:  #4F7A4A;   /* IRA / utility green, muted */
+
+  /* Cost-band hex from JSON (must use these for that one chart) */
+  --c-cor:  #E05C5C;
+  --c-rd:   #5B8DEF;
+  --c-sga:  #F5A623;
+  --c-cap:  #7ED321;
+  --c-ramp: #9B59B6;
+
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; background: #1A1A1A; }
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* The page is the design — mobile width, centered on desktop, no phone chrome */
+.page {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--bone);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---------------- STICKY ORIENTATION CHROME ---------------- */
+.chrome {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(244, 239, 230, 0.78);
+  backdrop-filter: saturate(1.2) blur(14px);
+  -webkit-backdrop-filter: saturate(1.2) blur(14px);
+  border-bottom: 1px solid rgba(217, 208, 188, 0.6);
+}
+.chrome-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px 10px;
+}
+.ticker {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  background: var(--ink);
+  color: var(--bone);
+  padding: 4px 7px;
+  border-radius: 4px;
+}
+.chrome-name {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+.chrome-tag {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.chrome-tag .dot { color: var(--sun); }
+.progress {
+  height: 1px;
+  background: rgba(217, 208, 188, 0.4);
+  position: relative;
+}
+.progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: var(--sun);
+  transform-origin: left;
+  transition: width 80ms linear;
+}
+
+/* ---------------- TYPOGRAPHY ---------------- */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+.eyebrow .sig { color: var(--sun-3); }
+.eyebrow.on-dark { color: rgba(244,239,230,0.55); }
+.eyebrow.on-dark .sig { color: var(--sun-2); }
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: -0.018em;
+  color: var(--ink);
+}
+.italic { font-family: var(--font-display); font-style: italic; }
+.sig { color: var(--sun-3); }
+.sig-2 { color: var(--cdte); }
+
+p { margin: 0; }
+.body-copy {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  text-wrap: pretty;
+  max-width: 36ch;
+}
+.body-copy em, .body-copy i {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.08em;
+  color: var(--ink);
+}
+.body-copy em.sig { color: var(--sun-3); }
+.body-copy em.cdte { color: var(--cdte); }
+
+/* ---------------- SECTION SCAFFOLDING ---------------- */
+.section {
+  padding: 72px 24px;
+  position: relative;
+}
+.section.tight { padding: 56px 24px; }
+.section.dusk {
+  background: var(--dusk);
+  color: var(--bone);
+}
+.section.dusk .body-copy { color: rgba(244,239,230,0.74); }
+.section.dusk .body-copy em { color: var(--bone); }
+.section.dusk .display { color: var(--bone); }
+.section.sand { background: var(--bone-2); }
+
+.eyebrow-row { margin-bottom: 28px; display: flex; align-items: center; gap: 10px; }
+.eyebrow-row .rule {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.section.dusk .eyebrow-row .rule { background: rgba(244,239,230,0.14); }
+
+/* ---------------- RESET BEATS ---------------- */
+.reset {
+  padding: 56px 28px;
+  background: var(--bone-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.reset.dusk-bridge { background: var(--dusk-2); border-color: rgba(244,239,230,0.08); }
+.reset .quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+.reset.dusk-bridge .quote { color: var(--bone); }
+.reset .quote .sig { color: var(--cdte); }
+.reset.dusk-bridge .quote .sig { color: var(--sun-2); }
+.reset .attrib {
+  margin-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.reset.dusk-bridge .attrib { color: rgba(244,239,230,0.4); }
+
+/* ---------------- HERO ---------------- */
+.hero {
+  position: relative;
+  background: linear-gradient(180deg, #F7F1E5 0%, var(--bone) 60%, var(--bone-2) 100%);
+  padding: 28px 24px 64px;
+  overflow: hidden;
+  min-height: 720px;
+}
+.hero-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 60px;
+}
+.hero-meta .price-up { color: var(--grid-green); }
+
+.hero-stage {
+  position: relative;
+  height: 280px;
+  margin: 24px -24px;
+}
+/* Sun arc — rises with scroll */
+.sun-disc {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 360px;
+  height: 360px;
+  transform: translate(-50%, 60%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, var(--sun-2) 0%, var(--sun) 35%, var(--sun-3) 60%, transparent 72%);
+  filter: blur(0.5px);
+  will-change: transform;
+}
+.sun-rays {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 50%);
+  width: 700px;
+  height: 700px;
+  pointer-events: none;
+  opacity: 0.55;
+}
+.horizon {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-2) 20%, var(--line-2) 80%, transparent);
+}
+.module-row {
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  display: flex;
+  gap: 2px;
+  padding: 0 16px;
+  z-index: 2;
+}
+.module-row .panel {
+  flex: 1;
+  height: 56px;
+  background: linear-gradient(180deg, #2A4A78 0%, #1B3358 100%);
+  border-top: 1px solid #3F6AA8;
+  position: relative;
+  overflow: hidden;
+  transform-origin: bottom center;
+  transform: perspective(220px) rotateX(34deg);
+}
+.module-row .panel::before,
+.module-row .panel::after {
+  content:"";
+  position: absolute;
+  left: 0; right: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.07);
+}
+.module-row .panel::before { top: 33%; }
+.module-row .panel::after  { top: 66%; }
+.module-row .panel .vline {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgba(255,255,255,0.08);
+}
+
+.hero-thesis {
+  position: relative;
+  z-index: 3;
+  margin-top: 24px;
+}
+.thesis-line {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 0.95;
+  letter-spacing: -0.022em;
+  color: var(--ink);
+  font-weight: 400;
+}
+.thesis-line .italic { color: var(--ink); }
+.thesis-line .sun { color: var(--sun-3); }
+.thesis-sub {
+  margin-top: 24px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 32ch;
+  text-wrap: pretty;
+}
+.thesis-sub em { font-family: var(--font-display); font-style: italic; font-size: 1.1em; color: var(--ink); }
+
+.hero-stats {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+.hero-stat {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.hero-stat:nth-child(odd) { padding-right: 16px; border-right: 1px solid var(--line); }
+.hero-stat:nth-child(even) { padding-left: 16px; }
+.hero-stat .label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 6px;
+}
+.hero-stat .val {
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.hero-stat .val .unit {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink-3);
+  margin-left: 2px;
+}
+
+/* ---------------- BUSINESS BEAT — module cross section ---------------- */
+.cross-section-stage {
+  position: relative;
+  height: 360px;
+  margin: 24px -24px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.cs-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.cs-caption {
+  margin-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.flow-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin-top: 36px;
+}
+.flow-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 14px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+  align-items: baseline;
+}
+.flow-row:last-child { border-bottom: 1px solid var(--line); }
+.flow-row .num {
+  font-family: var(--font-display);
+  font-size: 36px;
+  line-height: 0.9;
+  color: var(--sun-3);
+}
+.flow-row .num.cdte { color: var(--cdte); }
+.flow-row .num.muted { color: var(--ink-3); }
+.flow-row .lbl {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.35;
+}
+.flow-row .lbl .sub {
+  display: block;
+  font-weight: 400;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  margin-top: 3px;
+}
+.flow-row .meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ---------------- SCALE BEAT ---------------- */
+.scale-revenue {
+  margin-top: 24px;
+  position: relative;
+}
+.scale-bigfig {
+  font-family: var(--font-display);
+  font-size: 96px;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: var(--bone);
+}
+.scale-bigfig .billion { font-size: 42px; vertical-align: top; margin-top: 8px; display: inline-block; opacity: 0.7; }
+.scale-bigfig .yoy {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-top: 18px;
+  color: var(--sun-2);
+}
+.scale-yoy-bars {
+  margin-top: 32px;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 90px;
+  border-bottom: 1px solid rgba(244,239,230,0.18);
+  padding-bottom: 4px;
+}
+.scale-yoy-bars .bar {
+  flex: 1;
+  background: linear-gradient(180deg, var(--sun-2), var(--sun-3));
+  border-radius: 1px;
+  position: relative;
+}
+.scale-yoy-bars .bar.muted { background: rgba(244,239,230,0.18); }
+.scale-yoy-bars .bar .lbl {
+  position: absolute;
+  bottom: -22px;
+  left: 0; right: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(244,239,230,0.5);
+}
+.scale-yoy-bars .bar.now .lbl { color: var(--sun-2); }
+
+.backlog-block {
+  margin-top: 72px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(244,239,230,0.14);
+}
+.backlog-grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  gap: 3px;
+}
+.backlog-cell {
+  aspect-ratio: 1 / 1;
+  background: rgba(244,239,230,0.08);
+  border-radius: 1px;
+}
+.backlog-cell.lit {
+  background: var(--sun);
+  box-shadow: 0 0 6px rgba(232,160,58,0.4);
+}
+.backlog-legend {
+  margin-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(244,239,230,0.5);
+}
+.backlog-legend .now { color: var(--sun-2); }
+
+.scale-stats {
+  margin-top: 64px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px 16px;
+}
+.scale-stats .s {
+  border-left: 1px solid rgba(244,239,230,0.18);
+  padding-left: 14px;
+}
+.scale-stats .v {
+  font-family: var(--font-display);
+  font-size: 36px;
+  line-height: 1;
+  color: var(--bone);
+}
+.scale-stats .l {
+  margin-top: 8px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: rgba(244,239,230,0.6);
+}
+
+/* ---------------- COSTS BEAT — cell grid ---------------- */
+.cost-stage { margin-top: 20px; }
+.cost-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 2px;
+  margin-top: 8px;
+  padding: 12px;
+  background: var(--dusk);
+  border-radius: 6px;
+}
+.cost-cell {
+  aspect-ratio: 1 / 1;
+  background: var(--dusk-2);
+  border-radius: 1px;
+  position: relative;
+}
+.cost-cell::after {
+  content:"";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 48%, rgba(255,255,255,0.06) 50%, transparent 52%);
+}
+.cost-key {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.cost-row {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: center;
+}
+.cost-row:first-child { border-top: 1px solid var(--line); }
+.cost-row .swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+}
+.cost-row .lbl {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.cost-row .lbl .sub {
+  display: block;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+.cost-row .pct {
+  font-family: var(--font-display);
+  font-size: 26px;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.margin-tag {
+  margin-top: 32px;
+  padding: 18px 0 0;
+  border-top: 1px solid var(--line);
+}
+.margin-tag .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+}
+.margin-tag .row .l {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.margin-tag .row .v {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--ink);
+}
+
+/* ---------------- FOOTPRINT BEAT ---------------- */
+.geo-stage { margin-top: 16px; }
+.geo-bar-wrap { margin-top: 18px; }
+.geo-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 50px;
+  gap: 10px;
+  align-items: center;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.geo-row:first-child { border-top: 1px solid var(--line); }
+.geo-row .name {
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 500;
+}
+.geo-row.us .name { font-weight: 600; }
+.geo-row .bar {
+  height: 4px;
+  background: var(--bone-3);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+.geo-row .bar > i {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  background: var(--ink);
+  border-radius: 2px;
+  display: block;
+}
+.geo-row.us .bar > i { background: var(--sun-3); }
+.geo-row .pct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-align: right;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+.geo-row.us .pct { color: var(--sun-3); }
+
+.us-block {
+  margin-top: 36px;
+  padding: 24px;
+  background: var(--bone-3);
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+.us-block .map-svg { display: block; width: 100%; height: auto; }
+.us-block .factories {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+}
+.us-block .factories .fac {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.us-block .factories .fac .dot {
+  width: 6px; height: 6px;
+  background: var(--sun-3);
+  border-radius: 50%;
+  flex: 0 0 auto;
+  transform: translateY(-1px);
+}
+.us-block .factories .fac strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ---------------- THE BET BEAT ---------------- */
+.bet-stage { margin-top: 20px; position: relative; }
+.timeline {
+  position: relative;
+  margin: 32px 0 0;
+  padding-left: 32px;
+}
+.timeline::before {
+  content:"";
+  position: absolute;
+  left: 7px;
+  top: 6px; bottom: 6px;
+  width: 1px;
+  background: linear-gradient(180deg, rgba(244,239,230,0.05), var(--sun) 50%, var(--sun));
+}
+.tl-item {
+  position: relative;
+  padding-bottom: 32px;
+}
+.tl-item:last-child { padding-bottom: 0; }
+.tl-item::before {
+  content:"";
+  position: absolute;
+  left: -32px;
+  top: 8px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bone);
+  border: 2px solid var(--sun);
+}
+.tl-item.now::before {
+  background: var(--sun);
+  box-shadow: 0 0 0 4px rgba(232,160,58,0.18);
+}
+.tl-item .yr {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--bone);
+  opacity: 0.55;
+}
+.tl-item .ttl {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1.1;
+  color: var(--bone);
+  margin-top: 4px;
+}
+.tl-item .ttl .sun { color: var(--sun-2); }
+.tl-item .desc {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(244,239,230,0.6);
+  max-width: 32ch;
+}
+
+.cap-allocation {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(244,239,230,0.14);
+}
+.cap-allocation .row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(244,239,230,0.08);
+}
+.cap-allocation .row .l {
+  font-size: 13px;
+  color: rgba(244,239,230,0.78);
+}
+.cap-allocation .row .l em {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--bone);
+}
+.cap-allocation .row .v {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--bone);
+}
+.cap-allocation .row .v.zero { color: rgba(244,239,230,0.35); font-style: italic; }
+.cap-allocation .row .v.sun { color: var(--sun-2); }
+
+/* ---------------- COMPETITORS BEAT ---------------- */
+.comp-stage { margin-top: 24px; }
+.comp-fslr {
+  position: relative;
+  padding: 24px 20px;
+  background: var(--ink);
+  color: var(--bone);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.comp-fslr::after {
+  content:"";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 60%, rgba(232,160,58,0.18) 100%);
+  pointer-events: none;
+}
+.comp-fslr .row1 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.comp-fslr .name { font-family: var(--font-display); font-size: 22px; }
+.comp-fslr .ticker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--sun-2);
+}
+.comp-fslr .mc {
+  margin-top: 14px;
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+.comp-fslr .mc .b {
+  font-size: 22px;
+  vertical-align: top;
+  margin-top: 8px;
+  display: inline-block;
+  opacity: 0.6;
+}
+.comp-fslr .lbl {
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(244,239,230,0.55);
+}
+
+.comp-bar-stage {
+  margin-top: 24px;
+  position: relative;
+}
+.comp-bar {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.comp-bar:first-child { border-top: 1px solid var(--line); }
+.comp-bar .id {
+  display: flex;
+  flex-direction: column;
+}
+.comp-bar .id .nm {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.comp-bar .id .tk {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  margin-top: 3px;
+}
+.comp-bar .barwrap {
+  height: 22px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.comp-bar .barwrap > i {
+  display: block;
+  height: 22px;
+  background: var(--ink);
+  position: relative;
+}
+.comp-bar.fslr .barwrap > i { background: var(--sun-3); }
+.comp-bar .v {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--ink);
+  text-align: right;
+}
+
+.comp-detail {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.comp-card {
+  border-top: 1px solid var(--line);
+  padding: 18px 0;
+}
+.comp-card:last-child { border-bottom: 1px solid var(--line); }
+.comp-card .head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.comp-card .head .n {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--ink);
+}
+.comp-card .head .t {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+}
+.comp-card .threat {
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.comp-card .threat em {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.05em;
+  color: var(--ink);
+}
+.comp-card .stats {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.comp-card .stats .s {
+  border-left: 1px solid var(--line);
+  padding-left: 8px;
+}
+.comp-card .stats .s:first-child { border-left: none; padding-left: 0; }
+.comp-card .stats .s .v {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--ink);
+  line-height: 1;
+}
+.comp-card .stats .s .v.up { color: var(--grid-green); }
+.comp-card .stats .s .l {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 4px;
+}
+
+/* ---------------- CLOSE / TAKEAWAY ---------------- */
+.close-stage {
+  position: relative;
+  padding: 96px 24px 80px;
+  background: linear-gradient(180deg, var(--bone-2) 0%, var(--bone) 60%);
+  overflow: hidden;
+}
+.close-stage::before {
+  content:"";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 480px;
+  height: 480px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(232,160,58,0.35) 0%, rgba(232,160,58,0.08) 40%, transparent 70%);
+  pointer-events: none;
+}
+.close-eyebrow { position: relative; z-index: 2; }
+.close-line {
+  position: relative;
+  z-index: 2;
+  margin-top: 32px;
+  font-family: var(--font-display);
+  font-size: 50px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.close-line .gw {
+  display: block;
+  font-style: italic;
+  color: var(--cdte);
+  margin-top: 4px;
+}
+.close-foot {
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  position: relative;
+  z-index: 2;
+}
+.close-foot .item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+}
+.close-foot .item .l {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.close-foot .item .v {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--ink);
+}
+
+.colophon {
+  padding: 32px 24px 48px;
+  background: var(--bone);
+  text-align: center;
+}
+.colophon .c {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  line-height: 1.8;
+}
+
+/* ---------------- ANIMATION HOOKS ---------------- */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 700ms ease-out, transform 700ms cubic-bezier(0.22, 1, 0.36, 1); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 80ms; }
+.reveal-d2 { transition-delay: 160ms; }
+.reveal-d3 { transition-delay: 240ms; }
+.reveal-d4 { transition-delay: 320ms; }
+
+.count { display: inline-block; }
+
+/* Subtle grain on bone backgrounds */
+.page::before {
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/></svg>");
+}
+
+/* Bigger viewports — center the mobile canvas on a dark studio backdrop */
+@media (min-width: 540px) {
+  body {
+    background: #0E0E0E;
+    background-image:
+      radial-gradient(circle at 50% 30%, rgba(232,160,58,0.05), transparent 50%),
+      radial-gradient(circle at 50% 90%, rgba(44,81,128,0.08), transparent 60%);
+    min-height: 100vh;
+  }
+  .page {
+    margin: 24px auto;
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.6), 0 8px 24px rgba(0,0,0,0.4);
+    border-radius: 28px;
+    overflow: hidden;
+  }
+  .chrome { border-top-left-radius: 28px; border-top-right-radius: 28px; }
+}
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <!-- ============ STICKY CHROME ============ -->
+  <div class="chrome">
+    <div class="chrome-row">
+      <span class="ticker">FSLR</span>
+      <span class="chrome-name">First&nbsp;Solar</span>
+      <span class="chrome-tag"><span class="dot">●</span>&nbsp;RECAP · FY '25</span>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-meta">
+      <span>NASDAQ · PHX, AZ</span>
+      <span>Mkt Cap <strong style="color:var(--ink); font-weight:500;">$20.44B</strong></span>
+    </div>
+
+    <div class="hero-thesis">
+      <div class="eyebrow"><span class="sig">●</span>&nbsp;THE THESIS</div>
+      <h1 class="thesis-line" style="margin-top:14px;">
+        <span class="italic">Eight thousand</span> acres<br/>
+        of <span class="italic sun">glass.</span><br/>
+        One company makes it<br/>
+        <span class="italic">in America.</span>
+      </h1>
+      <p class="thesis-sub">First Solar is the <em>only U.S.-headquartered</em> firm among the world's largest solar manufacturers — and the only one shipping thin-film cadmium telluride at utility scale.</p>
+    </div>
+
+    <!-- Sun stage -->
+    <div class="hero-stage" id="heroStage">
+      <svg class="sun-rays" viewBox="0 0 700 700" id="sunRays" aria-hidden="true">
+        <g stroke="#E8A03A" stroke-width="0.6" opacity="0.5" transform="translate(350 350)">
+          <!-- 36 rays -->
+        </g>
+      </svg>
+      <div class="sun-disc" id="sunDisc"></div>
+      <div class="horizon"></div>
+      <div class="module-row" id="moduleRow"></div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="label">FY '25 Revenue</div>
+        <div class="val">$5.22<span class="unit">B</span></div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">YoY Growth</div>
+        <div class="val">+24.1<span class="unit">%</span></div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">Backlog</div>
+        <div class="val">53.7<span class="unit">GW</span></div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">Q4 EPS</div>
+        <div class="val">$4.84</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 1 ============ -->
+  <section class="reset">
+    <div class="quote">A solar module is a <span class="sig">sandwich</span> of glass, semiconductor, and back-sheet. Most of the world bakes silicon. First Solar bakes <span class="sig">cadmium&nbsp;telluride</span> — and bakes it <em>here</em>.</div>
+    <div class="attrib">— THE BUSINESS · §02</div>
+  </section>
+
+  <!-- ============ BUSINESS BEAT — MODULE CROSS-SECTION ============ -->
+  <section class="section">
+    <div class="eyebrow-row">
+      <span class="eyebrow">THE BUSINESS · <span class="sig">CdTe</span></span>
+      <span class="rule"></span>
+    </div>
+
+    <h2 class="display" style="font-size:40px; line-height:1; max-width:14ch;">
+      Sunlight in.<br/>
+      <span class="italic sig">Watts</span> out.
+    </h2>
+    <p class="body-copy" style="margin-top:20px;">Almost all revenue comes from <em>one product</em>: proprietary <em class="cdte">CdTe</em> thin-film modules sold to utilities, IPPs, and developers. The <em>Systems</em> segment — project development and O&amp;M — is residual.</p>
+
+    <!-- Module cross-section SVG: scrubbed by scroll -->
+    <div class="cross-section-stage">
+      <svg class="cs-svg" viewBox="0 0 380 320" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="glassGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#E8F2FA"/>
+            <stop offset="1" stop-color="#B8D0E2"/>
+          </linearGradient>
+          <linearGradient id="cdteGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#D85A2C"/>
+            <stop offset="1" stop-color="#8E2E10"/>
+          </linearGradient>
+          <linearGradient id="encapGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#3D4856"/>
+            <stop offset="1" stop-color="#222934"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Sun arrow (photons in) -->
+        <g id="photons" stroke="#E8A03A" stroke-width="1.4" stroke-linecap="round">
+          <line x1="60"  y1="20" x2="80"  y2="60" id="ph1"/>
+          <line x1="120" y1="14" x2="135" y2="58" id="ph2"/>
+          <line x1="180" y1="10" x2="190" y2="56" id="ph3"/>
+          <line x1="240" y1="14" x2="245" y2="58" id="ph4"/>
+          <line x1="300" y1="20" x2="298" y2="60" id="ph5"/>
+        </g>
+        <text x="35" y="22" fill="#E8A03A" font-family="Geist Mono" font-size="8.5" letter-spacing="0.16em">PHOTONS</text>
+
+        <!-- Module layers — exploded -->
+        <g id="layers" transform="translate(40 80)">
+          <!-- Glass (front) -->
+          <g class="layer" data-layer="0">
+            <rect x="0" y="0" width="300" height="22" fill="url(#glassGrad)" stroke="#9FB6CC" stroke-width="0.6"/>
+            <text x="310" y="14" fill="#1A1F28" font-family="Geist Mono" font-size="8" letter-spacing="0.12em">FRONT GLASS</text>
+          </g>
+          <!-- TCO -->
+          <g class="layer" data-layer="1">
+            <rect x="0" y="32" width="300" height="6" fill="#A6C8D8" stroke="#7C9DAD" stroke-width="0.4"/>
+            <text x="310" y="38" fill="#1A1F28" font-family="Geist Mono" font-size="8" letter-spacing="0.12em">TCO</text>
+          </g>
+          <!-- CdS -->
+          <g class="layer" data-layer="2">
+            <rect x="0" y="46" width="300" height="6" fill="#E8B843"/>
+            <text x="310" y="52" fill="#1A1F28" font-family="Geist Mono" font-size="8" letter-spacing="0.12em">CdS</text>
+          </g>
+          <!-- CdTe — the absorber, the ★ -->
+          <g class="layer" data-layer="3">
+            <rect x="0" y="60" width="300" height="20" fill="url(#cdteGrad)"/>
+            <text x="310" y="74" fill="#B8431F" font-family="Geist Mono" font-size="9" font-weight="500" letter-spacing="0.12em">CdTe ABSORBER</text>
+          </g>
+          <!-- Back contact -->
+          <g class="layer" data-layer="4">
+            <rect x="0" y="88" width="300" height="6" fill="#6B6258"/>
+            <text x="310" y="94" fill="#1A1F28" font-family="Geist Mono" font-size="8" letter-spacing="0.12em">BACK CONTACT</text>
+          </g>
+          <!-- Encapsulant -->
+          <g class="layer" data-layer="5">
+            <rect x="0" y="102" width="300" height="14" fill="url(#encapGrad)"/>
+            <text x="310" y="112" fill="#1A1F28" font-family="Geist Mono" font-size="8" letter-spacing="0.12em">BACK GLASS</text>
+          </g>
+          <!-- Watts out arrow -->
+          <g id="watts" stroke="#4F7A4A" stroke-width="1.4" stroke-linecap="round" fill="none">
+            <path d="M 40 124 L 40 158 M 36 154 L 40 158 L 44 154"/>
+            <path d="M 100 124 L 100 158 M 96 154 L 100 158 L 104 154"/>
+            <path d="M 160 124 L 160 158 M 156 154 L 160 158 L 164 154"/>
+            <path d="M 220 124 L 220 158 M 216 154 L 220 158 L 224 154"/>
+            <path d="M 280 124 L 280 158 M 276 154 L 280 158 L 284 154"/>
+          </g>
+          <text x="0" y="178" fill="#4F7A4A" font-family="Geist Mono" font-size="9" font-weight="500" letter-spacing="0.12em">→ ELECTRONS · WATTS · GRID</text>
+        </g>
+      </svg>
+      <div class="cs-caption">A FIRST SOLAR MODULE · CROSS-SECTION</div>
+    </div>
+
+    <h3 style="font-family:var(--font-display); font-size:26px; line-height:1.1; margin-top:24px; max-width:18ch;">A few large numbers, <span class="italic sig">one model.</span></h3>
+
+    <div class="flow-grid">
+      <div class="flow-row">
+        <span class="num">$5.22B</span>
+        <span class="lbl">Revenue, FY '25<span class="sub">Up <em style="font-style:italic; font-family:var(--font-display);">24.1%</em> year over year.</span></span>
+        <span class="meta">FY '25</span>
+      </div>
+      <div class="flow-row">
+        <span class="num">$1.68B</span>
+        <span class="lbl">Q4 revenue<span class="sub">EPS of $4.84 in the quarter.</span></span>
+        <span class="meta">Q4 '25</span>
+      </div>
+      <div class="flow-row">
+        <span class="num cdte">53.7 GW</span>
+        <span class="lbl">Contracted backlog<span class="sub">≈ <em style="font-style:italic; font-family:var(--font-display);">$16.4B</em> of future revenue, locked.</span></span>
+        <span class="meta">MID-'25</span>
+      </div>
+      <div class="flow-row">
+        <span class="num muted">≈$1.6B</span>
+        <span class="lbl">IRA Section 45X credits<span class="sub">A federal tailwind on every U.S. watt shipped.</span></span>
+        <span class="meta">FY '25 EST</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 2 — DUSK BRIDGE ============ -->
+  <section class="reset dusk-bridge">
+    <div class="quote">For two decades the solar industry was a <em>graveyard</em> of bankruptcies. First Solar walked through it carrying <span class="sig">cash</span> — and came out the other side with the <span class="sig">policy wind</span> at its back.</div>
+    <div class="attrib">— THE SCALE · §03</div>
+  </section>
+
+  <!-- ============ SCALE BEAT — DUSK ============ -->
+  <section class="section dusk">
+    <div class="eyebrow-row">
+      <span class="eyebrow on-dark">THE SCALE · <span class="sig">FY '25</span></span>
+      <span class="rule"></span>
+    </div>
+
+    <div class="scale-revenue">
+      <div class="scale-bigfig">
+        $5.22<span class="billion">B</span>
+        <span class="yoy">↑ +24.1% YoY · vs. $4.21B in FY '24</span>
+      </div>
+    </div>
+
+    <!-- Stylized YoY bars -->
+    <div class="scale-yoy-bars" aria-hidden="true">
+      <div class="bar muted" style="height:42%"><span class="lbl">'21</span></div>
+      <div class="bar muted" style="height:38%"><span class="lbl">'22</span></div>
+      <div class="bar muted" style="height:55%"><span class="lbl">'23</span></div>
+      <div class="bar muted" style="height:78%"><span class="lbl">'24</span></div>
+      <div class="bar now"   style="height:100%"><span class="lbl">'25</span></div>
+    </div>
+
+    <div class="backlog-block">
+      <div class="eyebrow on-dark" style="margin-bottom:10px;">THE BACKLOG · <span class="sig">53.7 GW</span></div>
+      <h3 style="font-family:var(--font-display); font-size:36px; line-height:1; color:var(--bone); max-width:14ch;">$16.4B<span style="color:var(--sun-2); font-style:italic;"> already&nbsp;sold.</span></h3>
+      <p class="body-copy" style="margin-top:14px; max-width:34ch;">Every lit cell below is roughly half a gigawatt of contracted modules — utility-scale orders the company has already booked but not yet shipped.</p>
+
+      <div class="backlog-grid" id="backlogGrid"></div>
+      <div class="backlog-legend">
+        <span><span style="display:inline-block;width:8px;height:8px;background:var(--sun);vertical-align:middle;margin-right:6px;"></span>CONTRACTED</span>
+        <span class="now">≈ 0.5 GW PER CELL</span>
+      </div>
+    </div>
+
+    <div class="scale-stats">
+      <div class="s">
+        <div class="v">8.1<span style="font-size:18px; opacity:0.6; margin-left:2px;">k</span></div>
+        <div class="l">Employees, globally</div>
+      </div>
+      <div class="s">
+        <div class="v">1999</div>
+        <div class="l">Founded · Phoenix, AZ</div>
+      </div>
+      <div class="s">
+        <div class="v">40.6<span style="font-size:18px; opacity:0.6;">%</span></div>
+        <div class="l">Gross margin</div>
+      </div>
+      <div class="s">
+        <div class="v">30.6<span style="font-size:18px; opacity:0.6;">%</span></div>
+        <div class="l">Operating margin</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 3 ============ -->
+  <section class="reset">
+    <div class="quote">For every dollar that comes in, <em>fifty-nine cents</em> are spent <span class="sig">making the module</span>. Another <em>seventeen</em> are poured into <span class="sig">the next factory.</span></div>
+    <div class="attrib">— A HUNDRED CENTS IN · §04</div>
+  </section>
+
+  <!-- ============ COSTS BEAT — CELL GRID ============ -->
+  <section class="section">
+    <div class="eyebrow-row">
+      <span class="eyebrow">A HUNDRED CENTS IN · <span class="sig">FY '25</span></span>
+      <span class="rule"></span>
+    </div>
+
+    <h2 class="display" style="font-size:40px; line-height:1; max-width:18ch;">
+      One hundred cells.<br/>
+      <span class="italic sig">Each one a cent.</span>
+    </h2>
+    <p class="body-copy" style="margin-top:18px;">Not a pie. Not a bar. The same shape First Solar manufactures, used to read the income statement: each cell below is one cent of revenue, colored by where it goes.</p>
+
+    <div class="cost-stage">
+      <div class="cost-grid" id="costGrid"></div>
+    </div>
+
+    <div class="cost-key">
+      <div class="cost-row">
+        <span class="swatch" style="background:#E05C5C;"></span>
+        <span class="lbl">Cost of Revenue<span class="sub">Glass, CdTe, encapsulant, factory labor.</span></span>
+        <span class="pct">59¢</span>
+      </div>
+      <div class="cost-row">
+        <span class="swatch" style="background:#7ED321;"></span>
+        <span class="lbl">Capital Expenditure<span class="sub">$869.88M deployed in FY '25 — new lines, new plants.</span></span>
+        <span class="pct">17¢</span>
+      </div>
+      <div class="cost-row">
+        <span class="swatch" style="background:#5B8DEF;"></span>
+        <span class="lbl">Research &amp; Development<span class="sub">CURE the next cell. Higher efficiency, thinner film.</span></span>
+        <span class="pct">5¢</span>
+      </div>
+      <div class="cost-row">
+        <span class="swatch" style="background:#F5A623;"></span>
+        <span class="lbl">SG&amp;A<span class="sub">Selling, general, administrative.</span></span>
+        <span class="pct">4¢</span>
+      </div>
+      <div class="cost-row">
+        <span class="swatch" style="background:#9B59B6;"></span>
+        <span class="lbl">Production Ramp &amp; Start-Up<span class="sub">The cost of switching a new factory on.</span></span>
+        <span class="pct">2¢</span>
+      </div>
+    </div>
+
+    <div class="margin-tag">
+      <div class="row">
+        <span class="l">GROSS MARGIN</span>
+        <span class="v">40.6%</span>
+      </div>
+      <div class="row">
+        <span class="l">OPERATING MARGIN</span>
+        <span class="v">30.6%</span>
+      </div>
+      <div class="row">
+        <span class="l">IRA 45X CREDIT, FY '25</span>
+        <span class="v" style="color:var(--sun-3);">≈ $1.6B</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 4 ============ -->
+  <section class="reset">
+    <div class="quote">Three quarters of every watt First Solar ships <em>stays inside</em> American borders. Most of its rivals ship from <span class="sig">somewhere else.</span></div>
+    <div class="attrib">— THE FOOTPRINT · §05</div>
+  </section>
+
+  <!-- ============ FOOTPRINT BEAT ============ -->
+  <section class="section">
+    <div class="eyebrow-row">
+      <span class="eyebrow">THE FOOTPRINT · <span class="sig">75% U.S.</span></span>
+      <span class="rule"></span>
+    </div>
+
+    <h2 class="display" style="font-size:40px; line-height:1; max-width:14ch;">
+      A solar company<br/>
+      <span class="italic sig">made in&nbsp;America.</span>
+    </h2>
+    <p class="body-copy" style="margin-top:18px;">Headquartered in <em>Phoenix</em>, with U.S. plants in Ohio, Alabama, and Louisiana — the fourth a $1.1B build now coming online.</p>
+
+    <!-- US first -->
+    <div class="us-block">
+      <svg class="map-svg" viewBox="0 0 320 180" aria-hidden="true">
+        <!-- Highly stylized US silhouette -->
+        <defs>
+          <pattern id="dotgrid" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.7" fill="#B5A98C"/>
+          </pattern>
+        </defs>
+        <path d="M 18 70 C 22 50, 40 38, 70 36 L 100 30 L 130 24 L 175 22 L 220 28 L 260 36 L 290 50 L 300 70 L 298 90 L 285 110 L 270 122 L 250 130 L 220 140 L 195 148 C 180 152, 160 154, 145 152 L 115 148 L 85 142 L 60 132 L 40 118 L 26 100 L 18 80 Z" fill="url(#dotgrid)" stroke="#A89A78" stroke-width="0.8"/>
+
+        <!-- Florida -->
+        <path d="M 240 130 L 248 142 L 252 158 L 248 162 L 244 156 L 240 144 Z" fill="url(#dotgrid)" stroke="#A89A78" stroke-width="0.8"/>
+
+        <!-- Plant pins -->
+        <!-- Ohio (Toledo) -->
+        <g>
+          <circle cx="218" cy="68" r="4" fill="#E8A03A"/>
+          <circle cx="218" cy="68" r="9" fill="none" stroke="#E8A03A" stroke-width="0.8" opacity="0.4"/>
+          <text x="226" y="64" font-family="Geist Mono" font-size="7" fill="#1A1F28" letter-spacing="0.1em">OHIO</text>
+        </g>
+        <!-- Alabama -->
+        <g>
+          <circle cx="200" cy="115" r="4" fill="#E8A03A"/>
+          <circle cx="200" cy="115" r="9" fill="none" stroke="#E8A03A" stroke-width="0.8" opacity="0.4"/>
+          <text x="208" y="116" font-family="Geist Mono" font-size="7" fill="#1A1F28" letter-spacing="0.1em">ALABAMA</text>
+        </g>
+        <!-- Louisiana -->
+        <g>
+          <circle cx="172" cy="124" r="4" fill="#E8A03A"/>
+          <circle cx="172" cy="124" r="9" fill="none" stroke="#C4801E" stroke-width="0.8" opacity="0.5" stroke-dasharray="2 2"/>
+          <text x="116" y="142" font-family="Geist Mono" font-size="7" fill="#B8431F" letter-spacing="0.1em">LOUISIANA · NEW</text>
+        </g>
+        <!-- Phoenix HQ -->
+        <g>
+          <rect x="74" y="98" width="6" height="6" fill="#1A1F28" transform="rotate(45 77 101)"/>
+          <text x="22" y="93" font-family="Geist Mono" font-size="7" fill="#1A1F28" letter-spacing="0.1em">HQ · PHOENIX</text>
+        </g>
+      </svg>
+
+      <div class="factories">
+        <div class="fac"><span class="dot"></span><span><strong>Ohio</strong> · Toledo / Lake Twp.</span></div>
+        <div class="fac"><span class="dot"></span><span><strong>Alabama</strong> · Decatur</span></div>
+        <div class="fac"><span class="dot" style="background:var(--cdte);"></span><span><strong>Louisiana</strong> · $1.1B, new</span></div>
+        <div class="fac"><span class="dot" style="background:var(--ink);"></span><span><strong>Phoenix</strong> · HQ &amp; R&amp;D</span></div>
+      </div>
+    </div>
+
+    <!-- Geo distribution -->
+    <div class="geo-stage">
+      <div class="eyebrow" style="margin-top:36px; margin-bottom:14px;">REVENUE BY REGION</div>
+      <div class="geo-bar-wrap" id="geoBars">
+        <!-- Filled by JS -->
+      </div>
+      <p class="body-copy" style="margin-top:18px; font-size:13px;">Manufacturing also runs in <em>Malaysia</em>, <em>Vietnam</em>, and <em>India</em> — but the customer base, and the policy that pays for it, lives at home.</p>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 5 — DUSK BRIDGE ============ -->
+  <section class="reset dusk-bridge">
+    <div class="quote">Some companies return cash to shareholders. First Solar <em>returns it to the floor</em> — into a fourth plant, then a fifth, then <span class="sig">eighteen gigawatts a year</span> by 2027.</div>
+    <div class="attrib">— THE BET · §06</div>
+  </section>
+
+  <!-- ============ THE BET — DUSK ============ -->
+  <section class="section dusk">
+    <div class="eyebrow-row">
+      <span class="eyebrow on-dark">THE BET · <span class="sig">CAPACITY</span></span>
+      <span class="rule"></span>
+    </div>
+
+    <h2 class="display" style="font-size:42px; line-height:0.98; max-width:14ch; color:var(--bone);">
+      $4.5<span class="italic sig">B</span> in,<br/>
+      <span class="italic sig">18 GW</span> out.
+    </h2>
+    <p class="body-copy" style="margin-top:18px; max-width:34ch; color:rgba(244,239,230,0.74);">Total invested in U.S. manufacturing and R&amp;D <em>since 2019</em>. The company pays no dividend, runs no buyback. Every dollar of free cash flow lands back on the factory floor.</p>
+
+    <div class="bet-stage">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="yr">SINCE 2019</div>
+          <div class="ttl"><span class="sun">$4.5B</span> committed in U.S. manufacturing &amp; R&amp;D</div>
+          <div class="desc">A multi-year build-out, well underway.</div>
+        </div>
+        <div class="tl-item now">
+          <div class="yr">FY '25 · NOW</div>
+          <div class="ttl">$869.88M in <span class="sun">capex</span></div>
+          <div class="desc">Including the new <em style="font-family:var(--font-display); font-style:italic; color:var(--bone);">$1.1B Louisiana facility</em>.</div>
+        </div>
+        <div class="tl-item">
+          <div class="yr">2027 TARGET</div>
+          <div class="ttl"><span class="sun">≈ 18 GW</span> annual nameplate capacity</div>
+          <div class="desc">Roughly five large nuclear reactors of solar modules — every year.</div>
+        </div>
+      </div>
+
+      <div class="cap-allocation">
+        <div class="eyebrow on-dark" style="margin-bottom:8px;">CAPITAL ALLOCATION · FY '25</div>
+        <div class="row">
+          <div class="l">Operating cash flow</div>
+          <div class="v">$2.06B</div>
+        </div>
+        <div class="row">
+          <div class="l">Free cash flow</div>
+          <div class="v">$1.19B</div>
+        </div>
+        <div class="row">
+          <div class="l">Capital expenditure</div>
+          <div class="v sun">$869.88M</div>
+        </div>
+        <div class="row">
+          <div class="l">Total debt <em>(India facility)</em></div>
+          <div class="v">$498.57M</div>
+        </div>
+        <div class="row">
+          <div class="l">Cash &amp; equivalents</div>
+          <div class="v">$2.80B</div>
+        </div>
+        <div class="row">
+          <div class="l">Total equity</div>
+          <div class="v">$9.54B</div>
+        </div>
+        <div class="row">
+          <div class="l">Dividend</div>
+          <div class="v zero">none</div>
+        </div>
+        <div class="row">
+          <div class="l">Buybacks</div>
+          <div class="v zero">none material</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESET BEAT 6 ============ -->
+  <section class="reset">
+    <div class="quote">First Solar does not look like its rivals. <em>None of them</em> bake cadmium telluride. <em>None of them</em> are headquartered <span class="sig">on this continent</span>. Most are <span class="sig">smaller</span>.</div>
+    <div class="attrib">— THE COMPETITION · §07</div>
+  </section>
+
+  <!-- ============ COMPETITION BEAT ============ -->
+  <section class="section">
+    <div class="eyebrow-row">
+      <span class="eyebrow">THE COMPETITION · <span class="sig">3 RIVALS</span></span>
+      <span class="rule"></span>
+    </div>
+
+    <h2 class="display" style="font-size:40px; line-height:1; max-width:16ch;">
+      A market cap<br/>
+      <span class="italic sig">five times</span> larger<br/>
+      than the <span class="italic">next two</span>.
+    </h2>
+    <p class="body-copy" style="margin-top:18px;">First Solar's nearest listed competitors don't quite fit on the same line. None makes the same module. Most are smaller — meaningfully so.</p>
+
+    <div class="comp-stage">
+      <!-- FSLR feature card -->
+      <div class="comp-fslr">
+        <div class="row1">
+          <div class="name">First Solar</div>
+          <div class="ticker">FSLR</div>
+        </div>
+        <div class="mc">$20.44<span class="b">B</span></div>
+        <div class="lbl">MARKET CAP · NASDAQ</div>
+      </div>
+
+      <!-- Comparative bars sized to FSLR -->
+      <div class="comp-bar-stage" style="margin-top:32px;">
+        <div class="comp-bar fslr">
+          <div class="id"><span class="nm">First Solar</span><span class="tk">FSLR</span></div>
+          <div class="barwrap"><i style="width:100%;"></i></div>
+          <div class="v">$20.4B</div>
+        </div>
+        <div class="comp-bar">
+          <div class="id"><span class="nm">Enphase Energy</span><span class="tk">ENPH</span></div>
+          <div class="barwrap"><i style="width:20.9%;"></i></div>
+          <div class="v">$4.28B</div>
+        </div>
+        <div class="comp-bar">
+          <div class="id"><span class="nm">SolarEdge</span><span class="tk">SEDG</span></div>
+          <div class="barwrap"><i style="width:11.3%;"></i></div>
+          <div class="v">$2.31B</div>
+        </div>
+        <div class="comp-bar">
+          <div class="id"><span class="nm">Canadian Solar</span><span class="tk">CSIQ</span></div>
+          <div class="barwrap"><i style="width:4.4%;"></i></div>
+          <div class="v">$895M</div>
+        </div>
+      </div>
+
+      <div class="comp-detail">
+        <div class="comp-card">
+          <div class="head">
+            <div class="n">Enphase</div>
+            <div class="t">ENPH · $4.28B</div>
+          </div>
+          <p class="threat">Microinverters and energy management — bundled with <em>competing</em> crystalline-silicon modules. The threat is <em>integration</em>, not chemistry.</p>
+          <div class="stats">
+            <div class="s"><div class="v">$1.47B</div><div class="l">Rev (annual)</div></div>
+            <div class="s"><div class="v up">+10.7%</div><div class="l">YoY</div></div>
+            <div class="s"><div class="v">24.9×</div><div class="l">P/E TTM</div></div>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <div class="head">
+            <div class="n">Canadian Solar</div>
+            <div class="t">CSIQ · $895M</div>
+          </div>
+          <p class="threat">The <em>head-to-head</em> module rival. Crystalline silicon, sold to the same utility-scale developers, on watt price and bankability.</p>
+          <div class="stats">
+            <div class="s"><div class="v">$1.22B</div><div class="l">Rev (Q)</div></div>
+            <div class="s"><div class="v up">+24.7%</div><div class="l">YoY</div></div>
+            <div class="s"><div class="v">—</div><div class="l">Module rival</div></div>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <div class="head">
+            <div class="n">SolarEdge</div>
+            <div class="t">SEDG · $2.31B</div>
+          </div>
+          <p class="threat">DC-optimized inverters bundled with <em>competing</em> silicon modules. A bet that customers will prefer <em>integrated systems</em> over standalone thin-film.</p>
+          <div class="stats">
+            <div class="s"><div class="v">$335M</div><div class="l">Rev (Q)</div></div>
+            <div class="s"><div class="v up">+27.8%</div><div class="l">YoY</div></div>
+            <div class="s"><div class="v">—</div><div class="l">System rival</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLOSE — INVERSION ============ -->
+  <section class="close-stage">
+    <div class="eyebrow close-eyebrow"><span class="sig">●</span>&nbsp;THE TAKEAWAY</div>
+    <div class="close-line">
+      Eight thousand acres<br/>
+      of glass became<br/>
+      <span class="gw">53.7&nbsp;gigawatts<br/>already&nbsp;sold.</span>
+    </div>
+    <p class="body-copy" style="position:relative; z-index:2; margin-top:32px; max-width:34ch;">The hero opened with a country and a material. The recap closes with what they have <em>added up to</em>: a backlog worth <em class="sig">$16.4&nbsp;billion</em>, a balance sheet with more cash than debt, and a bet on America that is no longer hypothetical.</p>
+
+    <div class="close-foot">
+      <div class="item"><span class="l">REVENUE FY '25</span><span class="v">$5.22B</span></div>
+      <div class="item"><span class="l">BACKLOG</span><span class="v">53.7 GW</span></div>
+      <div class="item"><span class="l">U.S. MANUFACTURING</span><span class="v">$4.5B</span></div>
+      <div class="item"><span class="l">DIVIDEND</span><span class="v" style="font-style:italic; color:var(--ink-3);">none</span></div>
+      <div class="item"><span class="l">2027 CAPACITY</span><span class="v" style="color:var(--cdte);">18 GW</span></div>
+    </div>
+  </section>
+
+  <div class="colophon">
+    <div class="c">FSLR · RECAP · FY '25<br/>SOURCE: COMPANY DATA · NOT INVESTMENT ADVICE</div>
+  </div>
+
+</div>
+
+<script>
+/* ============== Build sun rays ============== */
+(() => {
+  const g = document.querySelector('#sunRays g');
+  if (!g) return;
+  let rays = '';
+  const N = 36;
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * Math.PI * 2;
+    const r1 = 130;
+    const r2 = 320;
+    const x1 = Math.cos(a) * r1, y1 = Math.sin(a) * r1;
+    const x2 = Math.cos(a) * r2, y2 = Math.sin(a) * r2;
+    rays += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" />`;
+  }
+  g.innerHTML = rays;
+})();
+
+/* ============== Build module row (hero ground) ============== */
+(() => {
+  const row = document.getElementById('moduleRow');
+  if (!row) return;
+  const N = 14;
+  let html = '';
+  for (let i = 0; i < N; i++) {
+    html += '<div class="panel"><span class="vline"></span></div>';
+  }
+  row.innerHTML = html;
+})();
+
+/* ============== Build backlog grid (53.7 GW ≈ ~107 cells of 0.5 GW) ============== */
+(() => {
+  const grid = document.getElementById('backlogGrid');
+  if (!grid) return;
+  const TOTAL = 200; // 10 rows x 20 cols
+  const LIT = 107;   // ~53.7 / 0.5
+  let html = '';
+  for (let i = 0; i < TOTAL; i++) {
+    html += `<div class="backlog-cell${i < LIT ? ' lit' : ''}" data-i="${i}"></div>`;
+  }
+  grid.innerHTML = html;
+})();
+
+/* ============== Build cost grid (100 cells, distributed by pct) ============== */
+(() => {
+  const grid = document.getElementById('costGrid');
+  if (!grid) return;
+  // 59+5+4+17+2 = 87; remaining 13 = "what survives" = bone (margin)
+  const buckets = [
+    { n: 59, color: '#E05C5C' },
+    { n: 17, color: '#7ED321' },
+    { n: 5,  color: '#5B8DEF' },
+    { n: 4,  color: '#F5A623' },
+    { n: 2,  color: '#9B59B6' },
+    { n: 13, color: '#F4EFE6', label: 'survives' },
+  ];
+  const cells = [];
+  buckets.forEach(b => { for (let i = 0; i < b.n; i++) cells.push(b); });
+  let html = '';
+  for (let i = 0; i < 100; i++) {
+    const b = cells[i];
+    const isSurvive = b.label === 'survives';
+    html += `<div class="cost-cell" style="background:${b.color}; ${isSurvive ? 'border:1px dashed rgba(244,239,230,0.4); background:rgba(244,239,230,0.06);' : ''}"></div>`;
+  }
+  grid.innerHTML = html;
+})();
+
+/* ============== Build geo bars ============== */
+(() => {
+  const wrap = document.getElementById('geoBars');
+  if (!wrap) return;
+  const data = [
+    { region: 'United States', pct: 75, hi: true },
+    { region: 'India',         pct: 8 },
+    { region: 'Europe',        pct: 7 },
+    { region: 'Latin America', pct: 5 },
+    { region: 'Asia-Pacific',  pct: 3 },
+    { region: 'Rest of World', pct: 2 },
+  ];
+  const max = Math.max(...data.map(d => d.pct));
+  let html = '';
+  data.forEach(d => {
+    html += `<div class="geo-row${d.hi ? ' us' : ''}">
+      <span class="name">${d.region}</span>
+      <span class="bar"><i style="width:${(d.pct / max) * 100}%"></i></span>
+      <span class="pct">${d.pct}%</span>
+    </div>`;
+  });
+  wrap.innerHTML = html;
+})();
+
+/* ============== Scroll progress ============== */
+(() => {
+  const fill = document.getElementById('progressFill');
+  function update() {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const p = max > 0 ? (window.scrollY / max) : 0;
+    fill.style.width = (p * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+/* ============== Sun parallax — rises into frame as user scrolls ============== */
+(() => {
+  const stage = document.getElementById('heroStage');
+  const disc = document.getElementById('sunDisc');
+  const rays = document.getElementById('sunRays');
+  if (!stage || !disc) return;
+  function update() {
+    const r = stage.getBoundingClientRect();
+    const vh = window.innerHeight;
+    // p: 0 when stage is just entering, 1 when stage has passed
+    const p = Math.max(0, Math.min(1, (vh - r.top) / (vh + r.height)));
+    // sun rises and shrinks slightly
+    const ty = 60 - p * 110; // % units below
+    const scale = 1 - p * 0.15;
+    disc.style.transform = `translate(-50%, ${ty}%) scale(${scale})`;
+    rays.style.transform = `translate(-50%, 50%) rotate(${p * 30}deg)`;
+    rays.style.opacity = (0.25 + p * 0.45).toFixed(2);
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+/* ============== Reveal on intersection ============== */
+(() => {
+  const els = document.querySelectorAll('.section, .reset, .hero-stat, .flow-row, .cost-row, .geo-row, .comp-card, .tl-item');
+  els.forEach((el, i) => {
+    el.classList.add('reveal');
+    if (i % 4 === 1) el.classList.add('reveal-d1');
+    if (i % 4 === 2) el.classList.add('reveal-d2');
+    if (i % 4 === 3) el.classList.add('reveal-d3');
+  });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  els.forEach(el => io.observe(el));
+})();
+
+/* ============== Backlog "fill" animation tied to scroll over the section ============== */
+(() => {
+  const grid = document.getElementById('backlogGrid');
+  if (!grid) return;
+  const cells = Array.from(grid.querySelectorAll('.backlog-cell.lit'));
+  const block = grid.closest('.backlog-block');
+  let revealed = 0;
+
+  function update() {
+    const r = block.getBoundingClientRect();
+    const vh = window.innerHeight;
+    // 0 when top of block at bottom of viewport, 1 when bottom of block at top
+    const p = Math.max(0, Math.min(1, (vh - r.top) / (vh + r.height * 0.4)));
+    const target = Math.floor(cells.length * p);
+    if (target > revealed) {
+      for (let i = revealed; i < target; i++) cells[i].style.opacity = '1';
+      revealed = target;
+    } else if (target < revealed) {
+      for (let i = target; i < revealed; i++) cells[i].style.opacity = '0';
+      revealed = target;
+    }
+  }
+  // initialize: hidden
+  cells.forEach(c => { c.style.opacity = '0'; c.style.transition = 'opacity 280ms ease-out'; });
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+/* ============== Hero stats count-up on first appearance ============== */
+(() => {
+  const els = document.querySelectorAll('.hero-stat .val');
+  const animateNumber = (el) => {
+    const txt = el.textContent.trim();
+    // crude: only animate the leading number
+    const m = txt.match(/^(\$?)([\d.,]+)(.*)$/s);
+    if (!m) return;
+    const prefix = m[1];
+    const target = parseFloat(m[2].replace(/,/g,''));
+    const rest = m[3];
+    if (isNaN(target)) return;
+    const dur = 900;
+    const start = performance.now();
+    function tick(t) {
+      const p = Math.min(1, (t - start) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const v = (target * eased);
+      const decimals = (m[2].split('.')[1] || '').length;
+      el.firstChild.textContent = prefix + v.toFixed(decimals);
+      if (p < 1) requestAnimationFrame(tick);
+      else el.firstChild.textContent = prefix + m[2];
+    }
+    // wrap leading text in a text node we can rewrite
+    const unitSpan = el.querySelector('.unit');
+    el.firstChild.textContent = prefix + '0' + (m[2].includes('.') ? '.0' : '');
+    requestAnimationFrame(tick);
+  };
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateNumber(e.target);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  els.forEach(el => io.observe(el));
+})();
+
+/* ============== Comp bars: animate widths in view ============== */
+(() => {
+  const bars = document.querySelectorAll('.comp-bar .barwrap > i');
+  bars.forEach(b => {
+    const target = b.style.width;
+    b.style.width = '0%';
+    b.style.transition = 'width 900ms cubic-bezier(0.22, 1, 0.36, 1)';
+    b.dataset.target = target;
+  });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const i = e.target.querySelector('.barwrap > i');
+        if (i) i.style.width = i.dataset.target;
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.comp-bar').forEach(b => io.observe(b));
+})();
+
+/* ============== Geo bars width animation ============== */
+(() => {
+  const bars = document.querySelectorAll('.geo-row .bar > i');
+  bars.forEach(b => {
+    const target = b.style.width;
+    b.style.width = '0%';
+    b.style.transition = 'width 1100ms cubic-bezier(0.22, 1, 0.36, 1)';
+    b.dataset.target = target;
+  });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const i = e.target.querySelector('.bar > i');
+        if (i) i.style.width = i.dataset.target;
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.geo-row').forEach(b => io.observe(b));
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>NXPI · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" />
+<style>
+:root{
+  /* base palette — warm paper from DS, with cool silicon greys for the semiconductor character */
+  --paper:#FBFAF7;
+  --paper-2:#F4F2ED;
+  --paper-3:#ECEAE3;
+  --ink:#0E0F12;        /* slightly cool ink — graphite, not warm brown */
+  --ink-2:#3B3D44;
+  --ink-3:#6B6D75;
+  --ink-4:#A4A6AE;
+  --line:#E4E1D9;
+  --line-2:#CFCBC0;
+
+  /* signal — NXP's identity is precision; coral as our signal pop */
+  --signal:#FF7A57;
+  --signal-2:#F25A37;
+  --signal-soft:#FFE7DD;
+
+  /* silicon — for circuit traces, wafer art */
+  --silicon:#2A4D6E;     /* deep wafer blue */
+  --silicon-2:#5C7A99;
+  --copper:#C97F4B;      /* trace copper */
+  --solder:#E8E2D4;      /* lead-free solder */
+
+  --iris:#7B71F5;
+
+  /* cost-chart hexes (supplied — use these only here) */
+  --c-cor:#4E79A7;
+  --c-rd: #F28E2B;
+  --c-sga:#59A14F;
+  --c-amo:#E15759;
+  --c-rst:#B07AA1;
+
+  --font-display:'Instrument Serif','Times New Roman',serif;
+  --font-sans:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --font-mono:'Geist Mono','SF Mono',ui-monospace,Menlo,monospace;
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;background:#1a1a1a;}
+body{
+  font-family:var(--font-sans);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* The page itself is the design — mobile-first, ~430px, centered with letterbox on bigger screens */
+.stage{
+  max-width:430px;
+  margin:0 auto;
+  background:var(--paper);
+  position:relative;
+  overflow:hidden;        /* contain the absolute scenes */
+  min-height:100vh;
+}
+
+/* ------- PERSISTENT CHROME ------- */
+.chrome{
+  position:sticky; top:0; z-index:50;
+  height:54px;
+  display:flex; align-items:center; gap:10px;
+  padding:0 18px;
+  background:rgba(251,250,247,0.78);
+  backdrop-filter:blur(18px) saturate(1.3);
+  -webkit-backdrop-filter:blur(18px) saturate(1.3);
+  border-bottom:1px solid rgba(228,225,217,0.6);
+}
+.chrome-tick{
+  font-family:var(--font-mono);
+  font-size:13px; font-weight:600;
+  letter-spacing:0.04em;
+  color:var(--ink);
+  display:inline-flex; align-items:center; gap:8px;
+}
+.chrome-tick::before{
+  content:""; width:6px; height:6px; border-radius:50%;
+  background:var(--signal);
+  box-shadow:0 0 0 3px rgba(255,122,87,0.18);
+}
+.chrome-name{
+  font-family:var(--font-sans);
+  font-size:13px; font-weight:500;
+  color:var(--ink-2);
+}
+.chrome-spacer{flex:1;}
+.chrome-label{
+  font-family:var(--font-mono);
+  font-size:10.5px; letter-spacing:0.14em;
+  color:var(--ink-3); text-transform:uppercase;
+}
+.scroll-hairline{
+  position:absolute; left:0; bottom:-1px; height:1.5px;
+  background:linear-gradient(90deg, var(--signal), var(--signal-2));
+  width:0%; transition:width 80ms linear;
+}
+
+/* ------- TYPE PRIMITIVES ------- */
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:10.5px; letter-spacing:0.16em;
+  text-transform:uppercase; font-weight:500;
+  color:var(--ink-3);
+}
+.eyebrow .sig{color:var(--signal); font-weight:600;}
+.eyebrow .dot{color:var(--ink-4); margin:0 6px;}
+
+.display{
+  font-family:var(--font-display); font-weight:400;
+  line-height:0.96; letter-spacing:-0.022em;
+  color:var(--ink);
+}
+.display em{font-style:italic;}
+.display .sig{color:var(--signal); font-style:italic;}
+
+.lede{
+  font-family:var(--font-sans);
+  font-size:15.5px; line-height:1.55;
+  color:var(--ink-2);
+}
+.lede em{font-family:var(--font-display); font-style:italic; color:var(--ink); font-size:1.05em;}
+.lede .sig{font-family:var(--font-display); font-style:italic; color:var(--signal); font-size:1.05em;}
+
+.caption{
+  font-family:var(--font-mono);
+  font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--ink-3);
+}
+
+/* ------- SECTIONS ------- */
+section{position:relative; padding:0 22px;}
+
+/* ------- 1. THESIS / HERO ------- */
+.hero{
+  padding-top:42px; padding-bottom:60px;
+  position:relative;
+  overflow:hidden;
+}
+.hero-eyebrow{margin-bottom:32px;}
+.hero h1{
+  font-family:var(--font-display);
+  font-size:54px; line-height:0.96; letter-spacing:-0.025em;
+  font-weight:400;
+  margin:0 0 28px 0;
+}
+.hero h1 em{font-style:italic;}
+.hero h1 .sig{font-style:italic; color:var(--signal);}
+.hero-sub{
+  font-size:15px; line-height:1.55; color:var(--ink-2);
+  max-width:34ch;
+  margin-bottom:34px;
+}
+.hero-sub em{font-family:var(--font-display); font-style:italic; color:var(--ink); font-size:1.06em;}
+
+.hero-meta{
+  display:flex; gap:20px; align-items:flex-start;
+  border-top:1px solid var(--line);
+  padding-top:18px;
+  font-family:var(--font-mono);
+  font-size:11px; color:var(--ink-3);
+  letter-spacing:0.04em;
+}
+.hero-meta > div{flex:1;}
+.hero-meta strong{
+  display:block;
+  font-family:var(--font-sans);
+  font-size:18px; font-weight:500; color:var(--ink);
+  letter-spacing:-0.01em;
+  margin-bottom:4px;
+}
+
+/* radar pulse svg */
+.radar{
+  position:absolute; top:80px; right:-90px;
+  width:340px; height:340px;
+  pointer-events:none;
+  opacity:0.95;
+}
+
+/* ------- RESET BEAT (italic interlude) ------- */
+.reset{
+  padding:38px 30px;
+  background:var(--paper-2);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.reset p{
+  margin:0;
+  font-family:var(--font-display);
+  font-size:22px; line-height:1.28; letter-spacing:-0.01em;
+  color:var(--ink);
+  font-style:italic;
+  max-width:30ch;
+}
+.reset p .sig{color:var(--signal);}
+
+/* ------- 2. THE BUSINESS — car with chips ------- */
+.business{padding-top:56px; padding-bottom:56px;}
+.business h2{
+  font-family:var(--font-display);
+  font-size:38px; line-height:1.02; letter-spacing:-0.018em;
+  font-weight:400;
+  margin:14px 0 22px 0;
+  max-width:14ch;
+}
+.business h2 em{font-style:italic; color:var(--signal);}
+.business p{
+  font-size:14.5px; line-height:1.6; color:var(--ink-2);
+  max-width:36ch;
+}
+.business p em{font-family:var(--font-display); font-style:italic; color:var(--ink); font-size:1.06em;}
+
+.car-stage{
+  position:relative;
+  margin:34px -8px 12px;
+  height:280px;
+  display:flex; align-items:center; justify-content:center;
+}
+.car-svg{width:100%; height:100%;}
+.chip-tag{
+  position:absolute;
+  font-family:var(--font-mono);
+  font-size:9.5px; letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--ink-2);
+  white-space:nowrap;
+  padding-left:8px;
+  border-left:1px solid var(--ink-2);
+  opacity:0; transform:translateY(4px);
+  transition:opacity 380ms var(--ease-out, ease-out), transform 380ms ease-out;
+}
+.chip-tag .pct{color:var(--signal); font-weight:600;}
+.chip-tag.on{opacity:1; transform:translateY(0);}
+
+.business-revsplit{
+  margin-top:30px;
+  display:flex; flex-direction:column; gap:2px;
+  border-top:1px solid var(--line);
+  padding-top:18px;
+}
+.revrow{
+  display:flex; align-items:baseline; justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid var(--line);
+}
+.revrow .label{
+  font-family:var(--font-sans);
+  font-size:14px; color:var(--ink); font-weight:500;
+}
+.revrow .label .sub{
+  display:block; font-family:var(--font-mono);
+  font-size:10px; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--ink-3); margin-top:3px; font-weight:400;
+}
+.revrow .bar{
+  flex:1; margin:0 14px; height:1px; background:var(--line);
+  position:relative;
+}
+.revrow .bar::after{
+  content:""; position:absolute; left:0; top:-1px; height:3px;
+  background:var(--signal);
+  width:var(--w, 40%);
+  transition:width 600ms cubic-bezier(0.22,1,0.36,1);
+  transform-origin:left;
+}
+.revrow .num{
+  font-family:var(--font-display);
+  font-size:22px; font-style:italic; color:var(--ink);
+  letter-spacing:-0.01em;
+}
+
+/* ------- 3. THE SCALE ------- */
+.scale{
+  padding-top:64px; padding-bottom:64px;
+  background:var(--paper);
+}
+.scale-eyebrow{margin-bottom:20px;}
+.scale-big{
+  font-family:var(--font-display);
+  font-size:108px; line-height:0.92; letter-spacing:-0.035em;
+  font-weight:400;
+  margin:0 0 6px 0; color:var(--ink);
+}
+.scale-big .unit{font-style:italic; color:var(--signal); font-size:0.6em; letter-spacing:-0.02em;}
+.scale-cap{
+  font-family:var(--font-display); font-style:italic;
+  font-size:18px; line-height:1.35; color:var(--ink-2);
+  max-width:30ch;
+  margin:6px 0 30px 0;
+}
+.scale-cap .sig{color:var(--signal); font-style:italic;}
+
+.metric-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:0;
+  border-top:1px solid var(--line);
+  border-left:1px solid var(--line);
+}
+.metric-grid > div{
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  padding:18px 16px 20px;
+  background:var(--paper);
+}
+.metric-grid .v{
+  font-family:var(--font-display); font-size:34px; line-height:1;
+  letter-spacing:-0.01em; color:var(--ink);
+  margin-bottom:6px;
+}
+.metric-grid .v em{font-style:italic; color:var(--signal); font-size:0.7em;}
+.metric-grid .l{
+  font-family:var(--font-mono); font-size:9.5px;
+  letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-3);
+}
+.metric-grid .sub{
+  font-size:12px; line-height:1.4; color:var(--ink-3);
+  margin-top:6px;
+}
+
+/* margin twin-bar */
+.margin-row{
+  margin-top:36px;
+}
+.margin-row .label-row{
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--ink-3);
+  margin-bottom:6px;
+}
+.margin-row .label-row b{
+  font-family:var(--font-display); font-style:italic; font-size:20px;
+  color:var(--ink); letter-spacing:-0.01em; font-weight:400;
+  text-transform:none;
+}
+.margin-bar{
+  height:4px; background:var(--paper-3); position:relative;
+  border-radius:2px; overflow:hidden;
+}
+.margin-bar > i{
+  position:absolute; left:0; top:0; bottom:0;
+  background:var(--signal); width:0;
+  transition:width 900ms cubic-bezier(0.22,1,0.36,1);
+  border-radius:2px;
+}
+
+/* ------- 4. WHERE THE MONEY GOES — wafer cross-section ------- */
+.money{
+  padding-top:60px; padding-bottom:64px;
+  background:var(--paper-2);
+  position:relative;
+}
+.money h2{
+  font-family:var(--font-display);
+  font-size:36px; line-height:1.02; letter-spacing:-0.018em;
+  font-weight:400; margin:14px 0 18px 0;
+  max-width:14ch;
+}
+.money h2 em{font-style:italic;}
+.money-lede{
+  font-size:14.5px; line-height:1.55; color:var(--ink-2);
+  max-width:36ch; margin-bottom:30px;
+}
+.money-lede em{font-family:var(--font-display); font-style:italic; color:var(--ink); font-size:1.05em;}
+
+/* the die — horizontal stack of layers */
+.die-wrap{margin:0 -4px;}
+.die{
+  display:flex; flex-direction:column; gap:0;
+  width:100%;
+}
+.die-layer{
+  position:relative;
+  display:flex; align-items:center;
+  background:var(--c, #ccc);
+  color:#fff;
+  height:var(--h, 60px);
+  padding:0 14px;
+  overflow:hidden;
+  transition:height 700ms cubic-bezier(0.22,1,0.36,1);
+}
+.die-layer .pct{
+  font-family:var(--font-display); font-style:italic;
+  font-size:34px; letter-spacing:-0.01em;
+  line-height:1; color:#fff;
+  font-feature-settings:"tnum";
+  text-shadow:0 1px 0 rgba(0,0,0,0.08);
+}
+.die-layer .label{
+  margin-left:auto;
+  font-family:var(--font-mono);
+  font-size:10.5px; letter-spacing:0.1em;
+  text-transform:uppercase; color:#fff;
+  text-align:right; max-width:50%;
+  opacity:0.96;
+}
+.die-layer .label .x{
+  display:block;
+  font-family:var(--font-sans); font-size:11.5px;
+  text-transform:none; letter-spacing:0; color:rgba(255,255,255,0.78);
+  margin-top:2px;
+}
+.die-survives{
+  position:relative;
+  background:var(--paper); color:var(--ink);
+  height:64px;
+  border:1px solid var(--line);
+  border-top:none;
+  display:flex; align-items:center; padding:0 14px;
+}
+.die-survives .pct{
+  font-family:var(--font-display); font-style:italic; color:var(--signal);
+  font-size:36px; letter-spacing:-0.01em; line-height:1;
+}
+.die-survives .label{
+  margin-left:auto;
+  font-family:var(--font-mono); font-size:10.5px;
+  letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-3);
+  text-align:right;
+}
+.die-survives .label .x{
+  display:block; font-family:var(--font-sans); font-size:12px;
+  text-transform:none; letter-spacing:0; color:var(--ink-2); margin-top:2px;
+}
+
+.die-key{
+  margin-top:26px;
+  font-family:var(--font-mono); font-size:10px; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--ink-3);
+  text-align:center;
+}
+
+/* ------- 5. FOOTPRINT — circuit traces ------- */
+.footprint{padding-top:60px; padding-bottom:64px;}
+.footprint h2{
+  font-family:var(--font-display);
+  font-size:38px; line-height:1.02; letter-spacing:-0.018em;
+  font-weight:400; margin:14px 0 18px 0; max-width:14ch;
+}
+.footprint h2 em{font-style:italic;}
+.footprint p{
+  font-size:14.5px; line-height:1.55; color:var(--ink-2);
+  max-width:36ch; margin-bottom:30px;
+}
+.footprint p .sig{font-family:var(--font-display); font-style:italic; color:var(--signal); font-size:1.05em;}
+
+.board{
+  position:relative;
+  margin:0 -8px;
+  background:var(--ink);
+  border-radius:6px;
+  overflow:hidden;
+  box-shadow:0 14px 40px -16px rgba(20,20,30,0.45);
+}
+.board svg{display:block; width:100%; height:auto;}
+
+.region-list{margin-top:24px; display:flex; flex-direction:column; gap:0;}
+.region-row{
+  display:flex; align-items:baseline; gap:14px;
+  padding:14px 0;
+  border-bottom:1px solid var(--line);
+}
+.region-row:first-child{border-top:1px solid var(--line);}
+.region-row .num{
+  font-family:var(--font-mono); font-size:11px;
+  letter-spacing:0.08em; color:var(--ink-3);
+  width:28px;
+}
+.region-row .name{
+  font-family:var(--font-sans); font-size:14.5px; font-weight:500;
+  color:var(--ink); flex:1;
+}
+.region-row .pct{
+  font-family:var(--font-display); font-style:italic;
+  font-size:24px; color:var(--ink); letter-spacing:-0.01em;
+}
+.region-row.lead .pct{color:var(--signal);}
+
+/* ------- THE BET — acquisitions/capital ------- */
+.bet{
+  padding-top:64px; padding-bottom:72px;
+  background:var(--ink); color:#F4F2ED;
+  position:relative;
+  overflow:hidden;
+}
+.bet .eyebrow{color:#8B8E98;}
+.bet .eyebrow .sig{color:var(--signal);}
+.bet h2{
+  font-family:var(--font-display);
+  font-size:42px; line-height:1.0; letter-spacing:-0.022em;
+  font-weight:400;
+  color:#F4F2ED; margin:14px 0 18px 0;
+  max-width:14ch;
+}
+.bet h2 em{font-style:italic;}
+.bet h2 .sig{color:var(--signal); font-style:italic;}
+.bet-lede{
+  font-size:14.5px; line-height:1.6; color:#B7B9C2;
+  max-width:36ch; margin-bottom:38px;
+}
+.bet-lede em{font-family:var(--font-display); font-style:italic; color:#F4F2ED; font-size:1.06em;}
+
+/* PCB with three chips being soldered on */
+.pcb-stage{
+  position:relative;
+  margin:0 -8px 18px;
+  background:#0A0B0F;
+  border:1px solid #1F2129;
+  border-radius:8px;
+  padding:22px 18px 22px;
+}
+.pcb-svg{display:block; width:100%; height:auto;}
+
+.acq-list{
+  display:flex; flex-direction:column; gap:0;
+  margin-top:8px;
+}
+.acq-row{
+  padding:16px 0;
+  border-top:1px solid #25262C;
+  display:flex; align-items:flex-start; gap:14px;
+}
+.acq-row .glyph{
+  flex-shrink:0; width:32px; height:32px;
+  border:1px solid var(--signal);
+  border-radius:3px;
+  position:relative;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono); font-size:11px; font-weight:600;
+  color:var(--signal);
+}
+.acq-row .glyph::before,
+.acq-row .glyph::after{
+  content:""; position:absolute; background:var(--signal);
+}
+.acq-row .glyph::before{left:50%; top:-4px; width:1px; height:4px; transform:translateX(-50%);}
+.acq-row .glyph::after{left:50%; bottom:-4px; width:1px; height:4px; transform:translateX(-50%);}
+.acq-row .body-c{flex:1;}
+.acq-row .name{
+  font-family:var(--font-sans); font-weight:600; font-size:14.5px;
+  color:#F4F2ED; letter-spacing:-0.005em;
+}
+.acq-row .name em{
+  font-family:var(--font-display); font-style:italic; font-weight:400;
+  color:var(--signal); font-size:1.05em; margin-left:6px;
+}
+.acq-row .desc{
+  font-size:12.5px; line-height:1.5; color:#9598A2;
+  margin-top:4px;
+}
+
+/* capital allocation block */
+.capital{
+  margin-top:42px;
+  border-top:1px solid #25262C;
+  padding-top:24px;
+}
+.capital .lab{
+  font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em;
+  text-transform:uppercase; color:#8B8E98; margin-bottom:14px;
+}
+.capital-bar{
+  display:flex; height:8px; border-radius:2px; overflow:hidden;
+  background:#1F2129;
+  margin-bottom:14px;
+}
+.capital-bar > i{
+  display:block; height:100%;
+  transition:width 800ms cubic-bezier(0.22,1,0.36,1);
+}
+.capital-legend{
+  display:grid; grid-template-columns:1fr 1fr; gap:14px 18px;
+}
+.capital-legend > div{
+  display:flex; flex-direction:column; gap:2px;
+}
+.capital-legend .v{
+  font-family:var(--font-display); font-style:italic;
+  font-size:24px; color:#F4F2ED; line-height:1;
+}
+.capital-legend .v::before{
+  content:""; display:inline-block; width:8px; height:8px; border-radius:1px;
+  background:var(--c, var(--signal)); margin-right:8px; transform:translateY(-3px);
+}
+.capital-legend .l{
+  font-family:var(--font-mono); font-size:9.5px;
+  letter-spacing:0.1em; text-transform:uppercase; color:#8B8E98;
+  margin-left:16px;
+}
+.capital-legend .s{
+  font-family:var(--font-sans); font-size:11.5px; color:#9598A2;
+  margin-left:16px; margin-top:2px;
+}
+
+/* leverage line */
+.leverage{
+  margin-top:30px;
+  padding:18px 16px;
+  border:1px solid #25262C;
+  border-radius:6px;
+  display:flex; align-items:center; gap:14px;
+  background:#0A0B0F;
+}
+.leverage .gauge{
+  flex-shrink:0; width:62px; height:62px;
+  position:relative;
+}
+.leverage .text{
+  font-family:var(--font-display); font-style:italic;
+  font-size:16px; line-height:1.4; color:#D4D5DA;
+}
+.leverage .text b{
+  display:block;
+  font-style:italic; font-size:24px; color:#F4F2ED;
+  font-weight:400; letter-spacing:-0.01em;
+  margin-bottom:2px;
+}
+.leverage .text .sig{color:var(--signal);}
+
+/* ------- COMPETITION ------- */
+.compete{padding-top:64px; padding-bottom:60px;}
+.compete h2{
+  font-family:var(--font-display);
+  font-size:40px; line-height:1.0; letter-spacing:-0.02em;
+  font-weight:400; margin:14px 0 16px 0; max-width:13ch;
+}
+.compete h2 em{font-style:italic; color:var(--signal);}
+.compete p{
+  font-size:14.5px; line-height:1.55; color:var(--ink-2);
+  max-width:36ch; margin-bottom:36px;
+}
+.compete p em{font-family:var(--font-display); font-style:italic; color:var(--ink); font-size:1.05em;}
+
+.die-bench{
+  position:relative;
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:14px;
+  height:230px;
+  margin:0 -4px 14px;
+  padding-bottom:30px;
+  border-bottom:1px solid var(--line);
+}
+.die-card{
+  flex:1;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  position:relative;
+}
+.die-square{
+  width:100%;
+  position:relative;
+  background:var(--silicon);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 8px);
+  border:1px solid #1A2F47;
+  border-radius:2px;
+  box-shadow:0 6px 18px -8px rgba(20,30,50,0.4);
+  transition:height 700ms cubic-bezier(0.22,1,0.36,1);
+}
+.die-card.self .die-square{
+  background:var(--signal);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.12) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.12) 0 1px, transparent 1px 8px);
+  border-color:var(--signal-2);
+  box-shadow:0 6px 18px -6px rgba(242,90,55,0.35);
+}
+/* corner pads on the die */
+.die-square::before, .die-square::after{
+  content:""; position:absolute; width:6px; height:6px; background:var(--solder);
+  border-radius:1px;
+}
+.die-square::before{top:4px; left:4px;}
+.die-square::after{bottom:4px; right:4px;}
+
+.die-card .ticker{
+  font-family:var(--font-mono); font-size:11px;
+  letter-spacing:0.08em; color:var(--ink-2); font-weight:600;
+  margin-top:8px;
+}
+.die-card .mc{
+  font-family:var(--font-display); font-style:italic;
+  font-size:18px; color:var(--ink); letter-spacing:-0.01em;
+}
+.die-card.self .mc{color:var(--signal);}
+.die-card .name{
+  font-family:var(--font-sans); font-size:11px; color:var(--ink-3);
+  text-align:center; line-height:1.25;
+  max-width:14ch;
+}
+.die-card-axis{
+  position:absolute; bottom:-1px; left:0; right:0;
+  border-top:1px solid var(--line);
+}
+
+.compete-rows{
+  display:flex; flex-direction:column; gap:0;
+  margin-top:20px;
+}
+.compete-row{
+  padding:16px 0;
+  border-bottom:1px solid var(--line);
+}
+.compete-row .top{
+  display:flex; align-items:baseline; gap:10px;
+}
+.compete-row .tic{
+  font-family:var(--font-mono); font-size:11px; font-weight:600;
+  letter-spacing:0.05em; color:var(--ink);
+}
+.compete-row.self .tic{color:var(--signal);}
+.compete-row .nm{
+  font-family:var(--font-sans); font-size:13px; color:var(--ink-2);
+  flex:1;
+}
+.compete-row .grow{
+  font-family:var(--font-mono); font-size:11px;
+  color:var(--ink-3);
+}
+.compete-row .grow b{
+  font-family:var(--font-sans); font-weight:500; color:var(--ink);
+}
+.compete-row .desc{
+  font-size:12.5px; line-height:1.5; color:var(--ink-3);
+  margin-top:6px;
+  max-width:42ch;
+}
+
+/* ------- TAKEAWAY / CLOSE ------- */
+.close{
+  padding-top:62px; padding-bottom:80px;
+  background:var(--paper);
+  position:relative;
+}
+.close-eyebrow{margin-bottom:20px;}
+.close h2{
+  font-family:var(--font-display);
+  font-size:50px; line-height:0.98; letter-spacing:-0.025em;
+  font-weight:400; margin:0 0 24px 0;
+  max-width:11ch;
+}
+.close h2 em{font-style:italic;}
+.close h2 .sig{font-style:italic; color:var(--signal);}
+
+.close-line{
+  font-family:var(--font-display); font-style:italic;
+  font-size:20px; line-height:1.35;
+  color:var(--ink-2);
+  max-width:30ch;
+  margin-bottom:32px;
+}
+.close-line .sig{color:var(--signal);}
+
+.return-row{
+  display:flex; gap:0;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.return-row > div{
+  flex:1; padding:18px 12px;
+  border-right:1px solid var(--line);
+}
+.return-row > div:last-child{border-right:none;}
+.return-row .v{
+  font-family:var(--font-display); font-style:italic;
+  font-size:32px; color:var(--ink); letter-spacing:-0.01em;
+  line-height:1;
+}
+.return-row .v .sig{color:var(--signal);}
+.return-row .l{
+  font-family:var(--font-mono); font-size:9.5px;
+  letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--ink-3); margin-top:8px;
+}
+
+.foot{
+  padding:38px 22px 50px;
+  font-family:var(--font-mono); font-size:10px;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--ink-3);
+  border-top:1px solid var(--line);
+  background:var(--paper-2);
+}
+.foot .row{display:flex; justify-content:space-between; align-items:baseline;}
+.foot .ts{font-family:var(--font-sans); text-transform:none; letter-spacing:0; font-size:11px; color:var(--ink-3);}
+.foot .note{
+  margin-top:14px;
+  font-family:var(--font-sans); font-size:11px; line-height:1.55;
+  letter-spacing:0; text-transform:none; color:var(--ink-3);
+  max-width:42ch;
+}
+
+/* reveal-on-scroll utility */
+.fade{opacity:0; transform:translateY(14px); transition:opacity 600ms cubic-bezier(0.22,1,0.36,1), transform 600ms cubic-bezier(0.22,1,0.36,1);}
+.fade.in{opacity:1; transform:translateY(0);}
+
+/* desktop letterbox */
+@media (min-width: 500px){
+  body{background:#1a1a1a;}
+  .stage{
+    margin-top:0; margin-bottom:0;
+    box-shadow:0 0 80px rgba(0,0,0,0.4);
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <!-- ===== PERSISTENT CHROME ===== -->
+  <header class="chrome" data-screen-label="Chrome">
+    <span class="chrome-tick">NXPI</span>
+    <span class="chrome-name">NXP Semiconductors</span>
+    <span class="chrome-spacer"></span>
+    <span class="chrome-label">Recap · FY '25</span>
+    <span class="scroll-hairline" id="hairline"></span>
+  </header>
+
+  <!-- ===== 1. THESIS / HERO ===== -->
+  <section class="hero" data-screen-label="01 Thesis">
+    <!-- radar pulse decoration (top-right, behind type) -->
+    <svg class="radar" viewBox="0 0 340 340" aria-hidden="true">
+      <defs>
+        <radialGradient id="rg1" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#FF7A57" stop-opacity="0.18"/>
+          <stop offset="60%" stop-color="#FF7A57" stop-opacity="0.04"/>
+          <stop offset="100%" stop-color="#FF7A57" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <circle cx="170" cy="170" r="160" fill="url(#rg1)"/>
+      <!-- concentric rings (radar) -->
+      <g stroke="#FF7A57" fill="none" stroke-width="0.7" opacity="0.55">
+        <circle cx="170" cy="170" r="40"/>
+        <circle cx="170" cy="170" r="78"/>
+        <circle cx="170" cy="170" r="118"/>
+        <circle cx="170" cy="170" r="158" stroke-dasharray="2 4" opacity="0.4"/>
+      </g>
+      <!-- crosshair -->
+      <g stroke="#FF7A57" stroke-width="0.6" opacity="0.5">
+        <line x1="0" y1="170" x2="340" y2="170"/>
+        <line x1="170" y1="0" x2="170" y2="340"/>
+      </g>
+      <!-- sweep line, animated -->
+      <g transform="translate(170 170)">
+        <line id="sweep" x1="0" y1="0" x2="158" y2="0" stroke="#FF7A57" stroke-width="1" opacity="0.85"/>
+      </g>
+      <!-- detected blip -->
+      <circle cx="232" cy="118" r="3" fill="#FF7A57">
+        <animate attributeName="opacity" values="0.2;1;0.2" dur="2.4s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="232" cy="118" r="9" fill="none" stroke="#FF7A57" opacity="0.6">
+        <animate attributeName="r" values="3;14;3" dur="2.4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.7;0;0.7" dur="2.4s" repeatCount="indefinite"/>
+      </circle>
+      <!-- center dot -->
+      <circle cx="170" cy="170" r="2" fill="#0E0F12"/>
+    </svg>
+
+    <div class="eyebrow hero-eyebrow"><span class="sig">●</span>&nbsp;&nbsp;NXPI <span class="dot">·</span> NASDAQ <span class="dot">·</span> Eindhoven</div>
+
+    <h1>The chip<br/>behind <em>the wheel.</em></h1>
+
+    <p class="hero-sub">For seventy years it was Philips silicon. Today it sits inside <em>almost every car shipped</em> — radar, networking, security, control.</p>
+
+    <div class="hero-meta">
+      <div>
+        <strong>$54.59B</strong>
+        Market cap
+      </div>
+      <div>
+        <strong>$12.27B</strong>
+        FY '25 revenue
+      </div>
+      <div>
+        <strong>~32,000</strong>
+        Employees · 30+ countries
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESET BEAT 1 ===== -->
+  <div class="reset" data-screen-label="Reset 1">
+    <p>A car used to be steel and pistons. Now it's <span class="sig">a network of computers</span> — and most of them, somewhere, carry an NXP part.</p>
+  </div>
+
+  <!-- ===== 2. THE BUSINESS — car with chips ===== -->
+  <section class="business" data-screen-label="02 Business">
+    <div class="eyebrow">The business <span class="dot">·</span> <span class="sig">how a chip earns</span></div>
+    <h2>Mixed‑signal silicon, sold to <em>the people who make cars.</em></h2>
+    <p>NXP designs high‑performance mixed‑signal chips and sells them — direct and through distributors — to OEMs and Tier 1 suppliers. <em>Automotive is the heart of the business;</em> industrial, mobile, and comms infrastructure round it out.</p>
+
+    <!-- car svg with four chip locations -->
+    <div class="car-stage" id="carStage">
+      <svg class="car-svg" viewBox="0 0 380 240" aria-hidden="true">
+        <!-- ground line -->
+        <line x1="10" y1="200" x2="370" y2="200" stroke="#CFCBC0" stroke-width="0.8"/>
+
+        <!-- car silhouette (side profile, simplified sedan) -->
+        <g id="car">
+          <!-- body shadow -->
+          <ellipse cx="190" cy="206" rx="135" ry="6" fill="#0E0F12" opacity="0.08"/>
+          <!-- main body -->
+          <path d="M 50 178
+                   L 60 162
+                   L 90 132
+                   Q 120 110 160 108
+                   L 230 108
+                   Q 270 112 295 130
+                   L 325 152
+                   L 340 162
+                   L 340 180
+                   Q 340 192 328 192
+                   L 305 192
+                   Q 300 178 285 178
+                   Q 270 178 265 192
+                   L 130 192
+                   Q 125 178 110 178
+                   Q 95 178 90 192
+                   L 62 192
+                   Q 50 192 50 180
+                   Z"
+                fill="#0E0F12" stroke="#0E0F12" stroke-width="1"/>
+          <!-- windows -->
+          <path d="M 110 132 Q 130 116 160 114 L 198 114 L 198 152 L 105 152 Z" fill="#3B3D44"/>
+          <path d="M 204 114 L 230 114 Q 260 118 280 132 L 295 152 L 204 152 Z" fill="#3B3D44"/>
+          <line x1="200" y1="114" x2="200" y2="152" stroke="#0E0F12" stroke-width="3"/>
+          <!-- belt line -->
+          <line x1="60" y1="156" x2="330" y2="156" stroke="#3B3D44" stroke-width="0.6"/>
+          <!-- wheels -->
+          <circle cx="110" cy="192" r="16" fill="#0E0F12"/>
+          <circle cx="110" cy="192" r="9" fill="#3B3D44"/>
+          <circle cx="110" cy="192" r="3" fill="#0E0F12"/>
+          <circle cx="285" cy="192" r="16" fill="#0E0F12"/>
+          <circle cx="285" cy="192" r="9" fill="#3B3D44"/>
+          <circle cx="285" cy="192" r="3" fill="#0E0F12"/>
+          <!-- door handle -->
+          <rect x="155" y="148" width="22" height="2" fill="#3B3D44"/>
+          <rect x="220" y="148" width="22" height="2" fill="#3B3D44"/>
+          <!-- headlight -->
+          <path d="M 332 162 L 340 162 L 340 168 L 332 168 Z" fill="#FF7A57" opacity="0.85"/>
+          <!-- tail light -->
+          <rect x="50" y="166" width="6" height="6" fill="#FF7A57" opacity="0.5"/>
+        </g>
+
+        <!-- four chip locations as small squares -->
+        <!-- 1. front: radar -->
+        <g class="chip" id="chip1">
+          <rect x="332" y="156" width="10" height="10" fill="#FF7A57" stroke="#fff" stroke-width="0.6" rx="1"/>
+          <!-- radar fan -->
+          <g stroke="#FF7A57" fill="none" opacity="0.7" stroke-width="0.8">
+            <path d="M 348 161 Q 360 155 360 168 Q 360 180 348 174"/>
+            <path d="M 350 161 Q 364 154 364 168 Q 364 182 350 175" opacity="0.5"/>
+          </g>
+        </g>
+        <!-- 2. dash: MCU -->
+        <g class="chip" id="chip2">
+          <rect x="170" y="138" width="10" height="10" fill="#FF7A57" stroke="#fff" stroke-width="0.6" rx="1"/>
+        </g>
+        <!-- 3. center: IVN gateway -->
+        <g class="chip" id="chip3">
+          <rect x="220" y="170" width="10" height="10" fill="#FF7A57" stroke="#fff" stroke-width="0.6" rx="1"/>
+        </g>
+        <!-- 4. rear: connectivity -->
+        <g class="chip" id="chip4">
+          <rect x="78" y="138" width="10" height="10" fill="#FF7A57" stroke="#fff" stroke-width="0.6" rx="1"/>
+        </g>
+
+        <!-- connecting traces between chips (IVN bus) -->
+        <g stroke="#FF7A57" stroke-width="0.6" stroke-dasharray="2 3" fill="none" opacity="0.55" id="busTrace">
+          <path d="M 83 148 L 83 168 L 175 168 L 175 148"/>
+          <path d="M 175 148 L 175 175 L 225 175"/>
+          <path d="M 225 175 L 225 168 L 337 168 L 337 161"/>
+        </g>
+      </svg>
+
+      <!-- chip text tags positioned absolutely over the car -->
+      <div class="chip-tag" id="tag1" style="top:64%; right:2%;">Radar &amp; <span class="pct">ADAS</span></div>
+      <div class="chip-tag" id="tag2" style="top:46%; left:42%;">MCU <span class="pct">·</span> control</div>
+      <div class="chip-tag" id="tag3" style="top:78%; left:50%;">IVN &amp; <span class="pct">SerDes</span></div>
+      <div class="chip-tag" id="tag4" style="top:46%; left:14%;">Wireless <span class="pct">·</span> security</div>
+    </div>
+
+    <!-- end-market split (scale visualization) -->
+    <div class="business-revsplit">
+      <div class="revrow">
+        <div class="label">Automotive<span class="sub">Microcontrollers · radar · IVN</span></div>
+        <div class="bar" style="--w: 100%"></div>
+        <div class="num">dom.</div>
+      </div>
+      <div class="revrow">
+        <div class="label">Industrial &amp; IoT<span class="sub">Edge processing · sensors</span></div>
+        <div class="bar" style="--w: 60%"></div>
+      </div>
+      <div class="revrow">
+        <div class="label">Mobile<span class="sub">Secure NFC · power</span></div>
+        <div class="bar" style="--w: 32%"></div>
+      </div>
+      <div class="revrow">
+        <div class="label">Comms infra<span class="sub">RF · network silicon</span></div>
+        <div class="bar" style="--w: 22%"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 3. THE SCALE ===== -->
+  <section class="scale" data-screen-label="03 Scale">
+    <div class="eyebrow scale-eyebrow">The scale <span class="dot">·</span> <span class="sig">FY 2025</span></div>
+    <div class="scale-big" id="bigRev">$<span id="rev">12.27</span><span class="unit">B</span></div>
+    <div class="scale-cap">A year of revenue. <span class="sig">$3.33B</span> of it landed in the last quarter alone.</div>
+
+    <div class="metric-grid">
+      <div>
+        <div class="v">$<span class="cu" data-target="3.33">0.00</span><em>B</em></div>
+        <div class="l">Q4 '25 Revenue</div>
+      </div>
+      <div>
+        <div class="v">$<span class="cu" data-target="3.35" data-dec="2">0.00</span></div>
+        <div class="l">Non‑GAAP EPS · Q4</div>
+      </div>
+      <div>
+        <div class="v">$<span class="cu" data-target="2.82">0.00</span><em>B</em></div>
+        <div class="l">Operating cash flow</div>
+      </div>
+      <div>
+        <div class="v">$<span class="cu" data-target="2.42">0.00</span><em>B</em></div>
+        <div class="l">Free cash flow</div>
+      </div>
+    </div>
+
+    <!-- margin twin-bar -->
+    <div class="margin-row">
+      <div class="label-row">
+        <span>Gross margin</span>
+        <b id="gm">54.7%</b>
+      </div>
+      <div class="margin-bar"><i style="--target:54.7" data-w="54.7"></i></div>
+    </div>
+    <div class="margin-row" style="margin-top:18px;">
+      <div class="label-row">
+        <span>Operating margin</span>
+        <b id="om">24.8%</b>
+      </div>
+      <div class="margin-bar"><i style="--target:24.8" data-w="24.8"></i></div>
+    </div>
+    <div class="caption" style="margin-top:14px; color:var(--ink-3);">Pricing power of design‑intensive, application‑specific silicon.</div>
+  </section>
+
+  <!-- ===== RESET BEAT 2 ===== -->
+  <div class="reset" data-screen-label="Reset 2">
+    <p>For every dollar that comes in, only some of it survives. <span class="sig">Most of it goes back into the next chip.</span></p>
+  </div>
+
+  <!-- ===== 4. WHERE THE MONEY GOES — silicon die layers ===== -->
+  <section class="money" data-screen-label="04 Costs">
+    <div class="eyebrow">The bill <span class="dot">·</span> <span class="sig">cost stack</span></div>
+    <h2>One dollar in. <em>Stacked, by where it goes.</em></h2>
+    <p class="money-lede">Each layer below is a slice of revenue — drawn proportionally, like the layers of <em>a fabricated die</em>. The remainder is what survives to the bottom line.</p>
+
+    <div class="die-wrap">
+      <div class="die" id="die">
+        <div class="die-layer" style="--c:#4E79A7; --h:0">
+          <div class="pct">45<span style="font-size:0.5em">%</span></div>
+          <div class="label">Cost of revenue<span class="x">silicon, packaging, foundry</span></div>
+        </div>
+        <div class="die-layer" style="--c:#F28E2B; --h:0">
+          <div class="pct">17<span style="font-size:0.5em">%</span></div>
+          <div class="label">Research &amp; development<span class="x">the next chip</span></div>
+        </div>
+        <div class="die-layer" style="--c:#59A14F; --h:0">
+          <div class="pct">7<span style="font-size:0.5em">%</span></div>
+          <div class="label">Selling, G&amp;A<span class="x">go‑to‑market</span></div>
+        </div>
+        <div class="die-layer" style="--c:#E15759; --h:0">
+          <div class="pct">4<span style="font-size:0.5em">%</span></div>
+          <div class="label">Amortization<span class="x">of acquired intangibles</span></div>
+        </div>
+        <div class="die-layer" style="--c:#B07AA1; --h:0">
+          <div class="pct">2<span style="font-size:0.5em">%</span></div>
+          <div class="label">Restructuring<span class="x">&amp; other incidentals</span></div>
+        </div>
+        <div class="die-survives">
+          <div class="pct">25<span style="font-size:0.5em">%</span></div>
+          <div class="label">What survives<span class="x">to operating margin</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="die-key">A dollar of NXP revenue, layer by layer</div>
+  </section>
+
+  <!-- ===== 5. FOOTPRINT ===== -->
+  <section class="footprint" data-screen-label="05 Footprint">
+    <div class="eyebrow">Footprint <span class="dot">·</span> <span class="sig">where the chips ship</span></div>
+    <h2>The board <em>is global.</em></h2>
+    <p>Sales follow the world's car factories. <span class="sig">Greater China leads.</span> No single region carries more than a quarter — diversification by design.</p>
+
+    <div class="board" id="board">
+      <svg viewBox="0 0 400 280" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1A2F47" stroke-width="0.4"/>
+          </pattern>
+          <radialGradient id="padGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FF7A57" stop-opacity="0.65"/>
+            <stop offset="100%" stop-color="#FF7A57" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect x="0" y="0" width="400" height="280" fill="#0E0F12"/>
+        <rect x="0" y="0" width="400" height="280" fill="url(#grid)" opacity="0.45"/>
+
+        <!-- copper traces, like a PCB -->
+        <g stroke="#C97F4B" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.85">
+          <!-- main bus -->
+          <path d="M 30 220 L 90 220 L 100 210 L 180 210 L 195 195 L 260 195 L 275 180 L 330 180 L 350 200 L 370 200"/>
+          <!-- spurs upward -->
+          <path d="M 60 220 L 60 160 L 80 140 L 80 70"/>
+          <path d="M 130 210 L 130 130 L 150 110 L 200 110"/>
+          <path d="M 220 195 L 220 80 L 240 60"/>
+          <path d="M 300 180 L 300 130 L 320 110 L 350 110"/>
+          <path d="M 350 200 L 350 240"/>
+          <!-- branches -->
+          <path d="M 100 210 L 100 250"/>
+          <path d="M 195 195 L 195 240"/>
+          <path d="M 275 180 L 275 230"/>
+        </g>
+        <!-- via dots along traces -->
+        <g fill="#0E0F12" stroke="#C97F4B" stroke-width="0.8">
+          <circle cx="60" cy="220" r="2.2"/>
+          <circle cx="100" cy="210" r="2.2"/>
+          <circle cx="130" cy="210" r="2.2"/>
+          <circle cx="195" cy="195" r="2.2"/>
+          <circle cx="220" cy="195" r="2.2"/>
+          <circle cx="275" cy="180" r="2.2"/>
+          <circle cx="300" cy="180" r="2.2"/>
+          <circle cx="350" cy="200" r="2.2"/>
+        </g>
+
+        <!-- Region "pads" — sized by % -->
+        <!-- Greater China 26 -->
+        <g class="region" data-region="China">
+          <circle cx="320" cy="110" r="38" fill="url(#padGlow)"/>
+          <circle cx="320" cy="110" r="18" fill="#FF7A57" stroke="#0E0F12" stroke-width="2"/>
+          <text x="320" y="114" font-family="Geist Mono, monospace" font-size="11" font-weight="600"
+                fill="#0E0F12" text-anchor="middle">26%</text>
+          <text x="320" y="148" font-family="Geist, sans-serif" font-size="10" fill="#F4F2ED"
+                text-anchor="middle" letter-spacing="0.5">Greater China</text>
+        </g>
+        <!-- Europe 24 -->
+        <g class="region">
+          <circle cx="200" cy="110" r="36" fill="url(#padGlow)" opacity="0.85"/>
+          <circle cx="200" cy="110" r="17" fill="#FF7A57" stroke="#0E0F12" stroke-width="2" opacity="0.9"/>
+          <text x="200" y="114" font-family="Geist Mono, monospace" font-size="11" font-weight="600"
+                fill="#0E0F12" text-anchor="middle">24%</text>
+          <text x="200" y="146" font-family="Geist, sans-serif" font-size="10" fill="#F4F2ED"
+                text-anchor="middle">Europe</text>
+        </g>
+        <!-- Americas 20 -->
+        <g class="region">
+          <circle cx="80" cy="70" r="32" fill="url(#padGlow)" opacity="0.78"/>
+          <circle cx="80" cy="70" r="15" fill="#FF7A57" stroke="#0E0F12" stroke-width="2" opacity="0.85"/>
+          <text x="80" y="74" font-family="Geist Mono, monospace" font-size="11" font-weight="600"
+                fill="#0E0F12" text-anchor="middle">20%</text>
+          <text x="80" y="102" font-family="Geist, sans-serif" font-size="10" fill="#F4F2ED"
+                text-anchor="middle">Americas</text>
+        </g>
+        <!-- Japan & Korea 18 -->
+        <g class="region">
+          <circle cx="240" cy="60" r="30" fill="url(#padGlow)" opacity="0.7"/>
+          <circle cx="240" cy="60" r="13" fill="#FF7A57" stroke="#0E0F12" stroke-width="2" opacity="0.8"/>
+          <text x="240" y="64" font-family="Geist Mono, monospace" font-size="10" font-weight="600"
+                fill="#0E0F12" text-anchor="middle">18%</text>
+          <text x="240" y="90" font-family="Geist, sans-serif" font-size="9.5" fill="#F4F2ED"
+                text-anchor="middle">Japan &amp; Korea</text>
+        </g>
+        <!-- Rest of APAC 12 -->
+        <g class="region">
+          <circle cx="350" cy="240" r="24" fill="url(#padGlow)" opacity="0.62"/>
+          <circle cx="350" cy="240" r="10" fill="#FF7A57" stroke="#0E0F12" stroke-width="2" opacity="0.78"/>
+          <text x="350" y="244" font-family="Geist Mono, monospace" font-size="10" font-weight="600"
+                fill="#0E0F12" text-anchor="middle">12%</text>
+          <text x="350" y="270" font-family="Geist, sans-serif" font-size="9" fill="#F4F2ED"
+                text-anchor="middle">Rest of APAC</text>
+        </g>
+
+        <!-- corner mounting holes for board feel -->
+        <g fill="#0E0F12" stroke="#3B3D44" stroke-width="1">
+          <circle cx="14" cy="14" r="3"/>
+          <circle cx="386" cy="14" r="3"/>
+          <circle cx="14" cy="266" r="3"/>
+          <circle cx="386" cy="266" r="3"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="region-list">
+      <div class="region-row lead">
+        <div class="num">01</div>
+        <div class="name">Greater China</div>
+        <div class="pct">26%</div>
+      </div>
+      <div class="region-row">
+        <div class="num">02</div>
+        <div class="name">Europe</div>
+        <div class="pct">24%</div>
+      </div>
+      <div class="region-row">
+        <div class="num">03</div>
+        <div class="name">Americas</div>
+        <div class="pct">20%</div>
+      </div>
+      <div class="region-row">
+        <div class="num">04</div>
+        <div class="name">Japan &amp; Korea</div>
+        <div class="pct">18%</div>
+      </div>
+      <div class="region-row">
+        <div class="num">05</div>
+        <div class="name">Rest of Asia‑Pacific</div>
+        <div class="pct">12%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESET BEAT 3 ===== -->
+  <div class="reset" data-screen-label="Reset 3">
+    <p>You don't stay in front of the wheel <span class="sig">by standing still.</span> Three acquisitions in 2025 say where NXP thinks the road is going.</p>
+  </div>
+
+  <!-- ===== 6. THE BET ===== -->
+  <section class="bet" data-screen-label="06 The bet">
+    <div class="eyebrow">The bet <span class="dot">·</span> <span class="sig">2025 acquisitions</span></div>
+    <h2>Three new chips <em>on the board.</em><br/><span class="sig">Software‑defined vehicle</span> &amp; edge AI.</h2>
+    <p class="bet-lede">NXP added three companies in 2025 — each plugging directly into where the next decade of automotive value lives: <em>software, perception, and inside‑the‑car networking</em>.</p>
+
+    <!-- PCB scene with three chips being soldered on -->
+    <div class="pcb-stage">
+      <svg class="pcb-svg" viewBox="0 0 380 220" aria-hidden="true">
+        <!-- substrate -->
+        <rect x="0" y="0" width="380" height="220" fill="#0A0B0F"/>
+        <rect x="0" y="0" width="380" height="220" fill="none" stroke="#25262C" stroke-width="1"/>
+        <!-- background trace grid -->
+        <g stroke="#1E2933" stroke-width="0.6" fill="none">
+          <path d="M 0 60 L 380 60"/>
+          <path d="M 0 110 L 380 110"/>
+          <path d="M 0 160 L 380 160"/>
+          <path d="M 80 0 L 80 220"/>
+          <path d="M 200 0 L 200 220"/>
+          <path d="M 300 0 L 300 220"/>
+        </g>
+
+        <!-- main NXP package (bigger, center) -->
+        <g>
+          <rect x="140" y="80" width="100" height="60" rx="3" fill="#1A1B1F" stroke="#3B3D44" stroke-width="1"/>
+          <text x="190" y="108" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" fill="#F4F2ED" font-weight="600" letter-spacing="2">NXP</text>
+          <text x="190" y="124" text-anchor="middle" font-family="Geist Mono, monospace" font-size="7" fill="#8B8E98" letter-spacing="1">SDV PLATFORM</text>
+          <!-- package pins -->
+          <g fill="#C97F4B">
+            <rect x="140" y="84" width="-3" height="3" transform="translate(-3 0)"/>
+          </g>
+          <g fill="#C97F4B">
+            <!-- left pins -->
+            <rect x="135" y="86" width="5" height="2"/><rect x="135" y="92" width="5" height="2"/><rect x="135" y="98" width="5" height="2"/><rect x="135" y="104" width="5" height="2"/><rect x="135" y="110" width="5" height="2"/><rect x="135" y="116" width="5" height="2"/><rect x="135" y="122" width="5" height="2"/><rect x="135" y="128" width="5" height="2"/><rect x="135" y="134" width="5" height="2"/>
+            <!-- right pins -->
+            <rect x="240" y="86" width="5" height="2"/><rect x="240" y="92" width="5" height="2"/><rect x="240" y="98" width="5" height="2"/><rect x="240" y="104" width="5" height="2"/><rect x="240" y="110" width="5" height="2"/><rect x="240" y="116" width="5" height="2"/><rect x="240" y="122" width="5" height="2"/><rect x="240" y="128" width="5" height="2"/><rect x="240" y="134" width="5" height="2"/>
+            <!-- top pins -->
+            <rect x="146" y="76" width="2" height="5"/><rect x="156" y="76" width="2" height="5"/><rect x="166" y="76" width="2" height="5"/><rect x="176" y="76" width="2" height="5"/><rect x="186" y="76" width="2" height="5"/><rect x="196" y="76" width="2" height="5"/><rect x="206" y="76" width="2" height="5"/><rect x="216" y="76" width="2" height="5"/><rect x="226" y="76" width="2" height="5"/>
+            <!-- bottom pins -->
+            <rect x="146" y="140" width="2" height="5"/><rect x="156" y="140" width="2" height="5"/><rect x="166" y="140" width="2" height="5"/><rect x="176" y="140" width="2" height="5"/><rect x="186" y="140" width="2" height="5"/><rect x="196" y="140" width="2" height="5"/><rect x="206" y="140" width="2" height="5"/><rect x="216" y="140" width="2" height="5"/><rect x="226" y="140" width="2" height="5"/>
+          </g>
+        </g>
+
+        <!-- Three new chips connecting in -->
+        <!-- TTTech (top-left) -->
+        <g class="acq-chip">
+          <rect x="36" y="22" width="62" height="34" rx="2" fill="#FF7A57" stroke="#F25A37" stroke-width="0.8"/>
+          <text x="67" y="42" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#0E0F12" font-weight="600">TTTECH</text>
+          <text x="67" y="51" text-anchor="middle" font-family="Geist Mono, monospace" font-size="6" fill="#0E0F12" letter-spacing="0.5">AUTO</text>
+          <!-- pins to main -->
+          <g stroke="#C97F4B" stroke-width="1" fill="none">
+            <path d="M 67 56 L 67 80 L 140 80 L 140 86"/>
+          </g>
+          <circle cx="67" cy="56" r="1.5" fill="#C97F4B"/>
+        </g>
+        <!-- Kinara (top-right) -->
+        <g class="acq-chip">
+          <rect x="282" y="22" width="62" height="34" rx="2" fill="#FF7A57" stroke="#F25A37" stroke-width="0.8"/>
+          <text x="313" y="42" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#0E0F12" font-weight="600">KINARA</text>
+          <text x="313" y="51" text-anchor="middle" font-family="Geist Mono, monospace" font-size="6" fill="#0E0F12" letter-spacing="0.5">EDGE AI</text>
+          <g stroke="#C97F4B" stroke-width="1" fill="none">
+            <path d="M 313 56 L 313 80 L 240 80 L 240 86"/>
+          </g>
+          <circle cx="313" cy="56" r="1.5" fill="#C97F4B"/>
+        </g>
+        <!-- Aviva (bottom) -->
+        <g class="acq-chip">
+          <rect x="159" y="170" width="62" height="34" rx="2" fill="#FF7A57" stroke="#F25A37" stroke-width="0.8"/>
+          <text x="190" y="190" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#0E0F12" font-weight="600">AVIVA</text>
+          <text x="190" y="199" text-anchor="middle" font-family="Geist Mono, monospace" font-size="6" fill="#0E0F12" letter-spacing="0.5">LINKS · SerDes</text>
+          <g stroke="#C97F4B" stroke-width="1" fill="none">
+            <path d="M 190 170 L 190 145"/>
+          </g>
+          <circle cx="190" cy="170" r="1.5" fill="#C97F4B"/>
+        </g>
+
+        <!-- corner solder pads -->
+        <g fill="#E8E2D4">
+          <circle cx="14" cy="14" r="2.5"/>
+          <circle cx="366" cy="14" r="2.5"/>
+          <circle cx="14" cy="206" r="2.5"/>
+          <circle cx="366" cy="206" r="2.5"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="acq-list">
+      <div class="acq-row">
+        <div class="glyph">T</div>
+        <div class="body-c">
+          <div class="name">TTTech Auto <em>· software</em></div>
+          <div class="desc">Software platforms for safety‑critical automotive systems — the OS layer for the software‑defined vehicle.</div>
+        </div>
+      </div>
+      <div class="acq-row">
+        <div class="glyph">K</div>
+        <div class="body-c">
+          <div class="name">Kinara <em>· edge AI</em></div>
+          <div class="desc">Discrete edge‑AI processors for inference at the sensor — perception silicon to pair with NXP's MCUs.</div>
+        </div>
+      </div>
+      <div class="acq-row">
+        <div class="glyph">A</div>
+        <div class="body-c">
+          <div class="name">Aviva Links <em>· SerDes</em></div>
+          <div class="desc">In‑vehicle networking and SerDes — the wires that carry video, lidar, and sensor data inside the car.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- capital allocation -->
+    <div class="capital">
+      <div class="lab">FY '25 capital <span style="color:var(--signal)">·</span> what came back to shareholders</div>
+      <div class="capital-bar">
+        <i style="background:#FF7A57; width:42%"></i>
+        <i style="background:#7B71F5; width:14%"></i>
+        <i style="background:#3B3D44; width:16%"></i>
+        <i style="background:#1F2129; width:28%"></i>
+      </div>
+      <div class="capital-legend">
+        <div>
+          <span class="v" style="--c:#FF7A57">$1.02B</span>
+          <span class="l">Dividends</span>
+          <span class="s">42% of FCF</span>
+        </div>
+        <div>
+          <span class="v" style="--c:#7B71F5">$338M</span>
+          <span class="l">Buybacks · Q4 alone</span>
+          <span class="s">Open‑market repo</span>
+        </div>
+        <div>
+          <span class="v" style="--c:#3B3D44">$397M</span>
+          <span class="l">Capex</span>
+          <span class="s">Property &amp; equipment</span>
+        </div>
+        <div>
+          <span class="v" style="--c:#1F2129">$2.42B</span>
+          <span class="l">Free cash flow</span>
+          <span class="s">2025 total</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="leverage">
+      <svg class="gauge" viewBox="0 0 62 62" aria-hidden="true">
+        <circle cx="31" cy="31" r="26" fill="none" stroke="#25262C" stroke-width="3"/>
+        <!-- arc to ~45% indicating well below 2x cap -->
+        <circle cx="31" cy="31" r="26" fill="none" stroke="#FF7A57" stroke-width="3"
+                stroke-dasharray="73 200" stroke-linecap="round" transform="rotate(-90 31 31)"/>
+        <text x="31" y="35" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic"
+              font-size="14" fill="#F4F2ED">&lt;2×</text>
+      </svg>
+      <div class="text">
+        <b>Net leverage capped <span class="sig">below 2× EBITDA.</span></b>
+        100% of excess free cash flow returned via dividends &amp; buybacks. The discipline runs alongside the bets.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESET BEAT 4 ===== -->
+  <div class="reset" data-screen-label="Reset 4">
+    <p>Bigger names sit on either side. <span class="sig">NXP runs the road in the middle</span> — focused on the silicon that drives a car.</p>
+  </div>
+
+  <!-- ===== 7. COMPETITION ===== -->
+  <section class="compete" data-screen-label="07 Competition">
+    <div class="eyebrow">The competition <span class="dot">·</span> <span class="sig">market cap</span></div>
+    <h2>Sized against <em>the room.</em></h2>
+    <p>Each square is a company, scaled by market cap. <em>NXP sits in the middle</em> — outflanked in size, but more focused on automotive silicon than either.</p>
+
+    <!-- die-bench: dies sized by market cap -->
+    <div class="die-bench">
+      <!-- TEL — 62.72B -->
+      <div class="die-card">
+        <div class="die-square" style="height:175px"></div>
+        <div class="ticker">TEL</div>
+        <div class="mc">$62.72B</div>
+        <div class="name">TE Connectivity</div>
+      </div>
+      <!-- KEYS — 57.34B -->
+      <div class="die-card">
+        <div class="die-square" style="height:160px"></div>
+        <div class="ticker">KEYS</div>
+        <div class="mc">$57.34B</div>
+        <div class="name">Keysight</div>
+      </div>
+      <!-- NXPI — 54.59B (signal color) -->
+      <div class="die-card self">
+        <div class="die-square" style="height:152px"></div>
+        <div class="ticker">NXPI</div>
+        <div class="mc">$54.59B</div>
+        <div class="name">NXP</div>
+      </div>
+      <!-- IFNNY (no mcap given — render smaller, neutral) -->
+      <div class="die-card">
+        <div class="die-square" style="height:120px; opacity:0.78"></div>
+        <div class="ticker">IFNNY</div>
+        <div class="mc">—</div>
+        <div class="name">Infineon</div>
+      </div>
+    </div>
+
+    <div class="compete-rows">
+      <div class="compete-row self">
+        <div class="top">
+          <span class="tic">NXPI</span>
+          <span class="nm">NXP Semiconductors</span>
+          <span class="grow">FY rev <b>$12.27B</b></span>
+        </div>
+        <div class="desc">Mixed‑signal silicon for automotive, industrial &amp; IoT, mobile, and comms infra.</div>
+      </div>
+      <div class="compete-row">
+        <div class="top">
+          <span class="tic">TEL</span>
+          <span class="nm">TE Connectivity</span>
+          <span class="grow">YoY <b>+14.2%</b></span>
+        </div>
+        <div class="desc">Connectors and sensor systems sold to the same automotive OEMs — converging on in‑vehicle networking where NXP's SerDes &amp; IVN portfolio overlaps directly.</div>
+      </div>
+      <div class="compete-row">
+        <div class="top">
+          <span class="tic">KEYS</span>
+          <span class="nm">Keysight Technologies</span>
+          <span class="grow">YoY <b>+13.1%</b></span>
+        </div>
+        <div class="desc">Test &amp; validation for comms infra and automotive electronics — semiconductor characterization &amp; radar test increasingly target the same 5G and ADAS environments.</div>
+      </div>
+      <div class="compete-row">
+        <div class="top">
+          <span class="tic">IFNNY</span>
+          <span class="nm">Infineon Technologies</span>
+          <span class="grow">Direct rival</span>
+        </div>
+        <div class="desc">The closest pure‑play peer — automotive‑first semiconductor company competing chip‑for‑chip in MCUs, power, and security.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 8. CLOSE / TAKEAWAY ===== -->
+  <section class="close" data-screen-label="08 Close">
+    <div class="eyebrow close-eyebrow">The takeaway <span class="dot">·</span> <span class="sig">FY '25</span></div>
+
+    <h2>The chip<br/>kept <em>the wheel.</em></h2>
+
+    <p class="close-line">Seventy years of silicon. <span class="sig">$12.27 billion</span> a year. A quarter of every dollar surviving as operating profit — and most of what's left, returned.</p>
+
+    <div class="return-row">
+      <div>
+        <div class="v"><span class="sig">$1.36B</span></div>
+        <div class="l">Returned in FY '25*</div>
+      </div>
+      <div>
+        <div class="v">100%</div>
+        <div class="l">Of excess FCF policy</div>
+      </div>
+      <div>
+        <div class="v">3</div>
+        <div class="l">Bets in front</div>
+      </div>
+    </div>
+
+    <p class="close-line" style="margin-top:34px;">Behind the wheel, <span class="sig">a counterweight.</span><br/>One foot on R&amp;D. One on the dividend.</p>
+  </section>
+
+  <div class="foot">
+    <div class="row">
+      <span>NXPI <span style="color:var(--ink-4)">·</span> Recap FY '25</span>
+      <span class="ts">As of Q4 2025</span>
+    </div>
+    <div class="note">
+      *Dividends ($1.02B) plus Q4 buybacks ($338M). Figures sourced from NXP's reported financials. This recap is illustrative; not investment advice.
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const stage = document.getElementById('stage');
+  const hairline = document.getElementById('hairline');
+
+  // 1. SCROLL HAIRLINE
+  function onScroll(){
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const p = max > 0 ? (h.scrollTop || document.body.scrollTop) / max : 0;
+    hairline.style.width = (p * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  // 2. RADAR sweep (rotate the sweep line)
+  const sweep = document.getElementById('sweep');
+  if(sweep){
+    let a = 0;
+    function tick(){
+      a = (a + 1.5) % 360;
+      sweep.setAttribute('transform', 'rotate('+a+')');
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // 3. INTERSECTION-driven reveals + animations
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting) return;
+      const el = e.target;
+      if(el.classList.contains('fade')) el.classList.add('in');
+
+      // car chips light up sequentially
+      if(el.id === 'carStage'){
+        ['tag1','tag2','tag3','tag4'].forEach((id, i)=>{
+          setTimeout(()=> document.getElementById(id).classList.add('on'), 250 + i*240);
+        });
+      }
+
+      // count-ups
+      if(el.classList && el.classList.contains('cu')){
+        const target = parseFloat(el.dataset.target);
+        const dec = parseInt(el.dataset.dec || '2', 10);
+        const dur = 1100;
+        const start = performance.now();
+        function step(t){
+          const k = Math.min(1, (t - start)/dur);
+          const eased = 1 - Math.pow(1-k, 3);
+          el.textContent = (target*eased).toFixed(dec);
+          if(k<1) requestAnimationFrame(step);
+          else el.textContent = target.toFixed(dec);
+        }
+        requestAnimationFrame(step);
+        io.unobserve(el);
+      }
+
+      // margin bars
+      if(el.tagName === 'I' && el.dataset.w){
+        el.style.width = el.dataset.w + '%';
+      }
+
+      // die layers — set heights based on % (proportional to revenue)
+      if(el.id === 'die'){
+        const layers = el.querySelectorAll('.die-layer');
+        const heights = [108, 56, 28, 18, 12]; // px, proportional but min legible
+        layers.forEach((l,i)=>{
+          setTimeout(()=> l.style.setProperty('--h', heights[i] + 'px'), 100 + i*120);
+          setTimeout(()=> l.style.height = heights[i] + 'px', 100 + i*120);
+        });
+        io.unobserve(el);
+      }
+    });
+  }, {threshold:0.25, rootMargin:'-5% 0px -10% 0px'});
+
+  // observe
+  document.querySelectorAll('.fade, .cu, .margin-bar i, #carStage, #die').forEach(el=> io.observe(el));
+
+  // Add fade class to selected elements (subtle reveal of headlines/leads)
+  // (kept off by default to avoid jank — content is the priority)
+
+  // 4. Die-bench reveal — set heights once visible (we already set inline)
+  // Already inline; nothing to do.
+
+  // 5. Hairline thresholds: subtle pulse when crossing major sections (skip for simplicity)
+
+})();
+</script>
+</body>
+</html>

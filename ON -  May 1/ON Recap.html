@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ON · Recap FY '25</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* =============================================================
+   ON Semiconductor — FY'25 Recap
+   Palette: silicon graphite + electric cyan signal
+   ============================================================= */
+:root{
+  --paper:        #F2F1EC;        /* warm wafer cream */
+  --paper-2:      #E7E5DE;
+  --paper-3:      #D9D6CC;
+  --ink:          #0E1116;        /* near-black graphite */
+  --ink-2:        #2A2E36;
+  --ink-3:        #5B6068;
+  --ink-4:        #8B8E94;
+  --line:         #C9C5BA;
+  --line-strong:  #A8A398;
+
+  /* Signal — electric blue (silicon current) */
+  --sig:          #1156FF;        /* hot signal */
+  --sig-2:        #4F86FF;
+  --sig-soft:     #DDE5FA;
+
+  /* Dark beat surfaces */
+  --night:        #0A0D12;
+  --night-2:      #14181F;
+  --night-line:   #1F242C;
+
+  /* Cost colors — supplied */
+  --c-cor: #E05C5C;
+  --c-rd:  #5B8FD4;
+  --c-sga: #F5A623;
+  --c-rst: #8E6BBF;
+  --c-da:  #4BBFA5;
+
+  --serif: 'Instrument Serif', 'Times New Roman', serif;
+  --sans:  'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --mono:  'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+*{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body{ margin:0; padding:0; background: var(--paper); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+body{ overflow-x: hidden; font-size: 16px; line-height: 1.45; }
+
+/* Mobile-only canvas ~ 420px */
+.page{ max-width: 440px; margin: 0 auto; min-height: 100vh; position: relative; background: var(--paper); }
+
+/* ===== Persistent chrome ===== */
+.chrome{
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  background: rgba(242,241,236,0.72);
+  border-bottom: 1px solid rgba(201,197,186,0.6);
+}
+.chrome.dark{ background: rgba(10,13,18,0.72); border-bottom: 1px solid rgba(31,36,44,0.8); }
+.chrome-row{ display:flex; align-items:center; gap: 10px; padding: 14px 20px 10px; }
+.tick{ font-family: var(--mono); font-size: 13px; font-weight: 500; letter-spacing: 0.04em; color: var(--ink); padding: 3px 7px; background: var(--sig); color: #fff; border-radius: 4px; }
+.cname{ font-family: var(--serif); font-size: 20px; line-height: 1; color: var(--ink); }
+.recap-tag{ font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--ink-3); margin-left: auto; text-transform: uppercase; }
+.chrome.dark .cname{ color: #ECEAE3; }
+.chrome.dark .recap-tag{ color: #8C8A84; }
+.progress-track{ height: 1.5px; background: transparent; }
+.progress-fill{ height: 100%; width: 0%; background: var(--sig); transition: width 80ms linear; }
+
+/* ===== Generic beat ===== */
+section{ position: relative; padding: 64px 24px; }
+.eyebrow{ font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--sig); font-weight: 500; }
+.eyebrow .dot{ display:inline-block; width:5px; height:5px; background: var(--sig); border-radius: 50%; vertical-align: 2px; margin: 0 8px; }
+.kicker{ display:flex; align-items:center; gap: 8px; }
+.kicker .num{ font-family: var(--mono); font-size: 10px; color: var(--ink-3); letter-spacing: 0.16em; }
+.kicker .lab{ font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--sig); font-weight: 500; }
+
+h1.display{ font-family: var(--serif); font-weight: 400; font-size: 56px; line-height: 0.96; letter-spacing: -0.02em; margin: 0; }
+h2.display{ font-family: var(--serif); font-weight: 400; font-size: 40px; line-height: 1.0; letter-spacing: -0.018em; margin: 0; }
+.italic{ font-style: italic; }
+.signal{ color: var(--sig); }
+
+p.body{ font-family: var(--sans); font-size: 15.5px; line-height: 1.55; color: var(--ink-2); margin: 0; text-wrap: pretty; }
+.cap{ font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--ink-3); }
+
+/* ===== Reveal ===== */
+.reveal{ opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease, cubic-bezier(.22,1,.36,1)), transform 600ms var(--ease, cubic-bezier(.22,1,.36,1)); }
+.reveal.in{ opacity: 1; transform: none; }
+
+/* ============================================================
+   1 · HERO — current through traces
+   ============================================================ */
+.hero{
+  min-height: 88vh;
+  padding: 28px 24px 72px;
+  display: flex; flex-direction: column; gap: 0;
+  position: relative;
+  overflow: hidden;
+}
+.hero-traces{
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-inner{ position: relative; z-index: 2; }
+.hero h1{ margin-top: 32px; }
+.hero h1 .small-line{ font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 18px; font-weight: 500; }
+.hero-sub{ margin-top: 28px; font-size: 16px; line-height: 1.5; color: var(--ink-2); max-width: 30ch; }
+.hero-meta{ position: absolute; bottom: 28px; left: 24px; right: 24px; z-index: 2; display: flex; justify-content: space-between; align-items: end; }
+.hero-meta .v{ font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; color: var(--ink-3); text-transform: uppercase; }
+.hero-meta .v b{ color: var(--ink); font-weight: 500; }
+.hero-pill{ display: inline-flex; align-items:center; gap: 8px; padding: 6px 12px; border: 1px solid var(--line-strong); border-radius: 999px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--ink-2); background: rgba(255,255,255,0.4); width: fit-content; }
+.hero-pill .pulse{ width: 7px; height: 7px; border-radius: 50%; background: var(--sig); box-shadow: 0 0 0 0 rgba(17,86,255,0.55); animation: pulse 1.6s ease-out infinite; }
+@keyframes pulse{ 0%{ box-shadow: 0 0 0 0 rgba(17,86,255,0.55);} 70%{ box-shadow: 0 0 0 12px rgba(17,86,255,0);} 100%{ box-shadow: 0 0 0 0 rgba(17,86,255,0);} }
+
+/* ============================================================
+   2 · Reset beat
+   ============================================================ */
+.reset{
+  background: var(--paper-2);
+  padding: 56px 28px;
+  border: none;
+}
+.reset p{ font-family: var(--serif); font-style: italic; font-size: 26px; line-height: 1.2; color: var(--ink); letter-spacing: -0.01em; }
+.reset.dark{ background: var(--night); color: #EDEAE3; }
+.reset.dark p{ color: #EDEAE3; }
+
+/* ============================================================
+   3 · Two segments — power rails
+   ============================================================ */
+.rails-scene{ margin-top: 40px; }
+.rail{ display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 14px; padding: 18px 0; border-top: 1px solid var(--line); }
+.rail:last-child{ border-bottom: 1px solid var(--line); }
+.rail-icon{ width: 56px; height: 56px; }
+.rail-name{ font-family: var(--serif); font-size: 22px; line-height: 1.05; color: var(--ink); }
+.rail-tag{ font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; color: var(--ink-3); text-transform: uppercase; margin-bottom: 4px; }
+.rail-share{ font-family: var(--mono); font-size: 12px; color: var(--sig); letter-spacing: 0.05em; }
+
+/* ============================================================
+   4 · Scale — count-ups
+   ============================================================ */
+.scale-grid{ margin-top: 32px; display: grid; grid-template-columns: 1fr; gap: 0; }
+.scale-row{ display:flex; align-items: baseline; gap: 16px; padding: 22px 0; border-top: 1px dashed var(--line-strong); }
+.scale-row:last-child{ border-bottom: 1px dashed var(--line-strong); }
+.scale-row .num{ font-family: var(--serif); font-size: 56px; line-height: 0.95; color: var(--ink); font-weight: 400; min-width: 0; }
+.scale-row .num .unit{ font-size: 28px; color: var(--ink-3); }
+.scale-row .lab{ font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); flex: 1; text-align: right; max-width: 14ch; }
+
+/* ============================================================
+   5 · Waveform — revenue down 15.35%
+   ============================================================ */
+.wave-scene{ margin-top: 36px; padding: 32px 0; }
+.wave-stat{ font-family: var(--serif); font-size: 88px; line-height: 0.9; letter-spacing: -0.03em; color: var(--ink); }
+.wave-stat .minus{ color: var(--c-cor); font-style: italic; }
+.wave-meta{ margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
+.wave-meta .l, .wave-meta .r{ font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+.wave-meta .r{ color: var(--ink); }
+
+/* ============================================================
+   6 · Cost breakdown — power dissipation bar
+   ============================================================ */
+.cost-bar{ display: grid; grid-template-columns: 1fr; margin-top: 28px; border-radius: 4px; overflow: hidden; }
+.cost-seg{ display: grid; grid-template-columns: 64px 1fr 56px; align-items: center; gap: 14px; padding: 16px 0; border-top: 1px solid var(--line); }
+.cost-seg:first-child{ border-top: none; }
+.cost-pct{ font-family: var(--serif); font-size: 36px; line-height: 1; color: var(--ink); letter-spacing: -0.02em; }
+.cost-lab{ font-family: var(--sans); font-size: 14px; color: var(--ink-2); line-height: 1.3; }
+.cost-lab .sub{ display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--ink-4); text-transform: uppercase; margin-top: 4px; }
+.cost-swatch{ height: 36px; border-radius: 3px; }
+.cost-bar-row{ display: flex; height: 14px; margin: 8px 0 28px; border-radius: 2px; overflow: hidden; background: var(--paper-3); }
+.cost-bar-row > div{ height: 100%; transition: width 1.2s var(--ease, cubic-bezier(.22,1,.36,1)); }
+.cost-foot{ display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ============================================================
+   7 · Footprint — wafer die map
+   ============================================================ */
+.wafer-wrap{ display:flex; justify-content:center; margin-top: 28px; }
+.wafer-legend{ margin-top: 24px; display: grid; grid-template-columns: 1fr; gap: 12px; }
+.legend-row{ display: grid; grid-template-columns: 16px 1fr 60px; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+.legend-row:last-child{ border-bottom: 1px solid var(--line); }
+.legend-row .swatch{ width: 16px; height: 16px; border-radius: 2px; }
+.legend-row .name{ font-family: var(--sans); font-size: 14px; color: var(--ink); }
+.legend-row .pct{ font-family: var(--mono); font-size: 13px; color: var(--ink); text-align: right; }
+
+/* ============================================================
+   8 · The bet — $6B buyback (dark beat)
+   ============================================================ */
+.dark-beat{
+  background: var(--night);
+  color: #EDEAE3;
+  padding: 80px 24px 88px;
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+}
+.dark-beat .eyebrow{ color: #5C8FFF; }
+.dark-beat .eyebrow .dot{ background: #5C8FFF; }
+.dark-beat h2.display{ color: #F4F2ED; margin-top: 24px; }
+.dark-beat p.body{ color: #B6B3AB; margin-top: 20px; }
+.bet-stack{ margin-top: 44px; }
+.bet-row{ display: flex; align-items: baseline; gap: 12px; padding: 16px 0; border-top: 1px solid var(--night-line); }
+.bet-row:last-child{ border-bottom: 1px solid var(--night-line); }
+.bet-row .k{ font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; color: #6B7080; text-transform: uppercase; flex: 1; }
+.bet-row .v{ font-family: var(--serif); font-size: 24px; color: #F4F2ED; }
+.bet-row .v.big{ font-size: 64px; line-height: 0.95; color: #5C8FFF; font-style: italic; }
+.bet-grid{ display: grid; grid-template-columns: repeat(60, 1fr); gap: 2px; margin-top: 36px; }
+.bet-grid .cell{ aspect-ratio: 1/1; background: #1B2230; border-radius: 1px; transition: background 240ms; }
+.bet-grid .cell.lit{ background: #5C8FFF; }
+
+/* ============================================================
+   9 · Competitors — chip-vs-chip dies
+   ============================================================ */
+.comp-list{ margin-top: 32px; display: grid; grid-template-columns: 1fr; gap: 0; }
+.comp-row{ padding: 22px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 84px 1fr; gap: 18px; align-items: start; }
+.comp-row:last-child{ border-bottom: 1px solid var(--line); }
+.comp-die{ width: 84px; height: 84px; }
+.comp-name{ font-family: var(--serif); font-size: 22px; line-height: 1.05; color: var(--ink); }
+.comp-tick{ font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; color: var(--sig); margin-bottom: 6px; text-transform: uppercase; }
+.comp-stats{ margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+.comp-stat .v{ font-family: var(--serif); font-size: 18px; color: var(--ink); }
+.comp-stat .v.down{ color: var(--c-cor); font-style: italic; }
+.comp-stat .v.up{ color: #2BB673; }
+.comp-stat .l{ font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.12em; color: var(--ink-3); text-transform: uppercase; }
+.comp-note{ margin-top: 10px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+.comp-note em{ font-family: var(--serif); font-style: italic; color: var(--sig); font-size: 14.5px; }
+
+/* ============================================================
+   10 · Closing thesis
+   ============================================================ */
+.close-beat{ padding: 80px 24px 96px; }
+.close-beat h2{ font-size: 46px; line-height: 1.0; }
+.close-figs{ margin-top: 44px; }
+.close-fig{ display: flex; align-items: baseline; gap: 14px; padding: 16px 0; border-top: 1px solid var(--line); }
+.close-fig:last-child{ border-bottom: 1px solid var(--line); }
+.close-fig .v{ font-family: var(--serif); font-size: 44px; line-height: 0.95; color: var(--ink); }
+.close-fig .v.signal{ color: var(--sig); font-style: italic; }
+.close-fig .l{ flex: 1; text-align: right; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; color: var(--ink-3); text-transform: uppercase; max-width: 18ch; }
+
+/* ============================================================
+   Footer
+   ============================================================ */
+footer{ padding: 48px 24px 96px; text-align: center; }
+footer .seal{ width: 28px; height: 28px; margin: 0 auto 14px; opacity: 0.5; }
+footer .src{ font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--ink-4); text-transform: uppercase; }
+
+/* ============================================================
+   Sparkline animations
+   ============================================================ */
+.draw{ stroke-dasharray: var(--len, 1000); stroke-dashoffset: var(--len, 1000); transition: stroke-dashoffset 1.6s var(--ease, cubic-bezier(.22,1,.36,1)); }
+.draw.in{ stroke-dashoffset: 0; }
+.fade-in{ opacity: 0; transition: opacity 800ms ease-out; }
+.fade-in.in{ opacity: 1; }
+
+/* current flow particles */
+@keyframes flow{ 0%{ stroke-dashoffset: 0; } 100%{ stroke-dashoffset: -120; } }
+.flow{ stroke-dasharray: 4 8; animation: flow 1.6s linear infinite; }
+.flow.slow{ animation-duration: 3.2s; }
+
+/* die map cells light */
+.wafer-cell{ transition: fill 600ms var(--ease, cubic-bezier(.22,1,.36,1)); }
+
+/* ============================================================
+   Section dividers — single hairline only at major resets, not card stacks
+   ============================================================ */
+.divider-band{ height: 1px; background: linear-gradient(90deg, transparent, var(--line-strong) 30%, var(--line-strong) 70%, transparent); margin: 0 24px; }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ===== STICKY CHROME ===== -->
+  <header class="chrome" id="chrome">
+    <div class="chrome-row">
+      <span class="tick">ON</span>
+      <span class="cname">onsemi</span>
+      <span class="recap-tag">Recap · FY '25</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+  </header>
+
+  <!-- ===== 1 · HERO ===== -->
+  <section class="hero" data-screen-label="01 Thesis">
+    <!-- circuit traces background -->
+    <svg class="hero-traces" viewBox="0 0 420 720" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="fade" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#1156FF" stop-opacity="0.0"/>
+          <stop offset="40%" stop-color="#1156FF" stop-opacity="0.55"/>
+          <stop offset="100%" stop-color="#1156FF" stop-opacity="0.0"/>
+        </linearGradient>
+      </defs>
+      <!-- silicon trace lines -->
+      <g stroke="#C9C5BA" stroke-width="0.7" fill="none" opacity="0.65">
+        <path d="M 0 120 H 80 L 100 100 H 200 L 220 120 H 420"/>
+        <path d="M 0 200 H 130 L 150 220 H 260 L 280 200 H 420"/>
+        <path d="M 0 300 H 60 L 80 280 H 180 L 200 300 H 360 L 380 320 H 420"/>
+        <path d="M 0 420 H 100 L 120 440 H 240 L 260 420 H 420"/>
+        <path d="M 0 540 H 90 L 110 520 H 220 L 240 540 H 420"/>
+        <path d="M 0 640 H 60 L 80 660 H 200 L 220 640 H 420"/>
+        <!-- vertical stitches -->
+        <path d="M 60 0 V 80"/>
+        <path d="M 120 80 V 160"/>
+        <path d="M 360 0 V 60"/>
+        <path d="M 380 360 V 480"/>
+        <path d="M 200 480 V 580"/>
+      </g>
+      <!-- nodes -->
+      <g fill="#A8A398">
+        <circle cx="100" cy="100" r="2"/>
+        <circle cx="220" cy="120" r="2"/>
+        <circle cx="150" cy="220" r="2"/>
+        <circle cx="280" cy="200" r="2"/>
+        <circle cx="80" cy="280" r="2"/>
+        <circle cx="200" cy="300" r="2"/>
+        <circle cx="380" cy="320" r="2"/>
+        <circle cx="120" cy="440" r="2"/>
+        <circle cx="260" cy="420" r="2"/>
+        <circle cx="240" cy="540" r="2"/>
+        <circle cx="80" cy="660" r="2"/>
+      </g>
+      <!-- live current flowing -->
+      <g stroke="#1156FF" stroke-width="1.6" fill="none">
+        <path class="flow" d="M 0 200 H 130 L 150 220 H 260 L 280 200 H 420" opacity="0.9"/>
+        <path class="flow slow" d="M 0 420 H 100 L 120 440 H 240 L 260 420 H 420" opacity="0.7"/>
+        <path class="flow" d="M 0 540 H 90 L 110 520 H 220 L 240 540 H 420" opacity="0.55"/>
+      </g>
+    </svg>
+
+    <div class="hero-inner">
+      <div class="hero-pill"><span class="pulse"></span> NASDAQ · $32.65B mkt cap</div>
+      <h1 class="display">
+        <span class="small-line">FY '25 · 6.00B in · 1.42B out</span>
+        Six billion<br>
+        dollars of<br>
+        <span class="italic signal">current,</span><br>
+        moving<br>
+        through<br>
+        silicon.
+      </h1>
+      <p class="hero-sub">onsemi is the second-largest power chipmaker on earth, and the largest image-sensor supplier to the cars driving past you.</p>
+    </div>
+
+    <div class="hero-meta">
+      <span class="v">EST · <b>1999</b></span>
+      <span class="v">SCOTTSDALE, AZ</span>
+      <span class="v">EMP · <b>22.6K</b></span>
+    </div>
+  </section>
+
+  <!-- ===== 2 · RESET BEAT ===== -->
+  <section class="reset reveal">
+    <p>The chips don't make headlines. The cars do — <span class="signal">and onsemi makes the chips that switch them on.</span></p>
+  </section>
+
+  <!-- ===== 3 · THE BUSINESS — two power rails ===== -->
+  <section data-screen-label="02 Business">
+    <div class="kicker reveal"><span class="num">02</span><span class="lab">The two rails</span></div>
+    <h2 class="display reveal" style="margin-top:18px;">Power and <span class="italic signal">sight.</span><br>That's the whole company.</h2>
+    <p class="body reveal" style="margin-top:18px; max-width:34ch;">Two reportable segments. The Power Solutions Group switches the current. The Intelligent Sensing Group is the eyes.</p>
+
+    <div class="rails-scene reveal">
+      <!-- PSG -->
+      <div class="rail">
+        <svg class="rail-icon" viewBox="0 0 56 56" aria-hidden="true">
+          <!-- power switch / MOSFET symbol -->
+          <rect x="6" y="6" width="44" height="44" rx="3" fill="none" stroke="#0E1116" stroke-width="1.2"/>
+          <path d="M 14 14 H 24 V 24 M 24 32 V 42 H 14" fill="none" stroke="#0E1116" stroke-width="1.4"/>
+          <path d="M 24 28 H 42" stroke="#1156FF" stroke-width="2"/>
+          <path d="M 32 14 H 42 V 42 H 32" fill="none" stroke="#0E1116" stroke-width="1.4"/>
+          <circle cx="33" cy="28" r="2.4" fill="#1156FF"/>
+        </svg>
+        <div>
+          <div class="rail-tag">PSG · Power Solutions</div>
+          <div class="rail-name">Silicon carbide,<br>MOSFETs, modules.</div>
+          <div class="rail-share" style="margin-top:8px;">EVs · industrial · grid</div>
+        </div>
+        <div style="font-family:var(--serif); font-size:36px; line-height:1; color:var(--sig);">·</div>
+      </div>
+      <!-- ISG -->
+      <div class="rail">
+        <svg class="rail-icon" viewBox="0 0 56 56" aria-hidden="true">
+          <!-- image sensor -->
+          <rect x="8" y="14" width="40" height="28" rx="2" fill="none" stroke="#0E1116" stroke-width="1.2"/>
+          <circle cx="28" cy="28" r="9" fill="none" stroke="#0E1116" stroke-width="1.2"/>
+          <circle cx="28" cy="28" r="4" fill="#1156FF"/>
+          <rect x="22" y="10" width="12" height="6" fill="none" stroke="#0E1116" stroke-width="1.2"/>
+          <line x1="14" y1="20" x2="14" y2="36" stroke="#0E1116" stroke-width="1"/>
+          <line x1="42" y1="20" x2="42" y2="36" stroke="#0E1116" stroke-width="1"/>
+        </svg>
+        <div>
+          <div class="rail-tag">ISG · Intelligent Sensing</div>
+          <div class="rail-name">Image &amp; depth<br>sensors.</div>
+          <div class="rail-share" style="margin-top:8px;">#1 to autos · ADAS · machine vision</div>
+        </div>
+        <div style="font-family:var(--serif); font-size:36px; line-height:1; color:var(--sig);">·</div>
+      </div>
+    </div>
+
+    <p class="body reveal" style="margin-top:32px; font-style: italic; font-family: var(--serif); font-size: 18px; color: var(--ink-2); max-width: 34ch;">
+      Hybrid manufacturing — owned fabs plus outsourced capacity — keeps the rails redundant.
+    </p>
+  </section>
+
+  <div class="divider-band"></div>
+
+  <!-- ===== 4 · SCALE — count-ups ===== -->
+  <section data-screen-label="03 Scale">
+    <div class="kicker reveal"><span class="num">03</span><span class="lab">The footprint</span></div>
+    <h2 class="display reveal" style="margin-top:18px;">Bigger than you<br>thought, <span class="italic signal">smaller</span><br>than the giants.</h2>
+
+    <div class="scale-grid reveal">
+      <div class="scale-row">
+        <span class="num" data-count="80000" data-suffix="+">0</span>
+        <span class="lab">Product types in catalog</span>
+      </div>
+      <div class="scale-row">
+        <span class="num" data-count="22600" data-suffix="">0</span>
+        <span class="lab">Employees worldwide</span>
+      </div>
+      <div class="scale-row">
+        <span class="num">$<span data-count="32.65" data-decimals="2">0</span><span class="unit">B</span></span>
+        <span class="lab">Market cap</span>
+      </div>
+      <div class="scale-row">
+        <span class="num">$<span data-count="6.00" data-decimals="2">0</span><span class="unit">B</span></span>
+        <span class="lab">FY '25 revenue</span>
+      </div>
+    </div>
+
+    <p class="body reveal" style="margin-top: 28px; max-width: 34ch;">
+      Spun out of Motorola in <em style="font-family:var(--serif); font-style:italic; color:var(--sig); font-size: 17px;">1999</em>. Now the second-largest power chipmaker on earth.
+    </p>
+  </section>
+
+  <!-- ===== 5 · RESET BEAT ===== -->
+  <section class="reset reveal">
+    <p>But scale, in semiconductors, is a tide. <span class="signal italic">And the tide just went out.</span></p>
+  </section>
+
+  <!-- ===== 6 · THE WAVEFORM — revenue down ===== -->
+  <section data-screen-label="04 Downturn">
+    <div class="kicker reveal"><span class="num">04</span><span class="lab">The cycle</span></div>
+    <h2 class="display reveal" style="margin-top: 18px;">Inventory<br>correction.<br><span class="italic" style="color:var(--c-cor);">Sharp.</span></h2>
+
+    <div class="wave-scene reveal">
+      <div class="wave-stat"><span class="minus">−15.35%</span></div>
+      <div class="wave-meta">
+        <span class="l">Revenue YoY</span>
+        <span class="r">FY '24 → FY '25</span>
+      </div>
+
+      <!-- voltage waveform dropping -->
+      <svg viewBox="0 0 380 180" style="margin-top: 28px; width: 100%; height: auto;" aria-hidden="true">
+        <defs>
+          <linearGradient id="wave-grad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#E05C5C" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#E05C5C" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- baseline grid -->
+        <g stroke="#C9C5BA" stroke-width="0.5" stroke-dasharray="2 4">
+          <line x1="0" y1="40" x2="380" y2="40"/>
+          <line x1="0" y1="90" x2="380" y2="90"/>
+          <line x1="0" y1="140" x2="380" y2="140"/>
+        </g>
+        <!-- the waveform: high then drop -->
+        <path id="wavefill" d="M 0 70 L 60 65 L 90 60 L 120 50 L 140 55 L 170 45 L 200 50 L 230 80 L 260 110 L 290 125 L 320 130 L 350 135 L 380 140 L 380 180 L 0 180 Z" fill="url(#wave-grad)" class="fade-in"/>
+        <path id="waveline" class="draw" style="--len: 700;" d="M 0 70 L 60 65 L 90 60 L 120 50 L 140 55 L 170 45 L 200 50 L 230 80 L 260 110 L 290 125 L 320 130 L 350 135 L 380 140" fill="none" stroke="#E05C5C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- markers -->
+        <circle cx="60" cy="65" r="2.5" fill="#E05C5C"/>
+        <circle cx="380" cy="140" r="3.5" fill="#E05C5C"/>
+        <text x="60" y="28" font-family="Geist Mono" font-size="9" fill="#5B6068" letter-spacing="1">FY'24 · $7.08B</text>
+        <text x="378" y="158" text-anchor="end" font-family="Geist Mono" font-size="9" fill="#5B6068" letter-spacing="1">FY'25 · $6.00B</text>
+      </svg>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 36px;" class="reveal">
+      <div>
+        <div class="cap" style="text-transform: uppercase;">Gross margin</div>
+        <div style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin-top: 4px;">33.1<span style="font-size:18px; color:var(--ink-3);">%</span></div>
+      </div>
+      <div>
+        <div class="cap" style="text-transform: uppercase;">Op. margin</div>
+        <div style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin-top: 4px;">1.4<span style="font-size:18px; color:var(--ink-3);">%</span></div>
+      </div>
+      <div>
+        <div class="cap" style="text-transform: uppercase;">Q4 EPS</div>
+        <div style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin-top: 4px;">$0.64</div>
+      </div>
+      <div>
+        <div class="cap" style="text-transform: uppercase;">Q4 revenue</div>
+        <div style="font-family: var(--serif); font-size: 36px; color: var(--ink); margin-top: 4px;">$1.53<span style="font-size:18px; color:var(--ink-3);">B</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider-band"></div>
+
+  <!-- ===== 7 · WHERE THE MONEY GOES — power dissipation ===== -->
+  <section data-screen-label="05 Costs">
+    <div class="kicker reveal"><span class="num">05</span><span class="lab">A hundred cents in</span></div>
+    <h2 class="display reveal" style="margin-top:18px;">Where the dollar<br><span class="italic signal">dissipates.</span></h2>
+    <p class="body reveal" style="margin-top: 16px; max-width: 32ch;">FY '25 cost stack as a share of revenue. Two-thirds gets burned on raw silicon.</p>
+
+    <!-- the dissipation bar -->
+    <div class="cost-bar-row reveal" id="costbar">
+      <div style="background: var(--c-cor); width: 0%;" data-w="67"></div>
+      <div style="background: var(--c-rd);  width: 0%;" data-w="10"></div>
+      <div style="background: var(--c-sga); width: 0%;" data-w="6"></div>
+      <div style="background: var(--c-rst); width: 0%;" data-w="3"></div>
+      <div style="background: var(--c-da);  width: 0%;" data-w="3"></div>
+      <div style="background: #2BB673; width: 0%;" data-w="11"></div>
+    </div>
+    <div class="cost-foot reveal"><span>FY '25</span><span>Cost of $1</span></div>
+
+    <div style="margin-top: 36px;" class="reveal">
+      <div class="cost-seg">
+        <div class="cost-pct">67<span style="font-size:18px;color:var(--ink-3);">¢</span></div>
+        <div class="cost-lab">Cost of revenue<span class="sub">Silicon, fabs, materials</span></div>
+        <div class="cost-swatch" style="background: var(--c-cor);"></div>
+      </div>
+      <div class="cost-seg">
+        <div class="cost-pct">10<span style="font-size:18px;color:var(--ink-3);">¢</span></div>
+        <div class="cost-lab">Research &amp; development<span class="sub">SiC · GaN · sensors</span></div>
+        <div class="cost-swatch" style="background: var(--c-rd);"></div>
+      </div>
+      <div class="cost-seg">
+        <div class="cost-pct">6<span style="font-size:18px;color:var(--ink-3);">¢</span></div>
+        <div class="cost-lab">SG&amp;A<span class="sub">Selling, general, admin</span></div>
+        <div class="cost-swatch" style="background: var(--c-sga);"></div>
+      </div>
+      <div class="cost-seg">
+        <div class="cost-pct">3<span style="font-size:18px;color:var(--ink-3);">¢</span></div>
+        <div class="cost-lab">Restructuring<span class="sub">Fab Right rationalization</span></div>
+        <div class="cost-swatch" style="background: var(--c-rst);"></div>
+      </div>
+      <div class="cost-seg">
+        <div class="cost-pct">3<span style="font-size:18px;color:var(--ink-3);">¢</span></div>
+        <div class="cost-lab">D&amp;A (non-COGS)<span class="sub">Asset depreciation</span></div>
+        <div class="cost-swatch" style="background: var(--c-da);"></div>
+      </div>
+      <div class="cost-seg" style="border-top: 1px dashed var(--line-strong);">
+        <div class="cost-pct" style="color: #2BB673;">11<span style="font-size:18px;color:var(--ink-3);">¢</span></div>
+        <div class="cost-lab" style="color: var(--ink);"><em style="font-family:var(--serif); font-style:italic; color:#2BB673;">Survives.</em><span class="sub">What makes it past the bar</span></div>
+        <div class="cost-swatch" style="background: #2BB673;"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider-band"></div>
+
+  <!-- ===== 8 · FOOTPRINT — wafer die map ===== -->
+  <section data-screen-label="06 Footprint">
+    <div class="kicker reveal"><span class="num">06</span><span class="lab">Where the chips ship</span></div>
+    <h2 class="display reveal" style="margin-top:18px;">Most of the silicon<br>moves <span class="italic signal">east.</span></h2>
+
+    <div class="wafer-wrap reveal">
+      <svg id="wafer" viewBox="0 0 320 320" width="100%" style="max-width: 380px;" aria-hidden="true">
+        <!-- wafer disc -->
+        <circle cx="160" cy="160" r="150" fill="#E7E5DE" stroke="#A8A398" stroke-width="0.7"/>
+        <!-- notch -->
+        <path d="M 152 12 L 168 12 L 160 22 Z" fill="#F2F1EC" stroke="#A8A398" stroke-width="0.7"/>
+        <!-- die cells -- generated below -->
+        <g id="wafer-cells"></g>
+        <!-- legend pointers -->
+        <g font-family="Geist Mono" font-size="9" fill="#5B6068" letter-spacing="1">
+          <text x="160" y="320" text-anchor="middle">200MM WAFER · FY'25 REVENUE BY REGION</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="wafer-legend reveal">
+      <div class="legend-row">
+        <span class="swatch" style="background: var(--sig);"></span>
+        <span class="name">Asia-Pacific</span>
+        <span class="pct">55%</span>
+      </div>
+      <div class="legend-row">
+        <span class="swatch" style="background: var(--sig-2);"></span>
+        <span class="name">Europe, Middle East &amp; Africa</span>
+        <span class="pct">25%</span>
+      </div>
+      <div class="legend-row">
+        <span class="swatch" style="background: #9CB4DD;"></span>
+        <span class="name">Americas</span>
+        <span class="pct">20%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 9 · RESET BEAT (dark-leaning prep) ===== -->
+  <section class="reset reveal">
+    <p>No dividend. <span class="signal italic">Every dollar of free cash comes home as buybacks.</span></p>
+  </section>
+
+  <!-- ===== 10 · THE BET — dark beat, $6B ===== -->
+  <section class="dark-beat" data-screen-label="07 The Bet">
+    <div class="kicker reveal"><span class="num">07</span><span class="lab" style="color:#5C8FFF;">The bet · $6B</span></div>
+    <h2 class="display reveal">A six billion<br>dollar vote of<br><span class="italic" style="color:#5C8FFF;">confidence.</span></h2>
+    <p class="body reveal">In November '25, the board authorized a new repurchase program: $6B over three years, replacing the prior authorization the company had already burned through. No dividend, ever — onsemi returns capital one way.</p>
+
+    <!-- dot grid representing $6B authorization -->
+    <div class="bet-grid reveal" id="betgrid"></div>
+    <div style="display:flex; justify-content: space-between; margin-top: 12px;">
+      <span style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: #6B7080; text-transform: uppercase;">$100M each ·  60 dots</span>
+      <span style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: #5C8FFF; text-transform: uppercase;">$6.0B authorized</span>
+    </div>
+
+    <div class="bet-stack reveal">
+      <div class="bet-row">
+        <span class="k">FY '25 op. cash flow</span>
+        <span class="v">$1.76B</span>
+      </div>
+      <div class="bet-row">
+        <span class="k">Free cash flow</span>
+        <span class="v">$1.42B</span>
+      </div>
+      <div class="bet-row">
+        <span class="k">% of FCF spent on buybacks</span>
+        <span class="v big">~100<span style="font-size:32px;">%</span></span>
+      </div>
+      <div class="bet-row">
+        <span class="k">Capex (Fab Right)</span>
+        <span class="v">$341M</span>
+      </div>
+      <div class="bet-row">
+        <span class="k">Qorvo SiC JFET acq.</span>
+        <span class="v">$118.8M</span>
+      </div>
+    </div>
+
+    <p class="body reveal" style="margin-top: 36px;">
+      Bolt-on M&amp;A. Selective capex. The cash machine is being pointed back at the share count.
+    </p>
+  </section>
+
+  <!-- ===== 11 · COMPETITORS ===== -->
+  <section data-screen-label="08 Rivals">
+    <div class="kicker reveal"><span class="num">08</span><span class="lab">In the same fab</span></div>
+    <h2 class="display reveal" style="margin-top: 18px;">The dies<br>across the<br><span class="italic signal">aisle.</span></h2>
+
+    <div class="comp-list reveal">
+      <!-- STM -->
+      <div class="comp-row">
+        <svg class="comp-die" viewBox="0 0 84 84" aria-hidden="true">
+          <rect x="8" y="8" width="68" height="68" rx="4" fill="#E7E5DE" stroke="#0E1116" stroke-width="1"/>
+          <g stroke="#0E1116" stroke-width="0.8" fill="none">
+            <line x1="20" y1="8" x2="20" y2="14"/><line x1="32" y1="8" x2="32" y2="14"/>
+            <line x1="44" y1="8" x2="44" y2="14"/><line x1="56" y1="8" x2="56" y2="14"/>
+            <line x1="68" y1="8" x2="68" y2="14"/>
+            <line x1="20" y1="76" x2="20" y2="70"/><line x1="32" y1="76" x2="32" y2="70"/>
+            <line x1="44" y1="76" x2="44" y2="70"/><line x1="56" y1="76" x2="56" y2="70"/>
+            <line x1="68" y1="76" x2="68" y2="70"/>
+            <line x1="8" y1="20" x2="14" y2="20"/><line x1="8" y1="32" x2="14" y2="32"/>
+            <line x1="8" y1="44" x2="14" y2="44"/><line x1="8" y1="56" x2="14" y2="56"/>
+            <line x1="76" y1="20" x2="70" y2="20"/><line x1="76" y1="32" x2="70" y2="32"/>
+            <line x1="76" y1="44" x2="70" y2="44"/><line x1="76" y1="56" x2="70" y2="56"/>
+          </g>
+          <rect x="20" y="20" width="44" height="44" rx="2" fill="none" stroke="#0E1116" stroke-width="0.8"/>
+          <text x="42" y="48" text-anchor="middle" font-family="Geist Mono" font-size="11" fill="#0E1116" letter-spacing="1">STM</text>
+        </svg>
+        <div>
+          <div class="comp-tick">STM · STMicroelectronics</div>
+          <div class="comp-name">The mirror.</div>
+          <div class="comp-stats">
+            <div class="comp-stat"><div class="v">$31.2<span style="font-size:13px;color:var(--ink-3);">B</span></div><div class="l">Market cap</div></div>
+            <div class="comp-stat"><div class="v">$3.19<span style="font-size:13px;color:var(--ink-3);">B</span></div><div class="l">Q. revenue</div></div>
+            <div class="comp-stat"><div class="v down">−50.57%</div><div class="l">Rev YoY</div></div>
+            <div class="comp-stat"><div class="v">40.5<span style="font-size:13px;color:var(--ink-3);">×</span></div><div class="l">P/E TTM</div></div>
+          </div>
+          <p class="comp-note">Head-to-head in <em>silicon carbide</em> for EV inverters and automotive MOSFETs. Same correction, deeper cut.</p>
+        </div>
+      </div>
+
+      <!-- GFS -->
+      <div class="comp-row">
+        <svg class="comp-die" viewBox="0 0 84 84" aria-hidden="true">
+          <rect x="8" y="8" width="68" height="68" rx="4" fill="#E7E5DE" stroke="#0E1116" stroke-width="1"/>
+          <g stroke="#0E1116" stroke-width="0.8" fill="none">
+            <line x1="20" y1="8" x2="20" y2="14"/><line x1="32" y1="8" x2="32" y2="14"/>
+            <line x1="44" y1="8" x2="44" y2="14"/><line x1="56" y1="8" x2="56" y2="14"/>
+            <line x1="68" y1="8" x2="68" y2="14"/>
+            <line x1="20" y1="76" x2="20" y2="70"/><line x1="32" y1="76" x2="32" y2="70"/>
+            <line x1="44" y1="76" x2="44" y2="70"/><line x1="56" y1="76" x2="56" y2="70"/>
+            <line x1="68" y1="76" x2="68" y2="70"/>
+            <line x1="8" y1="20" x2="14" y2="20"/><line x1="8" y1="32" x2="14" y2="32"/>
+            <line x1="8" y1="44" x2="14" y2="44"/><line x1="8" y1="56" x2="14" y2="56"/>
+            <line x1="76" y1="20" x2="70" y2="20"/><line x1="76" y1="32" x2="70" y2="32"/>
+            <line x1="76" y1="44" x2="70" y2="44"/><line x1="76" y1="56" x2="70" y2="56"/>
+          </g>
+          <rect x="20" y="20" width="44" height="44" rx="2" fill="none" stroke="#0E1116" stroke-width="0.8"/>
+          <!-- bridge line indicating partnership -->
+          <line x1="64" y1="42" x2="84" y2="42" stroke="#1156FF" stroke-width="2"/>
+          <text x="42" y="48" text-anchor="middle" font-family="Geist Mono" font-size="11" fill="#0E1116" letter-spacing="1">GFS</text>
+        </svg>
+        <div>
+          <div class="comp-tick">GFS · GlobalFoundries</div>
+          <div class="comp-name">Partner. Rival.<br>Both at once.</div>
+          <div class="comp-stats">
+            <div class="comp-stat"><div class="v">$30.5<span style="font-size:13px;color:var(--ink-3);">B</span></div><div class="l">Market cap</div></div>
+            <div class="comp-stat"><div class="v">$1.83<span style="font-size:13px;color:var(--ink-3);">B</span></div><div class="l">Q. revenue</div></div>
+            <div class="comp-stat"><div class="v up">+0.61%</div><div class="l">Rev YoY</div></div>
+            <div class="comp-stat"><div class="v">34.4<span style="font-size:13px;color:var(--ink-3);">×</span></div><div class="l">P/E TTM</div></div>
+          </div>
+          <p class="comp-note">Signed a 2025 collaboration to <em>co-develop GaN power devices</em>. The fab next door, threading both ways.</p>
+        </div>
+      </div>
+
+      <!-- IFNNY -->
+      <div class="comp-row">
+        <svg class="comp-die" viewBox="0 0 84 84" aria-hidden="true">
+          <rect x="8" y="8" width="68" height="68" rx="4" fill="#E7E5DE" stroke="#0E1116" stroke-width="1"/>
+          <g stroke="#0E1116" stroke-width="0.8" fill="none">
+            <line x1="20" y1="8" x2="20" y2="14"/><line x1="32" y1="8" x2="32" y2="14"/>
+            <line x1="44" y1="8" x2="44" y2="14"/><line x1="56" y1="8" x2="56" y2="14"/>
+            <line x1="68" y1="8" x2="68" y2="14"/>
+            <line x1="20" y1="76" x2="20" y2="70"/><line x1="32" y1="76" x2="32" y2="70"/>
+            <line x1="44" y1="76" x2="44" y2="70"/><line x1="56" y1="76" x2="56" y2="70"/>
+            <line x1="68" y1="76" x2="68" y2="70"/>
+            <line x1="8" y1="20" x2="14" y2="20"/><line x1="8" y1="32" x2="14" y2="32"/>
+            <line x1="8" y1="44" x2="14" y2="44"/><line x1="8" y1="56" x2="14" y2="56"/>
+            <line x1="76" y1="20" x2="70" y2="20"/><line x1="76" y1="32" x2="70" y2="32"/>
+            <line x1="76" y1="44" x2="70" y2="44"/><line x1="76" y1="56" x2="70" y2="56"/>
+          </g>
+          <rect x="20" y="20" width="44" height="44" rx="2" fill="none" stroke="#0E1116" stroke-width="0.8"/>
+          <text x="42" y="48" text-anchor="middle" font-family="Geist Mono" font-size="10" fill="#0E1116" letter-spacing="1">IFX</text>
+        </svg>
+        <div>
+          <div class="comp-tick">IFNNY · Infineon Technologies</div>
+          <div class="comp-name">The European<br>incumbent.</div>
+          <p class="comp-note">Direct rival across automotive and industrial power semiconductors — the <em>European pole</em> of the same correction.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider-band"></div>
+
+  <!-- ===== 12 · CLOSING THESIS ===== -->
+  <section class="close-beat" data-screen-label="09 Takeaway">
+    <div class="kicker reveal"><span class="num">09</span><span class="lab">The takeaway</span></div>
+    <h2 class="display reveal" style="margin-top: 18px;">Six billion<br>dollars went in.<br><span class="italic signal">Eleven cents</span><br>came out.</h2>
+    <p class="body reveal" style="margin-top: 24px; max-width: 34ch;">
+      A cyclical year for a structural company. The cars keep coming. The chips keep switching. <em style="font-family:var(--serif); font-style:italic; color:var(--sig); font-size: 17px;">The current is still flowing.</em>
+    </p>
+
+    <div class="close-figs reveal">
+      <div class="close-fig">
+        <span class="v signal">$1.42B</span>
+        <span class="l">Free cash, FY '25</span>
+      </div>
+      <div class="close-fig">
+        <span class="v signal">$6.0B</span>
+        <span class="l">Authorized for buyback, 3-yr</span>
+      </div>
+      <div class="close-fig">
+        <span class="v signal">11¢</span>
+        <span class="l">Of every dollar of revenue, kept</span>
+      </div>
+      <div class="close-fig">
+        <span class="v">26 yrs</span>
+        <span class="l">Since the spin from Motorola</span>
+      </div>
+    </div>
+
+    <p class="body reveal" style="margin-top: 44px; font-family: var(--serif); font-style: italic; font-size: 22px; line-height: 1.25; color: var(--ink); max-width: 26ch;">
+      You don't see the chips.<br>You see the cars.<br><span class="signal">onsemi sees both.</span>
+    </p>
+  </section>
+
+  <footer>
+    <svg class="seal" viewBox="0 0 28 28" aria-hidden="true">
+      <circle cx="14" cy="14" r="13" fill="none" stroke="#5B6068" stroke-width="0.8"/>
+      <circle cx="14" cy="14" r="3" fill="#1156FF"/>
+    </svg>
+    <div class="src">All figures · FY '25 filings &amp; Q4 release</div>
+    <div class="src" style="margin-top: 8px;">ON · NASDAQ · Recap</div>
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================
+   Scroll progress
+   ============================================================ */
+const progress = document.getElementById('progress');
+const chrome = document.getElementById('chrome');
+function onScroll(){
+  const h = document.documentElement;
+  const max = h.scrollHeight - window.innerHeight;
+  const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+  progress.style.width = (p * 100) + '%';
+
+  // chrome turns dark once we enter the dark-beat
+  const beat = document.querySelector('.dark-beat');
+  if (beat){
+    const r = beat.getBoundingClientRect();
+    if (r.top < 60 && r.bottom > 60) chrome.classList.add('dark');
+    else chrome.classList.remove('dark');
+  }
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+/* ============================================================
+   Reveal-on-scroll
+   ============================================================ */
+const io = new IntersectionObserver((entries) => {
+  for (const e of entries){
+    if (e.isIntersecting){
+      e.target.classList.add('in');
+      // count-ups
+      e.target.querySelectorAll('[data-count]').forEach(startCount);
+      // cost bar
+      if (e.target.id === 'costbar') startCostBar();
+    }
+  }
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+const costbar = document.getElementById('costbar');
+if (costbar) io.observe(costbar);
+
+/* ============================================================
+   Count-up
+   ============================================================ */
+function startCount(el){
+  if (el.dataset.done) return;
+  el.dataset.done = '1';
+  const target = parseFloat(el.dataset.count);
+  const decimals = parseInt(el.dataset.decimals || '0', 10);
+  const suffix = el.dataset.suffix || '';
+  const dur = 1400;
+  const t0 = performance.now();
+  function fmt(n){
+    if (decimals > 0) return n.toFixed(decimals);
+    return Math.round(n).toLocaleString('en-US');
+  }
+  function step(t){
+    const k = Math.min(1, (t - t0) / dur);
+    const eased = 1 - Math.pow(1 - k, 3);
+    el.textContent = fmt(target * eased) + suffix;
+    if (k < 1) requestAnimationFrame(step);
+    else el.textContent = fmt(target) + suffix;
+  }
+  requestAnimationFrame(step);
+}
+
+/* ============================================================
+   Cost bar fill
+   ============================================================ */
+function startCostBar(){
+  const segs = document.querySelectorAll('#costbar > div');
+  segs.forEach(s => {
+    s.style.width = (parseFloat(s.dataset.w) || 0) + '%';
+  });
+}
+
+/* ============================================================
+   Waveform draw
+   ============================================================ */
+const waveline = document.getElementById('waveline');
+const wavefill = document.getElementById('wavefill');
+if (waveline){
+  const len = waveline.getTotalLength();
+  waveline.style.setProperty('--len', len);
+  waveline.style.strokeDasharray = len;
+  waveline.style.strokeDashoffset = len;
+  const wio = new IntersectionObserver((es)=>{
+    es.forEach(e=>{
+      if (e.isIntersecting){
+        waveline.classList.add('in');
+        wavefill.classList.add('in');
+        wio.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  wio.observe(waveline);
+}
+
+/* ============================================================
+   Wafer cells — die map weighted by region pct
+   ============================================================ */
+(function buildWafer(){
+  const cells = document.getElementById('wafer-cells');
+  if (!cells) return;
+  // generate grid cells inside circle r=150 around (160,160), cell ~12px
+  const cx = 160, cy = 160, R = 144;
+  const cell = 14, gap = 1;
+  const list = [];
+  for (let y = cy - R; y < cy + R; y += cell + gap){
+    for (let x = cx - R; x < cx + R; x += cell + gap){
+      const dx = x + cell/2 - cx, dy = y + cell/2 - cy;
+      if (Math.sqrt(dx*dx + dy*dy) <= R - 2){
+        list.push({x, y, dx, dy, ang: Math.atan2(dy, dx)});
+      }
+    }
+  }
+  // assign regions:
+  // Asia-Pacific 55% → angles approx -45° to 135° (right + bottom-right wedge)
+  // EMEA 25% → 135° to -135° (left wedge)
+  // Americas 20% → bottom-left wedge
+  // simpler: sort by angle then bucket by pct
+  const total = list.length;
+  // sort by angle so wedges are contiguous
+  list.sort((a,b)=> a.ang - b.ang);
+  const counts = [
+    { color: '#1156FF', n: Math.round(total * 0.55) }, // APAC
+    { color: '#4F86FF', n: Math.round(total * 0.25) }, // EMEA
+    { color: '#9CB4DD', n: total - Math.round(total*0.55) - Math.round(total*0.25) }, // Americas
+  ];
+  let i = 0;
+  counts.forEach(seg => {
+    for (let k = 0; k < seg.n && i < total; k++, i++){
+      const c = list[i];
+      const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      r.setAttribute('x', c.x); r.setAttribute('y', c.y);
+      r.setAttribute('width', cell); r.setAttribute('height', cell);
+      r.setAttribute('fill', '#D9D6CC');
+      r.setAttribute('rx', '1');
+      r.setAttribute('class', 'wafer-cell');
+      r.dataset.target = seg.color;
+      cells.appendChild(r);
+    }
+  });
+  // observer to light up cells
+  const wfio = new IntersectionObserver((es)=>{
+    es.forEach(e=>{
+      if (e.isIntersecting){
+        const cs = cells.querySelectorAll('.wafer-cell');
+        cs.forEach((c, idx) => {
+          setTimeout(()=> c.setAttribute('fill', c.dataset.target), idx * 6);
+        });
+        wfio.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  wfio.observe(document.getElementById('wafer'));
+})();
+
+/* ============================================================
+   Bet grid — 60 cells, light up over time
+   ============================================================ */
+(function buildBetGrid(){
+  const grid = document.getElementById('betgrid');
+  if (!grid) return;
+  for (let i = 0; i < 60; i++){
+    const d = document.createElement('div');
+    d.className = 'cell';
+    grid.appendChild(d);
+  }
+  const bgio = new IntersectionObserver((es)=>{
+    es.forEach(e=>{
+      if (e.isIntersecting){
+        const cells = grid.querySelectorAll('.cell');
+        cells.forEach((c, i) => setTimeout(()=> c.classList.add('lit'), i * 40));
+        bgio.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  bgio.observe(grid);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PCG · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Tokens (PCG-tuned, derived from Zair Naqvi DS) ---------- */
+  :root {
+    /* Paper / ink — warm cream like the design system, but cooler-leaning to feel infrastructural */
+    --paper:        #F4F1EA;        /* base — slightly cooler / dustier than DS paper */
+    --paper-2:      #ECE8DF;        /* raised */
+    --paper-3:      #E1DCD0;        /* deeper, dividers */
+    --ink:          #14171A;        /* ledger ink, slightly blue-cool */
+    --ink-2:        #353A3F;
+    --ink-3:        #6B7177;
+    --ink-4:        #9CA1A6;
+    --line:         #DAD5C8;
+    --line-2:       #C7C1B2;
+
+    /* Signal — ember (wildfire/cost weight, used sparingly) */
+    --ember:        #D8501F;
+    --ember-soft:   #F2A580;
+    --ember-wash:   #FBE4D6;
+
+    /* Grid blue — high-voltage line, secondary signal */
+    --voltage:      #2D5C8E;
+    --voltage-soft: #6E94BC;
+    --voltage-wash: #DCE6F1;
+
+    /* Inverted "weight" mode for the debt section */
+    --night:        #0E1115;
+    --night-2:      #181C21;
+    --night-3:      #232830;
+    --night-line:   #2B313A;
+    --night-fg:     #ECE8DF;
+    --night-fg-2:   #A6ADB5;
+    --night-fg-3:   #6B7480;
+
+    /* Cost colors — exact hexes from JSON */
+    --c-cor:  #4E79A7;
+    --c-om:   #F28E2B;
+    --c-da:   #59A14F;
+    --c-int:  #E15759;
+    --c-wfr:  #B07AA1;
+    --c-tax:  #76B7B2;
+
+    --font-display: 'Instrument Serif', 'Times New Roman', serif;
+    --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+
+    --max-w: 440px;     /* mobile artifact width */
+    --pad: 22px;
+  }
+
+  * { box-sizing: border-box; -webkit-text-size-adjust: 100%; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #1a1a1c;
+    font-family: var(--font-sans);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+  /* The page is the design — center it on a dim void so it reads as a mobile artifact */
+  .stage {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    background: var(--paper);
+    min-height: 100vh;
+    position: relative;
+    box-shadow: 0 0 80px rgba(0,0,0,0.4);
+    overflow: hidden;
+  }
+
+  /* ============================================================
+     PERSISTENT CHROME — ticker, name, recap label, scroll hairline
+     ============================================================ */
+  .chrome {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(244,241,234,0.78);
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    border-bottom: 1px solid rgba(218,213,200,0.6);
+  }
+  .chrome-inner {
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 14px var(--pad) 12px;
+  }
+  .ticker {
+    font-family: var(--font-mono);
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3px 7px; border-radius: 3px;
+  }
+  .co-name {
+    font-family: var(--font-sans);
+    font-size: 14px; font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .recap-label {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+  }
+  .scroll-bar {
+    height: 1.5px;
+    background: var(--line);
+    position: relative;
+  }
+  .scroll-bar::before {
+    content: ""; position: absolute; left:0; top:0; bottom:0;
+    width: var(--scroll, 0%);
+    background: var(--ember);
+    transition: width 60ms linear;
+  }
+
+  /* ============================================================
+     EDITORIAL PRIMITIVES
+     ============================================================ */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .eyebrow .dot { color: var(--ember); }
+  .eyebrow b { color: var(--ink); font-weight: 500; }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.018em;
+    color: var(--ink);
+  }
+  .display em, .em-serif {
+    font-family: var(--font-display);
+    font-style: italic;
+  }
+
+  .body {
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+  .body em { font-family: var(--font-display); font-style: italic; font-size: 1.05em; color: var(--ink); }
+  .body .ember { color: var(--ember); font-style: italic; font-family: var(--font-display); font-size: 1.05em; }
+  .body .voltage { color: var(--voltage); font-style: italic; font-family: var(--font-display); font-size: 1.05em; }
+
+  .mono { font-family: var(--font-mono); }
+
+  section { padding: 64px var(--pad) 56px; position: relative; }
+  section.tight { padding-top: 36px; padding-bottom: 36px; }
+
+  /* Reset beats — italic-serif on contrasting band */
+  .reset-beat {
+    background: var(--paper-3);
+    padding: 44px var(--pad);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .reset-beat p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.18;
+    color: var(--ink);
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .reset-beat .ember { color: var(--ember); }
+  .reset-beat.invert { background: var(--night); border-color: #000; }
+  .reset-beat.invert p { color: var(--night-fg); }
+
+  /* ============================================================
+     1 · HERO — sharp thesis, parallax transmission scene
+     ============================================================ */
+  .hero {
+    padding: 26px var(--pad) 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-meta { display: flex; gap: 14px; align-items: center; }
+  .hero-meta .dotline { flex: 1; height: 1px; background: var(--line); }
+  .hero-h {
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.92;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    margin: 22px 0 14px;
+  }
+  .hero-h .em { font-style: italic; }
+  .hero-h .num { font-style: italic; }
+  .hero-sub {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.25;
+    color: var(--ink-2);
+    margin-bottom: 28px;
+    max-width: 22ch;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 14px;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+  }
+  .hero-stats .label {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 4px;
+  }
+  .hero-stats .val {
+    font-family: var(--font-display);
+    font-size: 24px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .hero-stats .val em { font-style: italic; }
+
+  /* Parallax transmission scene */
+  .grid-scene {
+    position: relative;
+    margin: 30px calc(-1 * var(--pad)) 0;
+    height: 220px;
+    overflow: hidden;
+  }
+  .grid-scene svg { display: block; width: 100%; height: 100%; }
+
+  /* Hero sun/horizon wash */
+  .hero-sky {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg,
+      rgba(244,241,234,0) 0%,
+      rgba(242,165,128,0.18) 60%,
+      rgba(216,80,31,0.22) 100%);
+    pointer-events: none;
+  }
+
+  /* ============================================================
+     2 · THE BUSINESS — regulated rate-base mechanism
+     ============================================================ */
+  .ratebase {
+    margin-top: 26px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 24px 0;
+  }
+  .ratebase .row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 0;
+  }
+  .ratebase .row + .row { border-top: 1px dashed var(--line); }
+  .ratebase .glyph {
+    width: 44px; height: 44px; flex-shrink: 0;
+    border: 1px solid var(--line-2);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--paper);
+  }
+  .ratebase .glyph svg { width: 22px; height: 22px; }
+  .ratebase .lab { flex: 1; }
+  .ratebase .lab .k {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    margin-bottom: 2px;
+  }
+  .ratebase .lab .v {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .ratebase .lab .v em { font-style: italic; }
+  .ratebase .pct {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ember);
+  }
+
+  /* Revenue split — electric vs gas, segmented bar */
+  .revsplit { margin-top: 28px; }
+  .revsplit .bar {
+    height: 56px; display: flex;
+    border-radius: 4px; overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .revsplit .seg {
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 10px 12px;
+    color: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .revsplit .seg.elec { background: var(--voltage); flex: 70; }
+  .revsplit .seg.gas  { background: #B89556; flex: 30; }
+  .revsplit .seg .big {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .revsplit .cap {
+    margin-top: 10px;
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    color: var(--ink-3);
+    line-height: 1.5;
+  }
+
+  /* ============================================================
+     3 · THE SCALE — California fills with reach
+     ============================================================ */
+  .scale-stage {
+    position: relative;
+    margin: 0 calc(-1 * var(--pad));
+    padding: 0 var(--pad);
+  }
+  .scale-num {
+    font-family: var(--font-display);
+    font-size: 96px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin: 8px 0 4px;
+  }
+  .scale-num em { font-style: italic; }
+  .scale-num .unit { font-style: italic; font-size: 36px; color: var(--ink-3); margin-left: 4px; }
+
+  .scale-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 14px;
+    margin-top: 36px;
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+  }
+  .scale-grid .item .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .scale-grid .item .v {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1;
+    color: var(--ink);
+    margin: 6px 0 4px;
+  }
+  .scale-grid .item .v em { font-style: italic; }
+  .scale-grid .item .v .unit { font-style: italic; font-size: 16px; color: var(--ink-3); margin-left: 2px; }
+  .scale-grid .item .c {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--ink-3);
+    line-height: 1.4;
+  }
+
+  .ca-wrap {
+    margin: 36px 0 0;
+    padding: 0 0;
+  }
+  .ca-wrap svg { width: 100%; height: auto; display: block; }
+  .ca-cap {
+    margin-top: 14px;
+    display: flex; gap: 18px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .ca-cap .k { color: var(--ink); }
+  .ca-cap .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+
+  /* ============================================================
+     4 · COST DOLLAR — where every dollar of cost goes
+     ============================================================ */
+  .cost-section { padding-bottom: 72px; }
+  .cost-grid {
+    margin: 28px 0 0;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-auto-rows: 28px;
+    gap: 4px;
+  }
+  .cost-cell {
+    border-radius: 2px;
+    transition: transform 280ms var(--ease);
+    --ease: cubic-bezier(.22,1,.36,1);
+  }
+  .cost-legend { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .cost-row { display: grid; grid-template-columns: 14px 1fr auto; gap: 12px; align-items: baseline; }
+  .cost-row .swatch { width: 14px; height: 14px; border-radius: 3px; align-self: center; }
+  .cost-row .lab {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .cost-row .lab .sub {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 2px;
+  }
+  .cost-row .v {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .cost-total {
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .cost-total b { color: var(--ink); font-family: var(--font-display); font-style: italic; font-size: 18px; letter-spacing: 0; }
+
+  /* ============================================================
+     5 · FOOTPRINT — north 65 / central 35
+     ============================================================ */
+  .footprint .ca-map svg { width: 100%; height: auto; }
+  .footprint .ratio {
+    margin-top: 26px;
+    display: flex; gap: 6px;
+    height: 80px;
+  }
+  .footprint .ratio .seg {
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 12px 14px;
+    color: var(--paper);
+    border-radius: 4px;
+  }
+  .footprint .ratio .seg .top {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+  .footprint .ratio .seg .big {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 36px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .footprint .ratio .seg.north  { background: var(--voltage); flex: 65; }
+  .footprint .ratio .seg.central { background: var(--voltage-soft); flex: 35; color: #142840; }
+
+  /* ============================================================
+     6 · THE WEIGHT — debt + capex (inverted dark beat)
+     ============================================================ */
+  .weight {
+    background: var(--night);
+    color: var(--night-fg);
+    padding: 80px var(--pad) 80px;
+    margin: 0 calc(-1 * var(--pad));
+    position: relative;
+  }
+  .weight .eyebrow { color: var(--night-fg-3); }
+  .weight .eyebrow b { color: var(--night-fg); }
+  .weight h2 {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--night-fg);
+    margin: 18px 0 18px;
+  }
+  .weight h2 em { font-style: italic; color: var(--ember); }
+  .weight .body { color: var(--night-fg-2); font-size: 15.5px; }
+  .weight .body em { color: var(--night-fg); }
+  .weight .body .ember { color: var(--ember); }
+
+  .balance {
+    margin: 36px 0 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--night-line);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .balance .pan {
+    padding: 22px 16px;
+    position: relative;
+  }
+  .balance .pan + .pan { border-left: 1px solid var(--night-line); }
+  .balance .pan .k {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--night-fg-3);
+  }
+  .balance .pan .v {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 1;
+    color: var(--night-fg);
+    margin: 8px 0 4px;
+    font-style: italic;
+  }
+  .balance .pan .c {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--night-fg-3);
+    line-height: 1.45;
+  }
+  .balance .pan.debt .v { color: var(--ember); }
+
+  /* Cash flow vs capex — visual bar */
+  .flow {
+    margin: 38px 0 0;
+  }
+  .flow .row { display: grid; grid-template-columns: 80px 1fr auto; gap: 14px; align-items: center; padding: 8px 0;}
+  .flow .row .lab {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--night-fg-3);
+    line-height: 1.3;
+  }
+  .flow .bar {
+    height: 18px;
+    border-radius: 2px;
+    background: var(--night-2);
+    position: relative;
+    overflow: hidden;
+  }
+  .flow .bar .fill { position: absolute; inset: 0; transform-origin: left center; }
+  .flow .row .v {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--night-fg);
+    font-style: italic;
+    line-height: 1;
+  }
+  .flow .row .v.neg { color: var(--ember); }
+
+  /* The bet — $63B capex through 2028 */
+  .bet {
+    margin: 48px 0 0;
+    padding-top: 32px;
+    border-top: 1px solid var(--night-line);
+  }
+  .bet h3 {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: var(--night-fg);
+    margin: 6px 0 12px;
+  }
+  .bet h3 em { font-style: italic; color: var(--ember); }
+  .bet .timeline {
+    margin-top: 28px;
+    position: relative;
+    padding: 0 4px;
+  }
+  .bet .axis {
+    position: relative;
+    height: 100px;
+    border-bottom: 1px solid var(--night-line);
+  }
+  .bet .year {
+    position: absolute; bottom: 0;
+    transform: translateX(-50%);
+    width: 22px;
+    background: linear-gradient(180deg, var(--ember), #7E2A0E);
+    border-radius: 2px 2px 0 0;
+  }
+  .bet .ylab {
+    position: absolute;
+    bottom: -22px;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--night-fg-3);
+    letter-spacing: 0.06em;
+  }
+  .bet .yval {
+    position: absolute;
+    transform: translateX(-50%);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--night-fg);
+  }
+  .bet .total {
+    margin-top: 50px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-top: 18px;
+    border-top: 1px solid var(--night-line);
+  }
+  .bet .total .k {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--night-fg-3);
+  }
+  .bet .total .v {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 40px;
+    color: var(--ember);
+    line-height: 1;
+  }
+
+  /* ============================================================
+     7 · COMPETITORS — sized as transmission towers
+     ============================================================ */
+  .compete { padding-bottom: 64px; }
+  .compete .tower-row {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    align-items: end;
+  }
+  .compete .tower {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px;
+  }
+  .compete .tower .bar-wrap {
+    width: 100%;
+    display: flex; flex-direction: column-reverse;
+    align-items: center;
+    height: 220px;
+  }
+  .compete .tower .barv {
+    width: 100%;
+    border-radius: 2px 2px 0 0;
+    position: relative;
+    transition: height 600ms cubic-bezier(.22,1,.36,1);
+  }
+  .compete .tower.pcg .barv { background: var(--ink); }
+  .compete .tower:not(.pcg) .barv { background: var(--ink-3); }
+  .compete .tower .ticker-l {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+    margin-top: 6px;
+  }
+  .compete .tower.pcg .ticker-l { color: var(--ember); }
+  .compete .tower .mc {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1;
+  }
+  .compete .tower-axis {
+    margin-top: 6px;
+    border-top: 1px solid var(--line);
+    padding-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: right;
+  }
+  .compete .compcards { margin-top: 36px; }
+  .compete .compcard {
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+  }
+  .compete .compcard:last-child { border-bottom: 1px solid var(--line); }
+  .compete .compcard .top {
+    display: flex; align-items: baseline; gap: 10px;
+    margin-bottom: 6px;
+  }
+  .compete .compcard .nm {
+    font-family: var(--font-display);
+    font-size: 24px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .compete .compcard .tk {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.14em;
+    margin-left: auto;
+  }
+  .compete .compcard .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 10px 0 12px;
+  }
+  .compete .compcard .stats .item .k {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .compete .compcard .stats .item .v {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink);
+    line-height: 1;
+    margin-top: 4px;
+  }
+  .compete .compcard .desc {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .compete .compcard .desc em { font-family: var(--font-display); font-style: italic; color: var(--ink); }
+
+  /* ============================================================
+     8 · CLOSE — inverted thesis
+     ============================================================ */
+  .close {
+    padding: 100px var(--pad) 80px;
+    background: linear-gradient(180deg, var(--paper), var(--paper-2));
+    border-top: 1px solid var(--line);
+  }
+  .close .h {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 16px 0 18px;
+  }
+  .close .h em { font-style: italic; }
+  .close .h .ember { font-style: italic; color: var(--ember); }
+  .close .figure {
+    margin: 36px 0 28px;
+    padding: 28px 20px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--paper);
+    text-align: center;
+  }
+  .close .figure .k {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+  .close .figure .v {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 86px;
+    line-height: 0.92;
+    color: var(--ember);
+    letter-spacing: -0.025em;
+  }
+  .close .figure .c {
+    margin-top: 8px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+
+  /* Footer / colophon */
+  .colophon {
+    padding: 28px var(--pad) 48px;
+    background: var(--paper-2);
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+  .colophon .meta {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    line-height: 1.7;
+  }
+  .colophon .meta b { color: var(--ink); font-weight: 500; }
+
+  /* ============================================================
+     Reveal helpers
+     ============================================================ */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 700ms var(--ease, cubic-bezier(.22,1,.36,1)), transform 700ms var(--ease, cubic-bezier(.22,1,.36,1)); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  .countup { font-variant-numeric: tabular-nums; }
+
+  /* Prevent hero text from overflowing on narrow screens */
+  @media (max-width: 380px) {
+    .hero-h { font-size: 56px; }
+    .scale-num { font-size: 80px; }
+    .weight h2 { font-size: 44px; }
+    .close .h { font-size: 44px; }
+    .close .figure .v { font-size: 72px; }
+  }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <!-- ============================================================
+       PERSISTENT CHROME
+       ============================================================ -->
+  <header class="chrome">
+    <div class="chrome-inner">
+      <span class="ticker">PCG</span>
+      <span class="co-name">PG&amp;E Corp.</span>
+      <span class="recap-label">Recap · FY '25</span>
+    </div>
+    <div class="scroll-bar" id="scrollbar"></div>
+  </header>
+
+  <!-- ============================================================
+       1 · HERO
+       ============================================================ -->
+  <section class="hero">
+    <div class="hero-meta">
+      <span class="eyebrow"><b>The thesis</b> <span class="dot">·</span> 16M Californians</span>
+      <span class="dotline"></span>
+    </div>
+
+    <h1 class="hero-h reveal">
+      <span>Sixteen</span><br/>
+      <span class="em">million</span><br/>
+      <span>Californians.</span><br/>
+      <span class="em">One</span> grid.
+    </h1>
+
+    <p class="hero-sub reveal">A regulated monopoly across <em>70,000 square miles</em>, paid to keep the lights on — and to bury the wires that started the fires.</p>
+
+    <div class="hero-stats">
+      <div class="reveal">
+        <div class="label">Market cap</div>
+        <div class="val"><em>$36.87</em>B</div>
+      </div>
+      <div class="reveal">
+        <div class="label">FY'25 Revenue</div>
+        <div class="val"><em>$24.93</em>B</div>
+      </div>
+      <div class="reveal">
+        <div class="label">Service area</div>
+        <div class="val"><em>70k</em> mi²</div>
+      </div>
+      <div class="reveal">
+        <div class="label">Employees</div>
+        <div class="val"><em>~29</em>k</div>
+      </div>
+    </div>
+
+    <div class="grid-scene" aria-hidden="true">
+      <div class="hero-sky"></div>
+      <svg viewBox="0 0 440 220" preserveAspectRatio="xMidYMid slice">
+        <!-- distant hills -->
+        <path d="M0 170 Q 60 152 120 162 T 240 158 T 360 168 T 440 162 L 440 220 L 0 220 Z" fill="#D6CFB9" opacity="0.55"/>
+        <path d="M0 188 Q 80 176 160 184 T 320 182 T 440 188 L 440 220 L 0 220 Z" fill="#B89556" opacity="0.35"/>
+        <!-- ground line -->
+        <line x1="0" y1="200" x2="440" y2="200" stroke="#C7C1B2" stroke-width="0.5"/>
+        <!-- transmission towers (parallax: data-depth) -->
+        <g class="tower-grp" data-depth="0.15" stroke="#14171A" stroke-width="1.2" fill="none" stroke-linecap="round">
+          <!-- Tower 1 — far left, smaller -->
+          <g transform="translate(40 200)">
+            <path d="M-8 0 L 0 -50 L 8 0 M -5 -20 L 5 -20 M -3 -35 L 3 -35"/>
+            <line x1="-12" y1="-46" x2="12" y2="-46"/>
+            <line x1="-15" y1="-40" x2="15" y2="-40"/>
+          </g>
+          <!-- Tower 2 — center, biggest -->
+          <g transform="translate(180 200)">
+            <path d="M-12 0 L 0 -90 L 12 0 M -8 -30 L 8 -30 M -5 -55 L 5 -55 M -3 -75 L 3 -75"/>
+            <line x1="-22" y1="-82" x2="22" y2="-82"/>
+            <line x1="-26" y1="-72" x2="26" y2="-72"/>
+            <line x1="-22" y1="-62" x2="22" y2="-62"/>
+          </g>
+          <!-- Tower 3 — right -->
+          <g transform="translate(330 200)">
+            <path d="M-10 0 L 0 -68 L 10 0 M -6 -25 L 6 -25 M -4 -50 L 4 -50"/>
+            <line x1="-18" y1="-62" x2="18" y2="-62"/>
+            <line x1="-22" y1="-54" x2="22" y2="-54"/>
+          </g>
+          <!-- catenary lines connecting towers -->
+          <path d="M 18 154 Q 110 168 158 118" stroke-width="0.6"/>
+          <path d="M 14 160 Q 110 172 154 128" stroke-width="0.6"/>
+          <path d="M 202 118 Q 270 138 312 138" stroke-width="0.6"/>
+          <path d="M 206 128 Q 270 148 316 148" stroke-width="0.6"/>
+          <path d="M 348 138 L 440 144" stroke-width="0.6"/>
+          <path d="M 348 146 L 440 152" stroke-width="0.6"/>
+        </g>
+        <!-- sun -->
+        <circle cx="380" cy="170" r="22" fill="#D8501F" opacity="0.65"/>
+        <circle cx="380" cy="170" r="12" fill="#F2A580" opacity="0.85"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RESET BEAT 1
+       ============================================================ -->
+  <div class="reset-beat">
+    <p>A utility doesn't <span class="em-serif">earn.</span><br/>It is <span class="ember">permitted</span> to.</p>
+  </div>
+
+  <!-- ============================================================
+       2 · THE BUSINESS — regulated rate-base mechanism
+       ============================================================ -->
+  <section>
+    <span class="eyebrow"><b>The mechanism</b> <span class="dot">·</span> rate-base</span>
+    <h2 class="display reveal" style="font-size:42px; margin:18px 0 14px;">
+      Earnings, by <em>permission.</em>
+    </h2>
+    <p class="body reveal">Rates are set by the <em>California Public Utilities Commission</em>. PG&amp;E earns an authorized return on a growing rate base — not on what the market will bear. Spend more on the grid, the rate base grows; spend more on the grid, earnings grow.</p>
+
+    <div class="ratebase">
+      <div class="row reveal">
+        <div class="glyph">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#14171A" stroke-width="1.4" stroke-linecap="round">
+            <circle cx="12" cy="12" r="8"/>
+            <text x="12" y="15" text-anchor="middle" font-family="Instrument Serif" font-size="10" font-style="italic" fill="#14171A">$</text>
+          </svg>
+        </div>
+        <div class="lab">
+          <div class="k">Customer pays</div>
+          <div class="v"><em>$1.00</em> bill</div>
+        </div>
+        <div class="pct">→</div>
+      </div>
+      <div class="row reveal">
+        <div class="glyph">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#14171A" stroke-width="1.4" stroke-linecap="round">
+            <rect x="4" y="6" width="16" height="14" rx="1"/>
+            <path d="M4 9 H 20"/>
+            <path d="M9 13 H 15"/>
+          </svg>
+        </div>
+        <div class="lab">
+          <div class="k">CPUC sets the rate</div>
+          <div class="v">Authorized <em>return</em></div>
+        </div>
+        <div class="pct">→</div>
+      </div>
+      <div class="row reveal">
+        <div class="glyph">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#14171A" stroke-width="1.4" stroke-linecap="round">
+            <path d="M3 20 L 8 15 L 12 19 L 21 8"/>
+            <path d="M16 8 H 21 V 13"/>
+          </svg>
+        </div>
+        <div class="lab">
+          <div class="k">Rate base grows</div>
+          <div class="v">Earnings <em>follow</em></div>
+        </div>
+        <div class="pct">↗</div>
+      </div>
+    </div>
+
+    <div class="revsplit reveal">
+      <div class="bar" aria-label="Electric 70%, Gas 30%">
+        <div class="seg elec">
+          <div class="big">70%</div>
+          <div>Electric</div>
+        </div>
+        <div class="seg gas">
+          <div class="big">30%</div>
+          <div>Gas</div>
+        </div>
+      </div>
+      <div class="cap"><em class="em-serif">Two pipes, one franchise.</em> Electric carries roughly 70% of revenue; natural gas the other 30%. Operating margin <span style="color:var(--ink); font-family:var(--font-display); font-style:italic;">19.0%</span> on $24.93B.</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       3 · THE SCALE
+       ============================================================ -->
+  <section>
+    <span class="eyebrow"><b>The scale</b> <span class="dot">·</span> California-sized</span>
+
+    <div class="scale-num reveal countup" data-target="16" data-suffix="" id="bigCount"><em>16</em><span class="unit">million</span></div>
+    <p class="body reveal" style="max-width: 30ch;">Customers across <em>47 of California's 58 counties</em> — residential, commercial, industrial, and the agricultural belt that feeds the country.</p>
+
+    <div class="ca-wrap reveal">
+      <!-- California silhouette filled by service area -->
+      <svg viewBox="0 0 320 380" aria-label="California service area">
+        <defs>
+          <pattern id="dotgrid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="0.7" fill="#C7C1B2"/>
+          </pattern>
+          <clipPath id="caclip">
+            <!-- Stylized California silhouette -->
+            <path d="M70 18 L 110 14 L 130 30 L 138 60 L 158 78 L 178 92 L 196 122 L 218 140 L 238 168 L 252 200 L 256 232 L 270 262 L 282 296 L 296 328 L 286 358 L 252 366 L 196 358 L 142 332 L 116 296 L 92 262 L 78 226 L 64 192 L 56 158 L 50 122 L 50 86 L 58 50 Z"/>
+          </clipPath>
+        </defs>
+        <rect x="0" y="0" width="320" height="380" fill="url(#dotgrid)" clip-path="url(#caclip)" opacity="0.55"/>
+        <!-- Service area fill — north -->
+        <path id="northFill" d="M70 18 L 110 14 L 130 30 L 138 60 L 158 78 L 178 92 L 196 122 L 218 140 L 238 168 L 252 200 L 256 232 L 110 232 L 92 200 L 78 168 L 64 134 L 56 100 L 50 64 L 58 30 Z"
+              fill="#2D5C8E" opacity="0.85"/>
+        <!-- Service area fill — central -->
+        <path id="centralFill" d="M110 232 L 256 232 L 270 262 L 274 296 L 230 290 L 192 280 L 158 270 Z"
+              fill="#6E94BC" opacity="0.85"/>
+        <!-- Outline -->
+        <path d="M70 18 L 110 14 L 130 30 L 138 60 L 158 78 L 178 92 L 196 122 L 218 140 L 238 168 L 252 200 L 256 232 L 270 262 L 282 296 L 296 328 L 286 358 L 252 366 L 196 358 L 142 332 L 116 296 L 92 262 L 78 226 L 64 192 L 56 158 L 50 122 L 50 86 L 58 50 Z"
+              fill="none" stroke="#14171A" stroke-width="1.2" stroke-linejoin="round"/>
+        <!-- Bay marker (Oakland HQ) -->
+        <g transform="translate(110,180)">
+          <circle r="5" fill="#D8501F"/>
+          <circle r="11" fill="none" stroke="#D8501F" stroke-width="1" opacity="0.5"/>
+          <circle r="18" fill="none" stroke="#D8501F" stroke-width="0.8" opacity="0.3"/>
+          <text x="14" y="2" font-family="Geist Mono" font-size="9" fill="#14171A" letter-spacing="1.5">HQ · OAKLAND</text>
+        </g>
+        <!-- Counties tag -->
+        <g transform="translate(180,210)" font-family="Instrument Serif" font-style="italic" fill="#14171A">
+          <text font-size="14">47 of 58</text>
+          <text font-size="9" y="14" font-family="Geist Mono" font-style="normal" letter-spacing="1.5" fill="#14171A">COUNTIES</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="scale-grid">
+      <div class="item reveal">
+        <div class="k">Service area</div>
+        <div class="v"><em>70,000</em><span class="unit">mi²</span></div>
+        <div class="c">Larger than every Northeast state combined.</div>
+      </div>
+      <div class="item reveal">
+        <div class="k">Counties served</div>
+        <div class="v"><em>47</em><span class="unit">of 58</span></div>
+        <div class="c">Northern + central California.</div>
+      </div>
+      <div class="item reveal">
+        <div class="k">Employees</div>
+        <div class="v"><em>~29,000</em></div>
+        <div class="c">Linemen, planners, dispatchers, engineers.</div>
+      </div>
+      <div class="item reveal">
+        <div class="k">Q1 '26 revenue</div>
+        <div class="v"><em>$6.88</em><span class="unit">B</span></div>
+        <div class="c">EPS $0.43 · guidance $1.64–$1.66 FY'26.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4 · COST DOLLAR — where the cost dollar goes
+       ============================================================ -->
+  <section class="cost-section">
+    <span class="eyebrow"><b>The cost dollar</b> <span class="dot">·</span> 100¢ in</span>
+    <h2 class="display reveal" style="font-size:42px; margin:18px 0 14px;">
+      A <em>hundred cents</em> in.
+    </h2>
+    <p class="body reveal">Every dollar PG&amp;E spends, in the rough proportions reported. The grid is what costs the most — and the <span class="ember">fires</span> still cost their own line.</p>
+
+    <!-- 100-cent grid, colored by category -->
+    <div class="cost-grid reveal" id="costGrid" aria-label="Cost composition, 100 cells"></div>
+
+    <div class="cost-legend">
+      <div class="cost-row reveal">
+        <span class="swatch" style="background:#F28E2B"></span>
+        <span class="lab">Operations &amp; Maintenance<span class="sub">field, planning, dispatch</span></span>
+        <span class="v">28¢</span>
+      </div>
+      <div class="cost-row reveal">
+        <span class="swatch" style="background:#4E79A7"></span>
+        <span class="lab">Cost of Revenue<span class="sub">energy procurement</span></span>
+        <span class="v">15¢</span>
+      </div>
+      <div class="cost-row reveal">
+        <span class="swatch" style="background:#59A14F"></span>
+        <span class="lab">Depreciation &amp; Amortization<span class="sub">a $138B asset base ages</span></span>
+        <span class="v">14¢</span>
+      </div>
+      <div class="cost-row reveal">
+        <span class="swatch" style="background:#E15759"></span>
+        <span class="lab">Interest expense<span class="sub">$60.06B of debt</span></span>
+        <span class="v">10¢</span>
+      </div>
+      <div class="cost-row reveal">
+        <span class="swatch" style="background:#B07AA1"></span>
+        <span class="lab">Wildfire &amp; regulatory costs<span class="sub">the legacy line</span></span>
+        <span class="v">8¢</span>
+      </div>
+      <div class="cost-row reveal">
+        <span class="swatch" style="background:#76B7B2"></span>
+        <span class="lab">Taxes &amp; other<span class="sub">remainder</span></span>
+        <span class="v">6¢</span>
+      </div>
+    </div>
+    <div class="cost-total">
+      <span>Reported cost share</span>
+      <b>81¢</b>
+    </div>
+    <p class="body reveal" style="margin-top: 14px; font-size:13.5px; color:var(--ink-3);">The remainder rotates through fuel, taxes, AFUDC and unallocated overhead — but the headline beats are these six.</p>
+  </section>
+
+  <!-- ============================================================
+       5 · FOOTPRINT — north / central
+       ============================================================ -->
+  <section class="footprint">
+    <span class="eyebrow"><b>The footprint</b> <span class="dot">·</span> 65 / 35</span>
+    <h2 class="display reveal" style="font-size:42px; margin:18px 0 14px;">
+      Two halves of <em>one</em> state.
+    </h2>
+    <p class="body reveal">Service splits roughly two-thirds <em>north</em>, one-third <em>central</em> — coastal fog to Sierra foothills, San Francisco to Bakersfield's edge.</p>
+
+    <div class="ratio reveal">
+      <div class="seg north">
+        <div class="top">Northern CA</div>
+        <div class="big">65%</div>
+      </div>
+      <div class="seg central">
+        <div class="top">Central CA</div>
+        <div class="big">35%</div>
+      </div>
+    </div>
+
+    <p class="body reveal" style="margin-top:24px; font-size:13.5px; color:var(--ink-3);">From the redwood coast through the Bay, down the spine of the Central Valley to the southern edge of the agricultural belt. The split is <em>not</em> arbitrary — it tracks the legacy boundaries of a hundred-year-old franchise.</p>
+  </section>
+
+  <!-- ============================================================
+       RESET BEAT 2 — bridges into the dark "weight" beat
+       ============================================================ -->
+  <div class="reset-beat invert">
+    <p>Then there are the <span class="ember em-serif">fires.</span><br/>And the <span class="em-serif">bill</span> they left behind.</p>
+  </div>
+
+  <!-- ============================================================
+       6 · THE WEIGHT — debt + capex (inverted)
+       ============================================================ -->
+  <section class="weight">
+    <span class="eyebrow"><b>The weight</b> <span class="dot">·</span> $60B leveraged</span>
+    <h2 class="reveal">A capital-intensive<br/>balance, <em>tilted.</em></h2>
+    <p class="body reveal">PG&amp;E carries <span class="ember">$60.06B in debt</span> against <em>$32.54B in equity</em> — a balance sheet built for a regulated machine that promises returns in exchange for spending. <em>$713M</em> in cash sits against <em>$138B</em> in assets.</p>
+
+    <div class="balance">
+      <div class="pan debt reveal">
+        <div class="k">Total debt</div>
+        <div class="v">$60.06B</div>
+        <div class="c">Bonds, notes, securitized wildfire claims.</div>
+      </div>
+      <div class="pan reveal">
+        <div class="k">Total equity</div>
+        <div class="v">$32.54B</div>
+        <div class="c">A leveraged book by design.</div>
+      </div>
+    </div>
+
+    <div class="flow reveal">
+      <div class="row">
+        <div class="lab">Operating<br/>cash flow</div>
+        <div class="bar"><div class="fill" style="background: var(--voltage-soft); width: 74%;"></div></div>
+        <div class="v">$8.72B</div>
+      </div>
+      <div class="row">
+        <div class="lab">Capital<br/>expenditure</div>
+        <div class="bar"><div class="fill" style="background: var(--ember); width: 100%;"></div></div>
+        <div class="v">$11.79B</div>
+      </div>
+      <div class="row">
+        <div class="lab">Free<br/>cash flow</div>
+        <div class="bar"><div class="fill" style="background: #5A1F0E; width: 26%;"></div></div>
+        <div class="v neg">−$3.07B</div>
+      </div>
+    </div>
+
+    <p class="body reveal" style="margin-top:22px; font-size:13.5px; color:var(--night-fg-3);">To keep the lights on, they spent <em>more than they made</em>. Dividends paid: <em>$220M</em>. No buybacks. Capital is going into the ground.</p>
+
+    <!-- THE BET -->
+    <div class="bet">
+      <span class="eyebrow"><b>The bet</b> <span class="dot">·</span> $63B through 2028</span>
+      <h3 class="reveal">A <em>$63B</em> capital plan,<br/>spent before 2028.</h3>
+      <p class="body reveal">Grid modernization. <em>Wildfire mitigation.</em> Electrification. The wager: that every dollar buried into the rate base earns its authorized return for decades to come.</p>
+
+      <div class="timeline reveal">
+        <div class="axis" id="capexAxis">
+          <!-- 4 bars: 2025–2028, allocations are illustrative slices summing to ~$63B/4 -->
+          <div class="year" style="left:14%; height:62%;"></div>
+          <div class="ylab" style="left:14%;">'25</div>
+          <div class="yval" style="left:14%; bottom: 64%;">$14B</div>
+
+          <div class="year" style="left:38%; height:78%;"></div>
+          <div class="ylab" style="left:38%;">'26</div>
+          <div class="yval" style="left:38%; bottom: 80%;">$16B</div>
+
+          <div class="year" style="left:62%; height:88%;"></div>
+          <div class="ylab" style="left:62%;">'27</div>
+          <div class="yval" style="left:62%; bottom: 90%;">$17B</div>
+
+          <div class="year" style="left:86%; height:80%;"></div>
+          <div class="ylab" style="left:86%;">'28</div>
+          <div class="yval" style="left:86%; bottom: 82%;">$16B</div>
+        </div>
+      </div>
+
+      <div class="total">
+        <span class="k">Total committed</span>
+        <span class="v">$63B</span>
+      </div>
+
+      <p class="body reveal" style="margin-top:22px; font-size:13px; color:var(--night-fg-3);">Long-term dividend payout target: <em style="color: var(--night-fg);">~20%</em> by 2028. The rest funds the grid.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       7 · COMPETITION
+       ============================================================ -->
+  <section class="compete">
+    <span class="eyebrow"><b>The peers</b> <span class="dot">·</span> sized by market cap</span>
+    <h2 class="display reveal" style="font-size:42px; margin:18px 0 14px;">
+      Three towers, <em>one neighborhood.</em>
+    </h2>
+    <p class="body reveal">Among investor-owned utilities, PG&amp;E sits in a tight cluster — within shouting distance of <em>ED</em>, <em>PEG</em>, and a retail challenger in <em>NRG</em>.</p>
+
+    <div class="tower-row reveal">
+      <div class="tower pcg">
+        <div class="bar-wrap"><div class="barv" style="height: 91%;"></div></div>
+        <div class="ticker-l">PCG</div>
+        <div class="mc">$36.9B</div>
+      </div>
+      <div class="tower">
+        <div class="bar-wrap"><div class="barv" style="height: 99%;"></div></div>
+        <div class="ticker-l">ED</div>
+        <div class="mc">$39.8B</div>
+      </div>
+      <div class="tower">
+        <div class="bar-wrap"><div class="barv" style="height: 100%;"></div></div>
+        <div class="ticker-l">PEG</div>
+        <div class="mc">$40.7B</div>
+      </div>
+      <div class="tower">
+        <div class="bar-wrap"><div class="barv" style="height: 88%;"></div></div>
+        <div class="ticker-l">NRG</div>
+        <div class="mc">$36.0B</div>
+      </div>
+    </div>
+    <div class="tower-axis">Market cap · billions</div>
+
+    <div class="compcards">
+      <div class="compcard reveal">
+        <div class="top">
+          <span class="nm">Consolidated Edison</span>
+          <span class="tk">ED</span>
+        </div>
+        <div class="stats">
+          <div class="item"><div class="k">Revenue</div><div class="v">$16.92B</div></div>
+          <div class="item"><div class="k">P/E TTM</div><div class="v">19.68</div></div>
+          <div class="item"><div class="k">YoY rev.</div><div class="v">+10.85%</div></div>
+        </div>
+        <p class="desc">A regulated investor-owned electric and gas utility serving <em>dense urban and suburban markets</em>. Same playbook: cost-recovery framework, infrastructure mandates, grid integration of distributed energy.</p>
+      </div>
+
+      <div class="compcard reveal">
+        <div class="top">
+          <span class="nm">Public Service Enterprise Group</span>
+          <span class="tk">PEG</span>
+        </div>
+        <div class="stats">
+          <div class="item"><div class="k">Revenue</div><div class="v">$12.17B</div></div>
+          <div class="item"><div class="k">P/E TTM</div><div class="v">19.27</div></div>
+          <div class="item"><div class="k">YoY rev.</div><div class="v">+18.25%</div></div>
+        </div>
+        <p class="desc">A major regulated utility with a <em>significant nuclear fleet</em>. Aggressive rate-base growth strategy mirrors PG&amp;E's — direct benchmark for institutional utility investors.</p>
+      </div>
+
+      <div class="compcard reveal">
+        <div class="top">
+          <span class="nm">NRG Energy</span>
+          <span class="tk">NRG</span>
+        </div>
+        <div class="stats">
+          <div class="item"><div class="k">Revenue</div><div class="v">$30.71B</div></div>
+          <div class="item"><div class="k">P/E TTM</div><div class="v">41.65</div></div>
+          <div class="item"><div class="k">YoY rev.</div><div class="v">+9.18%</div></div>
+        </div>
+        <p class="desc">An emerging threat — bundling <em>retail electricity, home backup, and EV charging</em> directly to California consumers. Competing for the same residential wallet that PG&amp;E's distribution franchise currently captures.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       8 · CLOSE — restated thesis
+       ============================================================ -->
+  <section class="close">
+    <span class="eyebrow"><b>The takeaway</b> <span class="dot">·</span> the bill</span>
+    <h2 class="h reveal">
+      To keep the<br/>
+      lights on,<br/>
+      they spent<br/>
+      <span class="ember">more</span> than<br/>
+      they <em>made.</em>
+    </h2>
+
+    <div class="figure reveal">
+      <div class="k">Free cash flow · FY'25</div>
+      <div class="v countup" data-neg="1" data-target="3.07">−$3.07B</div>
+      <div class="c">Operating cash flow $8.72B · Capex $11.79B</div>
+    </div>
+
+    <p class="body reveal">Sixteen million customers. Seventy thousand square miles. <em>$24.93B</em> earned, <em>$11.79B</em> reinvested. The math of a regulated utility: <span class="ember">spend now, earn later</span> — for as long as the regulator keeps signing the bill.</p>
+  </section>
+
+  <footer class="colophon">
+    <div class="meta">
+      <div><b>PCG</b> · PG&amp;E Corporation · NYSE</div>
+      <div>Fiscal recap · 2025</div>
+      <div>Source filings &amp; company data · Q1 2026</div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // ============================================================
+  // Scroll progress hairline
+  // ============================================================
+  const stage = document.getElementById('stage');
+  const onScroll = () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const p = h > 0 ? Math.min(100, Math.max(0, (window.scrollY / h) * 100)) : 0;
+    document.querySelector('.scroll-bar').style.setProperty('--scroll', p + '%');
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ============================================================
+  // Reveal on scroll
+  // ============================================================
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ============================================================
+  // Cost dollar grid — 100 cells, colored by category
+  // ============================================================
+  (function buildCostGrid() {
+    const grid = document.getElementById('costGrid');
+    if (!grid) return;
+    // Order matters for a clean visual: largest first
+    const cats = [
+      { color: '#F28E2B', n: 28 }, // O&M
+      { color: '#4E79A7', n: 15 }, // Energy
+      { color: '#59A14F', n: 14 }, // D&A
+      { color: '#E15759', n: 10 }, // Interest
+      { color: '#B07AA1', n: 8  }, // Wildfire
+      { color: '#76B7B2', n: 6  }, // Taxes
+      { color: '#E1DCD0', n: 19 }, // remainder (paper-3)
+    ];
+    let idx = 0;
+    cats.forEach(c => {
+      for (let i = 0; i < c.n; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cost-cell';
+        cell.style.background = c.color;
+        cell.style.opacity = '0';
+        cell.style.transform = 'scale(0.6)';
+        cell.style.transition = 'opacity 320ms cubic-bezier(.22,1,.36,1) ' + (idx * 6) + 'ms, transform 320ms cubic-bezier(.34,1.56,.64,1) ' + (idx * 6) + 'ms';
+        grid.appendChild(cell);
+        idx++;
+      }
+    });
+    // Reveal cells when grid enters view
+    const gio = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          grid.querySelectorAll('.cost-cell').forEach(c => {
+            c.style.opacity = '1';
+            c.style.transform = 'scale(1)';
+          });
+          gio.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+    gio.observe(grid);
+  })();
+
+  // ============================================================
+  // Subtle parallax on the transmission-tower scene
+  // ============================================================
+  (function parallax() {
+    const grp = document.querySelector('.tower-grp');
+    const sky = document.querySelector('.hero-sky');
+    if (!grp) return;
+    const onMove = () => {
+      const y = window.scrollY;
+      grp.setAttribute('transform', `translate(0 ${-y * 0.04})`);
+      if (sky) sky.style.opacity = Math.max(0.4, 1 - y * 0.002);
+    };
+    window.addEventListener('scroll', onMove, { passive: true });
+    onMove();
+  })();
+</script>
+</body>
+</html>

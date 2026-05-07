@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SNDK · Recap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ec;          /* warm paper */
+    --bg-raised: #ebe6dd;   /* slightly warmer raised */
+    --ink: #14110d;         /* near-black ink */
+    --ink-soft: #3a342c;
+    --ink-mute: #7a7166;
+    --rule: #d9d2c4;
+    --signal: #c8631c;      /* burnt copper — solder pads, heat */
+    --signal-soft: #e8a04a;
+    --silicon: #1a1d24;     /* deep silicon graphite for dark beats */
+    --silicon-2: #0d0f14;
+    --silicon-pad: #2a2e38;
+    --serif: "Instrument Serif", "Times New Roman", serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { background: #2a2722; }
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+
+  /* Phone-shaped column. We're NOT drawing a phone bezel; this is just the
+     fixed mobile design width. */
+  .page {
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    background: var(--bg);
+    color: var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ───────── Sticky chrome ───────── */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(244, 241, 236, 0.78);
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    border-bottom: 1px solid rgba(20,17,13,0.06);
+  }
+  .chrome.dark {
+    background: rgba(13,15,20,0.72);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    color: #f4f1ec;
+  }
+  .chrome-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 22px 10px;
+    gap: 10px;
+  }
+  .ticker-block { display: flex; align-items: baseline; gap: 10px; }
+  .ticker {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .ticker .dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--signal); margin-right: 7px; transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(200,99,28,0.18);
+  }
+  .ticker-name {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .chrome.dark .ticker-name { color: #c9c2b6; }
+  .recap-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+  }
+  .chrome.dark .recap-label { color: #8a8275; }
+  .progress {
+    height: 1.5px;
+    background: transparent;
+    width: 100%;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--signal);
+    transition: width 0.06s linear;
+  }
+
+  /* ───────── Layout primitives ───────── */
+  section { position: relative; }
+
+  .pad { padding-left: 26px; padding-right: 26px; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 18px; height: 1px; background: var(--signal); display: inline-block;
+  }
+  .eyebrow.on-dark { color: #948b7e; }
+  .eyebrow.on-dark::before { background: var(--signal-soft); }
+
+  h2.beat {
+    font-family: var(--serif);
+    font-size: 42px;
+    line-height: 1.02;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-top: 14px;
+  }
+  h2.beat em { font-style: italic; color: var(--signal); }
+  .beat-deck {
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin-top: 14px;
+    text-wrap: pretty;
+  }
+  .beat-deck em { font-family: var(--serif); font-style: italic; color: var(--signal); font-size: 17px; }
+
+  /* Reset beats */
+  .reset {
+    padding: 56px 32px;
+    background: var(--ink);
+    color: #f4f1ec;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.28;
+    letter-spacing: -0.005em;
+    text-wrap: pretty;
+  }
+  .reset em { font-style: italic; color: var(--signal-soft); font-family: var(--serif); }
+  .reset.light {
+    background: var(--bg-raised);
+    color: var(--ink);
+  }
+  .reset.light em { color: var(--signal); }
+  .reset .mark {
+    display: block;
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 22px;
+    text-transform: uppercase;
+  }
+  .reset.light .mark { color: var(--ink-mute); }
+
+  /* ───────── HERO ───────── */
+  .hero {
+    position: relative;
+    min-height: 92vh;
+    padding: 28px 26px 60px;
+    background: var(--bg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .hero-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  .hero-thesis {
+    font-family: var(--serif);
+    font-size: 56px;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    font-weight: 400;
+    margin-top: 8px;
+  }
+  .hero-thesis .l1 { display: block; }
+  .hero-thesis .l2 {
+    display: block;
+    font-style: italic;
+    color: var(--signal);
+  }
+  .hero-thesis .l3 {
+    display: block;
+    color: var(--ink-soft);
+    font-size: 38px;
+    line-height: 1.05;
+    margin-top: 12px;
+    letter-spacing: -0.015em;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 16px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+  }
+  .hero-stat .k {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+  }
+  .hero-stat .v {
+    font-family: var(--serif);
+    font-size: 28px;
+    line-height: 1;
+    margin-top: 8px;
+    letter-spacing: -0.01em;
+  }
+  .hero-stat .v small {
+    font-size: 13px;
+    color: var(--ink-mute);
+    font-family: var(--sans);
+    font-style: normal;
+    letter-spacing: 0;
+    margin-left: 3px;
+  }
+
+  /* The hero die — full-bleed grid of cells animating with scroll */
+  .hero-die-wrap {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .hero-die {
+    position: absolute;
+    top: 38%;
+    right: -22%;
+    width: 130%;
+    aspect-ratio: 1;
+    transform: rotate(8deg);
+    opacity: 0.85;
+  }
+  .hero-content { position: relative; z-index: 1; }
+
+  /* ───────── NAND CELL beat ───────── */
+  .nand-beat {
+    background: var(--bg);
+    padding: 70px 0 80px;
+  }
+  .nand-stage {
+    margin-top: 28px;
+    position: relative;
+    height: 360px;
+    overflow: visible;
+  }
+  .nand-svg { width: 100%; height: 100%; display: block; }
+  .nand-caption {
+    margin-top: 26px;
+    padding: 0 26px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+  }
+  .nand-caption b {
+    font-style: normal;
+    font-family: var(--sans);
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .seg-row {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .seg {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 14px;
+    align-items: baseline;
+    padding: 14px 0;
+    border-top: 1px solid var(--rule);
+  }
+  .seg:last-child { border-bottom: 1px solid var(--rule); }
+  .seg .pct {
+    font-family: var(--serif);
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .seg .lbl {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .seg .lbl small {
+    display: block;
+    font-weight: 400;
+    color: var(--ink-mute);
+    margin-top: 3px;
+    font-size: 11.5px;
+  }
+  .seg .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+  }
+
+  /* ───────── SCALE beat ───────── */
+  .scale-beat {
+    background: var(--bg-raised);
+    padding: 80px 0 90px;
+    position: relative;
+  }
+  .big-num {
+    font-family: var(--serif);
+    font-size: 110px;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    margin-top: 24px;
+    font-feature-settings: "lnum";
+  }
+  .big-num .unit {
+    font-size: 36px;
+    color: var(--ink-mute);
+    letter-spacing: -0.02em;
+    vertical-align: 0.55em;
+    margin-left: 4px;
+  }
+  .big-num .ital { font-style: italic; color: var(--signal); }
+  .scale-row {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+  .scale-row .k {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+  }
+  .scale-row .v {
+    font-family: var(--serif);
+    font-size: 30px;
+    line-height: 1;
+    margin-top: 6px;
+    letter-spacing: -0.01em;
+  }
+  .quarters {
+    margin-top: 40px;
+    border-top: 1px solid var(--rule);
+    padding-top: 24px;
+  }
+  .quarters-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .q-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    height: 160px;
+  }
+  .q-bar {
+    flex: 1;
+    background: linear-gradient(180deg, var(--signal) 0%, var(--signal-soft) 100%);
+    border-radius: 2px 2px 0 0;
+    position: relative;
+    transition: height 0.6s cubic-bezier(.2,.7,.2,1);
+  }
+  .q-bar.muted {
+    background: linear-gradient(180deg, #b8aea0 0%, #c9c0b3 100%);
+  }
+  .q-bar .lab {
+    position: absolute;
+    bottom: -22px; left: 0; right: 0;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+  }
+  .q-bar .val {
+    position: absolute;
+    top: -22px; left: 0; right: 0;
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  /* ───────── COST WAFER ───────── */
+  .cost-beat {
+    background: var(--bg);
+    padding: 80px 0 90px;
+  }
+  .wafer-stage {
+    margin-top: 36px;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .wafer-stage svg { width: 100%; height: 100%; display: block; }
+  .cost-list {
+    margin-top: 30px;
+    padding: 0 26px;
+  }
+  .cost-row {
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 0;
+    border-top: 1px solid var(--rule);
+  }
+  .cost-row:last-child { border-bottom: 1px solid var(--rule); }
+  .cost-swatch {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+  }
+  .cost-label {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .cost-pct {
+    font-family: var(--serif);
+    font-size: 24px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ───────── GEOGRAPHY ───────── */
+  .geo-beat {
+    background: var(--bg-raised);
+    padding: 80px 0 90px;
+  }
+  .geo-stage {
+    margin-top: 30px;
+    height: 320px;
+    position: relative;
+    overflow: hidden;
+  }
+  .geo-stage svg { width: 100%; height: 100%; display: block; }
+  .geo-rows {
+    margin-top: 30px;
+    padding: 0 26px;
+  }
+  .geo-row {
+    padding: 18px 0;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+  }
+  .geo-row:last-child { border-bottom: 1px solid var(--rule); }
+  .geo-region {
+    font-family: var(--serif);
+    font-size: 22px;
+    letter-spacing: -0.005em;
+  }
+  .geo-pct {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+  }
+  .geo-fill {
+    grid-column: 1 / -1;
+    height: 2px;
+    background: var(--rule);
+    margin-top: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .geo-fill::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: var(--w, 0%);
+    background: var(--signal);
+    transition: width 0.9s cubic-bezier(.2,.7,.2,1);
+  }
+
+  /* ───────── BET / CAPEX ───────── */
+  .bet-beat {
+    background: var(--bg);
+    padding: 80px 0 90px;
+    position: relative;
+  }
+  .bet-tower {
+    margin-top: 36px;
+    padding: 0 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .bet-card {
+    border-top: 1px solid var(--rule);
+    padding-top: 22px;
+    padding-bottom: 8px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .bet-card:last-child { border-bottom: 1px solid var(--rule); padding-bottom: 22px; }
+  .bet-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--signal);
+    padding-top: 6px;
+  }
+  .bet-name {
+    font-family: var(--serif);
+    font-size: 26px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+  .bet-name em { font-style: italic; color: var(--signal); }
+  .bet-desc {
+    margin-top: 10px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+
+  /* ───────── COMPETITION ───────── */
+  .comp-beat {
+    background: var(--bg-raised);
+    padding: 80px 0 90px;
+  }
+  .comp-stage {
+    margin-top: 32px;
+    padding: 0 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .comp-row {
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 10px;
+  }
+  .comp-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .comp-name {
+    font-family: var(--serif);
+    font-size: 22px;
+    letter-spacing: -0.005em;
+  }
+  .comp-tick {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-mute);
+    letter-spacing: 0.08em;
+  }
+  .comp-mc {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ink-soft);
+  }
+  .comp-mc b { color: var(--ink); font-weight: 500; }
+  .comp-bar {
+    height: 30px;
+    background: var(--rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .comp-bar .fill {
+    position: absolute; inset: 0;
+    width: var(--w, 0%);
+    background: var(--ink);
+    transition: width 1s cubic-bezier(.2,.7,.2,1);
+  }
+  .comp-row.self .comp-bar .fill {
+    background: var(--signal);
+  }
+  .comp-bar .scale-marks {
+    position: absolute; inset: 0;
+    display: flex; pointer-events: none;
+  }
+  .comp-bar .scale-marks span {
+    flex: 1; border-right: 1px solid rgba(20,17,13,0.06);
+  }
+  .comp-meta {
+    display: flex;
+    gap: 16px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-mute);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .comp-meta span b { color: var(--ink-soft); font-weight: 500; }
+  .comp-desc {
+    font-size: 12.5px;
+    color: var(--ink-mute);
+    line-height: 1.5;
+    margin-top: 4px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .comp-row.open .comp-desc { max-height: 200px; }
+  .comp-tap {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    color: var(--ink-mute);
+    letter-spacing: 0.18em;
+    margin-top: 8px;
+    text-transform: uppercase;
+  }
+  .comp-tap::before { content: "+ "; color: var(--signal); }
+  .comp-row.open .comp-tap::before { content: "− "; }
+
+  /* ───────── DEBT (DARK INTERLUDE) ───────── */
+  .debt-beat {
+    background: var(--silicon-2);
+    color: #ebe6dd;
+    padding: 90px 0 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  .debt-beat .eyebrow { color: #948b7e; }
+  .debt-beat .eyebrow::before { background: var(--signal-soft); }
+  .debt-beat h2.beat { color: #f4f1ec; }
+  .debt-beat h2.beat em { color: var(--signal-soft); }
+  .debt-beat .beat-deck { color: #c9c2b6; }
+  .debt-beat .beat-deck em { color: var(--signal-soft); }
+
+  .debt-cliff {
+    margin-top: 50px;
+    padding: 0 26px;
+    position: relative;
+    height: 320px;
+  }
+  .debt-cliff svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .debt-anno {
+    margin-top: 32px;
+    padding: 0 26px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .debt-anno .col .k {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    color: #948b7e;
+    text-transform: uppercase;
+  }
+  .debt-anno .col .v {
+    font-family: var(--serif);
+    font-size: 34px;
+    line-height: 1;
+    color: #f4f1ec;
+    margin-top: 6px;
+    letter-spacing: -0.02em;
+  }
+  .debt-anno .col .v.lit { color: var(--signal-soft); font-style: italic; }
+  .debt-anno .col .delta {
+    margin-top: 10px;
+    font-family: var(--sans);
+    font-size: 12px;
+    color: #948b7e;
+    line-height: 1.45;
+  }
+  .debt-cash {
+    margin-top: 50px;
+    padding: 0 26px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 28px;
+  }
+  .debt-cash .k {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #948b7e;
+    text-transform: uppercase;
+  }
+  .debt-cash .v {
+    font-family: var(--serif);
+    font-size: 56px;
+    line-height: 1;
+    margin-top: 12px;
+    color: #f4f1ec;
+    letter-spacing: -0.025em;
+  }
+  .debt-cash .v em { font-style: italic; color: var(--signal-soft); }
+  .debt-cash .sub {
+    margin-top: 12px;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: #948b7e;
+    line-height: 1.5;
+  }
+  .debt-cash .sub em { font-style: italic; color: var(--signal-soft); font-family: var(--serif); font-size: 15px; }
+
+  /* ───────── CLOSE ───────── */
+  .close-beat {
+    background: var(--bg);
+    padding: 90px 0 0;
+  }
+  .close-headline {
+    font-family: var(--serif);
+    font-size: 50px;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    margin-top: 22px;
+    color: var(--ink);
+  }
+  .close-headline em { font-style: italic; color: var(--signal); }
+  .close-arc {
+    margin-top: 50px;
+    height: 200px;
+    position: relative;
+  }
+  .close-arc svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .close-stats {
+    margin-top: 56px;
+    padding: 0 26px;
+    border-top: 1px solid var(--rule);
+    padding-top: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 22px;
+  }
+  .close-stats .k {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+  }
+  .close-stats .v {
+    font-family: var(--serif);
+    font-size: 30px;
+    line-height: 1;
+    margin-top: 6px;
+    letter-spacing: -0.01em;
+  }
+  .close-stats .v em { color: var(--signal); font-style: italic; }
+
+  .colophon {
+    margin-top: 60px;
+    padding: 28px 26px 56px;
+    background: var(--ink);
+    color: #948b7e;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    line-height: 1.7;
+    text-transform: uppercase;
+  }
+  .colophon .row { display: flex; justify-content: space-between; gap: 12px; }
+  .colophon .row + .row { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .colophon b { color: #f4f1ec; font-weight: 500; }
+
+  /* Reveal helpers */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1);
+    will-change: opacity, transform;
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* Subtle electron-flow on signal lines */
+  @keyframes flow {
+    0% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -40; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page" data-screen-label="01 SNDK Recap">
+
+  <!-- ═══════════ STICKY CHROME ═══════════ -->
+  <header class="chrome" id="chrome">
+    <div class="chrome-row">
+      <div class="ticker-block">
+        <span class="ticker"><span class="dot"></span>NASDAQ:SNDK</span>
+        <span class="ticker-name">Sandisk</span>
+      </div>
+      <div class="recap-label">Recap · FY '25</div>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progress"></div></div>
+  </header>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <section class="hero" data-screen-label="02 Thesis">
+    <div class="hero-die-wrap" aria-hidden="true">
+      <svg class="hero-die" id="heroDie" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice"></svg>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-meta">
+        <span>Milpitas · CA</span>
+        <span>Re-listed 02·24·25</span>
+      </div>
+
+      <h1 class="hero-thesis" style="margin-top: 56px;">
+        <span class="l1">Memory</span>
+        <span class="l2">remembers.</span>
+        <span class="l3">A storage company,<br>spun back into the open.</span>
+      </h1>
+    </div>
+
+    <div class="hero-stats hero-content">
+      <div class="hero-stat">
+        <div class="k">Market Cap</div>
+        <div class="v">$135.94<small>B</small></div>
+      </div>
+      <div class="hero-stat">
+        <div class="k">FY25 Revenue</div>
+        <div class="v">$7.36<small>B</small></div>
+      </div>
+      <div class="hero-stat">
+        <div class="k">Founded</div>
+        <div class="v">1988</div>
+      </div>
+      <div class="hero-stat">
+        <div class="k">Employees</div>
+        <div class="v">~11,000</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ RESET 1 ═══════════ -->
+  <div class="reset">
+    <span class="mark">— Interlude · I</span>
+    A flash cell holds a charge until it doesn't.<br>
+    <em>So does a balance sheet.</em> So does a story.
+  </div>
+
+  <!-- ═══════════ NAND CELL BEAT ═══════════ -->
+  <section class="nand-beat" data-screen-label="03 The Cell">
+    <div class="pad reveal">
+      <div class="eyebrow">The Cell · §01</div>
+      <h2 class="beat">Every bit you've ever&nbsp;saved <em>started here</em>.</h2>
+      <p class="beat-deck">
+        Sandisk designs and manufactures NAND flash — the silicon under every phone, console, datacenter SSD, and dashcam. <em>Three end markets,</em> one die.
+      </p>
+    </div>
+
+    <div class="nand-stage reveal">
+      <svg class="nand-svg" id="nandSvg" viewBox="0 0 430 360" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+
+    <div class="seg-row pad reveal">
+      <div class="seg">
+        <div class="pct">55<span style="font-size:14px;color:var(--ink-mute)">%</span></div>
+        <div class="lbl">Enterprise Storage<small>Datacenters · cloud · hyperscale</small></div>
+        <div class="tag">Largest</div>
+      </div>
+      <div class="seg">
+        <div class="pct">30<span style="font-size:14px;color:var(--ink-mute)">%</span></div>
+        <div class="lbl">Client SSDs<small>PC OEMs · gaming</small></div>
+        <div class="tag">PC</div>
+      </div>
+      <div class="seg">
+        <div class="pct">15<span style="font-size:14px;color:var(--ink-mute)">%</span></div>
+        <div class="lbl">Consumer Flash<small>Cards · USB · retail</small></div>
+        <div class="tag">Retail</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ SCALE BEAT ═══════════ -->
+  <section class="scale-beat" data-screen-label="04 Scale">
+    <div class="pad reveal">
+      <div class="eyebrow">The Turn · §02</div>
+      <h2 class="beat">Then the price&nbsp;of memory <em>came back</em>.</h2>
+      <p class="beat-deck">
+        FY25 closed at <em>$7.36B</em> — a $1.8B goodwill impairment dragged operating margin to −18.7%. Then NAND prices snapped, enterprise demand returned, and a single quarter rewrote the story.
+      </p>
+
+      <div class="big-num">
+        $3.02<span class="unit">B</span>
+      </div>
+      <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--ink-mute);text-transform:uppercase;margin-top:10px;">
+        Q2 FY'26 revenue · single quarter
+      </div>
+
+      <div class="scale-row">
+        <div>
+          <div class="k">Q2 FY'26 EPS</div>
+          <div class="v">$6.20</div>
+        </div>
+        <div>
+          <div class="k">Gross Margin (FY25)</div>
+          <div class="v">30.1%</div>
+        </div>
+        <div>
+          <div class="k">H1 FY'26 OCF</div>
+          <div class="v">$1.51<span style="font-size:14px;color:var(--ink-mute)">B</span></div>
+        </div>
+        <div>
+          <div class="k">FY25 OpMargin</div>
+          <div class="v" style="color:var(--ink-mute);">−18.7%</div>
+        </div>
+      </div>
+
+      <div class="quarters">
+        <div class="quarters-title">The pivot · operating cash flow</div>
+        <div class="q-bars" id="qBars">
+          <div class="q-bar muted" data-h="22"><span class="val">$84M</span><span class="lab">FY25</span></div>
+          <div class="q-bar" data-h="100"><span class="val">$1.51B</span><span class="lab">H1 FY26</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ RESET 2 ═══════════ -->
+  <div class="reset light">
+    <span class="mark">— Interlude · II</span>
+    <em>Seventy cents</em> of every dollar pays the fab.<br>
+    The rest pays the future.
+  </div>
+
+  <!-- ═══════════ COST WAFER ═══════════ -->
+  <section class="cost-beat" data-screen-label="05 Where the money goes">
+    <div class="pad reveal">
+      <div class="eyebrow">The Bill · §03</div>
+      <h2 class="beat">Where each <em>revenue dollar</em> lands.</h2>
+      <p class="beat-deck">
+        A wafer of cost. The fab takes the lion's share — silicon, capacity, the Kioxia JV. R&D buys the next node. The orange wedge is the goodwill burn.
+      </p>
+    </div>
+
+    <div class="wafer-stage reveal">
+      <svg id="waferSvg" viewBox="-200 -200 400 400"></svg>
+    </div>
+
+    <div class="cost-list reveal">
+      <div class="cost-row">
+        <div class="cost-swatch" style="background:#4F86C6"></div>
+        <div class="cost-label">Cost of Revenue</div>
+        <div class="cost-pct">70%</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-swatch" style="background:#F4A261"></div>
+        <div class="cost-label">Research &amp; Development</div>
+        <div class="cost-pct">12%</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-swatch" style="background:#E76F51"></div>
+        <div class="cost-label">Goodwill Impairment &amp; Other</div>
+        <div class="cost-pct">7%</div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-swatch" style="background:#2A9D8F"></div>
+        <div class="cost-label">Selling, General &amp; Admin</div>
+        <div class="cost-pct">5%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ GEOGRAPHY ═══════════ -->
+  <section class="geo-beat" data-screen-label="06 Geography">
+    <div class="pad reveal">
+      <div class="eyebrow">The Footprint · §04</div>
+      <h2 class="beat">Made in <em>Yokkaichi</em>. Sold everywhere.</h2>
+      <p class="beat-deck">
+        Wafers fab in Japan via the Kioxia JV. Revenue follows the data — and the data lives in <em>Asia.</em>
+      </p>
+    </div>
+
+    <div class="geo-stage reveal">
+      <svg id="geoSvg" viewBox="0 0 430 320" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+
+    <div class="geo-rows reveal">
+      <div class="geo-row">
+        <div class="geo-region">Asia</div>
+        <div class="geo-pct">61%</div>
+        <div class="geo-fill" style="--w:61%"></div>
+      </div>
+      <div class="geo-row">
+        <div class="geo-region">Americas</div>
+        <div class="geo-pct">22%</div>
+        <div class="geo-fill" style="--w:22%"></div>
+      </div>
+      <div class="geo-row">
+        <div class="geo-region">Europe, Middle East &amp; Africa</div>
+        <div class="geo-pct">17%</div>
+        <div class="geo-fill" style="--w:17%"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ THE BET ═══════════ -->
+  <section class="bet-beat" data-screen-label="07 The Bet">
+    <div class="pad reveal">
+      <div class="eyebrow">The Bet · §05</div>
+      <h2 class="beat">Two platforms, <em>one node ahead</em>.</h2>
+      <p class="beat-deck">
+        Capital allocation now flows in two directions: paying down debt, and buying the next density. <em>BiCS8</em> is the manufacturing node. <em>HBF</em> — High-Bandwidth Flash — is the AI bet.
+      </p>
+    </div>
+
+    <div class="bet-tower reveal">
+      <div class="bet-card">
+        <div class="bet-num">01</div>
+        <div>
+          <div class="bet-name"><em>BiCS8.</em> The next layer count.</div>
+          <div class="bet-desc">Sandisk's eighth-generation 3D NAND architecture — denser cells, lower cost-per-bit, manufactured in the Kioxia JV in Japan. The cost-of-revenue line buys this future every quarter.</div>
+        </div>
+      </div>
+      <div class="bet-card">
+        <div class="bet-num">02</div>
+        <div>
+          <div class="bet-name"><em>HBF.</em> Flash for AI memory.</div>
+          <div class="bet-desc">High Bandwidth Flash — Sandisk's bid to put NAND inside the AI inference loop, where bandwidth has historically belonged to DRAM. If it lands, the addressable market reshapes.</div>
+        </div>
+      </div>
+      <div class="bet-card">
+        <div class="bet-num">03</div>
+        <div>
+          <div class="bet-name">No <em>dividend.</em> No <em>buyback.</em></div>
+          <div class="bet-desc">Capital allocation is reinvestment and deleverage — for now. FY25 capex of $204M held tight; the cash that shows up next goes into nodes and balance sheet, not shareholders' pockets.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ RESET 3 ═══════════ -->
+  <div class="reset">
+    <span class="mark">— Interlude · III</span>
+    Three competitors. <em>One former parent.</em><br>
+    All chasing cost-per-terabyte to the floor.
+  </div>
+
+  <!-- ═══════════ COMPETITION ═══════════ -->
+  <section class="comp-beat" data-screen-label="08 Competition">
+    <div class="pad reveal">
+      <div class="eyebrow">The Field · §06</div>
+      <h2 class="beat">Sandisk is <em>not the largest</em>. It is the most singular.</h2>
+      <p class="beat-deck">
+        Compared by market cap. The line is Micron — the heavyweight. Tap any rival to read the relationship.
+      </p>
+    </div>
+
+    <div class="comp-stage reveal">
+
+      <div class="comp-row self">
+        <div class="comp-head">
+          <div><span class="comp-name">Sandisk</span> <span class="comp-tick">SNDK</span></div>
+          <div class="comp-mc">$<b>135.94</b>B</div>
+        </div>
+        <div class="comp-bar"><div class="fill" data-w="26.5"></div><div class="scale-marks"><span></span><span></span><span></span><span></span></div></div>
+        <div class="comp-meta">
+          <span>P/E · n/m</span>
+          <span>Rev <b>$7.36B</b></span>
+        </div>
+      </div>
+
+      <div class="comp-row" data-tap>
+        <div class="comp-head">
+          <div><span class="comp-name">Micron</span> <span class="comp-tick">MU</span></div>
+          <div class="comp-mc">$<b>513.20</b>B</div>
+        </div>
+        <div class="comp-bar"><div class="fill" data-w="100"></div><div class="scale-marks"><span></span><span></span><span></span><span></span></div></div>
+        <div class="comp-meta">
+          <span>P/E <b>21.28</b></span>
+          <span>Rev <b>$37.38B</b></span>
+          <span>YoY <b>+85.55%</b></span>
+        </div>
+        <div class="comp-tap">Tap to read the relationship</div>
+        <div class="comp-desc">Sandisk's most direct NAND flash competitor — SSDs, NAND wafers, embedded storage. Both are racing to deploy next-generation high-density NAND for AI inference and data center storage.</div>
+      </div>
+
+      <div class="comp-row" data-tap>
+        <div class="comp-head">
+          <div><span class="comp-name">Western Digital</span> <span class="comp-tick">WDC</span></div>
+          <div class="comp-mc">$<b>125.52</b>B</div>
+        </div>
+        <div class="comp-bar"><div class="fill" data-w="24.5"></div><div class="scale-marks"><span></span><span></span><span></span><span></span></div></div>
+        <div class="comp-meta">
+          <span>P/E <b>32.81</b></span>
+          <span>Rev <b>$9.52B</b></span>
+          <span>YoY <b>+12.51%</b></span>
+        </div>
+        <div class="comp-tap">Tap — the former parent</div>
+        <div class="comp-desc">Sandisk's former parent. WDC retains a flash storage business and continues to sell NAND-based SSDs and memory products under the WD brand, while still holding a residual equity stake in SNDK.</div>
+      </div>
+
+      <div class="comp-row" data-tap>
+        <div class="comp-head">
+          <div><span class="comp-name">Seagate</span> <span class="comp-tick">STX</span></div>
+          <div class="comp-mc">$<b>119.45</b>B</div>
+        </div>
+        <div class="comp-bar"><div class="fill" data-w="23.3"></div><div class="scale-marks"><span></span><span></span><span></span><span></span></div></div>
+        <div class="comp-meta">
+          <span>P/E <b>60.63</b></span>
+          <span>Rev <b>$9.10B</b></span>
+          <span>YoY <b>+31.56%</b></span>
+        </div>
+        <div class="comp-tap">Tap — the alternative physics</div>
+        <div class="comp-desc">A different medium entirely. Seagate is investing in HAMR (heat-assisted magnetic recording) to deliver ultra-high-capacity drives that challenge NAND SSDs on cost-per-terabyte in hyperscale and cloud storage.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════ DEBT — DARK INTERLUDE ═══════════ -->
+  <section class="debt-beat" data-screen-label="09 The Cliff">
+    <div class="pad reveal">
+      <div class="eyebrow on-dark">The Cliff · §07</div>
+      <h2 class="beat">From <em>$1.83B</em> in debt<br>to <em>net cash</em> — in two&nbsp;quarters.</h2>
+      <p class="beat-deck">
+        The single most underappreciated line in the recap. Long-term debt fell <em>from $1.83B to roughly $583M</em> by Q2 FY'26 — Sandisk hit its net-cash-positive milestone ahead of schedule.
+      </p>
+    </div>
+
+    <div class="debt-cliff reveal">
+      <svg id="debtSvg" viewBox="0 0 400 280" preserveAspectRatio="none"></svg>
+    </div>
+
+    <div class="debt-anno reveal">
+      <div class="col">
+        <div class="k">FY25 · Total Debt</div>
+        <div class="v">$1.83<span style="font-size:18px;color:#948b7e">B</span></div>
+        <div class="delta">Period end · the load Sandisk carried out of the spin.</div>
+      </div>
+      <div class="col">
+        <div class="k">Q2 FY'26 · Long-Term</div>
+        <div class="v lit">$583<span style="font-size:18px;color:#948b7e">M</span></div>
+        <div class="delta">An aggressive paydown — capital reroutes into the balance sheet, then the node.</div>
+      </div>
+    </div>
+
+    <div class="debt-cash reveal">
+      <div class="k">And on the other side of the ledger</div>
+      <div class="v">$1.48<em>B</em> <span style="font-size:24px;color:#948b7e;font-style:normal;">cash &amp; equivalents</span></div>
+      <div class="sub">Equity stands at <em>$9.22B</em>. Goodwill, after the Q3 write-down, sits near $1.3B — a ledger lighter, and more honest, than the one that rolled out of WDC.</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CLOSE ═══════════ -->
+  <section class="close-beat" data-screen-label="10 The Close">
+    <div class="pad reveal">
+      <div class="eyebrow">The Close · §08</div>
+      <h1 class="close-headline">
+        Memory remembers.<br>
+        <em>So do markets.</em>
+      </h1>
+      <p class="beat-deck">
+        Sandisk opened the year as a spin-off shouldering a write-down. It closes the recap with cash on hand, debt halved, a quarter of $3.02B, and two platforms — <em>BiCS8</em> and <em>HBF</em> — pointed at the next decade of storage. The cycle remembers, too.
+      </p>
+    </div>
+
+    <div class="close-arc reveal">
+      <svg id="closeArc" viewBox="0 0 430 200" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+
+    <div class="close-stats reveal">
+      <div>
+        <div class="k">Open · Market Cap</div>
+        <div class="v">$135.94<span style="font-size:14px;color:var(--ink-mute)">B</span></div>
+      </div>
+      <div>
+        <div class="k">Close · EPS Q2</div>
+        <div class="v"><em>$6.20</em></div>
+      </div>
+      <div>
+        <div class="k">Open · FY25 Rev</div>
+        <div class="v">$7.36<span style="font-size:14px;color:var(--ink-mute)">B</span></div>
+      </div>
+      <div>
+        <div class="k">Close · Q2 Rev</div>
+        <div class="v"><em>$3.02B</em></div>
+      </div>
+    </div>
+
+    <div class="colophon">
+      <div class="row"><span><b>NASDAQ:SNDK</b></span><span>Recap · FY '25</span></div>
+      <div class="row"><span>Milpitas, CA</span><span>Spun · 02·24·2025</span></div>
+      <div class="row"><span>~11,000 employees</span><span>Five-largest NAND supplier</span></div>
+      <div class="row"><span>End of recap</span><span>↑ Scroll to top</span></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ═══════════ HERO DIE — grid of NAND cells, scroll-tinted ═══════════ */
+(function buildHeroDie() {
+  const svg = document.getElementById('heroDie');
+  const N = 18;
+  const size = 600;
+  const pad = 18;
+  const cell = (size - pad * 2) / N;
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+
+  // Outer die border
+  const outer = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  outer.setAttribute('x', pad - 4);
+  outer.setAttribute('y', pad - 4);
+  outer.setAttribute('width', size - pad * 2 + 8);
+  outer.setAttribute('height', size - pad * 2 + 8);
+  outer.setAttribute('fill', 'none');
+  outer.setAttribute('stroke', '#d9d2c4');
+  outer.setAttribute('stroke-width', '0.6');
+  g.appendChild(outer);
+
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      rect.setAttribute('x', pad + c * cell + 1);
+      rect.setAttribute('y', pad + r * cell + 1);
+      rect.setAttribute('width', cell - 2);
+      rect.setAttribute('height', cell - 2);
+      rect.setAttribute('fill', '#e3dccd');
+      rect.setAttribute('rx', '0.8');
+      rect.dataset.r = r;
+      rect.dataset.c = c;
+      // Pre-seed a sparse pattern of "hot" cells
+      const seed = ((r * 37 + c * 19 + r * c) % 11);
+      if (seed < 2) rect.classList.add('hot-A');
+      else if (seed === 2) rect.classList.add('hot-B');
+      g.appendChild(rect);
+    }
+  }
+  svg.appendChild(g);
+  window.__heroCells = g.querySelectorAll('rect');
+})();
+
+/* ═══════════ NAND CELL — exploded layered die metaphor ═══════════ */
+(function buildNand() {
+  const svg = document.getElementById('nandSvg');
+  const W = 430, H = 360;
+  const ns = 'http://www.w3.org/2000/svg';
+
+  // Build three stacked perspective rects — the layered NAND die
+  const layers = [
+    { y: 250, scale: 1.00, fill: '#e3dccd', label: 'Substrate' },
+    { y: 200, scale: 0.92, fill: '#d4cab8', label: 'Layer 04' },
+    { y: 150, scale: 0.84, fill: '#c5b9a3', label: 'Layer 06' },
+    { y: 100, scale: 0.76, fill: '#1a1d24', label: 'BiCS8 · top', textFill: '#f4f1ec' },
+  ];
+
+  layers.forEach((L, i) => {
+    const w = 320 * L.scale;
+    const x = (W - w) / 2;
+    const h = 36;
+    // skew via path for isometric-ish look
+    const skew = 22;
+    const path = document.createElementNS(ns, 'path');
+    const d = `M${x + skew} ${L.y}
+               L${x + w} ${L.y}
+               L${x + w - skew} ${L.y + h}
+               L${x} ${L.y + h} Z`;
+    path.setAttribute('d', d);
+    path.setAttribute('fill', L.fill);
+    path.setAttribute('stroke', i === 3 ? '#0d0f14' : '#bfb5a0');
+    path.setAttribute('stroke-width', '0.8');
+    svg.appendChild(path);
+
+    // Top face
+    const top = document.createElementNS(ns, 'path');
+    const topD = `M${x + skew} ${L.y}
+                  L${x + w} ${L.y}
+                  L${x + w - 6} ${L.y - 8}
+                  L${x + skew - 6} ${L.y - 8} Z`;
+    top.setAttribute('d', topD);
+    top.setAttribute('fill', i === 3 ? '#2a2e38' : '#ebe6dd');
+    top.setAttribute('stroke', '#bfb5a0');
+    top.setAttribute('stroke-width', '0.5');
+    svg.appendChild(top);
+
+    // Cells on each face
+    if (i < 3) {
+      for (let k = 0; k < 12; k++) {
+        const cx = x + skew + 8 + k * ((w - skew - 16) / 12);
+        const cy = L.y + h/2;
+        const dot = document.createElementNS(ns, 'rect');
+        dot.setAttribute('x', cx);
+        dot.setAttribute('y', cy - 3);
+        dot.setAttribute('width', 4);
+        dot.setAttribute('height', 4);
+        dot.setAttribute('fill', '#7a7166');
+        dot.setAttribute('opacity', 0.45);
+        svg.appendChild(dot);
+      }
+    }
+
+    // Label tick
+    const tx = document.createElementNS(ns, 'text');
+    tx.setAttribute('x', x + w + 8);
+    tx.setAttribute('y', L.y + 24);
+    tx.setAttribute('font-family', 'JetBrains Mono, monospace');
+    tx.setAttribute('font-size', '9');
+    tx.setAttribute('letter-spacing', '0.1em');
+    tx.setAttribute('fill', '#7a7166');
+    tx.textContent = L.label.toUpperCase();
+    svg.appendChild(tx);
+  });
+
+  // signal trace from BiCS8 layer down — animated electron path
+  const trace = document.createElementNS(ns, 'path');
+  trace.setAttribute('d', 'M 360 110 L 380 110 L 380 286 L 90 286 L 90 110 L 60 110');
+  trace.setAttribute('fill', 'none');
+  trace.setAttribute('stroke', '#c8631c');
+  trace.setAttribute('stroke-width', '1.2');
+  trace.setAttribute('stroke-dasharray', '4 6');
+  trace.style.animation = 'flow 1.4s linear infinite';
+  svg.appendChild(trace);
+
+  // bit count bubbles at end of trace
+  ['1','0','1','0','1','1'].forEach((bit, i) => {
+    const t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', 30 + i * 12);
+    t.setAttribute('y', 70);
+    t.setAttribute('font-family', 'JetBrains Mono, monospace');
+    t.setAttribute('font-size', '14');
+    t.setAttribute('fill', i % 2 === 0 ? '#c8631c' : '#3a342c');
+    t.textContent = bit;
+    svg.appendChild(t);
+  });
+
+  // Footer caption inside SVG
+  const cap = document.createElementNS(ns, 'text');
+  cap.setAttribute('x', W/2);
+  cap.setAttribute('y', 340);
+  cap.setAttribute('text-anchor', 'middle');
+  cap.setAttribute('font-family', 'Instrument Serif, serif');
+  cap.setAttribute('font-size', '13');
+  cap.setAttribute('font-style', 'italic');
+  cap.setAttribute('fill', '#7a7166');
+  cap.textContent = 'A NAND die — layers stacked, charge trapped per cell.';
+  svg.appendChild(cap);
+})();
+
+/* ═══════════ COST WAFER — circular dial of cost ═══════════ */
+(function buildWafer() {
+  const svg = document.getElementById('waferSvg');
+  const ns = 'http://www.w3.org/2000/svg';
+  const data = [
+    { pct: 70, color: '#4F86C6', label: 'COR', name: 'Cost of Revenue' },
+    { pct: 12, color: '#F4A261', label: 'R&D' },
+    { pct: 7,  color: '#E76F51', label: 'GW' },
+    { pct: 5,  color: '#2A9D8F', label: 'SG&A' },
+    { pct: 6,  color: '#d9d2c4', label: 'Op income' }, // residue to 100
+  ];
+
+  // outer wafer ring
+  const ring = document.createElementNS(ns, 'circle');
+  ring.setAttribute('r', 175);
+  ring.setAttribute('fill', '#ebe6dd');
+  ring.setAttribute('stroke', '#d9d2c4');
+  ring.setAttribute('stroke-width', '1');
+  svg.appendChild(ring);
+
+  // Inner notch (real wafers have one)
+  const notch = document.createElementNS(ns, 'path');
+  notch.setAttribute('d', 'M -10 -175 L 10 -175 L 0 -160 Z');
+  notch.setAttribute('fill', '#f4f1ec');
+  svg.appendChild(notch);
+
+  // segments as donut arcs
+  let acc = -90; // start at top
+  const inner = 70, outer = 158;
+
+  data.forEach((d) => {
+    const start = acc;
+    const end = acc + (d.pct * 360 / 100);
+    acc = end;
+    const large = end - start > 180 ? 1 : 0;
+    const sR = (start * Math.PI) / 180, eR = (end * Math.PI) / 180;
+    const sxO = outer * Math.cos(sR), syO = outer * Math.sin(sR);
+    const exO = outer * Math.cos(eR), eyO = outer * Math.sin(eR);
+    const sxI = inner * Math.cos(eR), syI = inner * Math.sin(eR);
+    const exI = inner * Math.cos(sR), eyI = inner * Math.sin(sR);
+    const path = document.createElementNS(ns, 'path');
+    path.setAttribute('d',
+      `M ${sxO} ${syO}
+       A ${outer} ${outer} 0 ${large} 1 ${exO} ${eyO}
+       L ${sxI} ${syI}
+       A ${inner} ${inner} 0 ${large} 0 ${exI} ${eyI} Z`
+    );
+    path.setAttribute('fill', d.color);
+    path.setAttribute('stroke', '#f4f1ec');
+    path.setAttribute('stroke-width', '1.5');
+    svg.appendChild(path);
+  });
+
+  // grid pattern over wafer to suggest die layout
+  for (let x = -150; x <= 150; x += 18) {
+    for (let y = -150; y <= 150; y += 18) {
+      if (Math.sqrt(x*x + y*y) > 155 || Math.sqrt(x*x + y*y) < 65) continue;
+      const r = document.createElementNS(ns, 'rect');
+      r.setAttribute('x', x);
+      r.setAttribute('y', y);
+      r.setAttribute('width', 14);
+      r.setAttribute('height', 14);
+      r.setAttribute('fill', 'none');
+      r.setAttribute('stroke', 'rgba(255,255,255,0.16)');
+      r.setAttribute('stroke-width', '0.5');
+      svg.appendChild(r);
+    }
+  }
+
+  // center label
+  const cx1 = document.createElementNS(ns, 'text');
+  cx1.setAttribute('text-anchor', 'middle');
+  cx1.setAttribute('y', -8);
+  cx1.setAttribute('font-family', 'JetBrains Mono, monospace');
+  cx1.setAttribute('font-size', '9');
+  cx1.setAttribute('letter-spacing', '0.18em');
+  cx1.setAttribute('fill', '#7a7166');
+  cx1.textContent = 'EVERY $1';
+  svg.appendChild(cx1);
+
+  const cx2 = document.createElementNS(ns, 'text');
+  cx2.setAttribute('text-anchor', 'middle');
+  cx2.setAttribute('y', 22);
+  cx2.setAttribute('font-family', 'Instrument Serif, serif');
+  cx2.setAttribute('font-size', '36');
+  cx2.setAttribute('font-style', 'italic');
+  cx2.setAttribute('fill', '#14110d');
+  cx2.textContent = '70¢';
+  svg.appendChild(cx2);
+
+  const cx3 = document.createElementNS(ns, 'text');
+  cx3.setAttribute('text-anchor', 'middle');
+  cx3.setAttribute('y', 42);
+  cx3.setAttribute('font-family', 'Inter, sans-serif');
+  cx3.setAttribute('font-size', '10');
+  cx3.setAttribute('letter-spacing', '0.04em');
+  cx3.setAttribute('fill', '#7a7166');
+  cx3.textContent = 'pays the fab';
+  svg.appendChild(cx3);
+})();
+
+/* ═══════════ GEOGRAPHY — abstract globe with weighted regions ═══════════ */
+(function buildGeo() {
+  const svg = document.getElementById('geoSvg');
+  const ns = 'http://www.w3.org/2000/svg';
+
+  // background latitude lines
+  for (let i = 1; i <= 5; i++) {
+    const line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', 0);
+    line.setAttribute('x2', 430);
+    line.setAttribute('y1', i * 50);
+    line.setAttribute('y2', i * 50);
+    line.setAttribute('stroke', '#d9d2c4');
+    line.setAttribute('stroke-width', '0.5');
+    line.setAttribute('stroke-dasharray', '2 4');
+    svg.appendChild(line);
+  }
+
+  // Three abstract land masses positioned roughly: Americas left, EMEA center, Asia right
+  // Asia (largest, signal-color filled to emphasize 61%)
+  const asia = document.createElementNS(ns, 'path');
+  asia.setAttribute('d', 'M 290 90 Q 320 80 350 95 Q 385 105 395 130 Q 400 165 380 195 Q 360 225 325 230 Q 290 232 280 200 Q 270 170 275 145 Q 280 110 290 90 Z');
+  asia.setAttribute('fill', '#c8631c');
+  asia.setAttribute('opacity', 0.92);
+  svg.appendChild(asia);
+
+  // Americas
+  const ams = document.createElementNS(ns, 'path');
+  ams.setAttribute('d', 'M 50 70 Q 75 65 90 80 Q 100 100 95 130 Q 90 165 105 200 Q 110 230 95 250 Q 75 260 60 245 Q 45 220 50 180 Q 50 130 50 70 Z');
+  ams.setAttribute('fill', '#3a342c');
+  ams.setAttribute('opacity', 0.78);
+  svg.appendChild(ams);
+
+  // EMEA
+  const emea = document.createElementNS(ns, 'path');
+  emea.setAttribute('d', 'M 175 95 Q 205 90 220 110 Q 230 130 220 155 Q 210 180 195 195 Q 175 200 165 180 Q 155 155 160 130 Q 165 105 175 95 Z');
+  emea.setAttribute('fill', '#7a7166');
+  emea.setAttribute('opacity', 0.82);
+  svg.appendChild(emea);
+
+  // Yokkaichi marker on Asia (the JV)
+  const mark = document.createElementNS(ns, 'circle');
+  mark.setAttribute('cx', 360);
+  mark.setAttribute('cy', 130);
+  mark.setAttribute('r', 5);
+  mark.setAttribute('fill', '#f4f1ec');
+  mark.setAttribute('stroke', '#14110d');
+  mark.setAttribute('stroke-width', '1.5');
+  svg.appendChild(mark);
+
+  const ring1 = document.createElementNS(ns, 'circle');
+  ring1.setAttribute('cx', 360);
+  ring1.setAttribute('cy', 130);
+  ring1.setAttribute('r', 12);
+  ring1.setAttribute('fill', 'none');
+  ring1.setAttribute('stroke', '#f4f1ec');
+  ring1.setAttribute('stroke-width', '1');
+  ring1.setAttribute('opacity', 0.5);
+  svg.appendChild(ring1);
+
+  const lbl = document.createElementNS(ns, 'text');
+  lbl.setAttribute('x', 350);
+  lbl.setAttribute('y', 100);
+  lbl.setAttribute('text-anchor', 'end');
+  lbl.setAttribute('font-family', 'JetBrains Mono, monospace');
+  lbl.setAttribute('font-size', '9');
+  lbl.setAttribute('letter-spacing', '0.1em');
+  lbl.setAttribute('fill', '#14110d');
+  lbl.textContent = 'YOKKAICHI · KIOXIA JV';
+  svg.appendChild(lbl);
+
+  // line connecting label to marker
+  const ln = document.createElementNS(ns, 'line');
+  ln.setAttribute('x1', 350);
+  ln.setAttribute('y1', 104);
+  ln.setAttribute('x2', 360);
+  ln.setAttribute('y2', 125);
+  ln.setAttribute('stroke', '#14110d');
+  ln.setAttribute('stroke-width', '0.8');
+  svg.appendChild(ln);
+
+  // % labels per mass
+  const pcts = [
+    { x: 70, y: 165, label: '22%', region: 'AMERICAS', dark: false },
+    { x: 190, y: 145, label: '17%', region: 'EMEA', dark: false },
+    { x: 335, y: 165, label: '61%', region: 'ASIA', dark: true },
+  ];
+  pcts.forEach(p => {
+    const t1 = document.createElementNS(ns, 'text');
+    t1.setAttribute('x', p.x);
+    t1.setAttribute('y', p.y);
+    t1.setAttribute('text-anchor', 'middle');
+    t1.setAttribute('font-family', 'Instrument Serif, serif');
+    t1.setAttribute('font-size', '32');
+    t1.setAttribute('font-style', 'italic');
+    t1.setAttribute('fill', p.dark ? '#f4f1ec' : '#f4f1ec');
+    t1.setAttribute('font-weight', '400');
+    t1.textContent = p.label;
+    svg.appendChild(t1);
+    const t2 = document.createElementNS(ns, 'text');
+    t2.setAttribute('x', p.x);
+    t2.setAttribute('y', p.y + 14);
+    t2.setAttribute('text-anchor', 'middle');
+    t2.setAttribute('font-family', 'JetBrains Mono, monospace');
+    t2.setAttribute('font-size', '8');
+    t2.setAttribute('letter-spacing', '0.18em');
+    t2.setAttribute('fill', p.dark ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.85)');
+    t2.textContent = p.region;
+    svg.appendChild(t2);
+  });
+
+  // flow arrows from Asia to others
+  const arr1 = document.createElementNS(ns, 'path');
+  arr1.setAttribute('d', 'M 280 150 Q 240 120 200 130');
+  arr1.setAttribute('fill', 'none');
+  arr1.setAttribute('stroke', '#c8631c');
+  arr1.setAttribute('stroke-width', '1');
+  arr1.setAttribute('stroke-dasharray', '3 4');
+  arr1.style.animation = 'flow 2s linear infinite';
+  svg.appendChild(arr1);
+  const arr2 = document.createElementNS(ns, 'path');
+  arr2.setAttribute('d', 'M 280 175 Q 200 220 100 200');
+  arr2.setAttribute('fill', 'none');
+  arr2.setAttribute('stroke', '#c8631c');
+  arr2.setAttribute('stroke-width', '1');
+  arr2.setAttribute('stroke-dasharray', '3 4');
+  arr2.style.animation = 'flow 2.6s linear infinite';
+  svg.appendChild(arr2);
+})();
+
+/* ═══════════ DEBT CLIFF ═══════════ */
+(function buildDebt() {
+  const svg = document.getElementById('debtSvg');
+  const ns = 'http://www.w3.org/2000/svg';
+
+  // y axis baseline
+  const base = document.createElementNS(ns, 'line');
+  base.setAttribute('x1', 30); base.setAttribute('x2', 380);
+  base.setAttribute('y1', 230); base.setAttribute('y2', 230);
+  base.setAttribute('stroke', 'rgba(255,255,255,0.15)');
+  base.setAttribute('stroke-width', '0.6');
+  svg.appendChild(base);
+
+  // gridlines
+  [50, 100, 150, 200].forEach(y => {
+    const g = document.createElementNS(ns, 'line');
+    g.setAttribute('x1', 30); g.setAttribute('x2', 380);
+    g.setAttribute('y1', y); g.setAttribute('y2', y);
+    g.setAttribute('stroke', 'rgba(255,255,255,0.05)');
+    g.setAttribute('stroke-dasharray', '2 6');
+    svg.appendChild(g);
+  });
+
+  // Two stacked towers — FY25 ($1.83B) and Q2 FY26 ($583M)
+  // Tower 1
+  const t1Path = document.createElementNS(ns, 'rect');
+  t1Path.setAttribute('x', 60);
+  t1Path.setAttribute('y', 50);
+  t1Path.setAttribute('width', 100);
+  t1Path.setAttribute('height', 180);
+  t1Path.setAttribute('fill', 'rgba(255,255,255,0.92)');
+  svg.appendChild(t1Path);
+
+  // brick texture
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 5; c++) {
+      const b = document.createElementNS(ns, 'rect');
+      b.setAttribute('x', 60 + c * 20 + (r % 2 ? 6 : 0));
+      b.setAttribute('y', 50 + r * 20);
+      b.setAttribute('width', 18);
+      b.setAttribute('height', 18);
+      b.setAttribute('fill', 'none');
+      b.setAttribute('stroke', '#0d0f14');
+      b.setAttribute('stroke-width', '0.5');
+      b.setAttribute('opacity', 0.18);
+      svg.appendChild(b);
+    }
+  }
+
+  // Tower 2 — short, lit copper
+  const t2Path = document.createElementNS(ns, 'rect');
+  t2Path.setAttribute('x', 240);
+  t2Path.setAttribute('y', 173);
+  t2Path.setAttribute('width', 100);
+  t2Path.setAttribute('height', 57);
+  t2Path.setAttribute('fill', '#e8a04a');
+  svg.appendChild(t2Path);
+
+  // brick texture on tower 2
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 5; c++) {
+      const b = document.createElementNS(ns, 'rect');
+      b.setAttribute('x', 240 + c * 20 + (r % 2 ? 6 : 0));
+      b.setAttribute('y', 173 + r * 20);
+      b.setAttribute('width', 18);
+      b.setAttribute('height', 18);
+      b.setAttribute('fill', 'none');
+      b.setAttribute('stroke', '#0d0f14');
+      b.setAttribute('stroke-width', '0.5');
+      b.setAttribute('opacity', 0.25);
+      svg.appendChild(b);
+    }
+  }
+
+  // arrow from t1 top to t2 top — the cliff
+  const arrow = document.createElementNS(ns, 'path');
+  arrow.setAttribute('d', 'M 165 60 Q 200 60 220 120 Q 235 165 240 173');
+  arrow.setAttribute('fill', 'none');
+  arrow.setAttribute('stroke', '#e8a04a');
+  arrow.setAttribute('stroke-width', '1.5');
+  arrow.setAttribute('stroke-dasharray', '4 5');
+  arrow.style.animation = 'flow 1.6s linear infinite';
+  svg.appendChild(arrow);
+
+  // arrowhead
+  const head = document.createElementNS(ns, 'path');
+  head.setAttribute('d', 'M 235 165 L 240 173 L 248 168');
+  head.setAttribute('fill', 'none');
+  head.setAttribute('stroke', '#e8a04a');
+  head.setAttribute('stroke-width', '1.5');
+  svg.appendChild(head);
+
+  // labels under each
+  function lab(x, l1, l2, color) {
+    const t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', x); t.setAttribute('y', 252);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('font-family', 'JetBrains Mono, monospace');
+    t.setAttribute('font-size', '9');
+    t.setAttribute('letter-spacing', '0.18em');
+    t.setAttribute('fill', color || '#948b7e');
+    t.textContent = l1;
+    svg.appendChild(t);
+    const t2 = document.createElementNS(ns, 'text');
+    t2.setAttribute('x', x); t2.setAttribute('y', 270);
+    t2.setAttribute('text-anchor', 'middle');
+    t2.setAttribute('font-family', 'Instrument Serif, serif');
+    t2.setAttribute('font-size', '14');
+    t2.setAttribute('font-style', 'italic');
+    t2.setAttribute('fill', color || '#f4f1ec');
+    t2.textContent = l2;
+    svg.appendChild(t2);
+  }
+  lab(110, 'FY25', '$1.83B', '#f4f1ec');
+  lab(290, 'Q2 FY26', '$583M', '#e8a04a');
+
+  // top labels
+  const tt1 = document.createElementNS(ns, 'text');
+  tt1.setAttribute('x', 110); tt1.setAttribute('y', 42);
+  tt1.setAttribute('text-anchor', 'middle');
+  tt1.setAttribute('font-family', 'JetBrains Mono, monospace');
+  tt1.setAttribute('font-size', '8');
+  tt1.setAttribute('letter-spacing', '0.18em');
+  tt1.setAttribute('fill', '#948b7e');
+  tt1.textContent = 'TOTAL DEBT';
+  svg.appendChild(tt1);
+})();
+
+/* ═══════════ CLOSING ARC ═══════════ */
+(function buildCloseArc() {
+  const svg = document.getElementById('closeArc');
+  const ns = 'http://www.w3.org/2000/svg';
+
+  // The arc — a single line from low (open) to high (close), with milestones
+  const path = document.createElementNS(ns, 'path');
+  path.setAttribute('d', 'M 30 150 Q 100 145 160 130 Q 220 110 280 75 Q 350 35 400 30');
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', '#c8631c');
+  path.setAttribute('stroke-width', '2');
+  path.setAttribute('stroke-linecap', 'round');
+  svg.appendChild(path);
+
+  // shadow
+  const shadow = document.createElementNS(ns, 'path');
+  shadow.setAttribute('d', 'M 30 150 Q 100 145 160 130 Q 220 110 280 75 Q 350 35 400 30 L 400 180 L 30 180 Z');
+  shadow.setAttribute('fill', '#c8631c');
+  shadow.setAttribute('opacity', 0.08);
+  svg.appendChild(shadow);
+
+  // milestones
+  const stops = [
+    { x: 30, y: 150, l: 'SPIN', s: '02·24·25' },
+    { x: 160, y: 130, l: 'IMPAIR', s: 'Q3 FY25' },
+    { x: 280, y: 75, l: 'PIVOT', s: 'Q1 FY26' },
+    { x: 400, y: 30, l: 'NET CASH', s: 'Q2 FY26' },
+  ];
+  stops.forEach((s, i) => {
+    const c = document.createElementNS(ns, 'circle');
+    c.setAttribute('cx', s.x); c.setAttribute('cy', s.y);
+    c.setAttribute('r', 4);
+    c.setAttribute('fill', i === stops.length - 1 ? '#c8631c' : '#f4f1ec');
+    c.setAttribute('stroke', '#14110d');
+    c.setAttribute('stroke-width', '1.2');
+    svg.appendChild(c);
+
+    const isLast = i === stops.length - 1;
+    const labelY = i % 2 === 0 ? s.y + 22 : s.y - 14;
+
+    const t1 = document.createElementNS(ns, 'text');
+    t1.setAttribute('x', s.x);
+    t1.setAttribute('y', labelY);
+    t1.setAttribute('text-anchor', i === 0 ? 'start' : (isLast ? 'end' : 'middle'));
+    t1.setAttribute('font-family', 'JetBrains Mono, monospace');
+    t1.setAttribute('font-size', '9');
+    t1.setAttribute('letter-spacing', '0.18em');
+    t1.setAttribute('fill', isLast ? '#c8631c' : '#3a342c');
+    t1.textContent = s.l;
+    svg.appendChild(t1);
+
+    const t2 = document.createElementNS(ns, 'text');
+    t2.setAttribute('x', s.x);
+    t2.setAttribute('y', labelY + 12);
+    t2.setAttribute('text-anchor', i === 0 ? 'start' : (isLast ? 'end' : 'middle'));
+    t2.setAttribute('font-family', 'Instrument Serif, serif');
+    t2.setAttribute('font-size', '12');
+    t2.setAttribute('font-style', 'italic');
+    t2.setAttribute('fill', '#7a7166');
+    t2.textContent = s.s;
+    svg.appendChild(t2);
+  });
+})();
+
+/* ═══════════ SCROLL — progress, reveal, hero die scroll-tint, chrome theme ═══════════ */
+(function scrollCtl() {
+  const progress = document.getElementById('progress');
+  const chrome = document.getElementById('chrome');
+  const debtBeat = document.querySelector('.debt-beat');
+  const heroCells = window.__heroCells || [];
+
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        // ignite q-bars
+        if (e.target.querySelector('#qBars') || e.target.id === 'qBars') {
+          const bars = e.target.querySelectorAll('.q-bar');
+          bars.forEach(b => {
+            const h = parseFloat(b.dataset.h);
+            b.style.height = h + '%';
+          });
+        }
+        // ignite comp bars
+        e.target.querySelectorAll('.comp-bar .fill').forEach(f => {
+          f.style.width = (parseFloat(f.dataset.w) || 0) + '%';
+        });
+      }
+    });
+  }, { threshold: 0.18 });
+  reveals.forEach(r => io.observe(r));
+
+  // Q-bar manual trigger (in case parent's reveal hits before bars)
+  const qbarsObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.q-bar').forEach(b => {
+          b.style.height = parseFloat(b.dataset.h) + '%';
+        });
+      }
+    });
+  }, { threshold: 0.4 });
+  const qb = document.getElementById('qBars');
+  if (qb) qbarsObs.observe(qb);
+
+  // Tap-to-deepen on competitors
+  document.querySelectorAll('.comp-row[data-tap]').forEach(row => {
+    row.addEventListener('click', () => row.classList.toggle('open'));
+  });
+
+  function onScroll() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const sc = Math.max(0, Math.min(1, window.scrollY / max));
+    progress.style.width = (sc * 100) + '%';
+
+    // Hero die — light cells progressively
+    if (heroCells.length) {
+      const heroEl = document.querySelector('.hero');
+      const rect = heroEl.getBoundingClientRect();
+      const pp = Math.max(0, Math.min(1, 1 - (rect.top + rect.height) / (window.innerHeight + rect.height)));
+      const lit = Math.floor(pp * heroCells.length * 0.4);
+      heroCells.forEach((c, i) => {
+        if (c.classList.contains('hot-A')) {
+          c.setAttribute('fill', '#c8631c');
+          c.setAttribute('opacity', '0.85');
+        } else if (c.classList.contains('hot-B')) {
+          c.setAttribute('fill', '#e8a04a');
+          c.setAttribute('opacity', '0.6');
+        } else if (i < lit) {
+          c.setAttribute('fill', '#3a342c');
+          c.setAttribute('opacity', '0.4');
+        }
+      });
+    }
+
+    // Chrome theme — switch to dark while debt beat is dominant
+    if (debtBeat) {
+      const dr = debtBeat.getBoundingClientRect();
+      const dark = dr.top < 80 && dr.bottom > 100;
+      chrome.classList.toggle('dark', dark);
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>

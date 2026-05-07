@@ -1,0 +1,774 @@
+/* MCK Recap — McKesson stock recap, mobile editorial
+   Adopts Zair Naqvi DS color/type tokens and adds a McKesson-specific
+   secondary palette: ledger navy + prescription amber. */
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
+
+:root {
+  /* DS surface tokens */
+  --paper:        #FBFAF7;
+  --paper-2:      #F4F2ED;
+  --paper-3:      #ECEAE3;
+  --ink:          #141414;
+  --ink-2:        #3B3A37;
+  --ink-3:        #6B6A65;
+  --ink-4:        #A4A29C;
+  --line:         #E4E1D9;
+  --line-strong:  #CFCBC0;
+
+  /* McKesson-derived: ledger navy (medicinal, institutional) */
+  --navy-900:     #07182B;
+  --navy-800:     #0E2A47;
+  --navy-700:     #14375A;
+  --navy-600:     #1F4D7A;
+
+  /* Signal — prescription amber (the dollar that survives, the warm pulse) */
+  --amber-50:     #FFF6E6;
+  --amber-100:    #FCE4B0;
+  --amber-300:    #F2BE5F;
+  --amber-400:    #E8A33D;
+  --amber-500:    #C8851D;
+
+  /* Cost-chart hexes from the data (locked) */
+  --cost-1: #2563EB;
+  --cost-2: #16A34A;
+  --cost-3: #D97706;
+
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "tnum", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body {
+  /* Center the mobile column on desktop, full-bleed on mobile */
+  background: #E8E4DA;
+}
+
+/* The page itself — a 420px mobile column, no phone chrome. */
+.page {
+  width: 100%;
+  max-width: 440px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 80px rgba(7,24,43,0.08);
+}
+
+/* ---------- STICKY CHROME ---------- */
+.chrome {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  background: rgba(251,250,247,0.78);
+  border-bottom: 1px solid var(--line);
+}
+.chrome-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 12px;
+  gap: 12px;
+}
+.chrome-left {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.ticker {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+.ticker .dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber-400);
+  margin-right: 6px;
+  transform: translateY(-2px);
+}
+.co {
+  font-family: var(--font-display);
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--ink-2);
+}
+.recap-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border: 1px solid var(--line-strong);
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.5);
+}
+.progress {
+  height: 1.5px;
+  width: 100%;
+  background: transparent;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--navy-800);
+  transition: width 80ms linear;
+}
+
+/* ---------- BLOCK / SCAFFOLD ---------- */
+section { position: relative; }
+.beat { padding: 64px 24px; position: relative; }
+.beat-tight { padding: 40px 24px; }
+.beat-cream { background: var(--paper-2); }
+.beat-navy {
+  background: var(--navy-900);
+  color: var(--paper);
+}
+.beat-navy .ink-2 { color: rgba(244,242,237,0.78); }
+.beat-navy .ink-3 { color: rgba(244,242,237,0.55); }
+.beat-navy .eyebrow { color: var(--amber-400); }
+.beat-navy .hairline { background: rgba(244,242,237,0.18); }
+
+/* Eyebrow chapter labels */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--navy-700);
+  display: inline-block;
+  margin-bottom: 18px;
+}
+.eyebrow .num {
+  display: inline-block;
+  margin-right: 10px;
+  color: var(--ink-3);
+}
+
+/* Display headlines */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.display em { font-style: italic; color: var(--navy-800); }
+.beat-navy .display { color: var(--paper); }
+.beat-navy .display em { color: var(--amber-400); }
+
+.h-xl { font-size: 56px; }
+.h-lg { font-size: 44px; }
+.h-md { font-size: 34px; }
+.h-sm { font-size: 26px; }
+
+/* Body */
+.body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.body em.sig {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--amber-500);
+  font-size: 1.08em;
+}
+.body em.navy {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--navy-800);
+  font-size: 1.08em;
+}
+.beat-navy .body { color: rgba(244,242,237,0.78); }
+.beat-navy .body em.sig { color: var(--amber-400); }
+.beat-navy .body em.navy { color: var(--paper); }
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.hairline {
+  display: block;
+  height: 1px;
+  background: var(--line-strong);
+  width: 100%;
+}
+
+/* ---------- RESET BEAT (italic interlude) ---------- */
+.reset {
+  padding: 48px 28px;
+  background: var(--paper);
+  position: relative;
+}
+.reset.cream { background: var(--paper-2); }
+.reset.navy { background: var(--navy-900); color: var(--paper); }
+.reset .quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.reset .quote .sig { color: var(--amber-500); }
+.reset.navy .quote { color: var(--paper); }
+.reset.navy .quote .sig { color: var(--amber-400); }
+.reset .credit {
+  margin-top: 18px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.reset.navy .credit { color: rgba(244,242,237,0.5); }
+
+/* Scroll-reveal base */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease-out, cubic-bezier(.22,1,.36,1)), transform 600ms cubic-bezier(.22,1,.36,1); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+/* Tabular numbers everywhere they show up */
+.tnum, .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+/* Number callouts */
+.bignum {
+  font-family: var(--font-display);
+  font-size: 88px;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.bignum .unit { font-size: 0.42em; letter-spacing: 0.02em; color: var(--ink-3); margin-left: 4px; vertical-align: 0.4em; font-family: var(--font-sans); }
+
+.beat-navy .bignum { color: var(--paper); }
+
+/* Footer-y close */
+.coda {
+  padding: 48px 24px 80px;
+  text-align: center;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+.coda .meta { color: var(--ink-3); }
+.coda .ticker { color: var(--ink-2); }
+
+/* ---------- HERO PILL GRID ---------- */
+.hero {
+  padding: 28px 24px 56px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-thesis {
+  margin: 24px 0 36px;
+}
+.hero-thesis .display {
+  font-size: 56px;
+  line-height: 0.94;
+}
+.hero-thesis .display .accent {
+  color: var(--amber-500);
+  font-style: italic;
+}
+
+/* The 3-pill scene */
+.pill-grid {
+  position: relative;
+  height: 280px;
+  margin: 0 -8px;
+}
+
+/* ---------- SCALE — segment river ---------- */
+.scale-stage {
+  margin-top: 20px;
+}
+.segment-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 24px;
+}
+.seg {
+  position: relative;
+  padding: 16px 16px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.seg:last-child { border-bottom: 0; }
+.seg-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.seg-name {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.seg-amt {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.seg-amt .pct {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  margin-left: 8px;
+  letter-spacing: 0.06em;
+}
+.seg-bar {
+  height: 8px;
+  background: var(--paper-3);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+.seg-bar-fill {
+  height: 100%;
+  background: var(--navy-800);
+  width: 0;
+  border-radius: 999px;
+  transition: width 1200ms cubic-bezier(.22,1,.36,1);
+}
+.seg.amber .seg-bar-fill { background: var(--amber-400); }
+.seg.muted .seg-bar-fill { background: var(--navy-600); opacity: 0.55; }
+
+/* ---------- PIPE METAPHOR (business) ---------- */
+.pipe-stage {
+  margin: 20px -24px 0;
+  padding: 36px 24px 28px;
+  background: linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.pipe-stage svg { width: 100%; height: auto; display: block; }
+
+/* ---------- COSTS — the dollar split ---------- */
+.dollar {
+  margin: 32px 0 16px;
+}
+.dollar-bar {
+  display: flex;
+  height: 56px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 0 rgba(20,20,20,0.04);
+}
+.dollar-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  position: relative;
+  transition: flex 1600ms cubic-bezier(.22,1,.36,1);
+}
+.cost-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.cost-row:last-child { border-bottom: 0; }
+.cost-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 10px;
+  vertical-align: 1px;
+}
+.cost-label {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  flex: 1;
+}
+.cost-pct {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* The 100-cent grid */
+.penny-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  margin: 28px 0 12px;
+}
+.penny {
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: var(--paper-3);
+  position: relative;
+}
+.penny.cogs { background: var(--cost-1); }
+.penny.sga { background: var(--cost-2); }
+.penny.da { background: var(--cost-3); }
+.penny.profit {
+  background: var(--amber-400);
+  box-shadow: 0 0 0 2px var(--amber-100), 0 4px 12px -2px rgba(232,163,61,0.6);
+}
+.penny.tax { background: var(--paper-3); border: 1px dashed var(--line-strong); }
+
+/* ---------- FOOTPRINT MAP ---------- */
+.footprint {
+  margin-top: 24px;
+}
+.footprint svg { width: 100%; height: auto; }
+
+.country-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.country-bar:last-child { border-bottom: 0; }
+.country-bar .flag {
+  width: 28px;
+  height: 20px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  background: var(--paper-3);
+}
+.country-bar .name {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink);
+  flex: 1;
+}
+.country-bar .pct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+/* ---------- COMPETITORS ---------- */
+.comp-stack { margin-top: 24px; }
+.comp {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 22px 0 24px;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+}
+.comp:last-child { border-bottom: 0; }
+.comp-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.comp-name {
+  font-family: var(--font-display);
+  font-size: 26px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.comp-tick {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+}
+.comp-bars {
+  display: grid;
+  grid-template-columns: 60px 1fr 80px;
+  gap: 10px;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+.comp-bar {
+  position: relative;
+  height: 6px;
+  background: var(--paper-3);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.comp-bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--navy-800);
+  border-radius: 999px;
+  width: 0;
+  transition: width 1200ms cubic-bezier(.22,1,.36,1);
+}
+.comp.mck .comp-bar-fill { background: var(--amber-400); }
+.comp-amt {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.comp-desc {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  margin-top: 8px;
+  display: none;
+}
+.comp.open .comp-desc { display: block; }
+.comp-toggle {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--amber-500);
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
+/* ---------- THE BET — buybacks ---------- */
+.bet-grid {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.bet-card {
+  padding: 18px 16px 20px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.bet-card .label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.bet-card .num {
+  font-family: var(--font-display);
+  font-size: 38px;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.bet-card .sub {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 6px;
+  font-family: var(--font-sans);
+}
+
+/* The shrinking-shares dot stack */
+.shares-stage {
+  margin: 32px -24px 0;
+  padding: 32px 24px 24px;
+  background: var(--paper-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.shares-stage svg { width: 100%; height: auto; }
+
+/* ---------- CLOSING / TAKEAWAY ---------- */
+.takeaway-stage {
+  padding: 60px 24px 56px;
+  background: var(--navy-900);
+  color: var(--paper);
+  position: relative;
+  overflow: hidden;
+}
+.takeaway-stage .display { color: var(--paper); }
+.takeaway-stage .display em { color: var(--amber-400); }
+.takeaway-stage .meta { color: rgba(244,242,237,0.55); }
+
+.flow-equation {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin: 28px 0 8px;
+}
+.flow-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.flow-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(244,242,237,0.55);
+}
+.flow-amt {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-variant-numeric: tabular-nums;
+  color: var(--paper);
+  letter-spacing: -0.01em;
+}
+.flow-amt.amber { color: var(--amber-400); }
+.flow-rule {
+  height: 1px;
+  background: rgba(244,242,237,0.18);
+  margin: 6px 0;
+}
+
+/* ---------- MISC SVG ANIMATIONS ---------- */
+.draw-path {
+  stroke-dasharray: var(--dash, 1000);
+  stroke-dashoffset: var(--dash, 1000);
+  transition: stroke-dashoffset 1600ms cubic-bezier(.22,1,.36,1);
+}
+.draw-path.in { stroke-dashoffset: 0; }
+
+/* Capsule (pill) shape used in hero metaphor */
+.capsule {
+  position: absolute;
+  width: 60px;
+  height: 140px;
+  border-radius: 36px;
+  overflow: hidden;
+  box-shadow: 0 14px 30px -10px rgba(20,20,20,0.22), 0 2px 4px rgba(20,20,20,0.06);
+  transform-origin: center;
+  transition: transform 700ms cubic-bezier(.34, 1.56, .64, 1), box-shadow 400ms ease;
+}
+.capsule .top, .capsule .bot { position: absolute; left: 0; right: 0; }
+.capsule .top { top: 0; height: 50%; }
+.capsule .bot { bottom: 0; height: 50%; }
+.capsule .seam {
+  position: absolute; left: 6%; right: 6%; top: 50%;
+  height: 1px; background: rgba(0,0,0,0.18);
+  transform: translateY(-0.5px);
+}
+
+/* The labeled pill (the McKesson pill) */
+.capsule.mck .top { background: linear-gradient(180deg, var(--amber-400) 0%, var(--amber-500) 100%); }
+.capsule.mck .bot { background: linear-gradient(180deg, #FFFCF6 0%, #F7F0DC 100%); }
+.capsule.mck .label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 14%;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+}
+.capsule.mck .label .rx {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  text-transform: none;
+}
+
+/* Generic gray pills (the rest of the system) */
+.capsule.alt .top { background: linear-gradient(180deg, #C7C2B7 0%, #A8A398 100%); }
+.capsule.alt .bot { background: linear-gradient(180deg, #ECEAE3 0%, #D9D6CC 100%); }
+.capsule.alt2 .top { background: linear-gradient(180deg, #1F4D7A 0%, #0E2A47 100%); }
+.capsule.alt2 .bot { background: linear-gradient(180deg, #ECEAE3 0%, #D9D6CC 100%); }
+
+/* Tap-to-deepen */
+[data-tap] { cursor: pointer; }
+
+/* The ledger header strip — Rx style */
+.rx-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  margin: 0 -24px 32px;
+  background: var(--navy-900);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.rx-strip .rx-glyph {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--amber-400);
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1;
+}
+.rx-strip .sep { opacity: 0.4; }
+.rx-strip .right { margin-left: auto; opacity: 0.65; }
+
+/* List rows */
+.list-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.list-row:last-child { border-bottom: 0; }
+.list-row .k { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.list-row .v { font-family: var(--font-display); font-size: 22px; letter-spacing: -0.01em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.beat-navy .list-row { border-bottom-color: rgba(244,242,237,0.18); }
+.beat-navy .list-row .v { color: var(--paper); }
+.beat-navy .list-row .k { color: rgba(244,242,237,0.5); }
+
+/* Footnote / trace */
+.footnote {
+  margin-top: 28px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-4);
+  line-height: 1.5;
+}
+.beat-navy .footnote { color: rgba(244,242,237,0.4); }
+
+/* ---------- SCROLL-INDEXED TYPE EFFECT ---------- */
+.scroll-word {
+  display: inline-block;
+  transition: opacity 220ms ease, color 220ms ease;
+}

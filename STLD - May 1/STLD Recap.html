@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>STLD · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Steel Dynamics palette — molten coral signal on steel grays + warm paper */
+  --paper:        #F2EFE9;
+  --paper-2:      #E8E4DC;
+  --paper-3:      #DDD8CD;
+  --ink:          #14130F;
+  --ink-2:        #34322C;
+  --ink-3:        #6E6A5F;
+  --ink-4:        #9E9A8E;
+  --line:         #D6D1C4;
+  --line-strong:  #B9B3A3;
+
+  --steel-50:  #E6E4DE;
+  --steel-100: #C8C5BC;
+  --steel-300: #6A685F;
+  --steel-500: #2C2B27;
+  --steel-700: #1A1917;
+  --steel-900: #0B0A09;
+
+  /* signal */
+  --molten:    #FF6A2C;     /* hot pour */
+  --molten-2:  #FFB74A;     /* glow */
+  --ember:     #C2381A;
+  --slag:      #8C8275;
+
+  /* Cost colors as supplied */
+  --cost-cor:  #2563EB;
+  --cost-sga:  #16A34A;
+  --cost-cap:  #D97706;
+  --cost-int:  #DC2626;
+
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:    'Geist Mono', ui-monospace, 'SF Mono', monospace;
+}
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin:0; padding:0; background: var(--paper); color: var(--ink); font-family: var(--font-sans); }
+body { overflow-x: hidden; }
+
+.app {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  position: relative;
+  background: var(--paper);
+  overflow: hidden;
+}
+
+/* ---------- Persistent Chrome ---------- */
+.chrome {
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  background: rgba(242,239,233,0.78);
+  border-bottom: 1px solid rgba(214,209,196,0.6);
+}
+.chrome-row{
+  display:flex; align-items:center; gap: 10px;
+  padding: 14px 20px 10px;
+}
+.chrome-tick{
+  font-family: var(--font-mono); font-weight:500;
+  font-size: 13px; letter-spacing: 0.06em;
+  color: var(--ink); padding: 4px 8px;
+  border: 1px solid var(--line-strong); border-radius: 4px;
+  background: rgba(255,255,255,0.4);
+}
+.chrome-name{ font-size: 14px; color: var(--ink-2); font-weight: 500; }
+.chrome-label{ margin-left:auto; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+.chrome-prog{ height: 2px; width: 100%; background: transparent; position: relative; overflow: hidden; }
+.chrome-prog::before{
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width: var(--p, 0%); background: var(--molten);
+  transition: width 80ms linear;
+  box-shadow: 0 0 8px rgba(255,106,44,0.6);
+}
+
+/* ---------- Type ---------- */
+.eyebrow{
+  font-family: var(--font-mono); font-size: 10.5px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 500;
+}
+.eyebrow .dot{ color: var(--molten); }
+.eyebrow.on-dark{ color: #B9B3A3; }
+.eyebrow.on-dark .dot{ color: var(--molten-2); }
+
+.display{
+  font-family: var(--font-display); font-weight: 400;
+  line-height: 0.94; letter-spacing: -0.025em;
+  color: var(--ink);
+}
+.display .it{ font-style: italic; }
+.display .hot{ color: var(--molten); }
+
+.kicker{
+  font-family: var(--font-display); font-style: italic;
+  font-size: 22px; line-height: 1.32;
+  color: var(--ink-2);
+}
+.kicker .hot{ color: var(--molten); font-style: italic; }
+
+.body{
+  font-family: var(--font-sans); font-size: 15px; line-height: 1.55;
+  color: var(--ink-2);
+}
+.body .it{ font-family: var(--font-display); font-style: italic; font-size: 16.5px; color: var(--ink); }
+.body .hot{ color: var(--ember); font-family: var(--font-display); font-style: italic; }
+
+.metalabel{
+  font-family: var(--font-mono); font-size: 10.5px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ---------- Section frames ---------- */
+section{ padding: 56px 22px 56px; position: relative; }
+section.tight{ padding-top: 32px; padding-bottom: 32px; }
+
+/* Reset beats — italic interludes on contrasting band */
+.reset{
+  padding: 36px 26px;
+  background: linear-gradient(180deg, var(--paper-2), var(--paper-3));
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.reset p{
+  font-family: var(--font-display); font-style: italic;
+  font-size: 22px; line-height: 1.35; color: var(--ink);
+  margin: 0;
+}
+.reset .hot{ color: var(--molten); font-style: italic; }
+
+/* Dark interlude */
+.dark{
+  background: var(--steel-700);
+  color: #E8E4DC;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+.dark .body{ color: #B9B3A3; }
+.dark .display{ color: #F4F1EA; }
+.dark .display .hot{ color: var(--molten-2); }
+.dark .metalabel{ color: #8C8275; }
+
+/* ---------- Hero ---------- */
+.hero{
+  padding: 28px 22px 64px;
+  position: relative;
+  overflow: hidden;
+}
+.hero h1{
+  font-family: var(--font-display);
+  font-size: 64px; line-height: 0.92;
+  letter-spacing: -0.028em;
+  margin: 18px 0 22px;
+  font-weight: 400;
+}
+.hero h1 .it{ font-style: italic; }
+.hero h1 .hot{ color: var(--molten); }
+.hero-sub{
+  font-family: var(--font-sans); font-size: 15.5px; line-height: 1.5;
+  color: var(--ink-2); max-width: 32ch;
+}
+.hero-stat{
+  margin-top: 28px;
+  display: flex; align-items: baseline; gap: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+}
+.hero-stat .num{
+  font-family: var(--font-display); font-size: 56px;
+  line-height: 0.95; letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.hero-stat .num .it{ font-style: italic; color: var(--molten); }
+.hero-stat .lbl{
+  font-family: var(--font-mono); font-size: 10.5px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-3); max-width: 14ch;
+}
+
+/* Hero molten pour SVG */
+.pour-wrap{
+  position: relative;
+  height: 220px;
+  margin-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.pour-wrap svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+
+/* ---------- Mini-mill diagram ---------- */
+.mill-scene{
+  position: relative; height: 360px;
+  background: var(--paper-2);
+  border-radius: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin: 24px -22px 0;
+  overflow: hidden;
+}
+.mill-scene svg{ width:100%; height:100%; display:block; }
+
+/* ---------- Scale section ---------- */
+.scale-grid{
+  margin-top: 28px;
+  display: grid; gap: 0;
+  border-top: 1px solid var(--line);
+}
+.scale-row{
+  display: grid; grid-template-columns: 1fr auto;
+  align-items: end; gap: 14px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.scale-row .lbl{ font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+.scale-row .num{
+  font-family: var(--font-display); font-size: 44px;
+  letter-spacing: -0.02em; line-height: 1; color: var(--ink);
+}
+.scale-row .num .unit{ font-size: 22px; color: var(--ink-3); margin-left: 4px; }
+.scale-row .num .it{ font-style: italic; color: var(--molten); }
+
+/* Revenue bar metaphor: flat-rolled ribbon */
+.ribbon{
+  margin: 24px -22px 0;
+  padding: 26px 22px;
+  background: var(--steel-500);
+  color: #E8E4DC;
+  position: relative;
+  overflow: hidden;
+}
+.ribbon .meta{ color: #8C8275; }
+.ribbon-bars{ margin-top: 14px; display:flex; flex-direction:column; gap: 10px; }
+.bar-row{ display:flex; align-items:center; gap: 10px; font-family: var(--font-mono); font-size: 11px; color: #C8C5BC; }
+.bar-row .lab{ width: 88px; letter-spacing: 0.08em; text-transform: uppercase; }
+.bar-row .track{
+  flex: 1; height: 18px;
+  background: rgba(255,255,255,0.05);
+  position: relative;
+  overflow: hidden;
+}
+.bar-row .fill{
+  position:absolute; inset: 0 auto 0 0; width: 0%;
+  background: linear-gradient(90deg, #6A685F, #C8C5BC);
+  transition: width 1.4s var(--ease, cubic-bezier(0.22,1,0.36,1));
+}
+.bar-row.steel .fill{ background: linear-gradient(90deg, var(--molten) 0%, var(--molten-2) 100%); }
+.bar-row.recyc .fill{ background: linear-gradient(90deg, #6A685F, #B9B3A3); }
+.bar-row.fab   .fill{ background: linear-gradient(90deg, #46443E, #8C8A84); }
+.bar-row.alum  .fill{ background: linear-gradient(90deg, #2A2826, #5A5853); }
+.bar-row .val{ width: 64px; text-align: right; color: #F4F1EA; }
+.bar-row.alum .val{ color: #8C8275; font-style: italic; font-family: var(--font-display); }
+
+/* ---------- Costs: dollar grid ---------- */
+.dollar-grid{
+  margin: 18px 0 0;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 3px;
+}
+.cent{
+  aspect-ratio: 1;
+  background: var(--paper-3);
+  position: relative;
+  border-radius: 1.5px;
+  transition: background 240ms ease, transform 240ms ease;
+}
+.cent.cor{ background: var(--cost-cor); }
+.cent.sga{ background: var(--cost-sga); }
+.cent.cap{ background: var(--cost-cap); }
+.cent.int{ background: var(--cost-int); }
+.cent.keep{ background: var(--ink); }
+.cent.keep::after{
+  content:''; position: absolute; inset: 24%;
+  border-radius: 50%;
+  background: var(--molten);
+  box-shadow: 0 0 6px rgba(255,106,44,0.7);
+}
+
+.legend{ margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
+.legend-row{ display:flex; align-items:center; gap: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.04em; }
+.legend-row .swatch{ width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+.legend-row .pct{ font-family: var(--font-mono); font-weight: 500; color: var(--ink); width: 36px; }
+.legend-row .lab{ flex: 1; text-transform: none; letter-spacing: 0; font-size: 12px; color: var(--ink-2); }
+
+/* ---------- Footprint map ---------- */
+.map-wrap{
+  margin: 24px -22px 0;
+  padding: 28px 22px 22px;
+  background: var(--paper-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.map-svg{ width:100%; height: auto; display:block; }
+.map-stats{
+  margin-top: 18px;
+  display:flex; gap: 18px;
+}
+.map-stat{ flex:1; }
+.map-stat .pct{ font-family: var(--font-display); font-size: 44px; line-height: 1; color: var(--ink); }
+.map-stat .pct .it{ font-style: italic; color: var(--molten); }
+.map-stat .reg{ font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin-top: 4px; }
+
+/* ---------- The Bet: capital allocation pillars ---------- */
+.bet-canvas{
+  margin: 24px -22px 0;
+  padding: 30px 22px 18px;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+.bet-svg{ width:100%; height: 320px; display:block; }
+.bet-rows{ margin-top: 18px; display:flex; flex-direction:column; gap: 0; }
+.bet-row{
+  display: grid; grid-template-columns: 14px 1fr auto; gap: 12px;
+  align-items: center; padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.bet-row .dot{ width: 10px; height: 10px; border-radius: 50%; }
+.bet-row .lbl{ font-size: 13.5px; color: var(--ink); }
+.bet-row .lbl .meta{ display:block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin-top: 3px; }
+.bet-row .val{ font-family: var(--font-display); font-size: 26px; color: var(--ink); }
+.bet-row .val .it{ font-style: italic; color: var(--molten); }
+
+/* ---------- Competitors ---------- */
+.comp-list{ margin-top: 24px; display:flex; flex-direction:column; gap: 0; }
+.comp-row{
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+.comp-row:last-child{ border-bottom: 1px solid var(--line); }
+.comp-head{
+  display:flex; align-items:baseline; justify-content:space-between; gap: 10px;
+}
+.comp-head .name{ font-family: var(--font-display); font-size: 28px; color: var(--ink); }
+.comp-head .ticker{ font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em; color: var(--ink-3); }
+.comp-bars{ margin-top: 10px; display:flex; flex-direction:column; gap: 4px; }
+.comp-mc-row{ display:flex; align-items:center; gap: 10px; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.06em; }
+.comp-mc-row .ml{ width: 30px; }
+.comp-mc-row .tr{ flex:1; height: 10px; background: var(--paper-3); position: relative; overflow:hidden; }
+.comp-mc-row .fl{ position:absolute; left:0; top:0; bottom:0; background: var(--ink-2); width: 0%; transition: width 1.2s var(--ease, cubic-bezier(0.22,1,0.36,1)); }
+.comp-mc-row.stld .fl{ background: var(--molten); }
+.comp-mc-row .vl{ width: 64px; text-align:right; color: var(--ink); }
+.comp-desc{ margin-top: 12px; font-size: 13.5px; line-height: 1.55; color: var(--ink-2); }
+.comp-desc .it{ font-family: var(--font-display); font-style: italic; font-size: 15px; color: var(--ink); }
+
+/* ---------- Close ---------- */
+.close-section{
+  background: var(--steel-900);
+  color: #F4F1EA;
+  padding: 80px 22px 90px;
+  margin-top: 0;
+  position: relative;
+  overflow: hidden;
+}
+.close-section .display{ color: #F4F1EA; }
+.close-section .display .hot{ color: var(--molten); }
+.close-section .body{ color: #B9B3A3; }
+.close-section .metalabel{ color: #8C8275; }
+.close-pour{
+  position: relative; height: 240px; margin: 28px -22px 28px; overflow: hidden;
+}
+.close-pour svg{ width: 100%; height: 100%; display:block; }
+.close-stat{
+  display: flex; align-items: baseline; gap: 12px;
+  border-top: 1px solid #2A2826;
+  padding-top: 18px; margin-top: 8px;
+}
+.close-stat .n{ font-family: var(--font-display); font-size: 64px; color: #F4F1EA; line-height: 0.95; }
+.close-stat .n .it{ font-style: italic; color: var(--molten); }
+.close-stat .l{ font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #8C8275; max-width: 16ch; }
+
+/* ---------- Tap-to-deepen card flip (competitors source) ---------- */
+.tap-hint{ font-family: var(--font-mono); font-size: 10px; color: var(--ink-4); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 8px; }
+
+/* ---------- Reveal animation utility ---------- */
+.reveal{ opacity: 0; transform: translateY(14px); transition: opacity 700ms var(--ease, cubic-bezier(0.22,1,0.36,1)), transform 700ms var(--ease, cubic-bezier(0.22,1,0.36,1)); }
+.reveal.in{ opacity: 1; transform: none; }
+
+/* count-up stat fade */
+.cu{ display: inline-block; }
+
+/* footer-ish coda */
+.coda{
+  padding: 30px 22px 56px;
+  border-top: 1px solid #1A1917;
+  background: var(--steel-900);
+  color: #6A685F;
+}
+.coda .meta{ color: #6A685F; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+.coda .biglet{ font-family: var(--font-display); font-style: italic; font-size: 20px; color: #C8C5BC; line-height: 1.3; margin-top: 12px; }
+.coda .biglet .hot{ color: var(--molten); }
+
+/* sectioned editorial bands — alternating tone subtly */
+.band-paper2{ background: var(--paper-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+
+/* keep page from being a card stack — no individual rounded cards anywhere */
+::selection{ background: var(--molten); color: white; }
+
+/* small footer pad on mobile safe-area */
+@supports (padding: max(0px)){
+  .coda{ padding-bottom: max(56px, env(safe-area-inset-bottom)); }
+}
+
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ========== Persistent Chrome ========== -->
+  <header class="chrome" data-screen-label="Chrome">
+    <div class="chrome-row">
+      <span class="chrome-tick">STLD</span>
+      <span class="chrome-name">Steel Dynamics</span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="chrome-prog" id="prog"></div>
+  </header>
+
+  <!-- ========== HERO / THESIS ========== -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="eyebrow reveal"><span class="dot">●</span>&nbsp;&nbsp;Thesis · NASDAQ : STLD</div>
+    <h1 class="reveal">
+      Scrap goes <span class="hot it">in.</span><br/>
+      Steel comes <span class="it">out.</span><br/>
+      <span class="hot">Cash</span> survives.
+    </h1>
+    <p class="hero-sub reveal">
+      Three Nucor alumni bet, in 1993, that an electric-arc mini&#8209;mill could out-flex the blast furnace. Thirty-three years later — <span style="font-family:var(--font-display); font-style:italic; color:var(--molten);">$30B</span> of market cap and counting.
+    </p>
+
+    <!-- Molten pour SVG -->
+    <div class="pour-wrap reveal" id="pourWrap">
+      <svg viewBox="0 0 400 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="molten" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#FFD27A"/>
+            <stop offset="35%" stop-color="#FF9F3D"/>
+            <stop offset="80%" stop-color="#FF6A2C"/>
+            <stop offset="100%" stop-color="#C2381A"/>
+          </linearGradient>
+          <linearGradient id="ladle" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#34322C"/>
+            <stop offset="100%" stop-color="#0B0A09"/>
+          </linearGradient>
+          <radialGradient id="glow" cx="50%" cy="100%" r="80%">
+            <stop offset="0%" stop-color="rgba(255,159,61,0.65)"/>
+            <stop offset="100%" stop-color="rgba(255,159,61,0)"/>
+          </radialGradient>
+        </defs>
+        <!-- glow -->
+        <ellipse cx="200" cy="220" rx="180" ry="60" fill="url(#glow)"/>
+        <!-- ladle (top) -->
+        <path d="M120 8 L280 8 L268 56 L132 56 Z" fill="url(#ladle)"/>
+        <rect x="118" y="6" width="164" height="6" fill="#0B0A09"/>
+        <!-- pour stream — animated length via clip -->
+        <g id="pourStream">
+          <path d="M196 56 C 196 80, 198 110, 200 140 C 202 170, 200 200, 200 220" stroke="url(#molten)" stroke-width="14" fill="none" stroke-linecap="round"/>
+          <path d="M198 56 C 198 80, 199 110, 200 140 C 201 170, 200 200, 200 220" stroke="#FFE7B0" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.85"/>
+        </g>
+        <!-- splash particles -->
+        <g id="sparks" fill="#FFB74A">
+          <circle cx="155" cy="200" r="2"/>
+          <circle cx="245" cy="195" r="1.6"/>
+          <circle cx="170" cy="210" r="1.4"/>
+          <circle cx="232" cy="207" r="2.2"/>
+          <circle cx="190" cy="216" r="1.2"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-stat reveal">
+      <div class="num"><span class="it">$18.18B</span></div>
+      <div class="lbl">FY 2025 revenue<br/>13,000 employees</div>
+    </div>
+  </section>
+
+  <!-- ========== Reset Beat 1 ========== -->
+  <div class="reset" data-screen-label="Reset 01">
+    <p>The blast furnace is a cathedral. <span class="hot">The mini&#8209;mill is a kitchen.</span> One you light once a decade. The other you turn on whenever the order book rings.</p>
+  </div>
+
+  <!-- ========== HOW IT MAKES MONEY — Mini-mill metaphor ========== -->
+  <section data-screen-label="02 Mini-mill">
+    <div class="eyebrow reveal"><span class="dot">●</span>&nbsp;&nbsp;The business · EAF</div>
+    <h2 class="display reveal" style="font-size:46px; margin: 14px 0 14px;">
+      A <span class="it hot">recycled</span> car<br/>becomes a <span class="it">galvanized</span> coil.
+    </h2>
+    <p class="body reveal">
+      Scrap is the <span class="it">raw stock</span>. An electric arc the <span class="it">flame</span>. Out the other end: hot-rolled, cold-rolled, coated, painted — <span class="hot">value-added flat product at 65%+ of steel revenue</span>.
+    </p>
+
+    <!-- Mini-mill scene -->
+    <div class="mill-scene reveal" id="millScene">
+      <svg viewBox="0 0 440 360" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="furnace" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#34322C"/>
+            <stop offset="100%" stop-color="#0B0A09"/>
+          </linearGradient>
+          <linearGradient id="hotMetal" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#FFD27A"/>
+            <stop offset="50%" stop-color="#FF6A2C"/>
+            <stop offset="100%" stop-color="#C2381A"/>
+          </linearGradient>
+          <linearGradient id="coil" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#C8C5BC"/>
+            <stop offset="100%" stop-color="#6A685F"/>
+          </linearGradient>
+          <radialGradient id="furnaceGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(255,180,74,0.9)"/>
+            <stop offset="100%" stop-color="rgba(255,106,44,0)"/>
+          </radialGradient>
+        </defs>
+
+        <!-- floor line -->
+        <line x1="0" y1="280" x2="440" y2="280" stroke="#B9B3A3" stroke-width="1"/>
+        <line x1="0" y1="282" x2="440" y2="282" stroke="#D6D1C4" stroke-width="0.5" stroke-dasharray="2 4"/>
+
+        <!-- 1. Scrap pile (left) -->
+        <g id="scrapPile" transform="translate(20,210)">
+          <text x="0" y="-90" font-family="Geist Mono" font-size="9" letter-spacing="1" fill="#6E6A5F">01 · SCRAP</text>
+          <!-- jumbled rectangles -->
+          <g fill="#6A685F" stroke="#34322C" stroke-width="0.6">
+            <rect x="0" y="40" width="22" height="6" transform="rotate(-12 11 43)"/>
+            <rect x="14" y="32" width="18" height="6" transform="rotate(8 23 35)"/>
+            <rect x="28" y="44" width="24" height="5" transform="rotate(-22 40 46)"/>
+            <rect x="6" y="52" width="30" height="7" transform="rotate(-3 21 55)"/>
+            <rect x="36" y="22" width="14" height="5" transform="rotate(18 43 24)"/>
+            <rect x="48" y="40" width="20" height="6" transform="rotate(-8 58 43)"/>
+            <rect x="22" y="20" width="16" height="4" transform="rotate(-30 30 22)"/>
+            <rect x="58" y="48" width="14" height="6" transform="rotate(12 65 51)"/>
+            <rect x="2" y="26" width="12" height="4" transform="rotate(22 8 28)"/>
+            <rect x="54" y="30" width="10" height="4" transform="rotate(-15 59 32)"/>
+            <rect x="66" y="20" width="14" height="4" transform="rotate(6 73 22)"/>
+          </g>
+          <!-- ground -->
+          <line x1="-4" y1="60" x2="84" y2="60" stroke="#34322C" stroke-width="1"/>
+        </g>
+
+        <!-- arrow -->
+        <path d="M114 250 L 138 250 M 132 246 L 138 250 L 132 254" stroke="#6E6A5F" stroke-width="1" fill="none"/>
+
+        <!-- 2. EAF furnace (center) -->
+        <g id="furnaceGroup" transform="translate(150,140)">
+          <text x="0" y="-12" font-family="Geist Mono" font-size="9" letter-spacing="1" fill="#6E6A5F">02 · ARC</text>
+          <!-- glow behind -->
+          <ellipse cx="50" cy="80" rx="80" ry="60" fill="url(#furnaceGlow)" id="arcGlow"/>
+          <!-- furnace shell -->
+          <path d="M10 60 L90 60 L100 130 L0 130 Z" fill="url(#furnace)"/>
+          <!-- electrodes -->
+          <rect x="22" y="0" width="6" height="60" fill="#1A1917"/>
+          <rect x="46" y="0" width="6" height="60" fill="#1A1917"/>
+          <rect x="70" y="0" width="6" height="60" fill="#1A1917"/>
+          <!-- arc dots animated -->
+          <g id="arcDots">
+            <circle cx="25" cy="62" r="2.5" fill="#FFE7B0"/>
+            <circle cx="49" cy="62" r="2.5" fill="#FFE7B0"/>
+            <circle cx="73" cy="62" r="2.5" fill="#FFE7B0"/>
+          </g>
+          <!-- molten interior -->
+          <path d="M14 108 L86 108 L94 124 L6 124 Z" fill="url(#hotMetal)"/>
+          <!-- tap hole spout -->
+          <path d="M100 110 L 124 116 L 124 122 L 100 116 Z" fill="#1A1917"/>
+        </g>
+
+        <!-- arrow -->
+        <path d="M276 250 L 300 250 M 294 246 L 300 250 L 294 254" stroke="#6E6A5F" stroke-width="1" fill="none"/>
+
+        <!-- 3. Rolling / coil output -->
+        <g id="coilGroup" transform="translate(310,200)">
+          <text x="0" y="-30" font-family="Geist Mono" font-size="9" letter-spacing="1" fill="#6E6A5F">03 · COIL</text>
+          <!-- rolled strip moving right -->
+          <rect x="-12" y="58" width="56" height="6" fill="url(#hotMetal)" id="hotStrip"/>
+          <!-- coil cylinder -->
+          <ellipse cx="76" cy="60" rx="22" ry="22" fill="url(#coil)"/>
+          <ellipse cx="76" cy="60" rx="22" ry="22" fill="none" stroke="#34322C" stroke-width="0.7"/>
+          <ellipse cx="76" cy="60" rx="14" ry="14" fill="none" stroke="#34322C" stroke-width="0.5"/>
+          <ellipse cx="76" cy="60" rx="7" ry="7" fill="none" stroke="#34322C" stroke-width="0.4"/>
+          <circle cx="76" cy="60" r="3" fill="#FF6A2C"/>
+        </g>
+
+        <!-- segment labels under floor -->
+        <g font-family="Geist Mono" font-size="9" letter-spacing="0.6" fill="#34322C">
+          <text x="20" y="304">Recycling</text>
+          <text x="20" y="318" fill="#6E6A5F">$4.3B</text>
+
+          <text x="158" y="304">Steel ops</text>
+          <text x="158" y="318" fill="#6E6A5F">$13.4B</text>
+
+          <text x="306" y="304">Fabrication</text>
+          <text x="306" y="318" fill="#6E6A5F">$1.4B</text>
+        </g>
+
+        <!-- aluminum, ramping (ghosted) -->
+        <g transform="translate(310,260)" opacity="0.55">
+          <rect x="0" y="22" width="60" height="14" fill="none" stroke="#6E6A5F" stroke-width="0.6" stroke-dasharray="2 2"/>
+          <text x="0" y="50" font-family="Instrument Serif" font-style="italic" font-size="11" fill="#6E6A5F">+ aluminum</text>
+        </g>
+      </svg>
+    </div>
+
+    <p class="body reveal" style="margin-top: 22px;">
+      Q1 2026 came in at <span class="it">$5.20B</span> revenue, <span class="it">$2.78</span> EPS — the order book is still ringing.
+    </p>
+  </section>
+
+  <!-- ========== Reset Beat 2 ========== -->
+  <div class="reset" data-screen-label="Reset 02">
+    <p>Eighteen billion in. <span class="hot">Cost of doing business: nearly all of it.</span></p>
+  </div>
+
+  <!-- ========== COSTS — A hundred cents in ========== -->
+  <section data-screen-label="03 Costs">
+    <div class="eyebrow reveal"><span class="dot">●</span>&nbsp;&nbsp;A hundred cents in · FY '25</div>
+    <h2 class="display reveal" style="font-size:44px; margin: 14px 0 16px;">
+      Of every <span class="it">dollar</span><br/>
+      that <span class="it">walked in,</span><br/>
+      <span class="hot it">three</span> walked out.
+    </h2>
+    <p class="body reveal" style="max-width: 36ch;">
+      Materials and manufacturing eat <span class="hot">87¢</span>. Capex takes another five. SG&amp;A four. Interest one. The remainder — about <span class="it">3¢</span> of operating cushion at an 8.1% margin — is the prize.
+    </p>
+
+    <div class="dollar-grid reveal" id="dollarGrid" aria-label="Cost breakdown, 100 cents"></div>
+
+    <div class="legend reveal">
+      <div class="legend-row"><span class="swatch" style="background:var(--cost-cor)"></span><span class="pct">87%</span><span class="lab">Cost of revenue — materials, manufacturing</span></div>
+      <div class="legend-row"><span class="swatch" style="background:var(--cost-cap)"></span><span class="pct">5%</span><span class="lab">Capital expenditures — reinvestment</span></div>
+      <div class="legend-row"><span class="swatch" style="background:var(--cost-sga)"></span><span class="pct">4%</span><span class="lab">SG&amp;A &amp; operating</span></div>
+      <div class="legend-row"><span class="swatch" style="background:var(--cost-int)"></span><span class="pct">1%</span><span class="lab">Interest expense</span></div>
+      <div class="legend-row"><span class="swatch" style="background:var(--ink); position:relative;"><span style="position:absolute; inset:24%; border-radius:50%; background:var(--molten);"></span></span><span class="pct">3%</span><span class="lab">Operating margin — what's left to allocate</span></div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTPRINT ========== -->
+  <section class="band-paper2" data-screen-label="04 Footprint">
+    <div class="eyebrow reveal"><span class="dot">●</span>&nbsp;&nbsp;Footprint · North America</div>
+    <h2 class="display reveal" style="font-size:42px; margin: 14px 0 12px;">
+      The <span class="it">map</span> is mostly<br/>
+      one <span class="hot it">country.</span>
+    </h2>
+
+    <div class="map-wrap reveal">
+      <!-- Stylized US/Mexico SVG with mill-dot scatter -->
+      <svg class="map-svg" viewBox="0 0 400 240" aria-hidden="true">
+        <defs>
+          <pattern id="dotgrid" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.6" fill="#B9B3A3"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="400" height="240" fill="url(#dotgrid)"/>
+
+        <!-- US silhouette (very stylized) -->
+        <path d="M30 70
+                 L 90 60 L 130 56 L 180 50 L 240 48 L 290 52 L 330 60 L 360 72 L 372 92
+                 L 364 110 L 348 122 L 336 132 L 320 138 L 300 142 L 280 146 L 270 156
+                 L 240 162 L 210 158 L 180 156 L 150 154 L 120 148 L 96 138 L 72 124
+                 L 50 110 L 36 92 Z"
+              fill="#F2EFE9" stroke="#34322C" stroke-width="1.2" stroke-linejoin="round"/>
+
+        <!-- Mexico (small) -->
+        <path d="M210 162 L 240 165 L 270 162 L 280 175 L 268 195 L 250 205 L 234 200 L 222 188 L 214 175 Z"
+              fill="#E8E4DC" stroke="#34322C" stroke-width="1" stroke-linejoin="round"/>
+
+        <!-- Fort Wayne HQ marker -->
+        <g transform="translate(248,90)">
+          <circle r="9" fill="rgba(255,106,44,0.18)"/>
+          <circle r="4" fill="var(--molten)"/>
+          <text x="14" y="3" font-family="Geist Mono" font-size="8" fill="#34322C" letter-spacing="0.6">HQ · FORT WAYNE</text>
+        </g>
+
+        <!-- Mill dots scattered across US -->
+        <g fill="#34322C">
+          <circle cx="100" cy="98" r="2.5"/>
+          <circle cx="135" cy="84" r="2.5"/>
+          <circle cx="160" cy="110" r="2.5"/>
+          <circle cx="195" cy="92" r="2.5"/>
+          <circle cx="220" cy="115" r="2.5"/>
+          <circle cx="270" cy="105" r="2.5"/>
+          <circle cx="285" cy="125" r="2.5"/>
+          <circle cx="310" cy="100" r="2.5"/>
+          <circle cx="160" cy="135" r="2.5"/>
+          <circle cx="200" cy="140" r="2.5"/>
+          <circle cx="240" cy="130" r="2.5"/>
+          <circle cx="80" cy="115" r="2.5"/>
+        </g>
+        <!-- Mexico dot -->
+        <circle cx="245" cy="183" r="2.5" fill="#34322C"/>
+      </svg>
+
+      <div class="map-stats">
+        <div class="map-stat">
+          <div class="pct"><span class="it">95%</span></div>
+          <div class="reg">United States</div>
+        </div>
+        <div class="map-stat">
+          <div class="pct" style="color:var(--ink-3);">5%</div>
+          <div class="reg">Mexico &amp; other</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="body reveal" style="margin-top: 24px;">
+      A domestic story by design — <span class="it">scrap is heavy</span>, freight is everything, and the customers are the <span class="it">factory floors</span> of America.
+    </p>
+  </section>
+
+  <!-- ========== Reset Beat 3 ========== -->
+  <div class="reset dark" data-screen-label="Reset 03">
+    <p style="color:#F4F1EA;">A balance sheet doesn't <span class="hot">make</span> a company. <span style="color:#C8C5BC;">It tells you whether</span> the company is <span class="hot">making bets,</span> <span style="color:#C8C5BC;">or paying for old ones.</span></p>
+  </div>
+
+  <!-- ========== THE BET — Capital Allocation ========== -->
+  <section class="dark" data-screen-label="05 The Bet" style="padding-top: 60px;">
+    <div class="eyebrow on-dark reveal"><span class="dot">●</span>&nbsp;&nbsp;The bet · capital allocation</div>
+    <h2 class="display reveal" style="font-size:46px; margin: 14px 0 14px; color:#F4F1EA;">
+      A new mill.<br/>
+      Forty&#8209;one <span class="hot it">percent</span><br/>
+      of the company,<br/>
+      <span class="it">repurchased.</span>
+    </h2>
+    <p class="body reveal" style="color:#B9B3A3;">
+      $948M of FY'25 capex pointed at the new <span class="it" style="color:#F4F1EA; font-family:var(--font-display); font-style:italic;">aluminum flat-rolled</span> mill and coating expansions. Then they handed the rest back: a fresh <span style="color:var(--molten-2); font-family:var(--font-display); font-style:italic;">$1.5B</span> buyback authorization on top of <span style="color:var(--molten-2); font-family:var(--font-display); font-style:italic;">$6.7B</span> repurchased since 2017.
+    </p>
+
+    <!-- Capital allocation pillars SVG -->
+    <div class="bet-canvas" style="background: var(--steel-700); border-top: 1px solid #000;">
+      <svg class="bet-svg" viewBox="0 0 400 320" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="pillarCap" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#FF9F3D"/>
+            <stop offset="100%" stop-color="#C2381A"/>
+          </linearGradient>
+          <linearGradient id="pillarBuy" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#C8C5BC"/>
+            <stop offset="100%" stop-color="#6A685F"/>
+          </linearGradient>
+          <linearGradient id="pillarDiv" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#8C8275"/>
+            <stop offset="100%" stop-color="#46443E"/>
+          </linearGradient>
+          <linearGradient id="pillarFcf" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#46443E"/>
+            <stop offset="100%" stop-color="#1A1917"/>
+          </linearGradient>
+        </defs>
+
+        <!-- ground -->
+        <line x1="0" y1="280" x2="400" y2="280" stroke="#46443E" stroke-width="1"/>
+        <line x1="0" y1="282" x2="400" y2="282" stroke="#34322C" stroke-width="0.5" stroke-dasharray="2 4"/>
+
+        <!-- pillar 1: capex $948M ~ height 240 -->
+        <g id="pillarA">
+          <rect x="38" y="280" width="60" height="0" fill="url(#pillarCap)" data-h="240"/>
+          <text x="68" y="304" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="0.6" fill="#8C8275">CAPEX</text>
+          <text x="68" y="316" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#C8C5BC">$948M</text>
+        </g>
+
+        <!-- pillar 2: buybacks $901M ~ height 226 -->
+        <g id="pillarB">
+          <rect x="118" y="280" width="60" height="0" fill="url(#pillarBuy)" data-h="226"/>
+          <text x="148" y="304" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="0.6" fill="#8C8275">BUYBACK</text>
+          <text x="148" y="316" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#C8C5BC">$901M</text>
+        </g>
+
+        <!-- pillar 3: dividends $291M ~ height 75 -->
+        <g id="pillarC">
+          <rect x="198" y="280" width="60" height="0" fill="url(#pillarDiv)" data-h="75"/>
+          <text x="228" y="304" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="0.6" fill="#8C8275">DIVIDEND</text>
+          <text x="228" y="316" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#C8C5BC">$291M</text>
+        </g>
+
+        <!-- pillar 4: FCF $501M ~ height 130 -->
+        <g id="pillarD">
+          <rect x="278" y="280" width="60" height="0" fill="url(#pillarFcf)" data-h="130"/>
+          <text x="308" y="304" text-anchor="middle" font-family="Geist Mono" font-size="9" letter-spacing="0.6" fill="#8C8275">FCF</text>
+          <text x="308" y="316" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#C8C5BC">$501M</text>
+        </g>
+
+        <!-- floating callout: $1.5B authorization -->
+        <g id="newAuth" opacity="0">
+          <line x1="148" y1="60" x2="148" y2="48" stroke="#FF9F3D" stroke-width="0.8" stroke-dasharray="2 2"/>
+          <rect x="80" y="22" width="136" height="26" fill="#0B0A09" stroke="#FF6A2C" stroke-width="0.8"/>
+          <text x="148" y="38" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#FF9F3D" letter-spacing="0.6">+ $1.5B AUTHORIZED</text>
+          <text x="148" y="48" text-anchor="middle" font-family="Geist Mono" font-size="7" fill="#8C8275" letter-spacing="0.6">EARLY 2025</text>
+        </g>
+
+        <!-- annotation row: ROIC -->
+        <g>
+          <text x="20" y="20" font-family="Geist Mono" font-size="9" letter-spacing="0.8" fill="#6A685F">5-YEAR AFTER-TAX ROIC</text>
+          <text x="20" y="46" font-family="Instrument Serif" font-style="italic" font-size="32" fill="#FF6A2C">24%</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="bet-rows">
+      <div class="bet-row" style="border-top: 1px solid #2A2826;">
+        <span class="dot" style="background:var(--molten);"></span>
+        <span class="lbl" style="color:#F4F1EA;">Capex into the new aluminum mill <span class="meta">FY '25 reinvestment</span></span>
+        <span class="val"><span class="it">$948M</span></span>
+      </div>
+      <div class="bet-row" style="border-bottom: 1px solid #2A2826;">
+        <span class="dot" style="background:#C8C5BC;"></span>
+        <span class="lbl" style="color:#F4F1EA;">Buybacks <span class="meta">FY '25 returns</span></span>
+        <span class="val" style="color:#F4F1EA;">$901M</span>
+      </div>
+      <div class="bet-row" style="border-bottom: 1px solid #2A2826;">
+        <span class="dot" style="background:#8C8275;"></span>
+        <span class="lbl" style="color:#F4F1EA;">Dividends <span class="meta">FY '25 distributions</span></span>
+        <span class="val" style="color:#F4F1EA;">$291M</span>
+      </div>
+      <div class="bet-row" style="border-bottom: 1px solid #2A2826;">
+        <span class="dot" style="background:#46443E;"></span>
+        <span class="lbl" style="color:#F4F1EA;">Operating cash flow <span class="meta">FY '25</span></span>
+        <span class="val" style="color:#F4F1EA;">$1.45B</span>
+      </div>
+    </div>
+
+    <p class="body reveal" style="color:#B9B3A3; margin-top: 22px;">
+      Total debt sits at <span style="color:#F4F1EA; font-family:var(--font-display); font-style:italic;">$4.18B</span> against <span style="color:#F4F1EA; font-family:var(--font-display); font-style:italic;">$8.96B</span> of equity — <span class="hot" style="color:var(--molten-2); font-family:var(--font-display); font-style:italic;">investment grade</span>, with $770M of cash on hand.
+    </p>
+  </section>
+
+  <!-- ========== Reset Beat 4 ========== -->
+  <div class="reset" data-screen-label="Reset 04">
+    <p>Two of the rivals are <span class="hot">bigger.</span> One isn't a steelmaker at all.</p>
+  </div>
+
+  <!-- ========== COMPETITORS ========== -->
+  <section data-screen-label="06 Competitors">
+    <div class="eyebrow reveal"><span class="dot">●</span>&nbsp;&nbsp;The competition · weighed</div>
+    <h2 class="display reveal" style="font-size:42px; margin: 14px 0 12px;">
+      Three <span class="it">furnaces</span><br/>
+      around <span class="it">one.</span>
+    </h2>
+    <p class="body reveal">
+      Market cap is the obvious axis. Steel Dynamics enters the ring at <span class="it">$30.3B</span> — outweighed by Nucor, level with Amrize, slightly under Gerdau.
+    </p>
+
+    <div class="comp-list" id="compList">
+      <!-- STLD -->
+      <div class="comp-row reveal">
+        <div class="comp-head">
+          <span class="name">Steel Dynamics</span>
+          <span class="ticker">STLD</span>
+        </div>
+        <div class="comp-bars">
+          <div class="comp-mc-row stld">
+            <span class="ml">MC</span>
+            <span class="tr"><span class="fl" data-w="68"></span></span>
+            <span class="vl">$30.3B</span>
+          </div>
+        </div>
+        <div class="comp-desc">
+          <span class="it">The challenger of record.</span> Mini-mill from day one, vertically integrated through scrap recycling and downstream fabrication, ramping aluminum as a fourth leg.
+        </div>
+      </div>
+
+      <!-- Nucor -->
+      <div class="comp-row reveal">
+        <div class="comp-head">
+          <span class="name">Nucor</span>
+          <span class="ticker">NUE</span>
+        </div>
+        <div class="comp-bars">
+          <div class="comp-mc-row">
+            <span class="ml">MC</span>
+            <span class="tr"><span class="fl" data-w="100"></span></span>
+            <span class="vl">$44.6B</span>
+          </div>
+        </div>
+        <div class="comp-desc">
+          <span class="it">The mirror.</span> Same EAF playbook, head-to-head across flat-rolled, long, and structural steel. $32.5B revenue, P/E 25.6, +5.7% YoY.
+        </div>
+      </div>
+
+      <!-- Gerdau -->
+      <div class="comp-row reveal">
+        <div class="comp-head">
+          <span class="name">Gerdau</span>
+          <span class="ticker">GGB</span>
+        </div>
+        <div class="comp-bars">
+          <div class="comp-mc-row">
+            <span class="ml">MC</span>
+            <span class="tr"><span class="fl" data-w="90"></span></span>
+            <span class="vl">$40.1B</span>
+          </div>
+        </div>
+        <div class="comp-desc">
+          <span class="it">The long-products specialist.</span> Bars, merchant, SBQ steel for North American construction. P/E 28.9, +2.9% YoY on $18.0B quarterly revenue.
+        </div>
+      </div>
+
+      <!-- Amrize -->
+      <div class="comp-row reveal">
+        <div class="comp-head">
+          <span class="name">Amrize</span>
+          <span class="ticker">AMRZ</span>
+        </div>
+        <div class="comp-bars">
+          <div class="comp-mc-row">
+            <span class="ml">MC</span>
+            <span class="tr"><span class="fl" data-w="71"></span></span>
+            <span class="vl">$31.9B</span>
+          </div>
+        </div>
+        <div class="comp-desc">
+          <span class="it">The flank.</span> Holcim's North American spinout — building systems &amp; prefab structures that quietly displace fabricated steel on the non-residential job site.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Reset Beat 5 — Final ========== -->
+  <div class="reset" data-screen-label="Reset 05">
+    <p>Scrap went in. <span class="hot">Steel came out.</span> What survived was the part the company kept.</p>
+  </div>
+
+  <!-- ========== CLOSE — invert the open ========== -->
+  <section class="close-section" data-screen-label="07 Close">
+    <div class="eyebrow on-dark reveal"><span class="dot">●</span>&nbsp;&nbsp;The takeaway · what's left</div>
+    <h2 class="display reveal" style="font-size:54px; margin: 14px 0 18px;">
+      <span class="it">Eighteen</span> billion in.<br/>
+      <span class="it hot">A buck&#8209;forty&#8209;eight</span><br/>
+      of free cash<br/>
+      out the back.
+    </h2>
+
+    <div class="close-pour reveal">
+      <svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="ingot" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#FFD27A"/>
+            <stop offset="50%" stop-color="#FF6A2C"/>
+            <stop offset="100%" stop-color="#C2381A"/>
+          </linearGradient>
+        </defs>
+        <!-- mold -->
+        <rect x="50" y="40" width="300" height="50" fill="#0B0A09" stroke="#34322C" stroke-width="1"/>
+        <!-- molten fill, mostly gone, small shining ingot remains -->
+        <rect x="50" y="40" width="300" height="50" fill="url(#ingot)" id="ingotFill" style="transform-origin:50% 65px;"/>
+        <text x="50" y="30" font-family="Geist Mono" font-size="9" fill="#8C8275" letter-spacing="0.8">$18.18B FY '25 REVENUE</text>
+
+        <!-- Funnel narrowing -->
+        <path d="M50 90 L 350 90 L 280 140 L 120 140 Z" fill="#1A1917" stroke="#34322C"/>
+        <path d="M50 90 L 350 90 L 280 140 L 120 140 Z" fill="url(#ingot)" opacity="0.18"/>
+
+        <!-- bottom ingot — survives -->
+        <g id="finalIngot">
+          <rect x="160" y="160" width="80" height="34" fill="url(#ingot)" rx="2"/>
+          <rect x="160" y="160" width="80" height="34" fill="none" stroke="#FF9F3D" stroke-width="0.6" rx="2"/>
+          <text x="200" y="220" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="14" fill="#FF9F3D">$1.45B operating cash</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="close-stat">
+      <div class="n"><span class="it">$501M</span></div>
+      <div class="l">FY '25 free cash flow<br/>after $948M of capex</div>
+    </div>
+
+    <div style="margin-top: 36px; border-top: 1px solid #2A2826; padding-top: 22px;">
+      <div class="metalabel" style="margin-bottom: 8px;">Since 2017</div>
+      <div class="display" style="font-size: 36px; line-height: 1.05;">
+        <span class="it hot">$6.7B</span> repurchased.<br/>
+        <span style="color:#C8C5BC;">41% of the float —</span><br/>
+        <span class="it" style="color:#F4F1EA;">retired.</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 36px;">
+      <div class="metalabel" style="margin-bottom: 6px;">Five-year after-tax ROIC</div>
+      <div class="display" style="font-size: 88px; line-height: 0.95;">
+        <span class="it" style="color:var(--molten);">24%</span>
+      </div>
+      <p class="body" style="color:#8C8275; margin-top: 14px; max-width: 32ch;">
+        The case, in a single number. <span class="it" style="font-family:var(--font-display); font-style:italic; color:#F4F1EA;">Discipline shows up here</span> or it doesn't show up at all.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========== Coda ========== -->
+  <div class="coda" data-screen-label="Coda">
+    <div class="meta">STLD · Steel Dynamics, Inc.</div>
+    <div class="biglet">
+      Founded 1993 · HQ Fort Wayne, Indiana · 13,000 employees ·<br/>
+      <span class="hot">a mini&#8209;mill</span>, scaled.
+    </div>
+    <div class="meta" style="margin-top: 24px; opacity: 0.6;">Recap · FY '25 · End</div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  // ---------- Build the 100-cent dollar grid ----------
+  // 87 cor (blue), 4 sga (green), 5 cap (amber), 1 int (red), 3 keep (ink+molten dot) = 100
+  const grid = document.getElementById('dollarGrid');
+  if (grid){
+    const cells = [];
+    for (let i=0;i<87;i++) cells.push('cor');
+    for (let i=0;i<5;i++)  cells.push('cap');
+    for (let i=0;i<4;i++)  cells.push('sga');
+    for (let i=0;i<1;i++)  cells.push('int');
+    for (let i=0;i<3;i++)  cells.push('keep');
+    cells.forEach((cls, idx)=>{
+      const el = document.createElement('div');
+      el.className = 'cent ' + cls;
+      el.style.transitionDelay = (idx * 6) + 'ms';
+      grid.appendChild(el);
+    });
+  }
+
+  // ---------- Reveal-on-scroll ----------
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if (e.isIntersecting){
+        e.target.classList.add('in');
+        // trigger bar fills
+        if (e.target.id === 'compList' || e.target.classList.contains('comp-list') || e.target.querySelector?.('.fl')){
+          e.target.querySelectorAll('.fl').forEach(fl=>{
+            const w = fl.getAttribute('data-w');
+            if (w) requestAnimationFrame(()=> fl.style.width = w + '%');
+          });
+        }
+        if (e.target.classList.contains('ribbon')){
+          e.target.querySelectorAll('.fill').forEach(fl=>{
+            const w = fl.getAttribute('data-w');
+            if (w) requestAnimationFrame(()=> fl.style.width = w + '%');
+          });
+        }
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+
+  // Watch comp-list separately so bars fill when bars enter view
+  const compRows = document.querySelectorAll('.comp-row');
+  const ioComp = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if (e.isIntersecting){
+        e.target.querySelectorAll('.fl').forEach(fl=>{
+          const w = fl.getAttribute('data-w');
+          if (w) requestAnimationFrame(()=> fl.style.width = w + '%');
+        });
+        ioComp.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  compRows.forEach(r=> ioComp.observe(r));
+
+  // ---------- Bet pillars: animate height when in view ----------
+  const betSvg = document.querySelector('.bet-svg');
+  if (betSvg){
+    const ioBet = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if (e.isIntersecting){
+          const rects = e.target.querySelectorAll('rect[data-h]');
+          rects.forEach((r, idx)=>{
+            const h = parseFloat(r.getAttribute('data-h'));
+            r.setAttribute('y', 280);
+            r.setAttribute('height', 0);
+            // Animate
+            const start = performance.now();
+            const dur = 1100;
+            const delay = idx * 140;
+            function tick(t){
+              const elapsed = Math.max(0, t - start - delay);
+              const p = Math.min(1, elapsed/dur);
+              const eased = 1 - Math.pow(1 - p, 3);
+              const newH = h * eased;
+              r.setAttribute('y', 280 - newH);
+              r.setAttribute('height', newH);
+              if (p < 1) requestAnimationFrame(tick);
+              else if (idx === rects.length - 1){
+                // reveal authorization callout
+                const auth = document.getElementById('newAuth');
+                if (auth){
+                  auth.style.transition = 'opacity 700ms ease';
+                  auth.style.opacity = '1';
+                }
+              }
+            }
+            requestAnimationFrame(tick);
+          });
+          ioBet.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    ioBet.observe(betSvg);
+  }
+
+  // ---------- Scroll progress hairline ----------
+  const prog = document.getElementById('prog');
+  function updateProg(){
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const p = h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0;
+    if (prog) prog.style.setProperty('--p', (p*100).toFixed(2) + '%');
+  }
+  updateProg();
+  window.addEventListener('scroll', updateProg, { passive: true });
+  window.addEventListener('resize', updateProg);
+
+  // ---------- Hero pour parallax ----------
+  const pourStream = document.getElementById('pourStream');
+  const sparks = document.getElementById('sparks');
+  const arcGlow = document.getElementById('arcGlow');
+  const arcDots = document.getElementById('arcDots');
+  const hotStrip = document.getElementById('hotStrip');
+  const ingotFill = document.getElementById('ingotFill');
+  const finalIngot = document.getElementById('finalIngot');
+
+  function onScroll(){
+    const y = window.scrollY;
+
+    // Hero pour stretch slightly with scroll
+    if (pourStream){
+      const t = Math.max(0, Math.min(1, y / 400));
+      pourStream.setAttribute('transform', `translate(0, ${ -t*8 }) scale(1, ${1 + t*0.08})`);
+    }
+    if (sparks){
+      sparks.style.opacity = String(Math.max(0.2, 1 - y/500));
+    }
+
+    // Mini-mill: arc glow pulse (mostly time-based handled below); strip shifts
+    if (hotStrip){
+      const ms = document.getElementById('millScene');
+      if (ms){
+        const r = ms.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const t = Math.max(0, Math.min(1, (vh - r.top) / (vh + r.height)));
+        // shift hot strip into the coil as user scrolls past
+        const shift = -20 + t * 18;
+        hotStrip.setAttribute('x', shift);
+        hotStrip.setAttribute('width', 56);
+        hotStrip.style.opacity = String(Math.min(1, t*1.4));
+      }
+    }
+
+    // Close pour — ingot shrinks to a survivor
+    if (ingotFill){
+      const cs = document.querySelector('.close-section');
+      if (cs){
+        const r = cs.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const t = Math.max(0, Math.min(1, (vh*0.9 - r.top) / (vh*0.9)));
+        const sx = 1 - t*0.92; // shrinks to 8% width
+        ingotFill.setAttribute('transform', `scale(${sx}, 1)`);
+        ingotFill.style.transformOrigin = '50% 65px';
+      }
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Arc dot pulsing animation
+  if (arcDots){
+    const dots = arcDots.querySelectorAll('circle');
+    let phase = 0;
+    setInterval(()=>{
+      phase = (phase + 1) % 3;
+      dots.forEach((d,i)=>{
+        d.setAttribute('r', i === phase ? '3.6' : '2.2');
+        d.setAttribute('opacity', i === phase ? '1' : '0.55');
+      });
+    }, 220);
+  }
+  if (arcGlow){
+    let p = 0;
+    setInterval(()=>{
+      p = (p + 0.08) % (Math.PI*2);
+      const o = 0.6 + 0.3*Math.sin(p);
+      arcGlow.setAttribute('opacity', o.toFixed(2));
+    }, 60);
+  }
+})();
+</script>
+</body>
+</html>

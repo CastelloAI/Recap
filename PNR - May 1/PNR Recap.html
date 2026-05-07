@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PNR · Recap FY '25</title>
+<link rel="stylesheet" href="ds/colors_and_type.css" />
+<style>
+  /* ---------------------------------------------------
+     PNR RECAP — water-flow editorial
+     The Zair Naqvi base, retoned for Pentair:
+       - paper stays warm
+       - signal color is water, not coral
+       - one earned dark interlude for "the weight"
+  --------------------------------------------------- */
+  :root{
+    /* Pentair-tuned palette layered atop the DS */
+    --pnr-ink:        #0E1B26;     /* deep water-ink */
+    --pnr-ink-2:      #2A3947;
+    --pnr-ink-3:      #5A6976;
+    --pnr-paper:      #F6F4EE;     /* a touch cooler than DS paper */
+    --pnr-paper-2:    #ECEAE2;
+    --pnr-paper-3:    #E1DED4;
+    --pnr-line:       #DAD6CB;
+
+    --pnr-water-50:   #EAF1F6;
+    --pnr-water-100:  #CFE0EC;
+    --pnr-water-200:  #9CC0D8;
+    --pnr-water-300:  #5C95B8;
+    --pnr-water-400:  #2E6E94;     /* signal */
+    --pnr-water-500:  #1B4F70;
+    --pnr-water-600:  #0F3650;
+
+    --pnr-dark:       #07131C;
+    --pnr-dark-2:     #0E2030;
+
+    /* Cost colors are mandated by JSON — used only for that one chart */
+    --c-cor:  #E05C5C;
+    --c-sga:  #5B8FD4;
+    --c-rd:   #6DBF8A;
+    --c-da:   #F5A623;
+  }
+
+  *{ box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { margin: 0; padding: 0; }
+  html{ scroll-behavior: smooth; }
+  body{
+    background: var(--pnr-paper);
+    color: var(--pnr-ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+  /* The page is the design — sized for mobile, no device frame.
+     Center it on wider viewports against a quiet rail. */
+  .stage{
+    background: #2A3947;
+    background:
+      radial-gradient(1200px 600px at 50% 20%, #34424F 0%, #1F2A35 60%, #141C25 100%);
+    min-height: 100vh;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+  }
+  .page{
+    width: 100%;
+    max-width: 412px;
+    background: var(--pnr-paper);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.4), 0 8px 20px rgba(0,0,0,0.2);
+  }
+  @media (max-width: 460px){
+    .stage{ background: var(--pnr-paper); }
+    .page{ box-shadow: none; }
+  }
+
+  /* -------- PERSISTENT CHROME -------- */
+  .chrome{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    background: rgba(246,244,238,0.78);
+    border-bottom: 1px solid rgba(218,214,203,0.6);
+  }
+  .chrome-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px 12px;
+  }
+  .chrome-left{ display: flex; align-items: baseline; gap: 10px; }
+  .chrome-ticker{
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--pnr-ink);
+  }
+  .chrome-ticker .dot{
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--pnr-water-400);
+    margin: 0 6px 1px 2px;
+    vertical-align: middle;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:.45; transform:scale(.85)} }
+  .chrome-name{
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--pnr-ink-2);
+    letter-spacing: -0.01em;
+  }
+  .chrome-recap{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--pnr-ink-3);
+    text-transform: uppercase;
+  }
+  .progress{
+    height: 1.5px;
+    background: transparent;
+    position: relative;
+  }
+  .progress-fill{
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    background: var(--pnr-water-400);
+    transition: width 80ms linear;
+  }
+
+  /* -------- TYPOGRAPHY HELPERS -------- */
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--pnr-water-400);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow .bar{
+    width: 18px; height: 1px; background: var(--pnr-water-400);
+    display: inline-block;
+  }
+  .display{
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    color: var(--pnr-ink);
+  }
+  .display em, .display i{ font-style: italic; color: var(--pnr-water-400); }
+  .lede{
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--pnr-ink-2);
+  }
+  .lede em{ font-family: var(--font-display); font-style: italic; color: var(--pnr-water-500); font-size: 1.05em; }
+  .meta{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--pnr-ink-3);
+  }
+
+  /* -------- BEATS -------- */
+  section{ position: relative; padding: 64px 24px; }
+  section.tight{ padding: 48px 24px; }
+
+  /* Reset beat — italic-serif interlude */
+  .reset{
+    padding: 56px 36px;
+    background: var(--pnr-paper-2);
+    border-top: 1px solid var(--pnr-line);
+    border-bottom: 1px solid var(--pnr-line);
+    text-align: left;
+  }
+  .reset .quote{
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.25;
+    color: var(--pnr-ink-2);
+    letter-spacing: -0.005em;
+  }
+  .reset .quote em{ color: var(--pnr-water-400); font-style: italic; }
+  .reset .mark{
+    font-family: var(--font-display);
+    font-size: 36px;
+    color: var(--pnr-water-300);
+    line-height: 0;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  /* -------- 1. THESIS / HERO -------- */
+  .hero{
+    position: relative;
+    padding: 80px 24px 88px;
+    overflow: hidden;
+    background:
+      linear-gradient(to bottom, var(--pnr-paper) 0%, var(--pnr-paper) 60%, var(--pnr-water-50) 100%);
+  }
+  .hero-bg{
+    position: absolute; inset: 0; pointer-events: none;
+    z-index: 0;
+  }
+  .hero-content{ position: relative; z-index: 2; }
+  .hero h1{
+    font-size: 56px;
+    margin: 18px 0 14px;
+  }
+  .hero h1 .light{ color: var(--pnr-ink-3); }
+  .hero-sub{
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--pnr-ink-2);
+    margin-top: 10px;
+  }
+  .hero-sub em{ color: var(--pnr-water-400); }
+  .hero-foot{
+    margin-top: 44px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+  }
+  .hero-foot .stat{
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 0.95;
+    color: var(--pnr-ink);
+  }
+  .hero-foot .stat em{ font-style: italic; color: var(--pnr-water-400); }
+  .hero-foot .lbl{
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--pnr-ink-3);
+    margin-top: 6px;
+    max-width: 110px;
+    line-height: 1.4;
+  }
+
+  /* Droplet falling in hero */
+  .droplet-stage{
+    position: absolute;
+    left: 0; right: 0;
+    top: 60px; bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* -------- 2. THE BUSINESS — three taps -------- */
+  .taps{
+    background: var(--pnr-paper);
+    padding: 72px 24px 80px;
+  }
+  .taps h2{
+    font-size: 40px;
+    margin: 16px 0 8px;
+  }
+  .taps h2 em{ font-style: italic; color: var(--pnr-water-400); }
+  .taps-lede{ margin-bottom: 32px; max-width: 320px; }
+  .tap-row{
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    padding: 22px 0;
+    border-bottom: 1px dashed var(--pnr-line);
+    position: relative;
+  }
+  .tap-row:last-child{ border-bottom: none; }
+  .tap-row .num{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--pnr-ink-3);
+    width: 24px;
+    flex: 0 0 24px;
+    padding-top: 4px;
+  }
+  .tap-row .body{ flex: 1; }
+  .tap-row .seg{
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1.05;
+    color: var(--pnr-ink);
+  }
+  .tap-row .seg em{ font-style: italic; color: var(--pnr-water-400); }
+  .tap-row .desc{
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--pnr-ink-3);
+    margin-top: 8px;
+    max-width: 240px;
+  }
+  .tap-row .brands{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--pnr-ink-2);
+    margin-top: 10px;
+    text-transform: uppercase;
+  }
+  .tap-row .pipe{
+    flex: 0 0 56px;
+    height: 96px;
+    position: relative;
+  }
+  .tap-row .pipe svg{ width: 100%; height: 100%; display: block; }
+
+  /* -------- 3. THE SCALE — count-up tower -------- */
+  .scale{
+    background: var(--pnr-water-50);
+    padding: 72px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .scale-grid{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 32px;
+  }
+  .stat-block{
+    border-top: 1px solid var(--pnr-water-200);
+    padding-top: 16px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .stat-block .num{
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 1;
+    color: var(--pnr-ink);
+    letter-spacing: -0.02em;
+  }
+  .stat-block .num em{ font-style: italic; color: var(--pnr-water-400); }
+  .stat-block .num .unit{ font-family: var(--font-display); font-size: 28px; color: var(--pnr-ink-2); margin-left: 2px; }
+  .stat-block .lbl{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--pnr-ink-2);
+    text-align: right;
+    max-width: 130px;
+    line-height: 1.5;
+  }
+  .scale-callout{
+    margin-top: 36px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--pnr-ink-2);
+  }
+  .scale-callout em{ color: var(--pnr-water-500); }
+
+  /* Floating bubbles in scale */
+  .bubble-stage{
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  }
+  .scale > *{ position: relative; z-index: 1; }
+
+  /* -------- 4. WHERE THE MONEY GOES — water column -------- */
+  .column{
+    background: var(--pnr-paper);
+    padding: 80px 24px 80px;
+  }
+  .column h2{
+    font-size: 40px;
+    margin: 16px 0 14px;
+  }
+  .column h2 em{ font-style: italic; color: var(--pnr-water-400); }
+  .column-lede{ max-width: 320px; margin-bottom: 32px; }
+  .column-wrap{
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
+  }
+  .column-glass{
+    flex: 0 0 130px;
+    height: 380px;
+    position: relative;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.2));
+    border: 1.5px solid var(--pnr-ink);
+    border-top: none;
+    border-radius: 0 0 22px 22px;
+    overflow: hidden;
+  }
+  .column-glass::before{
+    /* glass meniscus */
+    content: '';
+    position: absolute;
+    top: 0; left: -1.5px; right: -1.5px;
+    height: 4px;
+    background: var(--pnr-ink);
+    border-radius: 2px 2px 0 0;
+  }
+  .column-glass::after{
+    /* highlight stripe */
+    content: '';
+    position: absolute;
+    top: 4px; bottom: 0; left: 12px;
+    width: 4px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0.05));
+    border-radius: 4px;
+  }
+  .layer{
+    position: absolute;
+    left: 0; right: 0;
+    transition: transform 1.4s var(--ease-spring), opacity 800ms ease;
+    overflow: hidden;
+  }
+  .layer .lbl{
+    position: absolute;
+    left: 12px; bottom: 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.92);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .layer .pct{
+    position: absolute;
+    right: 10px; top: 6px;
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1;
+    color: rgba(255,255,255,0.95);
+  }
+  .layer.cor{ background: var(--c-cor); }
+  .layer.sga{ background: var(--c-sga); }
+  .layer.da{ background: var(--c-da); }
+  .layer.rd{ background: var(--c-rd); }
+  .layer.surplus{
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.0) 50%),
+      var(--pnr-ink);
+  }
+  .layer.surplus .lbl{ color: rgba(255,255,255,0.9); }
+  .layer.surplus .pct{ color: var(--pnr-water-200); font-style: italic; }
+
+  .column-legend{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 4px 0;
+  }
+  .leg-row{
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--pnr-line);
+  }
+  .leg-row:last-child{ border-bottom: none; }
+  .leg-swatch{
+    width: 10px; height: 10px; border-radius: 2px;
+    flex: 0 0 10px;
+    transform: translateY(2px);
+  }
+  .leg-pct{
+    font-family: var(--font-display); font-size: 22px; color: var(--pnr-ink); line-height: 1;
+    flex: 0 0 44px;
+  }
+  .leg-pct em{ font-style: italic; color: var(--pnr-water-400); }
+  .leg-lbl{
+    font-family: var(--font-sans); font-size: 12px; line-height: 1.35;
+    color: var(--pnr-ink-2); letter-spacing: -0.005em;
+  }
+  .leg-lbl small{ font-family: var(--font-mono); font-size: 9.5px; color: var(--pnr-ink-3); letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-top: 2px; }
+
+  .column-foot{
+    margin-top: 32px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.35;
+    color: var(--pnr-ink-2);
+  }
+  .column-foot em{ color: var(--pnr-water-400); }
+
+  /* -------- 5. FOOTPRINT — globe of droplets -------- */
+  .footprint{
+    background: var(--pnr-paper-2);
+    padding: 72px 24px 80px;
+  }
+  .footprint h2{
+    font-size: 40px;
+    margin: 16px 0 8px;
+  }
+  .footprint h2 em{ font-style: italic; color: var(--pnr-water-400); }
+  .globe-wrap{
+    margin: 20px auto 8px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-width: 320px;
+    position: relative;
+  }
+  .globe-wrap svg{ width: 100%; height: 100%; display: block; }
+  .geo-list{
+    margin-top: 20px;
+  }
+  .geo-row{
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--pnr-line);
+  }
+  .geo-row:last-child{ border-bottom: none; }
+  .geo-pct{
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--pnr-ink);
+    line-height: 1;
+    flex: 0 0 70px;
+    letter-spacing: -0.01em;
+  }
+  .geo-pct em{ font-style: italic; color: var(--pnr-water-400); }
+  .geo-bar{
+    flex: 1; height: 2px;
+    background: var(--pnr-line);
+    position: relative;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .geo-bar-fill{
+    position: absolute; inset: 0 auto 0 0;
+    background: var(--pnr-water-400);
+    width: 0;
+    transition: width 1.2s var(--ease-spring);
+  }
+  .geo-region{
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--pnr-ink-2);
+    text-align: right;
+    min-width: 100px;
+  }
+
+  /* -------- 6. THE BET — capital allocation -------- */
+  .bet{
+    background: var(--pnr-paper);
+    padding: 72px 24px 80px;
+  }
+  .bet h2{
+    font-size: 40px;
+    margin: 16px 0 14px;
+  }
+  .bet h2 em{ font-style: italic; color: var(--pnr-water-400); }
+  .basin{
+    margin-top: 32px;
+    position: relative;
+    padding: 0;
+  }
+  .basin-svg{ width: 100%; height: 280px; display: block; }
+  .basin-rows{
+    margin-top: 28px;
+  }
+  .basin-row{
+    display: flex; align-items: baseline; gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--pnr-line);
+  }
+  .basin-row:last-child{ border-bottom: none; }
+  .basin-amt{
+    font-family: var(--font-display);
+    font-size: 32px;
+    color: var(--pnr-ink);
+    line-height: 1;
+    flex: 0 0 110px;
+    letter-spacing: -0.01em;
+  }
+  .basin-amt em{ font-style: italic; color: var(--pnr-water-400); }
+  .basin-amt small{
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--pnr-ink-3);
+    text-transform: uppercase;
+    font-style: normal;
+    display: block;
+    margin-top: 4px;
+  }
+  .basin-desc{
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--pnr-ink-2);
+    line-height: 1.45;
+  }
+  .basin-desc em{ font-family: var(--font-display); font-style: italic; color: var(--pnr-water-500); font-size: 1.1em; }
+
+  /* -------- 7. THE WEIGHT — dark interlude (debt) -------- */
+  .weight{
+    background: var(--pnr-dark);
+    color: #E8EEF3;
+    padding: 88px 24px 96px;
+    position: relative;
+    overflow: hidden;
+  }
+  .weight .eyebrow{ color: var(--pnr-water-200); }
+  .weight .eyebrow .bar{ background: var(--pnr-water-200); }
+  .weight h2{
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 1;
+    color: #F4F8FB;
+    margin: 16px 0 18px;
+    letter-spacing: -0.02em;
+  }
+  .weight h2 em{ font-style: italic; color: var(--pnr-water-200); }
+  .weight .lede{ color: #B8C5D2; max-width: 320px; }
+  .weight .lede em{ color: var(--pnr-water-200); }
+  .pressure{
+    margin: 40px 0 8px;
+    position: relative;
+    height: 280px;
+  }
+  .pressure svg{ width: 100%; height: 100%; }
+  .pressure .key{
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(232,238,243,0.6);
+  }
+  .pressure .keyval{
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: #F4F8FB;
+    letter-spacing: -0.01em;
+  }
+  .pressure .keyval em{ font-style: italic; color: var(--pnr-water-200); }
+
+  /* -------- 8. COMPETITORS — ripples -------- */
+  .competitors{
+    background: var(--pnr-paper);
+    padding: 72px 24px 80px;
+  }
+  .competitors h2{
+    font-size: 40px;
+    margin: 16px 0 14px;
+  }
+  .competitors h2 em{ font-style: italic; color: var(--pnr-water-400); }
+  .ripples{
+    margin: 28px 0 8px;
+    height: 320px;
+    position: relative;
+  }
+  .ripples svg{ width: 100%; height: 100%; display: block; }
+  .comp-rows{ margin-top: 16px; }
+  .comp-row{
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--pnr-line);
+    align-items: start;
+  }
+  .comp-row:last-child{ border-bottom: none; }
+  .comp-tick{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--pnr-ink);
+    font-weight: 500;
+    padding-top: 4px;
+  }
+  .comp-tick small{
+    display: block;
+    font-size: 9px;
+    color: var(--pnr-ink-3);
+    margin-top: 4px;
+    letter-spacing: 0.12em;
+  }
+  .comp-body .name{
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1.1;
+    color: var(--pnr-ink);
+    margin-bottom: 6px;
+  }
+  .comp-body .name em{ font-style: italic; color: var(--pnr-water-400); }
+  .comp-body .stats{
+    display: flex; flex-wrap: wrap; gap: 14px;
+    margin: 8px 0 8px;
+  }
+  .comp-body .stat-pair{
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--pnr-ink-2);
+  }
+  .comp-body .stat-pair b{
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 18px;
+    color: var(--pnr-water-500);
+    letter-spacing: -0.01em;
+    margin-right: 4px;
+  }
+  .comp-body .desc{
+    font-size: 12.5px;
+    color: var(--pnr-ink-3);
+    line-height: 1.5;
+  }
+
+  /* -------- 9. THE TAKEAWAY -------- */
+  .takeaway{
+    background:
+      linear-gradient(to bottom, var(--pnr-water-50) 0%, var(--pnr-water-100) 100%);
+    padding: 96px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .takeaway h2{
+    font-size: 56px;
+    margin: 16px 0 18px;
+    line-height: 0.96;
+  }
+  .takeaway h2 em{ font-style: italic; color: var(--pnr-water-500); }
+  .takeaway .lede{ max-width: 340px; color: var(--pnr-ink-2); }
+  .takeaway .lede em{ color: var(--pnr-water-500); }
+
+  /* The 50-year ladder */
+  .ladder-wrap{
+    margin: 40px 0 24px;
+  }
+  .ladder{
+    height: 200px;
+    width: 100%;
+  }
+  .ladder-caption{
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 24px;
+    line-height: 1.25;
+    color: var(--pnr-ink);
+    margin-top: 8px;
+  }
+  .ladder-caption em{ color: var(--pnr-water-500); }
+
+  .closing-stats{
+    margin: 40px 0 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 18px;
+  }
+  .closing-stats .num{
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 0.95;
+    color: var(--pnr-ink);
+    letter-spacing: -0.02em;
+  }
+  .closing-stats .num em{ font-style: italic; color: var(--pnr-water-500); }
+  .closing-stats .lbl{
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pnr-ink-3);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  /* -------- COLOPHON -------- */
+  .colophon{
+    background: var(--pnr-water-600);
+    color: rgba(255,255,255,0.85);
+    padding: 36px 24px 56px;
+    text-align: left;
+  }
+  .colophon .mark{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.65);
+    text-transform: uppercase;
+  }
+  .colophon .line{
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    color: #F4F8FB;
+    margin: 18px 0 24px;
+    line-height: 1.3;
+  }
+  .colophon .meta-row{
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 16px;
+  }
+
+  /* -------- SCROLL REVEALS -------- */
+  .reveal{
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+  }
+  .reveal.in{ opacity: 1; transform: translateY(0); }
+  .reveal.delay-1{ transition-delay: 80ms; }
+  .reveal.delay-2{ transition-delay: 160ms; }
+  .reveal.delay-3{ transition-delay: 240ms; }
+  .reveal.delay-4{ transition-delay: 320ms; }
+  .reveal.delay-5{ transition-delay: 400ms; }
+  .reveal.delay-6{ transition-delay: 480ms; }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity: 1; transform: none; transition: none; }
+    .layer{ transition: none; }
+    .geo-bar-fill{ transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <main class="page" id="page">
+
+    <!-- ============== CHROME ============== -->
+    <header class="chrome">
+      <div class="chrome-row">
+        <div class="chrome-left">
+          <span class="chrome-ticker"><span class="dot"></span>PNR</span>
+          <span class="chrome-name">Pentair</span>
+        </div>
+        <span class="chrome-recap">Recap · FY '25</span>
+      </div>
+      <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+    </header>
+
+    <!-- ============== 1. THESIS / HERO ============== -->
+    <section class="hero" data-screen-label="01 Thesis">
+      <div class="hero-bg" aria-hidden="true">
+        <!-- soft ripple rings -->
+        <svg viewBox="0 0 412 700" preserveAspectRatio="none" style="width:100%;height:100%;position:absolute;inset:0;">
+          <g fill="none" stroke="#9CC0D8" stroke-opacity="0.35">
+            <circle cx="206" cy="540" r="80" />
+            <circle cx="206" cy="540" r="160" stroke-opacity="0.22"/>
+            <circle cx="206" cy="540" r="240" stroke-opacity="0.14"/>
+            <circle cx="206" cy="540" r="320" stroke-opacity="0.08"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Falling droplet — animates with scroll -->
+      <div class="droplet-stage" aria-hidden="true">
+        <svg id="dropletSvg" viewBox="0 0 412 540" preserveAspectRatio="none" style="width:100%;height:100%;">
+          <defs>
+            <linearGradient id="dropGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#5C95B8"/>
+              <stop offset="100%" stop-color="#2E6E94"/>
+            </linearGradient>
+          </defs>
+          <g id="dropletG" transform="translate(206 60)">
+            <path d="M 0 -22 C 12 -8, 18 6, 18 16 A 18 18 0 1 1 -18 16 C -18 6, -12 -8, 0 -22 Z"
+                  fill="url(#dropGrad)" />
+            <ellipse cx="-5" cy="6" rx="3" ry="6" fill="rgba(255,255,255,0.6)" />
+          </g>
+          <!-- impact ripple, only visible at end -->
+          <g id="impactRipple" transform="translate(206 480)" opacity="0">
+            <ellipse cx="0" cy="0" rx="20" ry="5" fill="none" stroke="#2E6E94" stroke-width="1.5"/>
+            <ellipse cx="0" cy="0" rx="40" ry="10" fill="none" stroke="#5C95B8" stroke-width="1" opacity="0.6"/>
+            <ellipse cx="0" cy="0" rx="60" ry="15" fill="none" stroke="#9CC0D8" stroke-width="0.8" opacity="0.4"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="hero-content">
+        <div class="eyebrow"><span class="bar"></span>The thesis · NYSE: PNR</div>
+        <h1 class="display">
+          One drop.<br>
+          <span class="light">One company.</span><br>
+          <em>One hundred and fifty&nbsp;countries.</em>
+        </h1>
+        <p class="hero-sub">Pentair is one of the few large-caps in the S&P 500 that does <em>only one thing</em>: water — moved, filtered, softened, heated, and pumped.</p>
+
+        <div class="hero-foot reveal in">
+          <div>
+            <div class="stat"><em>$14.72</em>B</div>
+            <div class="lbl">Market cap</div>
+          </div>
+          <div>
+            <div class="stat">9,750</div>
+            <div class="lbl">Employees</div>
+          </div>
+          <div>
+            <div class="stat">150<span style="font-size:18px">+</span></div>
+            <div class="lbl">Countries served</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== RESET BEAT ============== -->
+    <section class="reset" data-screen-label="02 Reset">
+      <span class="mark">~</span>
+      <p class="quote">A water company is just <em>three taps</em> with the same plumbing behind them.</p>
+    </section>
+
+    <!-- ============== 2. THE BUSINESS — THREE TAPS ============== -->
+    <section class="taps" data-screen-label="03 The business">
+      <div class="eyebrow"><span class="bar"></span>The business · three segments</div>
+      <h2 class="display reveal">Three handles, <em>one&nbsp;source.</em></h2>
+      <p class="lede taps-lede reveal delay-1">Revenue is product-led, with strong aftermarket and recurring consumables. <em>$4.18B</em> through three taps in FY 2025.</p>
+
+      <div class="tap-row reveal delay-1">
+        <div class="num">01</div>
+        <div class="body">
+          <div class="seg"><em>Flow.</em></div>
+          <div class="desc">Industrial fluid treatment, pump systems, and wastewater solutions.</div>
+        </div>
+        <div class="pipe">
+          <svg viewBox="0 0 56 96" aria-hidden="true">
+            <path d="M 28 4 L 28 60" stroke="#2E6E94" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <rect x="20" y="58" width="16" height="6" rx="1" fill="#2E6E94"/>
+            <path d="M 28 64 Q 28 76 26 84 Q 28 90 30 84 Q 28 76 28 64" fill="#5C95B8" opacity="0.85"/>
+            <circle cx="28" cy="92" r="2" fill="#5C95B8"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="tap-row reveal delay-2">
+        <div class="num">02</div>
+        <div class="body">
+          <div class="seg"><em>Water Solutions.</em></div>
+          <div class="desc">Residential & commercial filtration, softening, ice equipment.</div>
+          <div class="brands">Everpure · Manitowoc Ice · RainSoft</div>
+        </div>
+        <div class="pipe">
+          <svg viewBox="0 0 56 96" aria-hidden="true">
+            <path d="M 28 4 L 28 60" stroke="#2E6E94" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <rect x="20" y="58" width="16" height="6" rx="1" fill="#2E6E94"/>
+            <path d="M 28 64 Q 28 78 24 86 Q 28 94 32 86 Q 28 78 28 64" fill="#5C95B8" opacity="0.85"/>
+            <circle cx="28" cy="92" r="2.4" fill="#5C95B8"/>
+            <circle cx="22" cy="84" r="1.5" fill="#9CC0D8"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="tap-row reveal delay-3">
+        <div class="num">03</div>
+        <div class="body">
+          <div class="seg"><em>Pool.</em></div>
+          <div class="desc">Pumps, filters, heaters, automation for residential & commercial pools.</div>
+          <div class="brands">Pentair Pool · Sta-Rite</div>
+        </div>
+        <div class="pipe">
+          <svg viewBox="0 0 56 96" aria-hidden="true">
+            <path d="M 28 4 L 28 60" stroke="#2E6E94" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <rect x="20" y="58" width="16" height="6" rx="1" fill="#2E6E94"/>
+            <path d="M 28 64 Q 28 78 22 88 Q 28 96 34 88 Q 28 78 28 64" fill="#5C95B8" opacity="0.85"/>
+            <circle cx="28" cy="92" r="2.6" fill="#5C95B8"/>
+            <circle cx="20" cy="86" r="1.6" fill="#9CC0D8"/>
+            <circle cx="36" cy="80" r="1.2" fill="#9CC0D8"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== 3. THE SCALE ============== -->
+    <section class="scale" data-screen-label="04 The scale">
+      <div class="bubble-stage" aria-hidden="true">
+        <svg viewBox="0 0 412 700" preserveAspectRatio="none" style="width:100%;height:100%;">
+          <g fill="#9CC0D8" opacity="0.35">
+            <circle cx="40" cy="120" r="3"/>
+            <circle cx="60" cy="220" r="2"/>
+            <circle cx="380" cy="180" r="4"/>
+            <circle cx="370" cy="320" r="2.5"/>
+            <circle cx="50" cy="420" r="3.5"/>
+            <circle cx="350" cy="500" r="2"/>
+            <circle cx="30" cy="600" r="2.8"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="eyebrow"><span class="bar"></span>The scale · FY 2025</div>
+      <h2 class="display reveal" style="font-size:40px;margin-top:16px;">Volume, in <em>billions.</em></h2>
+
+      <div class="scale-grid">
+        <div class="stat-block reveal delay-1" data-counter data-target="4.18" data-decimals="2" data-prefix="$" data-suffix="B">
+          <div class="num"><span class="counter">$0.00</span><span class="unit">B</span></div>
+          <div class="lbl">FY '25 Revenue</div>
+        </div>
+        <div class="stat-block reveal delay-2" data-counter data-target="40.5" data-decimals="1" data-suffix="%">
+          <div class="num"><span class="counter">0.0</span><span class="unit">%</span></div>
+          <div class="lbl">Gross margin</div>
+        </div>
+        <div class="stat-block reveal delay-3" data-counter data-target="20.5" data-decimals="1" data-suffix="%">
+          <div class="num"><span class="counter">0.0</span><span class="unit">%</span></div>
+          <div class="lbl">Operating margin</div>
+        </div>
+        <div class="stat-block reveal delay-4" data-counter data-target="746.0" data-decimals="0" data-prefix="$" data-suffix="M">
+          <div class="num"><span class="counter">$0</span><span class="unit">M</span></div>
+          <div class="lbl">Free cash flow</div>
+        </div>
+        <div class="stat-block reveal delay-5" data-counter data-target="1.18" data-decimals="2" data-prefix="$">
+          <div class="num"><span class="counter">$0.00</span></div>
+          <div class="lbl">Q4 '25 EPS</div>
+        </div>
+      </div>
+
+      <p class="scale-callout reveal delay-6">Revenue arrives like a basin filling — <em>steady, distributed, recurring</em> — through wholesale, retail, and direct channels.</p>
+    </section>
+
+    <!-- ============== 4. WHERE THE MONEY GOES ============== -->
+    <section class="column" data-screen-label="05 Cost column">
+      <div class="eyebrow"><span class="bar"></span>A hundred cents in</div>
+      <h2 class="display reveal">Of every dollar, <em>seventeen survive.</em></h2>
+      <p class="lede column-lede reveal delay-1">Costs stratify like density layers in a column of water — heaviest at the base, lightest at the top.</p>
+
+      <div class="column-wrap">
+        <div class="column-glass" id="costGlass" aria-hidden="true">
+          <!-- Layers stacked from bottom up: cor (60), sga (18), da (3), rd (2), surplus (17) -->
+          <div class="layer cor"   data-bottom="0"  data-h="60">
+            <span class="pct">60%</span>
+            <span class="lbl">Cost of<br>revenue</span>
+          </div>
+          <div class="layer sga"   data-bottom="60" data-h="18">
+            <span class="pct">18%</span>
+            <span class="lbl">SG&amp;A</span>
+          </div>
+          <div class="layer da"    data-bottom="78" data-h="3">
+            <span class="pct" style="font-size:14px;">3%</span>
+            <span class="lbl" style="font-size:8px;">D&amp;A</span>
+          </div>
+          <div class="layer rd"    data-bottom="81" data-h="2">
+            <span class="pct" style="font-size:13px;">2%</span>
+            <span class="lbl" style="font-size:8px;">R&amp;D</span>
+          </div>
+          <div class="layer surplus" data-bottom="83" data-h="17">
+            <span class="pct"><i>17¢</i></span>
+            <span class="lbl">Survives</span>
+          </div>
+        </div>
+
+        <div class="column-legend reveal delay-2">
+          <div class="leg-row">
+            <span class="leg-swatch" style="background:#E05C5C"></span>
+            <span class="leg-pct">60%</span>
+            <span class="leg-lbl">Cost of revenue<small>Inputs · materials</small></span>
+          </div>
+          <div class="leg-row">
+            <span class="leg-swatch" style="background:#5B8FD4"></span>
+            <span class="leg-pct">18%</span>
+            <span class="leg-lbl">SG&amp;A<small>Selling · admin</small></span>
+          </div>
+          <div class="leg-row">
+            <span class="leg-swatch" style="background:#F5A623"></span>
+            <span class="leg-pct">3%</span>
+            <span class="leg-lbl">D&amp;A<small>Depreciation</small></span>
+          </div>
+          <div class="leg-row">
+            <span class="leg-swatch" style="background:#6DBF8A"></span>
+            <span class="leg-pct">2%</span>
+            <span class="leg-lbl">R&amp;D<small>Research</small></span>
+          </div>
+          <div class="leg-row">
+            <span class="leg-swatch" style="background:#0E1B26"></span>
+            <span class="leg-pct"><em>17%</em></span>
+            <span class="leg-lbl">What survives<small>Op. margin 20.5%</small></span>
+          </div>
+        </div>
+      </div>
+
+      <p class="column-foot reveal delay-3">Heavy at the bottom. <em>Light at the top.</em> The 80/20 model keeps the column tall and the surplus dark.</p>
+    </section>
+
+    <!-- ============== RESET BEAT ============== -->
+    <section class="reset" data-screen-label="06 Reset">
+      <span class="mark">~</span>
+      <p class="quote">The water moves where the people are. <em>Fifty-seven cents</em> of every dollar comes home to North America.</p>
+    </section>
+
+    <!-- ============== 5. FOOTPRINT ============== -->
+    <section class="footprint" data-screen-label="07 Footprint">
+      <div class="eyebrow"><span class="bar"></span>The footprint · 150+ countries</div>
+      <h2 class="display reveal">A globe, <em>weighted west.</em></h2>
+
+      <div class="globe-wrap reveal delay-1">
+        <svg viewBox="0 0 320 320" id="globeSvg" aria-hidden="true">
+          <defs>
+            <radialGradient id="globeFill" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#EAF1F6"/>
+              <stop offset="100%" stop-color="#CFE0EC"/>
+            </radialGradient>
+            <clipPath id="globeClip">
+              <circle cx="160" cy="160" r="140"/>
+            </clipPath>
+          </defs>
+          <circle cx="160" cy="160" r="140" fill="url(#globeFill)" stroke="#2E6E94" stroke-width="1"/>
+          <!-- meridian lines -->
+          <g stroke="#9CC0D8" stroke-width="0.8" fill="none" clip-path="url(#globeClip)">
+            <ellipse cx="160" cy="160" rx="140" ry="46"/>
+            <ellipse cx="160" cy="160" rx="140" ry="92"/>
+            <ellipse cx="160" cy="160" rx="46" ry="140"/>
+            <ellipse cx="160" cy="160" rx="92" ry="140"/>
+            <line x1="20" y1="160" x2="300" y2="160"/>
+            <line x1="160" y1="20" x2="160" y2="300"/>
+          </g>
+          <!-- droplet clusters by region -->
+          <g id="geoDots">
+            <!-- North America (57%) - top-left cluster -->
+            <g class="geo-cluster" data-region="na">
+              <circle cx="100" cy="120" r="10" fill="#2E6E94"/>
+              <circle cx="118" cy="105" r="7"  fill="#2E6E94"/>
+              <circle cx="92"  cy="142" r="8"  fill="#2E6E94"/>
+              <circle cx="115" cy="135" r="6"  fill="#1B4F70"/>
+              <circle cx="85"  cy="160" r="5"  fill="#5C95B8"/>
+              <circle cx="125" cy="158" r="4"  fill="#5C95B8"/>
+            </g>
+            <!-- Western Europe (20%) - top-right -->
+            <g class="geo-cluster" data-region="we">
+              <circle cx="195" cy="125" r="7"  fill="#2E6E94"/>
+              <circle cx="210" cy="138" r="5"  fill="#2E6E94"/>
+              <circle cx="200" cy="148" r="4"  fill="#5C95B8"/>
+            </g>
+            <!-- Asia-Pacific (13%) - bottom-right -->
+            <g class="geo-cluster" data-region="ap">
+              <circle cx="225" cy="180" r="6"  fill="#2E6E94"/>
+              <circle cx="238" cy="195" r="4"  fill="#5C95B8"/>
+              <circle cx="218" cy="200" r="3"  fill="#5C95B8"/>
+            </g>
+            <!-- ROW (10%) - bottom-left -->
+            <g class="geo-cluster" data-region="row">
+              <circle cx="140" cy="220" r="5"  fill="#5C95B8"/>
+              <circle cx="120" cy="232" r="3.5" fill="#9CC0D8"/>
+              <circle cx="155" cy="240" r="3"  fill="#9CC0D8"/>
+            </g>
+          </g>
+          <!-- legend tags -->
+          <g font-family="'Geist Mono', monospace" font-size="9" fill="#0E1B26" letter-spacing="1">
+            <text x="50"  y="100">N. AMERICA</text>
+            <text x="206" y="100">W. EUROPE</text>
+            <text x="234" y="172">APAC</text>
+            <text x="100" y="262">REST OF WORLD</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="geo-list">
+        <div class="geo-row reveal delay-1">
+          <div class="geo-pct"><em>57%</em></div>
+          <div class="geo-bar"><div class="geo-bar-fill" data-w="57"></div></div>
+          <div class="geo-region">North America</div>
+        </div>
+        <div class="geo-row reveal delay-2">
+          <div class="geo-pct">20%</div>
+          <div class="geo-bar"><div class="geo-bar-fill" data-w="20"></div></div>
+          <div class="geo-region">Western Europe</div>
+        </div>
+        <div class="geo-row reveal delay-3">
+          <div class="geo-pct">13%</div>
+          <div class="geo-bar"><div class="geo-bar-fill" data-w="13"></div></div>
+          <div class="geo-region">Asia-Pacific</div>
+        </div>
+        <div class="geo-row reveal delay-4">
+          <div class="geo-pct">10%</div>
+          <div class="geo-bar"><div class="geo-bar-fill" data-w="10"></div></div>
+          <div class="geo-region">Rest of world</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== 6. THE BET ============== -->
+    <section class="bet" data-screen-label="08 The bet">
+      <div class="eyebrow"><span class="bar"></span>The bet · capital allocation</div>
+      <h2 class="display reveal">The basin, <em>and where it&nbsp;drains.</em></h2>
+      <p class="lede reveal delay-1" style="max-width:320px;">$814.8M of operating cash flow in. Four streams out — bolt-on M&amp;A, buybacks, dividends, capex.</p>
+
+      <div class="basin reveal delay-2">
+        <svg class="basin-svg" viewBox="0 0 360 280" aria-hidden="true">
+          <defs>
+            <linearGradient id="basinFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#5C95B8"/>
+              <stop offset="100%" stop-color="#2E6E94"/>
+            </linearGradient>
+          </defs>
+          <!-- inflow arrow + label -->
+          <g>
+            <path d="M 180 14 L 180 70" stroke="#2E6E94" stroke-width="2.5" fill="none" stroke-dasharray="3 4"/>
+            <polygon points="174,68 186,68 180,78" fill="#2E6E94"/>
+            <text x="180" y="10" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" letter-spacing="1.5" fill="#0E1B26">$814.8M OPERATING CASH FLOW</text>
+          </g>
+          <!-- basin shape -->
+          <path d="M 60 80 L 300 80 L 280 200 L 80 200 Z" fill="url(#basinFill)" opacity="0.95"/>
+          <path d="M 60 80 L 300 80 L 280 200 L 80 200 Z" fill="none" stroke="#0E1B26" stroke-width="1.5"/>
+          <!-- water surface highlight -->
+          <ellipse cx="180" cy="80" rx="120" ry="6" fill="rgba(255,255,255,0.45)"/>
+          <!-- 4 outflow drops -->
+          <g id="drainStreams">
+            <!-- stream 1: $225M buybacks (left-most) -->
+            <g>
+              <path d="M 100 200 Q 100 220 90 240" stroke="#2E6E94" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <text x="62" y="266" font-family="'Geist Mono', monospace" font-size="8" letter-spacing="1" fill="#0E1B26">BUYBACKS</text>
+              <text x="62" y="276" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#2E6E94">$225M</text>
+            </g>
+            <!-- stream 2: $164.3M dividends -->
+            <g>
+              <path d="M 150 200 Q 150 222 144 244" stroke="#2E6E94" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <text x="118" y="266" font-family="'Geist Mono', monospace" font-size="8" letter-spacing="1" fill="#0E1B26">DIVIDENDS</text>
+              <text x="118" y="276" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#2E6E94">$164M</text>
+            </g>
+            <!-- stream 3: $68.8M capex -->
+            <g>
+              <path d="M 210 200 Q 210 222 216 244" stroke="#2E6E94" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <text x="190" y="266" font-family="'Geist Mono', monospace" font-size="8" letter-spacing="1" fill="#0E1B26">CAPEX</text>
+              <text x="190" y="276" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#2E6E94">$68.8M</text>
+            </g>
+            <!-- stream 4: bolt-on M&A reserve -->
+            <g>
+              <path d="M 260 200 Q 260 220 270 240" stroke="#2E6E94" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="3 3"/>
+              <text x="246" y="266" font-family="'Geist Mono', monospace" font-size="8" letter-spacing="1" fill="#0E1B26">BOLT-ON M&amp;A</text>
+              <text x="246" y="276" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#2E6E94">reserved</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <div class="basin-rows">
+        <div class="basin-row reveal delay-1">
+          <div class="basin-amt"><em>$1.0</em>B<small>Authorized</small></div>
+          <div class="basin-desc">New buyback program <em>through Dec '28</em>, on top of the $225M repurchased in FY '25.</div>
+        </div>
+        <div class="basin-row reveal delay-2">
+          <div class="basin-amt">+8%<small>Quarterly raise</small></div>
+          <div class="basin-desc">Dividend lifted to <em>$0.27/share</em> — the 50th consecutive year of increases.</div>
+        </div>
+        <div class="basin-row reveal delay-3">
+          <div class="basin-amt">$3.5<small>Goodwill, $B</small></div>
+          <div class="basin-desc">Of $6.9B in total assets, more than half sits in <em>goodwill &amp; intangibles</em> — a balance sheet built by acquisition.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== RESET BEAT ============== -->
+    <section class="reset" data-screen-label="09 Reset">
+      <span class="mark">~</span>
+      <p class="quote">Every basin has a floor. <em>Pentair's</em> sits one-and-a-half billion below the surface.</p>
+    </section>
+
+    <!-- ============== 7. THE WEIGHT — DEBT (DARK INTERLUDE) ============== -->
+    <section class="weight" data-screen-label="10 The weight">
+      <div class="eyebrow"><span class="bar"></span>The weight · capital structure</div>
+      <h2><em>$1.64B</em> of debt against $3.87B of equity.</h2>
+      <p class="lede">Just <em>$101.6M</em> in cash sits at the surface — the rest is leverage held below it. Investment-grade by design, not by accident.</p>
+
+      <div class="pressure">
+        <svg viewBox="0 0 360 280" preserveAspectRatio="none" style="width:100%;height:100%;" aria-hidden="true">
+          <defs>
+            <linearGradient id="depthGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1B4F70" stop-opacity="0.05"/>
+              <stop offset="40%" stop-color="#1B4F70" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#0E2030" stop-opacity="0.95"/>
+            </linearGradient>
+          </defs>
+          <!-- waterline -->
+          <line x1="0" y1="36" x2="360" y2="36" stroke="#9CC0D8" stroke-width="1" stroke-dasharray="2 4"/>
+          <text x="10" y="28" font-family="'Geist Mono', monospace" font-size="9" letter-spacing="1.5" fill="#9CC0D8">SURFACE · CASH $101.6M</text>
+
+          <!-- depth column body -->
+          <rect x="0" y="36" width="360" height="244" fill="url(#depthGrad)"/>
+
+          <!-- equity bar (shorter — held nearer surface) -->
+          <g>
+            <rect id="equityBar" x="50" y="60" width="50" height="0" fill="#5C95B8" rx="2"/>
+            <text x="75" y="54" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" letter-spacing="1.5" fill="#E8EEF3">EQUITY</text>
+            <text id="equityVal" x="75" y="270" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#F4F8FB">$3.87B</text>
+          </g>
+
+          <!-- debt bar (taller — sits deeper) -->
+          <g>
+            <rect id="debtBar" x="160" y="60" width="50" height="0" fill="#1B4F70" rx="2"/>
+            <text x="185" y="54" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" letter-spacing="1.5" fill="#E8EEF3">DEBT</text>
+            <text id="debtVal" x="185" y="270" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#F4F8FB">$1.64B</text>
+          </g>
+
+          <!-- assets bar (tallest — full depth) -->
+          <g>
+            <rect id="assetsBar" x="270" y="60" width="50" height="0" fill="#9CC0D8" rx="2" opacity="0.9"/>
+            <text x="295" y="54" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" letter-spacing="1.5" fill="#E8EEF3">ASSETS</text>
+            <text id="assetsVal" x="295" y="270" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="20" fill="#F4F8FB">$6.9B</text>
+          </g>
+
+          <!-- depth ticks -->
+          <g font-family="'Geist Mono', monospace" font-size="8" letter-spacing="1" fill="rgba(232,238,243,0.4)">
+            <text x="350" y="100" text-anchor="end">— 25%</text>
+            <text x="350" y="160" text-anchor="end">— 50%</text>
+            <text x="350" y="220" text-anchor="end">— 75%</text>
+          </g>
+        </svg>
+      </div>
+
+      <p class="lede" style="margin-top:18px;">Half the asset base — roughly <em>$3.5B</em> — is goodwill. A balance sheet built by acquisition holds its weight below the line.</p>
+    </section>
+
+    <!-- ============== 8. COMPETITORS — RIPPLES ============== -->
+    <section class="competitors" data-screen-label="11 Competitors">
+      <div class="eyebrow"><span class="bar"></span>The competition · three rivals</div>
+      <h2 class="display reveal">Pentair is the <em>stone.</em><br>The ripples have names.</h2>
+
+      <div class="ripples reveal delay-1">
+        <svg viewBox="0 0 360 320" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <!-- center: PNR -->
+          <g id="ripples">
+            <!-- ripple rings -->
+            <circle cx="180" cy="160" r="50"  fill="none" stroke="#9CC0D8" stroke-width="1" opacity="0.5"/>
+            <circle cx="180" cy="160" r="90"  fill="none" stroke="#9CC0D8" stroke-width="1" opacity="0.4"/>
+            <circle cx="180" cy="160" r="130" fill="none" stroke="#9CC0D8" stroke-width="1" opacity="0.3"/>
+
+            <!-- PNR center disc, sized to market cap -->
+            <g transform="translate(180 160)">
+              <circle r="44" fill="#2E6E94"/>
+              <circle r="44" fill="none" stroke="#0E1B26" stroke-width="1"/>
+              <text y="-6" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="11" letter-spacing="1.5" font-weight="500" fill="#F4F8FB">PNR</text>
+              <text y="10" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#F4F8FB">$14.7B</text>
+            </g>
+
+            <!-- IDEX (largest competitor, $15.28B) — top -->
+            <g transform="translate(180 50)">
+              <circle r="36" fill="none" stroke="#2E6E94" stroke-width="1.5"/>
+              <circle r="36" fill="#FBFAF7" opacity="0.7"/>
+              <text y="-2" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" letter-spacing="1.5" fill="#0E1B26">IEX</text>
+              <text y="14" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#1B4F70">$15.3B</text>
+            </g>
+            <!-- GGG ($14.47B) — bottom-right -->
+            <g transform="translate(282 240)">
+              <circle r="34" fill="none" stroke="#2E6E94" stroke-width="1.5"/>
+              <circle r="34" fill="#FBFAF7" opacity="0.7"/>
+              <text y="-2" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" letter-spacing="1.5" fill="#0E1B26">GGG</text>
+              <text y="14" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#1B4F70">$14.5B</text>
+            </g>
+            <!-- HAYW ($3.32B) — bottom-left, smaller -->
+            <g transform="translate(80 240)">
+              <circle r="22" fill="none" stroke="#2E6E94" stroke-width="1.5"/>
+              <circle r="22" fill="#FBFAF7" opacity="0.7"/>
+              <text y="-1" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="8" letter-spacing="1.5" fill="#0E1B26">HAYW</text>
+              <text y="11" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="10" fill="#1B4F70">$3.3B</text>
+            </g>
+
+            <!-- thin connectors -->
+            <g stroke="#9CC0D8" stroke-width="0.75" stroke-dasharray="2 3" fill="none">
+              <line x1="180" y1="116" x2="180" y2="86"/>
+              <line x1="216" y1="194" x2="252" y2="218"/>
+              <line x1="144" y1="194" x2="100" y2="222"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <div class="comp-rows">
+        <div class="comp-row reveal delay-1">
+          <div class="comp-tick">IEX<small>NYSE</small></div>
+          <div class="comp-body">
+            <div class="name">IDEX <em>Corp.</em></div>
+            <div class="stats">
+              <div class="stat-pair"><b>$15.3B</b>Mkt cap</div>
+              <div class="stat-pair"><b>$3.46B</b>Revenue</div>
+              <div class="stat-pair"><b>+5.8%</b>YoY</div>
+              <div class="stat-pair"><b>31.6×</b>P/E TTM</div>
+            </div>
+            <div class="desc">Competes with Pentair's Flow segment in precision fluid handling — overlapping food, beverage, and industrial channels.</div>
+          </div>
+        </div>
+
+        <div class="comp-row reveal delay-2">
+          <div class="comp-tick">GGG<small>NYSE</small></div>
+          <div class="comp-body">
+            <div class="name">Graco <em>Inc.</em></div>
+            <div class="stats">
+              <div class="stat-pair"><b>$14.5B</b>Mkt cap</div>
+              <div class="stat-pair"><b>$2.24B</b>Revenue</div>
+              <div class="stat-pair"><b>+5.8%</b>YoY</div>
+              <div class="stat-pair"><b>27.7×</b>P/E TTM</div>
+            </div>
+            <div class="desc">Pumps and fluid transfer for industrial and commercial work — same contractor and distribution channels Pentair Flow sells through.</div>
+          </div>
+        </div>
+
+        <div class="comp-row reveal delay-3">
+          <div class="comp-tick">HAYW<small>NYSE</small></div>
+          <div class="comp-body">
+            <div class="name">Hayward <em>Holdings.</em></div>
+            <div class="stats">
+              <div class="stat-pair"><b>$3.32B</b>Mkt cap</div>
+              <div class="stat-pair"><b>$1.12B</b>Revenue</div>
+              <div class="stat-pair"><b>+6.7%</b>YoY</div>
+              <div class="stat-pair"><b>21.9×</b>P/E TTM</div>
+            </div>
+            <div class="desc">The most direct rival — head-to-head in residential and commercial pool pumps, filters, heaters, and automation.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== RESET BEAT ============== -->
+    <section class="reset" data-screen-label="12 Reset">
+      <span class="mark">~</span>
+      <p class="quote">Some streams run dry. <em>This one</em> has been rising for half a century.</p>
+    </section>
+
+    <!-- ============== 9. TAKEAWAY — THE LADDER ============== -->
+    <section class="takeaway" data-screen-label="13 Takeaway">
+      <div class="eyebrow"><span class="bar"></span>The takeaway · 50 years rising</div>
+      <h2 class="display reveal">One drop. <em>Fifty years.</em></h2>
+      <p class="lede reveal delay-1">If the page opened on one company doing one thing, it closes on the only number that proves it: <em>fifty consecutive years</em> of dividend increases — and the next basin is already authorized.</p>
+
+      <div class="ladder-wrap reveal delay-2">
+        <svg class="ladder" viewBox="0 0 360 200" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="ladderFill" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#9CC0D8" stop-opacity="0.2"/>
+              <stop offset="100%" stop-color="#2E6E94" stop-opacity="0.6"/>
+            </linearGradient>
+          </defs>
+          <!-- baseline -->
+          <line x1="0" y1="180" x2="360" y2="180" stroke="#1B4F70" stroke-width="1"/>
+          <!-- 50 ascending bars + filled area -->
+          <path id="ladderArea" d="" fill="url(#ladderFill)"/>
+          <g id="ladderBars"></g>
+
+          <!-- annotations -->
+          <g font-family="'Geist Mono', monospace" font-size="8" letter-spacing="1.2" fill="#1B4F70">
+            <text x="2" y="194">YR 1</text>
+            <text x="332" y="194">YR 50</text>
+          </g>
+          <!-- final marker -->
+          <g id="ladderEnd">
+            <circle cx="350" cy="32" r="4" fill="#1B4F70"/>
+            <text x="346" y="22" text-anchor="end" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#1B4F70">$0.27</text>
+          </g>
+        </svg>
+      </div>
+
+      <p class="ladder-caption reveal delay-3">Fifty step-ups. Not one step <em>down.</em></p>
+
+      <div class="closing-stats reveal delay-4">
+        <div>
+          <div class="num">50<span style="font-size:24px;">yrs</span></div>
+          <div class="lbl">Consecutive<br>div increases</div>
+        </div>
+        <div>
+          <div class="num"><em>$0.27</em></div>
+          <div class="lbl">New quarterly<br>dividend / share</div>
+        </div>
+        <div>
+          <div class="num"><em>$1.0</em>B</div>
+          <div class="lbl">Buyback<br>authorized · '28</div>
+        </div>
+        <div>
+          <div class="num">9,750</div>
+          <div class="lbl">People moving<br>the water</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== COLOPHON ============== -->
+    <footer class="colophon">
+      <div class="mark">PNR · NYSE · S&amp;P 500</div>
+      <div class="line">Pentair PLC — designed, manufactured, and pumped from <i>Twickenham, London</i>; rooted in <i>Minneapolis</i>.</div>
+      <div class="meta-row">
+        <span>Recap · FY 2025</span>
+        <span>Mkt cap $14.72B</span>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // ---------- SCROLL: chrome progress + reveal observer ----------
+  const page = document.getElementById('page');
+  const progressFill = document.getElementById('progressFill');
+
+  function onScroll(){
+    const max = page.scrollHeight - window.innerHeight;
+    const y = Math.max(0, window.scrollY);
+    const pct = Math.min(100, (y / max) * 100);
+    progressFill.style.width = pct + '%';
+
+    // hero droplet — falls and impacts as user scrolls past hero
+    const dropletG = document.getElementById('dropletG');
+    const ripple = document.getElementById('impactRipple');
+    if (dropletG){
+      const heroEl = document.querySelector('.hero');
+      const rect = heroEl.getBoundingClientRect();
+      // 0 -> just entered; 1 -> exited
+      const heroProg = Math.max(0, Math.min(1, -rect.top / rect.height));
+      const ty = 60 + heroProg * 420; // travel
+      dropletG.setAttribute('transform', `translate(206 ${ty}) scale(${1 - heroProg*0.1})`);
+      if (heroProg > 0.85){
+        const rprog = (heroProg - 0.85) / 0.15;
+        ripple.setAttribute('opacity', rprog);
+        ripple.setAttribute('transform', `translate(206 480) scale(${1 + rprog*0.6})`);
+      } else {
+        ripple.setAttribute('opacity', 0);
+      }
+    }
+  }
+  window.addEventListener('scroll', onScroll, {passive: true});
+  onScroll();
+
+  // ---------- REVEAL OBSERVER ----------
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){
+        e.target.classList.add('in');
+        // counters
+        if (e.target.hasAttribute('data-counter')){
+          startCounter(e.target);
+        }
+        // geo bars
+        if (e.target.classList.contains('geo-row')){
+          const fill = e.target.querySelector('.geo-bar-fill');
+          if (fill){ fill.style.width = fill.dataset.w + '%'; }
+        }
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ---------- COUNT-UP ----------
+  function startCounter(el){
+    if (el.dataset.counted) return;
+    el.dataset.counted = '1';
+    const target = parseFloat(el.dataset.target);
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    const prefix = el.dataset.prefix || '';
+    const span = el.querySelector('.counter');
+    if (!span) return;
+    const start = performance.now();
+    const dur = 1400;
+    function frame(t){
+      const k = Math.min(1, (t - start) / dur);
+      const eased = 1 - Math.pow(1 - k, 3);
+      const val = target * eased;
+      span.textContent = prefix + val.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      if (k < 1) requestAnimationFrame(frame);
+      else span.textContent = prefix + target.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ---------- COST COLUMN: stack layers from bottom up after reveal ----------
+  const costGlass = document.getElementById('costGlass');
+  const costIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){
+        const layers = costGlass.querySelectorAll('.layer');
+        layers.forEach((layer, i) => {
+          const bot = parseFloat(layer.dataset.bottom);
+          const h = parseFloat(layer.dataset.h);
+          // stagger
+          setTimeout(() => {
+            layer.style.bottom = bot + '%';
+            layer.style.height = h + '%';
+            layer.style.opacity = 1;
+          }, 180 + i * 220);
+        });
+        costIO.disconnect();
+      }
+    });
+  }, { threshold: 0.4 });
+  if (costGlass){
+    // initial state: at bottom, height 0
+    costGlass.querySelectorAll('.layer').forEach(l => {
+      l.style.position = 'absolute';
+      l.style.left = '0'; l.style.right = '0';
+      l.style.bottom = '0%';
+      l.style.height = '0%';
+      l.style.opacity = '0';
+    });
+    costIO.observe(costGlass);
+  }
+
+  // ---------- PRESSURE BARS (debt section) ----------
+  const equityBar = document.getElementById('equityBar');
+  const debtBar = document.getElementById('debtBar');
+  const assetsBar = document.getElementById('assetsBar');
+  const equityVal = document.getElementById('equityVal');
+  const debtVal = document.getElementById('debtVal');
+  const assetsVal = document.getElementById('assetsVal');
+
+  // log scale of sorts: equity 3.87 -> ~110, debt 1.64 -> ~75, assets 6.9 -> ~190
+  // y starts at 60, max 250
+  const targets = [
+    { bar: equityBar, val: equityVal, h: 110 },
+    { bar: debtBar,   val: debtVal,   h: 145 },
+    { bar: assetsBar, val: assetsVal, h: 200 }
+  ];
+  const pressureSection = document.querySelector('.weight');
+  const pIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){
+        targets.forEach((t, i) => {
+          setTimeout(() => {
+            t.bar.style.transition = 'height 1.2s cubic-bezier(0.22, 1, 0.36, 1), y 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+            // SVG attribute animation via attribute set
+            animateAttr(t.bar, 'height', 0, t.h, 1200);
+            animateAttr(t.val, 'y', 60, 60 + t.h + 18, 1200);
+          }, i * 200);
+        });
+        pIO.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  if (pressureSection) pIO.observe(pressureSection);
+
+  function animateAttr(el, attr, from, to, dur){
+    const start = performance.now();
+    function frame(t){
+      const k = Math.min(1, (t - start) / dur);
+      const eased = 1 - Math.pow(1 - k, 3);
+      const val = from + (to - from) * eased;
+      el.setAttribute(attr, val);
+      if (k < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ---------- LADDER: 50 ascending bars, draw on reveal ----------
+  function buildLadder(){
+    const bars = document.getElementById('ladderBars');
+    const area = document.getElementById('ladderArea');
+    if (!bars) return;
+    const W = 360, H = 200, BASE = 180, TOP = 30;
+    const N = 50;
+    const w = (W - 20) / N;
+    let pathPts = `M 0 ${BASE} `;
+    for (let i = 0; i < N; i++){
+      const x = 10 + i * w;
+      // gentle compounding curve
+      const t = i / (N - 1);
+      const y = BASE - (BASE - TOP) * (Math.pow(t, 0.85)); // mostly steady, slight curve
+      pathPts += `L ${x.toFixed(1)} ${y.toFixed(1)} `;
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', x.toFixed(1));
+      rect.setAttribute('y', BASE);
+      rect.setAttribute('width', (w - 1.5).toFixed(1));
+      rect.setAttribute('height', 0);
+      rect.setAttribute('fill', '#1B4F70');
+      rect.setAttribute('opacity', 0.85);
+      rect.dataset.targetY = y.toFixed(1);
+      rect.dataset.targetH = (BASE - y).toFixed(1);
+      bars.appendChild(rect);
+    }
+    pathPts += `L ${W - 10} ${BASE} Z`;
+    area.setAttribute('d', pathPts);
+    area.style.opacity = 0;
+
+    const ladderSection = document.querySelector('.ladder-wrap');
+    const lIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting){
+          // animate bars
+          const rects = bars.querySelectorAll('rect');
+          rects.forEach((r, i) => {
+            setTimeout(() => {
+              const y = parseFloat(r.dataset.targetY);
+              const h = parseFloat(r.dataset.targetH);
+              animateAttr(r, 'y', BASE, y, 600);
+              animateAttr(r, 'height', 0, h, 600);
+            }, i * 26);
+          });
+          // fade in area near end
+          setTimeout(() => {
+            area.style.transition = 'opacity 800ms ease';
+            area.style.opacity = 1;
+          }, N * 26);
+          lIO.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    lIO.observe(ladderSection);
+  }
+  buildLadder();
+</script>
+</body>
+</html>

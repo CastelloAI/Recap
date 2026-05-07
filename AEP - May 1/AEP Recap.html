@@ -1,0 +1,1489 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AEP — FY '25 Recap</title>
+<link rel="stylesheet" href="ds.css">
+<style>
+/* =========================================================
+   AEP Recap — utility dusk palette
+   Borrows DS typography & spacing; reskins color for AEP.
+   ========================================================= */
+:root {
+  /* Page tones — paper warmed toward dusk */
+  --bg:        #F4F1EA;   /* warm cream */
+  --bg-2:      #EAE5D9;   /* raised cream */
+  --bg-3:      #DED8C7;   /* deeper paper / interludes */
+  --ink:       #1B1F26;   /* deep slate ink */
+  --ink-2:     #3A4150;
+  --ink-3:     #6F7585;
+  --ink-4:     #A6AAB5;
+  --line:      #D8D2C2;
+  --line-2:    #C0B9A5;
+
+  /* Signal: amber — live current, hot copper */
+  --signal:    #E89B2F;
+  --signal-2:  #C97A14;
+  --signal-soft:#FCE7B8;
+
+  /* Wire / dusk blue */
+  --wire:      #2E5C8A;
+  --wire-2:    #1A3A5C;
+
+  /* Night beats */
+  --night:     #0E141C;
+  --night-2:   #161E2A;
+  --night-ink: #E7E2D4;
+  --night-mute:#8A8F9C;
+
+  /* Cost palette honors the JSON */
+  --c-fuel:    #E8534A;
+  --c-maint:   #4A90D9;
+  --c-dep:     #F5A623;
+  --c-tax:     #7ED321;
+  --c-int:     #9B59B6;
+
+  --maxw: 440px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
+}
+body {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ===================== STICKY CHROME ===================== */
+.chrome {
+  position: sticky;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(244, 241, 234, 0.78);
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  border-bottom: 1px solid rgba(216,210,194,0.6);
+}
+.chrome-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 20px 12px;
+}
+.chrome-tick {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
+.chrome-name {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--ink-2);
+  flex: 1;
+  letter-spacing: -0.005em;
+}
+.chrome-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.chrome-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--signal);
+  margin-right: 6px;
+  box-shadow: 0 0 8px rgba(232,155,47,0.6);
+  animation: pulse 2.4s ease-in-out infinite;
+  vertical-align: middle;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.25); }
+}
+.progress {
+  position: relative;
+  height: 1.5px;
+  background: rgba(216,210,194,0.7);
+}
+.progress-fill {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 0%;
+  background: linear-gradient(90deg, var(--signal-2), var(--signal));
+  transition: width 80ms linear;
+}
+
+/* ===================== EYEBROW ===================== */
+.eyebrow {
+  display: flex; align-items: baseline; gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 18px 0;
+  font-weight: 500;
+}
+.eyebrow .num {
+  color: var(--signal-2);
+}
+.eyebrow .bar {
+  flex: 0 0 18px; height: 1px; background: var(--line-2);
+  align-self: center;
+}
+
+/* ===================== TYPOGRAPHIC HELPERS ===================== */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+.italic { font-style: italic; }
+.signal { color: var(--signal-2); }
+.wire   { color: var(--wire); }
+.ink-2  { color: var(--ink-2); }
+.ink-3  { color: var(--ink-3); }
+.mono   { font-family: var(--font-mono); }
+
+p { color: var(--ink-2); font-size: 16px; line-height: 1.55; margin: 0; text-wrap: pretty; }
+
+/* ===================== SECTION FRAME ===================== */
+section {
+  padding: 80px 24px;
+  position: relative;
+}
+section.tight { padding: 56px 24px; }
+
+/* ===================== HERO ===================== */
+.hero {
+  padding: 36px 24px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  margin: 16px 0 0;
+  font-weight: 400;
+}
+.hero h1 .small-cap {
+  font-size: 0.78em;
+  display: block;
+}
+.hero-meta {
+  margin-top: 36px;
+  display: flex; gap: 24px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.hero-meta .v { color: var(--ink); font-size: 14px; letter-spacing: 0; text-transform: none; font-family: var(--font-sans); display: block; margin-top: 4px; }
+
+.tower-stage {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  margin: 28px 0 8px;
+}
+.tower-stage svg {
+  width: 100%; height: 100%;
+  display: block;
+}
+/* current trace dash animation */
+.wire-path {
+  stroke-dasharray: 6 8;
+  animation: flow 2.4s linear infinite;
+}
+@keyframes flow {
+  to { stroke-dashoffset: -56; }
+}
+
+/* ===================== INTERLUDE / RESET BEAT ===================== */
+.interlude {
+  background: var(--bg-3);
+  padding: 56px 28px;
+  position: relative;
+}
+.interlude::before, .interlude::after {
+  content: "";
+  position: absolute; left: 0; right: 0;
+  height: 1px; background: var(--line-2);
+  opacity: 0.7;
+}
+.interlude::before { top: 0; }
+.interlude::after  { bottom: 0; }
+.interlude p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.interlude .em { color: var(--signal-2); font-style: italic; }
+
+/* Night interlude variant */
+.night {
+  background: var(--night);
+  color: var(--night-ink);
+}
+.night p { color: var(--night-ink); }
+.night .ink-2 { color: var(--night-mute); }
+.night .signal { color: var(--signal); }
+
+/* ===================== BUSINESS — current paths ===================== */
+.segments {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin-top: 32px;
+}
+.seg-row {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.seg-row:last-child { border-bottom: none; }
+.seg-icon {
+  width: 64px; height: 44px;
+}
+.seg-icon svg { width: 100%; height: 100%; display: block; }
+.seg-name {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+.seg-name .desc {
+  display: block;
+  color: var(--ink-3);
+  font-size: 12px;
+  margin-top: 3px;
+  letter-spacing: 0;
+}
+.seg-share {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+
+/* ===================== SCALE — big numbers ===================== */
+.scale-stack { margin-top: 32px; }
+.bignum {
+  margin: 0 0 36px;
+}
+.bignum .label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 8px;
+}
+.bignum .num {
+  font-family: var(--font-display);
+  font-size: 76px;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.bignum .num .unit {
+  font-size: 0.46em;
+  color: var(--ink-2);
+  font-style: italic;
+  margin-left: 4px;
+}
+.bignum .sub {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--ink-3);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+.bignum .sub .grow { color: var(--signal-2); font-family: var(--font-mono); font-size: 12px; }
+
+/* Load-growth bar visualization */
+.loadbar {
+  margin: 8px 0 0;
+  height: 32px;
+  position: relative;
+  background: var(--bg-2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.loadbar-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: linear-gradient(90deg, var(--signal-2), var(--signal));
+  width: 0%;
+  transition: width 1.2s var(--ease-out);
+}
+.loadbar-tick {
+  position: absolute; top: 0; bottom: 0;
+  width: 1px; background: var(--line-2);
+}
+.loadbar-label {
+  position: absolute; top: -16px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+
+/* ===================== COSTS — fuel-stack metaphor ===================== */
+.costs-stage {
+  margin: 28px 0 0;
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 22px;
+  align-items: stretch;
+}
+.stack-col {
+  position: relative;
+  height: 360px;
+  display: flex;
+  flex-direction: column-reverse;
+  border-bottom: 2px solid var(--ink);
+}
+.stack-seg {
+  width: 100%;
+  position: relative;
+  transform-origin: bottom;
+  transform: scaleY(0);
+  transition: transform 900ms var(--ease-out);
+}
+.stack-seg::after {
+  /* thin paper line between segments */
+  content: "";
+  position: absolute; left: 0; right: 0; top: 0;
+  height: 1px;
+  background: rgba(244,241,234,0.6);
+}
+.cost-legend {
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 0;
+}
+.cost-row {
+  display: grid;
+  grid-template-columns: 12px 1fr auto;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+.cost-row:first-child { border-top: none; padding-top: 0; }
+.cost-swatch {
+  width: 12px; height: 12px;
+  border-radius: 2px;
+  margin-top: 4px;
+}
+.cost-name {
+  color: var(--ink);
+  line-height: 1.3;
+  font-size: 13px;
+  letter-spacing: -0.005em;
+}
+.cost-pct {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.cost-other {
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+}
+
+/* ===================== FOOTPRINT — node map ===================== */
+.map-stage {
+  margin-top: 28px;
+  width: 100%;
+  position: relative;
+}
+.map-stage svg { width: 100%; height: auto; display: block; }
+.map-node circle.outer {
+  opacity: 0.18;
+}
+.map-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  fill: var(--ink-2);
+}
+.map-pct {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 14px;
+  fill: var(--ink);
+}
+.map-list {
+  margin-top: 24px;
+  display: grid;
+  gap: 0;
+}
+.map-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.map-row:first-child { border-top: none; }
+.map-row .idx {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+}
+.map-row .reg {
+  font-size: 14px;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+.map-row .pct {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink);
+}
+.map-row .pctbar {
+  grid-column: 2 / 4;
+  height: 2px;
+  background: var(--bg-2);
+  margin-top: 6px;
+  position: relative;
+}
+.map-row .pctbar > i {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0%;
+  background: var(--wire);
+  transition: width 1100ms var(--ease-out);
+}
+
+/* ===================== THE BET — capex ===================== */
+.bet-stage {
+  margin-top: 32px;
+  position: relative;
+}
+.bet-headline {
+  font-family: var(--font-display);
+  font-size: 88px;
+  line-height: 0.88;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.bet-headline .unit {
+  font-size: 0.42em; font-style: italic; color: var(--ink-2); margin-left: 4px;
+}
+.bet-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.years {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 24px;
+}
+.year-cell {
+  display: flex; flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.year-bar {
+  width: 100%;
+  height: 120px;
+  position: relative;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--line-2);
+  overflow: hidden;
+}
+.year-bar > .core {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: var(--ink);
+  height: 0%;
+  transition: height 900ms var(--ease-out);
+}
+.year-bar > .core > .td {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: var(--signal);
+  height: 66%;
+}
+.year-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+.bet-key {
+  margin-top: 24px;
+  display: flex; gap: 18px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.bet-key .sw {
+  display: inline-block; width: 10px; height: 10px;
+  margin-right: 6px; vertical-align: -1px;
+}
+
+/* ===================== DEBT — night beat ===================== */
+.debt {
+  background: var(--night);
+  color: var(--night-ink);
+  padding: 96px 24px 88px;
+  position: relative;
+  overflow: hidden;
+}
+.debt .eyebrow { color: var(--night-mute); }
+.debt .eyebrow .num { color: var(--signal); }
+.debt h2 {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  font-weight: 400;
+  color: var(--night-ink);
+  margin: 0;
+  text-wrap: balance;
+}
+.debt h2 .em { font-style: italic; color: var(--signal); }
+.debt p { color: var(--night-mute); margin-top: 20px; font-size: 15px; }
+.debt p .em { color: var(--night-ink); font-style: italic; font-family: var(--font-display); font-size: 18px; }
+
+.debt-meter {
+  margin-top: 40px;
+  position: relative;
+}
+.debt-meter .scale {
+  height: 1px;
+  background: rgba(231,226,212,0.18);
+  position: relative;
+  margin-bottom: 36px;
+}
+.debt-meter .needle {
+  position: absolute;
+  bottom: 0;
+  width: 1px;
+  background: var(--signal);
+  height: 28px;
+  box-shadow: 0 0 12px rgba(232,155,47,0.55);
+}
+.debt-meter .stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 8px;
+}
+.debt-meter .stat .k {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--night-mute);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.debt-meter .stat .v {
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 1;
+  color: var(--night-ink);
+  letter-spacing: -0.02em;
+}
+.debt-grid {
+  margin-top: 44px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid rgba(231,226,212,0.14);
+}
+.debt-cell {
+  padding: 22px 4px 0;
+  border-right: 1px solid rgba(231,226,212,0.14);
+}
+.debt-cell:nth-child(2n) { border-right: none; padding-left: 18px; }
+.debt-cell .k {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--night-mute);
+  text-transform: uppercase;
+}
+.debt-cell .v {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 36px;
+  line-height: 1;
+  color: var(--night-ink);
+  margin-top: 8px;
+  letter-spacing: -0.02em;
+}
+.debt-cell .v .neg { color: var(--c-fuel); font-style: normal; }
+.debt-cell .sub {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--night-mute);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* ===================== COMPETITORS ===================== */
+.comp-stage {
+  margin-top: 28px;
+  display: grid; gap: 22px;
+}
+.comp-row {
+  position: relative;
+}
+.comp-bars {
+  position: relative;
+  height: 140px;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 6px;
+}
+.comp-bar {
+  flex: 1;
+  position: relative;
+  display: flex; flex-direction: column-reverse;
+}
+.comp-bar .fill {
+  width: 100%;
+  background: var(--ink-3);
+  height: 0%;
+  transition: height 1100ms var(--ease-out);
+  position: relative;
+}
+.comp-bar.aep .fill { background: var(--ink); }
+.comp-bar .fill::after {
+  content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 1px;
+  background: var(--bg);
+}
+.comp-bar .ticker {
+  position: absolute; bottom: -22px; left: 0; right: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+.comp-bar.aep .ticker { color: var(--signal-2); }
+.comp-bar .cap {
+  position: absolute; top: -18px; left: 0; right: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-2);
+  letter-spacing: -0.005em;
+}
+.comp-meta {
+  margin-top: 38px;
+  display: grid; gap: 0;
+}
+.comp-card {
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+.comp-card:first-child { border-top: none; padding-top: 8px; }
+.comp-card .title {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 6px;
+}
+.comp-card .name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.comp-card .tk {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+}
+.comp-card p {
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.5;
+  margin-top: 4px;
+}
+.comp-card .stats {
+  margin-top: 10px;
+  display: flex; gap: 14px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+.comp-card .stats b { color: var(--ink); font-weight: 500; }
+
+/* ===================== TAKEAWAY ===================== */
+.takeaway {
+  background: var(--bg);
+  padding: 96px 24px 120px;
+  position: relative;
+  text-align: left;
+  overflow: hidden;
+}
+.takeaway h2 {
+  font-family: var(--font-display);
+  font-size: 60px;
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+  font-weight: 400;
+  text-wrap: balance;
+}
+.takeaway h2 .em { font-style: italic; color: var(--signal-2); }
+.takeaway .kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 28px;
+}
+.takeaway p.lead {
+  margin-top: 28px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.takeaway .sig {
+  margin-top: 56px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+
+/* small reveal */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal-stagger > * { opacity: 0; transform: translateY(10px); transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out); }
+.reveal-stagger.in > * { opacity: 1; transform: translateY(0); }
+.reveal-stagger.in > *:nth-child(2) { transition-delay: 80ms; }
+.reveal-stagger.in > *:nth-child(3) { transition-delay: 160ms; }
+.reveal-stagger.in > *:nth-child(4) { transition-delay: 240ms; }
+.reveal-stagger.in > *:nth-child(5) { transition-delay: 320ms; }
+.reveal-stagger.in > *:nth-child(6) { transition-delay: 400ms; }
+
+</style>
+</head>
+<body>
+
+<!-- ============ STICKY CHROME ============ -->
+<header class="chrome">
+  <div class="chrome-row">
+    <span class="chrome-tick">AEP</span>
+    <span class="chrome-name">American Electric Power</span>
+    <span class="chrome-label"><span class="chrome-dot"></span>Recap · FY '25</span>
+  </div>
+  <div class="progress"><div class="progress-fill" id="progress"></div></div>
+</header>
+
+<!-- ============ HERO / THESIS ============ -->
+<section class="hero">
+  <div class="eyebrow"><span class="num">01</span> The thesis <span class="bar"></span></div>
+
+  <h1 class="display">
+    The country runs<br>
+    on what they<br>
+    <span class="italic signal">move.</span>
+  </h1>
+
+  <div class="tower-stage" aria-hidden="true">
+    <svg viewBox="0 0 380 280" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="duskSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#F4F1EA" stop-opacity="0"/>
+          <stop offset="1" stop-color="#DED8C7" stop-opacity="0.5"/>
+        </linearGradient>
+        <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#E89B2F" stop-opacity="0.55"/>
+          <stop offset="1" stop-color="#E89B2F" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <rect x="0" y="180" width="380" height="100" fill="url(#duskSky)"/>
+
+      <!-- horizon -->
+      <line x1="0" y1="230" x2="380" y2="230" stroke="#C0B9A5" stroke-width="0.5"/>
+
+      <!-- distant towers -->
+      <g stroke="#6F7585" stroke-width="0.8" fill="none" opacity="0.6">
+        <g transform="translate(40,150)">
+          <line x1="0" y1="0" x2="0" y2="80"/>
+          <line x1="-12" y1="20" x2="12" y2="20"/>
+          <line x1="-9" y1="35" x2="9" y2="35"/>
+          <path d="M-7 75 L0 0 L7 75 M-3 35 L0 75 M3 35 L0 75" stroke-width="0.5"/>
+        </g>
+        <g transform="translate(140,140)">
+          <line x1="0" y1="0" x2="0" y2="90"/>
+          <line x1="-14" y1="18" x2="14" y2="18"/>
+          <line x1="-11" y1="34" x2="11" y2="34"/>
+          <path d="M-8 85 L0 0 L8 85 M-4 34 L0 85 M4 34 L0 85" stroke-width="0.5"/>
+        </g>
+      </g>
+
+      <!-- foreground tower (big) -->
+      <g transform="translate(260,80)" stroke="#1B1F26" stroke-width="1.1" fill="none">
+        <line x1="0" y1="0" x2="0" y2="170"/>
+        <line x1="-26" y1="40" x2="26" y2="40"/>
+        <line x1="-22" y1="60" x2="22" y2="60"/>
+        <line x1="-18" y1="80" x2="18" y2="80"/>
+        <!-- truss -->
+        <path d="M-13 165 L0 0 L13 165 M-8 60 L0 165 M8 60 L0 165 M-6 80 L0 165 M6 80 L0 165 M-15 165 L15 165"/>
+        <!-- insulators -->
+        <circle cx="-26" cy="44" r="1.4" fill="#1B1F26"/>
+        <circle cx="0"   cy="44" r="1.4" fill="#1B1F26"/>
+        <circle cx="26"  cy="44" r="1.4" fill="#1B1F26"/>
+        <circle cx="-22" cy="64" r="1.4" fill="#1B1F26"/>
+        <circle cx="22"  cy="64" r="1.4" fill="#1B1F26"/>
+      </g>
+
+      <!-- transmission lines flowing across (sag curves) -->
+      <g fill="none" stroke="#3A4150" stroke-width="0.9" opacity="0.7">
+        <path d="M0 130 Q140 165 286 124" />
+        <path d="M0 150 Q140 185 286 144" />
+        <path d="M0 170 Q140 205 286 164" />
+      </g>
+
+      <!-- live current overlay (the signal color) -->
+      <g fill="none" stroke="#E89B2F" stroke-width="1.4" opacity="0.95">
+        <path class="wire-path" d="M0 130 Q140 165 286 124" />
+        <path class="wire-path" d="M0 150 Q140 185 286 144" style="animation-delay:-0.6s"/>
+        <path class="wire-path" d="M0 170 Q140 205 286 164" style="animation-delay:-1.2s"/>
+      </g>
+
+      <!-- glow on tower top -->
+      <circle cx="260" cy="86" r="22" fill="url(#glow)"/>
+      <circle cx="260" cy="86" r="2.4" fill="#E89B2F"/>
+
+      <!-- ground -->
+      <line x1="0" y1="252" x2="380" y2="252" stroke="#1B1F26" stroke-width="0.6"/>
+    </svg>
+  </div>
+
+  <div class="hero-meta reveal-stagger">
+    <div>
+      <div>Customers</div>
+      <div class="v">5.6 million</div>
+    </div>
+    <div>
+      <div>Trans. lines</div>
+      <div class="v">40,000 mi</div>
+    </div>
+    <div>
+      <div>States</div>
+      <div class="v">11</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INTERLUDE 1 ============ -->
+<aside class="interlude">
+  <p>
+    Founded <span class="em">1906</span>. One hundred and twenty years later, the grid still hums on the same idea —
+    <span class="em">poles, wires, and the patience to run them everywhere.</span>
+  </p>
+</aside>
+
+<!-- ============ THE BUSINESS ============ -->
+<section>
+  <div class="eyebrow"><span class="num">02</span> The business <span class="bar"></span></div>
+  <h2 class="display" style="font-size:38px;">
+    Four meters,<br>one current.
+  </h2>
+  <p style="margin-top:18px; max-width:38ch;">
+    AEP earns through state-approved <span class="italic">electric rates</span> — fuel costs pass through
+    to ratepayers; the company keeps the wires.
+  </p>
+
+  <!-- Bus diagram: source feeds four loads -->
+  <div style="margin-top:32px;" aria-hidden="true">
+    <svg viewBox="0 0 380 220" style="width:100%;height:auto;display:block;">
+      <defs>
+        <linearGradient id="busGlow" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#E89B2F" stop-opacity="0"/>
+          <stop offset="0.5" stop-color="#E89B2F" stop-opacity="1"/>
+          <stop offset="1" stop-color="#E89B2F" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+
+      <!-- substation source on left -->
+      <g transform="translate(20,80)">
+        <rect x="0" y="0" width="42" height="50" fill="none" stroke="#1B1F26" stroke-width="1"/>
+        <line x1="6" y1="10" x2="36" y2="10" stroke="#1B1F26"/>
+        <line x1="6" y1="20" x2="36" y2="20" stroke="#1B1F26"/>
+        <line x1="6" y1="30" x2="36" y2="30" stroke="#1B1F26"/>
+        <line x1="6" y1="40" x2="36" y2="40" stroke="#1B1F26"/>
+        <text x="21" y="65" text-anchor="middle" font-family="Geist Mono" font-size="8" letter-spacing="0.1em" fill="#6F7585">SOURCE</text>
+      </g>
+
+      <!-- vertical bus line -->
+      <line x1="120" y1="20" x2="120" y2="200" stroke="#1B1F26" stroke-width="1.2"/>
+      <!-- glow on bus -->
+      <line x1="120" y1="20" x2="120" y2="200" stroke="url(#busGlow)" stroke-width="2" opacity="0.6">
+        <animate attributeName="y1" values="20;200;20" dur="3.6s" repeatCount="indefinite"/>
+        <animate attributeName="y2" values="60;240;60" dur="3.6s" repeatCount="indefinite"/>
+      </line>
+
+      <!-- feed from source -->
+      <line x1="62" y1="105" x2="120" y2="105" stroke="#1B1F26" stroke-width="1.2"/>
+
+      <!-- four branches to right -->
+      <g stroke="#1B1F26" stroke-width="0.9" fill="none">
+        <line x1="120" y1="35" x2="240" y2="35"/>
+        <line x1="120" y1="85" x2="240" y2="85"/>
+        <line x1="120" y1="135" x2="240" y2="135"/>
+        <line x1="120" y1="185" x2="240" y2="185"/>
+        <!-- breakers -->
+        <circle cx="160" cy="35" r="3" fill="#F4F1EA"/>
+        <circle cx="160" cy="85" r="3" fill="#F4F1EA"/>
+        <circle cx="160" cy="135" r="3" fill="#F4F1EA"/>
+        <circle cx="160" cy="185" r="3" fill="#F4F1EA"/>
+      </g>
+
+      <!-- segment chips on right -->
+      <g font-family="Geist" font-size="11" fill="#1B1F26">
+        <g transform="translate(248,30)">
+          <rect x="0" y="0" width="120" height="14" fill="none" stroke="#D8D2C2"/>
+          <text x="6" y="10">Vertically Integrated</text>
+        </g>
+        <g transform="translate(248,80)">
+          <rect x="0" y="0" width="120" height="14" fill="none" stroke="#D8D2C2"/>
+          <text x="6" y="10">T &amp; D Utilities</text>
+        </g>
+        <g transform="translate(248,130)">
+          <rect x="0" y="0" width="120" height="14" fill="none" stroke="#D8D2C2"/>
+          <text x="6" y="10">Transmission Holdco</text>
+        </g>
+        <g transform="translate(248,180)">
+          <rect x="0" y="0" width="120" height="14" fill="none" stroke="#D8D2C2"/>
+          <text x="6" y="10">Generation &amp; Marketing</text>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div style="margin-top:36px;">
+    <div class="bignum">
+      <div class="label">Q4 '25 Revenue</div>
+      <div class="num">$5.31<span class="unit">billion</span></div>
+      <div class="sub">EPS <span class="mono">$1.19</span> &nbsp;·&nbsp; <span class="grow">↑ 10.98% YoY</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INTERLUDE 2 ============ -->
+<aside class="interlude">
+  <p>
+    The data centers came hungry. Commercial load grew <span class="em">10.6% in a single year</span> —
+    a pace this grid has not seen since the postwar boom.
+  </p>
+</aside>
+
+<!-- ============ THE SCALE ============ -->
+<section>
+  <div class="eyebrow"><span class="num">03</span> The scale <span class="bar"></span></div>
+
+  <div class="scale-stack">
+
+    <div class="bignum reveal">
+      <div class="label">Generating capacity</div>
+      <div class="num">29,000<span class="unit">megawatts</span></div>
+      <div class="sub">Diverse fleet across coal, gas, nuclear, wind, hydro, solar.</div>
+    </div>
+
+    <div class="bignum reveal">
+      <div class="label">Distribution lines</div>
+      <div class="num">225,000<span class="unit">miles</span></div>
+      <div class="sub">Plus <span class="mono">40,000 mi</span> of transmission — the largest in the U.S.</div>
+    </div>
+
+    <div class="bignum reveal">
+      <div class="label">Market capitalization</div>
+      <div class="num">$72.65<span class="unit">billion</span></div>
+      <div class="sub">16,330 employees · serving 5.6M meters across 11 states.</div>
+    </div>
+
+    <!-- Commercial load growth bar -->
+    <div class="reveal" style="margin-top:8px;">
+      <div class="label" style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:18px;">
+        2024 commercial load growth
+      </div>
+      <div class="loadbar" data-loadbar>
+        <div class="loadbar-fill" data-target="88"></div>
+        <div class="loadbar-tick" style="left:25%"></div>
+        <div class="loadbar-tick" style="left:50%"></div>
+        <div class="loadbar-tick" style="left:75%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--ink-3);letter-spacing:0.04em;margin-top:8px;">
+        <span>0%</span>
+        <span class="signal">10.6% — driven by data centers &amp; reshoring</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ COSTS — fuel-stack metaphor ============ -->
+<section style="background:var(--bg-2);">
+  <div class="eyebrow"><span class="num">04</span> Where the dollar burns <span class="bar"></span></div>
+  <h2 class="display" style="font-size:42px;">
+    Every dollar of revenue,<br>
+    <span class="italic signal">stacked.</span>
+  </h2>
+  <p style="margin-top:18px;max-width:38ch;">
+    The cost stack of a regulated utility — fuel and purchased power on the bottom, the
+    weight of the wires above.
+  </p>
+
+  <div class="costs-stage">
+    <!-- The vertical fuel stack -->
+    <div class="stack-col" data-stack>
+      <div class="stack-seg" style="background:var(--c-fuel);"  data-pct="30"></div>
+      <div class="stack-seg" style="background:var(--c-maint);" data-pct="22"></div>
+      <div class="stack-seg" style="background:var(--c-dep);"   data-pct="17"></div>
+      <div class="stack-seg" style="background:var(--c-tax);"   data-pct="8"></div>
+      <div class="stack-seg" style="background:var(--c-int);"   data-pct="7"></div>
+      <div class="stack-seg" style="background:var(--ink-4);opacity:0.4;" data-pct="16"></div>
+    </div>
+
+    <!-- Legend -->
+    <div class="cost-legend">
+      <div class="cost-row"><div class="cost-swatch" style="background:var(--c-fuel)"></div>
+        <div class="cost-name">Purchased Electricity, Fuel &amp; Generation Consumables</div>
+        <div class="cost-pct">30%</div></div>
+      <div class="cost-row"><div class="cost-swatch" style="background:var(--c-maint)"></div>
+        <div class="cost-name">Maintenance &amp; Other Operations</div>
+        <div class="cost-pct">22%</div></div>
+      <div class="cost-row"><div class="cost-swatch" style="background:var(--c-dep)"></div>
+        <div class="cost-name">Depreciation &amp; Amortization</div>
+        <div class="cost-pct">17%</div></div>
+      <div class="cost-row"><div class="cost-swatch" style="background:var(--c-tax)"></div>
+        <div class="cost-name">Taxes Other Than Income</div>
+        <div class="cost-pct">8%</div></div>
+      <div class="cost-row"><div class="cost-swatch" style="background:var(--c-int)"></div>
+        <div class="cost-name">Interest Expense</div>
+        <div class="cost-pct">7%</div></div>
+      <div class="cost-other">+ 16% other &amp; income tax</div>
+    </div>
+  </div>
+
+  <p style="margin-top:36px;font-family:var(--font-display);font-style:italic;font-size:22px;line-height:1.3;color:var(--ink);max-width:32ch;">
+    Fuel is the loudest line.<br>
+    <span class="signal">The wires are the longest.</span>
+  </p>
+</section>
+
+<!-- ============ FOOTPRINT ============ -->
+<section>
+  <div class="eyebrow"><span class="num">05</span> The footprint <span class="bar"></span></div>
+  <h2 class="display" style="font-size:38px;">
+    Eleven states.<br>
+    <span class="italic">One network.</span>
+  </h2>
+
+  <!-- Abstract grid map: nodes by state share -->
+  <div class="map-stage" aria-hidden="true">
+    <svg viewBox="0 0 380 280" preserveAspectRatio="xMidYMid meet">
+      <!-- background grid -->
+      <defs>
+        <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="0.6" fill="#C0B9A5" opacity="0.45"/>
+        </pattern>
+      </defs>
+      <rect x="0" y="0" width="380" height="280" fill="url(#dots)"/>
+
+      <!-- network connections -->
+      <g stroke="#2E5C8A" stroke-width="0.7" fill="none" opacity="0.55">
+        <line x1="80"  y1="180" x2="180" y2="120"/>
+        <line x1="180" y1="120" x2="280" y2="100"/>
+        <line x1="180" y1="120" x2="240" y2="200"/>
+        <line x1="80"  y1="180" x2="160" y2="220"/>
+        <line x1="240" y1="200" x2="320" y2="180"/>
+        <line x1="160" y1="220" x2="240" y2="200"/>
+        <line x1="280" y1="100" x2="320" y2="180"/>
+      </g>
+
+      <!-- nodes (radius scales with pct) -->
+      <!-- Texas 22 -->
+      <g class="map-node" transform="translate(80,180)">
+        <circle class="outer" r="34" fill="#2E5C8A"/>
+        <circle r="8" fill="#1A3A5C"/>
+        <text class="map-pct" x="0" y="-44" text-anchor="middle">22%</text>
+        <text class="map-label" x="0" y="56" text-anchor="middle">TEXAS</text>
+      </g>
+      <!-- Ohio 20 -->
+      <g class="map-node" transform="translate(280,100)">
+        <circle class="outer" r="32" fill="#2E5C8A"/>
+        <circle r="7.5" fill="#1A3A5C"/>
+        <text class="map-pct" x="0" y="-40" text-anchor="middle">20%</text>
+        <text class="map-label" x="0" y="50" text-anchor="middle">OHIO</text>
+      </g>
+      <!-- VA & WV 18 -->
+      <g class="map-node" transform="translate(240,200)">
+        <circle class="outer" r="30" fill="#2E5C8A"/>
+        <circle r="7" fill="#1A3A5C"/>
+        <text class="map-pct" x="0" y="-38" text-anchor="middle">18%</text>
+        <text class="map-label" x="0" y="48" text-anchor="middle">VA · WV</text>
+      </g>
+      <!-- IN & MI 14 -->
+      <g class="map-node" transform="translate(180,120)">
+        <circle class="outer" r="26" fill="#2E5C8A"/>
+        <circle r="6" fill="#1A3A5C"/>
+        <text class="map-pct" x="0" y="-34" text-anchor="middle">14%</text>
+        <text class="map-label" x="0" y="42" text-anchor="middle">IN · MI</text>
+      </g>
+      <!-- OK & AR 14 -->
+      <g class="map-node" transform="translate(160,220)">
+        <circle class="outer" r="26" fill="#2E5C8A"/>
+        <circle r="6" fill="#1A3A5C"/>
+        <text class="map-pct" x="0" y="-34" text-anchor="middle">14%</text>
+        <text class="map-label" x="0" y="44" text-anchor="middle">OK · AR</text>
+      </g>
+      <!-- LA KY TN 12 -->
+      <g class="map-node" transform="translate(320,180)">
+        <circle class="outer" r="24" fill="#2E5C8A"/>
+        <circle r="5.5" fill="#1A3A5C"/>
+        <text class="map-pct" x="0" y="-32" text-anchor="middle">12%</text>
+        <text class="map-label" x="0" y="42" text-anchor="middle">LA · KY · TN</text>
+      </g>
+
+      <!-- legend -->
+      <text x="20" y="30" font-family="Geist Mono" font-size="9" fill="#6F7585" letter-spacing="0.1em">SERVICE TERRITORY · 11 STATES</text>
+    </svg>
+  </div>
+
+  <div class="map-list">
+    <div class="map-row"><span class="idx">01</span><span class="reg">Texas</span><span class="pct" data-pct="22">22%</span><div class="pctbar"><i data-w="100"></i></div></div>
+    <div class="map-row"><span class="idx">02</span><span class="reg">Ohio</span><span class="pct" data-pct="20">20%</span><div class="pctbar"><i data-w="91"></i></div></div>
+    <div class="map-row"><span class="idx">03</span><span class="reg">Virginia &amp; West Virginia</span><span class="pct" data-pct="18">18%</span><div class="pctbar"><i data-w="82"></i></div></div>
+    <div class="map-row"><span class="idx">04</span><span class="reg">Indiana &amp; Michigan</span><span class="pct" data-pct="14">14%</span><div class="pctbar"><i data-w="64"></i></div></div>
+    <div class="map-row"><span class="idx">05</span><span class="reg">Oklahoma &amp; Arkansas</span><span class="pct" data-pct="14">14%</span><div class="pctbar"><i data-w="64"></i></div></div>
+    <div class="map-row"><span class="idx">06</span><span class="reg">Louisiana, Kentucky &amp; Tennessee</span><span class="pct" data-pct="12">12%</span><div class="pctbar"><i data-w="55"></i></div></div>
+  </div>
+</section>
+
+<!-- ============ INTERLUDE 3 ============ -->
+<aside class="interlude">
+  <p>
+    To meet the load coming next, AEP is laying capital like track —
+    <span class="em">fifty-four billion dollars over five years.</span>
+  </p>
+</aside>
+
+<!-- ============ THE BET ============ -->
+<section>
+  <div class="eyebrow"><span class="num">06</span> The bet · <span class="signal">2025–2029</span> <span class="bar"></span></div>
+
+  <div class="bet-stage">
+    <div class="bet-headline display">$54B<span class="unit">in five years</span></div>
+    <div class="bet-sub">~⅔ to transmission &amp; distribution</div>
+
+    <div class="years" data-years>
+      <div class="year-cell">
+        <div class="year-bar"><div class="core" data-h="78"><div class="td"></div></div></div>
+        <div class="year-label">'25</div>
+      </div>
+      <div class="year-cell">
+        <div class="year-bar"><div class="core" data-h="86"><div class="td"></div></div></div>
+        <div class="year-label">'26</div>
+      </div>
+      <div class="year-cell">
+        <div class="year-bar"><div class="core" data-h="92"><div class="td"></div></div></div>
+        <div class="year-label">'27</div>
+      </div>
+      <div class="year-cell">
+        <div class="year-bar"><div class="core" data-h="96"><div class="td"></div></div></div>
+        <div class="year-label">'28</div>
+      </div>
+      <div class="year-cell">
+        <div class="year-bar"><div class="core" data-h="100"><div class="td"></div></div></div>
+        <div class="year-label">'29</div>
+      </div>
+    </div>
+
+    <div class="bet-key">
+      <span><span class="sw" style="background:var(--signal)"></span>Transmission &amp; Distribution</span>
+      <span><span class="sw" style="background:var(--ink)"></span>Generation &amp; other</span>
+    </div>
+
+    <p style="margin-top:32px;font-family:var(--font-display);font-style:italic;font-size:22px;line-height:1.3;color:var(--ink);max-width:34ch;">
+      And one balance-sheet move alongside it —
+      <span class="signal">$2.82B</span> sold of Ohio &amp; Indiana Michigan Transmission, minority interest, to keep the books loose.
+    </p>
+  </div>
+</section>
+
+<!-- ============ DEBT — NIGHT BEAT ============ -->
+<section class="debt">
+  <div class="eyebrow"><span class="num">07</span> The weight underneath <span class="bar"></span></div>
+  <h2>
+    Capital like this comes <span class="em italic">at a cost.</span>
+  </h2>
+  <p>
+    To build the grid the data centers want, AEP carries a balance sheet that would crush a leaner company.
+    The free cash flow line is <span class="em">red</span> — and that is, for this kind of business, the plan.
+  </p>
+
+  <div class="debt-meter">
+    <div class="scale">
+      <div class="needle" id="debtNeedle" style="left:78%;"></div>
+    </div>
+    <div class="stat">
+      <span class="k">D / E ratio</span>
+      <span class="v">1.50</span>
+    </div>
+  </div>
+
+  <div class="debt-grid">
+    <div class="debt-cell">
+      <div class="k">Long-term debt</div>
+      <div class="v">$39.3<span style="font-size:0.5em;font-style:italic;color:var(--night-mute);">B</span></div>
+      <div class="sub">Year-end 2024</div>
+    </div>
+    <div class="debt-cell">
+      <div class="k">Shareholder equity</div>
+      <div class="v">$31.5<span style="font-size:0.5em;font-style:italic;color:var(--night-mute);">B</span></div>
+      <div class="sub">Most recent reporting</div>
+    </div>
+    <div class="debt-cell">
+      <div class="k">Free cash flow '24</div>
+      <div class="v"><span class="neg">−$0.46</span><span style="font-size:0.5em;font-style:italic;color:var(--night-mute);">B</span></div>
+      <div class="sub">Capex outpacing operations</div>
+    </div>
+    <div class="debt-cell">
+      <div class="k">FFO / Debt target</div>
+      <div class="v">14–15<span style="font-size:0.5em;font-style:italic;color:var(--night-mute);">%</span></div>
+      <div class="sub">The line they manage to</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COMPETITORS ============ -->
+<section>
+  <div class="eyebrow"><span class="num">08</span> Sized against the field <span class="bar"></span></div>
+  <h2 class="display" style="font-size:42px;">
+    Three rivals,<br>
+    <span class="italic">three angles.</span>
+  </h2>
+  <p style="margin-top:18px;max-width:38ch;">
+    Two regulated peers running the same playbook — and one merchant generator chasing the same hyperscaler load.
+  </p>
+
+  <!-- Bars: market cap comparison -->
+  <div class="comp-bars" style="margin-top:48px;" data-compbars>
+    <div class="comp-bar">
+      <div class="cap">$55.3B</div>
+      <div class="fill" data-h="52"></div>
+      <div class="ticker">VST</div>
+    </div>
+    <div class="comp-bar aep">
+      <div class="cap">$72.6B</div>
+      <div class="fill" data-h="68"></div>
+      <div class="ticker">AEP</div>
+    </div>
+    <div class="comp-bar">
+      <div class="cap">$99.6B</div>
+      <div class="fill" data-h="94"></div>
+      <div class="ticker">DUK</div>
+    </div>
+    <div class="comp-bar">
+      <div class="cap">$105.8B</div>
+      <div class="fill" data-h="100"></div>
+      <div class="ticker">SO</div>
+    </div>
+  </div>
+
+  <div class="comp-meta">
+    <div class="comp-card">
+      <div class="title"><span class="name">Duke Energy</span><span class="tk">DUK</span></div>
+      <p>Same playbook — regulated electric utility across the Southeast and Midwest, fighting the same rate cases for the same industrial load.</p>
+      <div class="stats">
+        <span>Cap <b>$99.64B</b></span>
+        <span>Q rev <b>$7.94B</b></span>
+        <span>P/E <b>20.06</b></span>
+        <span>YoY <b>+6.19%</b></span>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="title"><span class="name">Southern Company</span><span class="tk">SO</span></div>
+      <p>South-Central regulated peer chasing the same data-center contracts, with a clean-energy transition slightly further along.</p>
+      <div class="stats">
+        <span>Cap <b>$105.79B</b></span>
+        <span>Q rev <b>$6.04B</b></span>
+        <span>P/E <b>24.37</b></span>
+        <span>YoY <b>+10.55%</b></span>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="title"><span class="name">Vistra</span><span class="tk">VST</span></div>
+      <p>Different animal — a merchant generator, not a regulated utility. Its nuclear-plus-gas-plus-renewables fleet is bidding for the same hyperscaler power that AEP wants to wire.</p>
+      <div class="stats">
+        <span>Cap <b>$55.34B</b></span>
+        <span>Yr rev <b>$17.74B</b></span>
+        <span>P/E <b>58.62</b></span>
+        <span>YoY <b>+19.14%</b></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAKEAWAY ============ -->
+<section class="takeaway">
+  <div class="kicker">The takeaway</div>
+  <h2>
+    The country runs<br>
+    on what they move —<br>
+    and there is <span class="em italic">more coming<br>down the wire.</span>
+  </h2>
+
+  <p class="lead">
+    A 119-year-old company is, today, a growth story.
+    Five-and-a-half million meters become the inlet for the data-center decade.
+    The bill — <span class="italic" style="color:var(--ink);">$54 billion</span> — is the grid we are about to build.
+  </p>
+
+  <div class="sig">
+    <span>AEP · NYSE</span>
+    <span>FY '25 · End</span>
+  </div>
+</section>
+
+<script>
+/* ===================== SCROLL-DRIVEN BEHAVIOR ===================== */
+
+// Progress hairline
+const progressEl = document.getElementById('progress');
+function updateProgress() {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+  progressEl.style.width = pct + '%';
+}
+document.addEventListener('scroll', updateProgress, { passive: true });
+window.addEventListener('resize', updateProgress);
+updateProgress();
+
+// Generic IntersectionObserver: add .in when entering view
+const ioReveal = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+
+document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => ioReveal.observe(el));
+
+// Loadbar fill on enter
+const ioLoad = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const fill = e.target.querySelector('.loadbar-fill');
+    if (fill) requestAnimationFrame(() => fill.style.width = fill.dataset.target + '%');
+    ioLoad.unobserve(e.target);
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('[data-loadbar]').forEach(el => ioLoad.observe(el));
+
+// Cost stack reveal — segments rise from bottom in order
+const ioStack = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const segs = e.target.querySelectorAll('.stack-seg');
+    let totalPct = 0;
+    segs.forEach(s => totalPct += parseFloat(s.dataset.pct));
+    segs.forEach((s, i) => {
+      const h = (parseFloat(s.dataset.pct) / totalPct) * 100;
+      s.style.height = h + '%';
+      setTimeout(() => { s.style.transform = 'scaleY(1)'; }, 120 * i + 80);
+    });
+    ioStack.unobserve(e.target);
+  });
+}, { threshold: 0.35 });
+document.querySelectorAll('[data-stack]').forEach(el => ioStack.observe(el));
+
+// Capex year bars
+const ioYears = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.querySelectorAll('.core').forEach((c, i) => {
+      setTimeout(() => { c.style.height = c.dataset.h + '%'; }, 120 * i);
+    });
+    ioYears.unobserve(e.target);
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('[data-years]').forEach(el => ioYears.observe(el));
+
+// Competitor bars
+const ioComp = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.querySelectorAll('.fill').forEach((f, i) => {
+      setTimeout(() => { f.style.height = f.dataset.h + '%'; }, 100 * i);
+    });
+    ioComp.unobserve(e.target);
+  });
+}, { threshold: 0.35 });
+document.querySelectorAll('[data-compbars]').forEach(el => ioComp.observe(el));
+
+// Map bars
+const ioMap = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.querySelectorAll('.pctbar > i').forEach((b, i) => {
+      setTimeout(() => { b.style.width = b.dataset.w + '%'; }, 60 * i);
+    });
+    ioMap.unobserve(e.target);
+  });
+}, { threshold: 0.2 });
+document.querySelectorAll('.map-list').forEach(el => ioMap.observe(el));
+
+</script>
+
+</body>
+</html>

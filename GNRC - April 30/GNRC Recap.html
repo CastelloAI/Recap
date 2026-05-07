@@ -1,0 +1,1686 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>GNRC · Recap FY '25</title>
+<link rel="stylesheet" href="styles/tokens.css" />
+<style>
+  /* ---------- Page-local tokens — Generac mood ---------- */
+  :root {
+    /* On/off binary palette: deep industrial ink ↔ paper, with coral as the "live current" */
+    --grid-ink:   #0B0C0E;       /* "grid down" near-black */
+    --grid-ink-2: #15171B;
+    --grid-ink-3: #1F2127;
+    --grid-line:  #2A2D34;
+    --signal:     #FF6A3D;       /* the live current — coral, pushed slightly more orange to feel electrical */
+    --signal-hot: #FFA07A;
+    --signal-dim: rgba(255,106,61,0.18);
+    --paper-ink:  #161514;       /* warm dark for body text on paper */
+    --hairline:   #E4E1D9;
+    --paper-band: #F4F2ED;
+    --paper-deep: #ECEAE3;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--paper-ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    overflow-x: hidden;
+    /* Mobile artifact — content sized for ~420px column, centered on wider screens */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* The artifact frame — mobile column, centered, full height */
+  .artifact {
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    position: relative;
+    background: var(--paper);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.04);
+  }
+  @media (min-width: 600px) {
+    body { background: #2A2826; }
+    .artifact {
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,0,0,0.4);
+    }
+  }
+
+  /* ---------- Sticky chrome ---------- */
+  .chrome {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    background: rgba(251,250,247,0.78);
+    border-bottom: 1px solid rgba(228,225,217,0.6);
+    transition: background 220ms ease, color 220ms ease, border-color 220ms ease;
+  }
+  .chrome.dark {
+    background: rgba(11,12,14,0.72);
+    color: #F4F2ED;
+    border-bottom-color: rgba(255,255,255,0.08);
+  }
+  .chrome-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 20px 10px;
+  }
+  .chrome-tick {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    color: var(--signal);
+  }
+  .chrome-name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: inherit;
+    opacity: 0.9;
+  }
+  .chrome-label {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: inherit;
+    opacity: 0.55;
+  }
+  .chrome-progress {
+    height: 1.5px;
+    background: rgba(0,0,0,0.06);
+    position: relative;
+  }
+  .chrome.dark .chrome-progress { background: rgba(255,255,255,0.08); }
+  .chrome-progress-fill {
+    position: absolute; inset: 0 100% 0 0;
+    background: var(--signal);
+    transform-origin: left;
+    transition: width 80ms linear;
+  }
+
+  /* ---------- Eyebrow + section primitives ---------- */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--signal);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .eyebrow .dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--signal);
+    box-shadow: 0 0 10px var(--signal);
+  }
+  .eyebrow.dark { color: var(--signal-hot); }
+
+  .section { padding: 72px 24px; position: relative; }
+  .section.tight { padding: 56px 24px; }
+  .section.dark { background: var(--grid-ink); color: #F4F2ED; }
+  .section.band { background: var(--paper-band); }
+  .section.deep { background: var(--paper-deep); }
+
+  /* Display type */
+  .display-xl {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    color: inherit;
+    margin: 0;
+  }
+  .display-lg {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .display-md {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 36px;
+    line-height: 1.0;
+    letter-spacing: -0.015em;
+    margin: 0;
+  }
+  .ital { font-style: italic; }
+  .signal { color: var(--signal); }
+
+  .lede {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--paper-ink);
+    opacity: 0.82;
+    max-width: 38ch;
+  }
+  .dark .lede { color: #C9C6BF; opacity: 1; }
+
+  .mono-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+  }
+  .mono-meta-d {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(20,20,20,0.5);
+  }
+
+  /* ---------- Reset beats ---------- */
+  .reset {
+    padding: 56px 28px;
+    text-align: left;
+  }
+  .reset .quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1.18;
+    letter-spacing: -0.012em;
+    color: inherit;
+  }
+  .reset.band { background: var(--paper-band); color: var(--paper-ink); }
+  .reset.dark { background: var(--grid-ink); color: #F4F2ED; }
+  .reset.deep { background: var(--paper-deep); color: var(--paper-ink); }
+
+  /* ============================================================
+     1) HERO — The grid going down, then GNRC switching on.
+     ============================================================ */
+  .hero {
+    background: var(--grid-ink);
+    color: #F4F2ED;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    min-height: 100vh;
+  }
+  .hero-canvas {
+    position: relative;
+    height: 100vh;
+    min-height: 620px;
+  }
+
+  /* Background: faint power lines / grid pattern */
+  .hero-grid-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 70% 30%, rgba(255,106,61,0.06), transparent 55%),
+      linear-gradient(to bottom, #0B0C0E 0%, #15171B 100%);
+  }
+  .hero-grid-bg svg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0.5;
+  }
+
+  /* Flicker */
+  .flicker { animation: flicker 6s infinite; }
+  @keyframes flicker {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+    20%, 24%, 55% { opacity: 0.35; }
+    23% { opacity: 0.7; }
+  }
+
+  /* Hero text */
+  .hero-content {
+    position: absolute;
+    inset: 0;
+    display: flex; flex-direction: column;
+    padding: 110px 28px 36px;
+    z-index: 3;
+  }
+  .hero-eyebrow-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 22px;
+  }
+  .hero-eyebrow-row .pulse {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--signal);
+    box-shadow: 0 0 12px var(--signal), 0 0 4px var(--signal);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.85); }
+  }
+  .hero-h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 62px;
+    line-height: 0.96;
+    letter-spacing: -0.028em;
+    margin: 0 0 24px;
+    color: #F4F2ED;
+  }
+  .hero-h1 .off { color: rgba(244,242,237,0.32); }
+  .hero-h1 .on  { color: var(--signal); font-style: italic; }
+
+  .hero-sub {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: #9C9A93;
+    max-width: 34ch;
+    margin: 0 0 auto;
+  }
+
+  .hero-meter {
+    margin-top: 26px;
+    display: flex; align-items: flex-end; gap: 14px;
+  }
+  .hero-meter .price {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #F4F2ED;
+  }
+  .hero-meter .ticker-row {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .hero-meter .t {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--signal);
+  }
+  .hero-meter .n {
+    font-family: var(--font-sans); font-size: 12px;
+    color: rgba(244,242,237,0.5);
+  }
+
+  .hero-scroll-cue {
+    position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%);
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.4); text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    z-index: 4;
+  }
+  .hero-scroll-cue .line {
+    width: 1px; height: 28px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.5));
+  }
+
+  /* ============================================================
+     2) BUSINESS — Three circuits drawing from a central bus
+     ============================================================ */
+  .business {
+    background: var(--grid-ink-2);
+    color: #F4F2ED;
+    padding: 80px 24px 72px;
+    position: relative;
+    overflow: hidden;
+  }
+  .business-h {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 36px;
+    line-height: 1.05;
+    letter-spacing: -0.018em;
+    margin: 18px 0 12px;
+    color: #F4F2ED;
+  }
+  .business-h .em { color: var(--signal); font-style: italic; }
+  .circuits { margin-top: 38px; }
+  .circuit {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 18px 0;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    position: relative;
+  }
+  .circuit:last-child { border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .circuit .pct {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1;
+    color: #F4F2ED;
+  }
+  .circuit .label {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: #C9C6BF;
+    line-height: 1.35;
+  }
+  .circuit .label .small {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-top: 4px;
+  }
+  .circuit .amt {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--signal);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .circuit-bar {
+    grid-column: 1 / -1;
+    height: 2px;
+    background: rgba(255,255,255,0.06);
+    margin-top: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .circuit-bar .fill {
+    position: absolute; top:0; left:0; height: 100%;
+    background: var(--signal);
+    box-shadow: 0 0 8px var(--signal);
+    width: 0%;
+    transition: width 1200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .circuit.in-view .circuit-bar .fill { /* width set inline */ }
+
+  /* ============================================================
+     3) SCALE — Voltage meter sine wave, count-ups
+     ============================================================ */
+  .scale {
+    background: var(--paper);
+    color: var(--paper-ink);
+    padding: 88px 24px;
+  }
+  .scale .lede { margin-bottom: 36px; }
+  .scale-meter {
+    margin: 28px -24px 8px;
+    background: var(--grid-ink);
+    color: #F4F2ED;
+    padding: 22px 24px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .scale-meter .top {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .scale-meter .v {
+    font-family: var(--font-display); font-size: 44px; line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .scale-meter .yoy {
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--signal);
+    letter-spacing: 0.06em;
+  }
+  .scale-meter .mlabel {
+    font-family: var(--font-mono); font-size: 10px;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .scale-wave { width: 100%; height: 90px; display: block; }
+
+  .scale-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 36px;
+    border-top: 1px solid var(--hairline);
+  }
+  .scale-stat {
+    padding: 22px 16px 22px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .scale-stat:nth-child(odd) { border-right: 1px solid var(--hairline); padding-right: 16px; }
+  .scale-stat:nth-child(even) { padding-left: 16px; }
+  .scale-stat .num {
+    font-family: var(--font-display);
+    font-size: 38px; line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--paper-ink);
+  }
+  .scale-stat .num.italic { font-style: italic; color: var(--signal); }
+  .scale-stat .lab {
+    margin-top: 6px;
+    font-family: var(--font-mono); font-size: 10.5px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(20,20,20,0.5);
+  }
+  .scale-stat .sub {
+    margin-top: 4px;
+    font-family: var(--font-sans); font-size: 13px; color: var(--paper-ink); opacity: 0.65;
+    line-height: 1.35;
+  }
+
+  /* ============================================================
+     4) DOLLAR OF REVENUE — 100-cent grid lighting up
+     ============================================================ */
+  .dollar {
+    background: var(--paper-band);
+    color: var(--paper-ink);
+    padding: 88px 24px 80px;
+  }
+  .dollar h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 14px 0 16px;
+  }
+  .dollar h2 .em { font-style: italic; color: var(--signal); }
+
+  .cents-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 3px;
+    margin: 32px 0 24px;
+    aspect-ratio: 1 / 1;
+  }
+  .cent {
+    background: #DDD9D0;
+    border-radius: 2px;
+    transition: background 320ms ease, transform 320ms ease;
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  .cents-grid.in-view .cent { transform: scale(1); opacity: 1; }
+  .cent.lit { background: var(--c, #ccc); }
+  .cent.surplus {
+    background: var(--paper-ink);
+    box-shadow: 0 0 0 1px var(--paper-ink) inset;
+  }
+
+  .cents-legend {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 12px;
+    border-top: 1px solid var(--hairline);
+  }
+  .cents-row {
+    display: grid;
+    grid-template-columns: 16px 1fr auto;
+    gap: 12px; align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .cents-row .sw {
+    width: 14px; height: 14px; border-radius: 3px;
+  }
+  .cents-row .lab {
+    font-family: var(--font-sans); font-size: 14px; color: var(--paper-ink);
+  }
+  .cents-row .pct {
+    font-family: var(--font-mono); font-size: 13px;
+    color: var(--paper-ink); letter-spacing: 0.04em;
+  }
+  .cents-row.survive .lab { font-family: var(--font-display); font-style: italic; font-size: 17px; }
+  .cents-row.survive .pct { color: var(--signal); }
+  .cents-row.survive .sw {
+    background: transparent;
+    border: 1.5px dashed var(--paper-ink);
+  }
+
+  .dollar-survive {
+    margin-top: 28px;
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1.18;
+    font-style: italic;
+    color: var(--paper-ink);
+    letter-spacing: -0.01em;
+  }
+  .dollar-survive .signal { font-style: normal; }
+
+  /* ============================================================
+     5) FOOTPRINT — Concentric voltage rings
+     ============================================================ */
+  .footprint {
+    background: var(--paper-deep);
+    color: var(--paper-ink);
+    padding: 88px 24px;
+    position: relative;
+  }
+  .footprint h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 14px 0 12px;
+  }
+  .rings-wrap {
+    margin: 36px auto 14px;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    max-width: 360px;
+    position: relative;
+  }
+  .rings-wrap svg { width: 100%; height: 100%; }
+  .rings-legend {
+    display: flex; flex-direction: column; gap: 0;
+    margin-top: 10px;
+    border-top: 1px solid var(--hairline);
+  }
+  .rings-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px; align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .rings-row .pct {
+    font-family: var(--font-display);
+    font-size: 28px; line-height: 1;
+    width: 64px;
+    color: var(--paper-ink);
+  }
+  .rings-row .reg {
+    font-family: var(--font-sans); font-size: 14px; color: var(--paper-ink);
+  }
+  .rings-row .reg .small {
+    display: block;
+    font-family: var(--font-mono); font-size: 10.5px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(20,20,20,0.5);
+    margin-top: 2px;
+  }
+  .rings-row.dom .pct { color: var(--signal); font-style: italic; }
+
+  /* ============================================================
+     6) THE BET — Transfer switch flipping
+     ============================================================ */
+  .bet {
+    background: var(--grid-ink);
+    color: #F4F2ED;
+    padding: 96px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bet h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 14px 0 14px;
+    color: #F4F2ED;
+  }
+  .bet h2 .em { color: var(--signal); font-style: italic; }
+  .bet .lede { color: #C9C6BF; max-width: 36ch; margin-bottom: 32px; }
+
+  .switch {
+    position: relative;
+    margin: 12px -8px 8px;
+    height: 220px;
+  }
+  .switch svg { width: 100%; height: 100%; display: block; }
+
+  .bet-stack {
+    margin-top: 36px;
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .bet-row {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 14px; align-items: baseline;
+    padding: 18px 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .bet-row:last-child { border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .bet-row .num {
+    font-family: var(--font-display);
+    font-size: 28px; line-height: 1;
+    color: var(--signal);
+    font-style: italic;
+  }
+  .bet-row .lab {
+    font-family: var(--font-sans); font-size: 14px;
+    color: #F4F2ED; line-height: 1.35;
+  }
+  .bet-row .lab .small {
+    display: block;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-top: 4px;
+  }
+  .bet-row .when {
+    font-family: var(--font-mono); font-size: 10.5px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  /* ============================================================
+     7) COMPETITION — transformers on a shared bus
+     ============================================================ */
+  .compete {
+    background: var(--paper);
+    color: var(--paper-ink);
+    padding: 88px 24px;
+  }
+  .compete h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 14px 0 12px;
+  }
+  .compete h2 .em { font-style: italic; color: var(--signal); }
+  .compete .lede { margin-bottom: 30px; }
+
+  .rivals { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+  .rival {
+    padding: 18px 0 16px;
+    border-top: 1px solid var(--hairline);
+  }
+  .rival:last-child { border-bottom: 1px solid var(--hairline); }
+  .rival.self {
+    background: linear-gradient(180deg, rgba(255,106,61,0.06), transparent);
+    margin: 0 -24px; padding: 18px 24px 16px;
+    border-top: 1px solid rgba(255,106,61,0.4);
+    border-bottom: 1px solid rgba(255,106,61,0.4);
+  }
+  .rival-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .rival-name {
+    font-family: var(--font-sans); font-size: 15px; font-weight: 500;
+    color: var(--paper-ink);
+  }
+  .rival-name .tk {
+    font-family: var(--font-mono); font-size: 11px;
+    color: rgba(20,20,20,0.5);
+    margin-left: 8px;
+    letter-spacing: 0.06em;
+  }
+  .rival.self .rival-name .tk { color: var(--signal); }
+  .rival-cap {
+    font-family: var(--font-display); font-size: 22px; line-height: 1;
+    color: var(--paper-ink);
+  }
+  .rival.self .rival-cap { color: var(--signal); font-style: italic; }
+  .rival-bar-wrap {
+    height: 8px;
+    background: var(--paper-deep);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 8px;
+  }
+  .rival-bar {
+    height: 100%;
+    background: var(--paper-ink);
+    width: 0%;
+    border-radius: 999px;
+    transition: width 1100ms cubic-bezier(0.22,1,0.36,1);
+  }
+  .rival.self .rival-bar { background: var(--signal); }
+  .rival-meta {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    font-family: var(--font-mono); font-size: 10.5px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(20,20,20,0.55);
+  }
+  .rival-meta .v { color: var(--paper-ink); }
+  .rival.self .rival-meta .v { color: var(--signal); }
+  .rival-desc {
+    margin-top: 10px;
+    font-family: var(--font-sans); font-size: 13.5px; line-height: 1.5;
+    color: var(--paper-ink); opacity: 0.78;
+  }
+
+  /* ============================================================
+     8) CLOSE — inversion
+     ============================================================ */
+  .close {
+    background: var(--grid-ink);
+    color: #F4F2ED;
+    padding: 110px 24px 90px;
+    position: relative;
+    overflow: hidden;
+  }
+  .close-glow {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 80%, rgba(255,106,61,0.18), transparent 60%);
+    pointer-events: none;
+  }
+  .close h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    color: #F4F2ED;
+    position: relative;
+    margin: 22px 0 28px;
+  }
+  .close h2 .em { font-style: italic; color: var(--signal); }
+  .close p.lede { color: #C9C6BF; max-width: 36ch; position: relative; }
+
+  .close-mark {
+    margin-top: 56px;
+    display: flex; flex-direction: column; gap: 16px;
+    position: relative;
+  }
+  .close-mark .row {
+    display: flex; align-items: baseline; gap: 12px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding: 16px 0 0;
+  }
+  .close-mark .row .lab {
+    font-family: var(--font-mono); font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    width: 92px; flex-shrink: 0;
+  }
+  .close-mark .row .val {
+    font-family: var(--font-sans); font-size: 14px;
+    color: #F4F2ED;
+  }
+  .close-mark .row .val .em {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--signal);
+  }
+
+  .colophon {
+    margin-top: 56px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.7;
+  }
+  .colophon .signal { color: var(--signal); }
+
+  /* ---------- Reveal-on-scroll ---------- */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* count-up base */
+  .count { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<div class="artifact" id="artifact">
+
+  <!-- ============================================================
+       STICKY CHROME
+  ============================================================ -->
+  <div class="chrome dark" id="chrome">
+    <div class="chrome-row">
+      <span class="chrome-tick">GNRC</span>
+      <span class="chrome-name">Generac Holdings</span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="chrome-progress"><div class="chrome-progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- ============================================================
+       1) HERO — power-on
+  ============================================================ -->
+  <section class="hero" data-chrome="dark" data-screen-label="01 Hero">
+    <div class="hero-canvas">
+      <div class="hero-grid-bg">
+        <!-- transmission lines / grid pattern -->
+        <svg viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <pattern id="poles" x="0" y="0" width="100" height="180" patternUnits="userSpaceOnUse">
+              <line x1="50" y1="20" x2="50" y2="180" stroke="#2A2D34" stroke-width="1"/>
+              <line x1="20" y1="40" x2="80" y2="40" stroke="#2A2D34" stroke-width="1"/>
+              <line x1="25" y1="55" x2="75" y2="55" stroke="#2A2D34" stroke-width="0.6"/>
+            </pattern>
+          </defs>
+          <rect width="400" height="800" fill="url(#poles)" opacity="0.35"/>
+          <!-- sagging power lines across the top -->
+          <g stroke="#2A2D34" stroke-width="0.8" fill="none" opacity="0.7">
+            <path d="M -20 80 Q 200 130 420 90"/>
+            <path d="M -20 110 Q 200 170 420 120"/>
+            <path d="M -20 140 Q 200 210 420 150"/>
+          </g>
+          <!-- a single live wire -->
+          <path id="liveWire" d="M -20 110 Q 200 170 420 120"
+                stroke="var(--signal)" stroke-width="1.2" fill="none"
+                stroke-dasharray="3 6"
+                opacity="0.9" class="flicker">
+            <animate attributeName="stroke-dashoffset" from="0" to="-90" dur="3s" repeatCount="indefinite"/>
+          </path>
+          <!-- distant skyline silhouette -->
+          <g fill="#15171B" opacity="0.9">
+            <rect x="0" y="640" width="40" height="160"/>
+            <rect x="44" y="600" width="28" height="200"/>
+            <rect x="76" y="660" width="56" height="140"/>
+            <rect x="136" y="580" width="34" height="220"/>
+            <rect x="174" y="630" width="48" height="170"/>
+            <rect x="226" y="600" width="40" height="200"/>
+            <rect x="270" y="650" width="60" height="150"/>
+            <rect x="334" y="610" width="36" height="190"/>
+            <rect x="374" y="640" width="30" height="160"/>
+          </g>
+          <!-- a few "lit windows" only on one building, signaling backup power on -->
+          <g fill="var(--signal)">
+            <rect x="142" y="610" width="3" height="3" class="flicker"/>
+            <rect x="150" y="618" width="3" height="3"/>
+            <rect x="158" y="626" width="3" height="3" class="flicker"/>
+            <rect x="142" y="630" width="3" height="3"/>
+            <rect x="158" y="640" width="3" height="3"/>
+            <rect x="150" y="652" width="3" height="3" class="flicker"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="hero-content">
+        <div class="hero-eyebrow-row">
+          <span class="pulse"></span>
+          <span class="eyebrow dark">Backup Power · Wisconsin · 1959</span>
+        </div>
+
+        <h1 class="hero-h1">
+          When the grid<br>
+          <span class="off">goes dark,</span><br>
+          <span class="on">they come on.</span>
+        </h1>
+
+        <p class="hero-sub">
+          Generac sells the moment the lights stay on after they shouldn't have.
+          A 67-year-old machine shop in Waukesha, now a $12&nbsp;billion company
+          standing between weather, the grid, and the basement freezer.
+        </p>
+
+        <div class="hero-meter">
+          <div class="ticker-row">
+            <span class="t">NYSE · GNRC</span>
+            <span class="n">Mkt cap, FY '25</span>
+          </div>
+          <div class="price">$12.45<span style="font-size:24px;opacity:0.7;">B</span></div>
+        </div>
+      </div>
+
+      <div class="hero-scroll-cue"><span>Scroll</span><span class="line"></span></div>
+    </div>
+  </section>
+
+  <!-- Reset 1 -->
+  <section class="reset dark" data-chrome="dark" data-screen-label="02 Reset · grid is fragile">
+    <p class="quote">
+      The grid is fragile.<br>
+      <span class="signal">That is the business.</span>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       2) BUSINESS — three circuits
+  ============================================================ -->
+  <section class="business" data-chrome="dark" data-screen-label="03 Business">
+    <span class="eyebrow dark"><span class="dot"></span>How it makes money · $4.21B</span>
+    <h2 class="business-h">
+      Three circuits<br>off one bus.
+    </h2>
+    <p class="lede">
+      Every dollar in flows through one of three lines:
+      home, jobsite, or the parts and service that keep them running.
+    </p>
+
+    <!-- the SVG bus + three circuits -->
+    <div style="margin: 30px -8px 8px;">
+      <svg viewBox="0 0 400 200" style="width:100%;height:auto;display:block;" aria-hidden="true">
+        <!-- main horizontal bus -->
+        <line x1="0" y1="100" x2="400" y2="100" stroke="rgba(255,255,255,0.15)" stroke-width="1.4"/>
+        <!-- live current overlay -->
+        <line x1="0" y1="100" x2="400" y2="100" stroke="var(--signal)" stroke-width="1.4"
+              stroke-dasharray="6 8" class="flicker">
+          <animate attributeName="stroke-dashoffset" from="0" to="-140" dur="4s" repeatCount="indefinite"/>
+        </line>
+
+        <!-- Three drops, sized by % of revenue -->
+        <!-- Residential 53.9 -->
+        <g>
+          <line x1="80" y1="100" x2="80" y2="40" stroke="var(--signal)" stroke-width="1.4"/>
+          <circle cx="80" cy="40" r="22" fill="none" stroke="var(--signal)" stroke-width="1.4"/>
+          <circle cx="80" cy="40" r="14" fill="var(--signal)" opacity="0.18"/>
+          <text x="80" y="44" text-anchor="middle"
+                font-family="Instrument Serif, serif" font-size="16" fill="#F4F2ED" font-style="italic">54%</text>
+        </g>
+        <!-- C&I 34.6 -->
+        <g>
+          <line x1="200" y1="100" x2="200" y2="50" stroke="var(--signal)" stroke-width="1.2" opacity="0.85"/>
+          <circle cx="200" cy="50" r="17" fill="none" stroke="var(--signal)" stroke-width="1.2" opacity="0.85"/>
+          <circle cx="200" cy="50" r="11" fill="var(--signal)" opacity="0.14"/>
+          <text x="200" y="54" text-anchor="middle"
+                font-family="Instrument Serif, serif" font-size="13" fill="#F4F2ED" font-style="italic">35%</text>
+        </g>
+        <!-- Other 11.5 -->
+        <g>
+          <line x1="320" y1="100" x2="320" y2="64" stroke="var(--signal)" stroke-width="1" opacity="0.7"/>
+          <circle cx="320" cy="64" r="10" fill="none" stroke="var(--signal)" stroke-width="1" opacity="0.7"/>
+          <circle cx="320" cy="64" r="6" fill="var(--signal)" opacity="0.12"/>
+          <text x="320" y="67" text-anchor="middle"
+                font-family="Instrument Serif, serif" font-size="10" fill="#F4F2ED" font-style="italic">12%</text>
+        </g>
+
+        <!-- ground-side notch -->
+        <line x1="0" y1="100" x2="400" y2="100" stroke="rgba(11,12,14,1)" stroke-width="0" />
+        <g stroke="rgba(255,255,255,0.25)" stroke-width="1">
+          <line x1="60" y1="100" x2="60" y2="120"/>
+          <line x1="100" y1="100" x2="100" y2="120"/>
+          <line x1="180" y1="100" x2="180" y2="120"/>
+          <line x1="220" y1="100" x2="220" y2="120"/>
+          <line x1="305" y1="100" x2="305" y2="120"/>
+          <line x1="335" y1="100" x2="335" y2="120"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="circuits">
+      <div class="circuit" data-pct="53.9">
+        <div class="pct">54<span style="font-size:18px;">%</span></div>
+        <div class="label">Residential
+          <span class="small">Home standby · portable · battery · ecobee</span>
+        </div>
+        <div class="amt">$2.27B</div>
+        <div class="circuit-bar"><div class="fill"></div></div>
+      </div>
+      <div class="circuit" data-pct="34.6">
+        <div class="pct">35<span style="font-size:18px;">%</span></div>
+        <div class="label">Commercial &amp; Industrial
+          <span class="small">Stationary · mobile · light towers · data&nbsp;centers</span>
+        </div>
+        <div class="amt">$1.46B</div>
+        <div class="circuit-bar"><div class="fill"></div></div>
+      </div>
+      <div class="circuit" data-pct="11.5">
+        <div class="pct">12<span style="font-size:18px;">%</span></div>
+        <div class="label">Other
+          <span class="small">Aftermarket parts · accessories · service</span>
+        </div>
+        <div class="amt">$0.48B</div>
+        <div class="circuit-bar"><div class="fill"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reset 2 -->
+  <section class="reset band" data-chrome="light" data-screen-label="04 Reset · weather sells">
+    <p class="quote">
+      Weather sells generators.<br>
+      <span class="signal" style="font-style:normal;">FY&nbsp;'25 was, mostly, calm.</span>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       3) SCALE — voltage meter
+  ============================================================ -->
+  <section class="scale" data-chrome="light" data-screen-label="05 Scale">
+    <span class="eyebrow"><span class="dot"></span>The scale · $4.21B</span>
+    <h2 class="display-lg" style="margin-top:14px;">
+      Revenue, read<br>
+      <span class="ital signal">like voltage.</span>
+    </h2>
+    <p class="lede" style="margin-top:14px;">
+      Net sales pulled in <em>$4.21&nbsp;billion</em> for the year — a <em>2.0%</em> draw-down
+      versus '24, as a quieter storm season took the air out of home standby and portable demand.
+    </p>
+
+    <div class="scale-meter">
+      <div class="top">
+        <span class="v"><span class="count" data-target="4.21" data-decimals="2">0.00</span><span style="font-size:24px;opacity:0.7;">B</span></span>
+        <span class="yoy">YoY · −2.02%</span>
+      </div>
+      <div class="mlabel">FY '25 · Net sales</div>
+      <svg class="scale-wave" viewBox="0 0 360 90" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="waveGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="rgba(255,106,61,0.0)"/>
+            <stop offset="20%" stop-color="rgba(255,106,61,0.6)"/>
+            <stop offset="100%" stop-color="rgba(255,106,61,1)"/>
+          </linearGradient>
+        </defs>
+        <!-- ambient wave -->
+        <path d="M 0 50 Q 30 28 60 50 T 120 50 T 180 50 T 240 50 T 300 50 T 360 50"
+              fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.2"/>
+        <!-- live signal — dips at the end (the YoY decline) -->
+        <path id="livePath" d="M 0 50 Q 30 28 60 50 T 120 50 T 180 50 T 240 50 T 300 58 T 360 64"
+              fill="none" stroke="url(#waveGrad)" stroke-width="1.6"
+              stroke-dasharray="900" stroke-dashoffset="900"/>
+        <!-- the dip annotation -->
+        <circle cx="360" cy="64" r="3" fill="var(--signal)"/>
+        <text x="354" y="80" text-anchor="end"
+              font-family="Geist Mono, monospace" font-size="9"
+              fill="rgba(255,255,255,0.6)" letter-spacing="1.4">DIP · OUTAGES DOWN</text>
+      </svg>
+    </div>
+
+    <div class="scale-stats">
+      <div class="scale-stat">
+        <div class="num"><span class="count" data-target="9239" data-decimals="0">0</span></div>
+        <div class="lab">People</div>
+        <div class="sub">Across Wisconsin, UK, Mexico, Brazil, Italy.</div>
+      </div>
+      <div class="scale-stat">
+        <div class="num italic">38.3%</div>
+        <div class="lab">Gross margin</div>
+        <div class="sub">Operating margin: 6.9%.</div>
+      </div>
+      <div class="scale-stat">
+        <div class="num">$<span class="count" data-target="438.0" data-decimals="0">0</span>M</div>
+        <div class="lab">Operating cash flow</div>
+        <div class="sub">$268M free cash flow after capex.</div>
+      </div>
+      <div class="scale-stat">
+        <div class="num italic">$1.61</div>
+        <div class="lab">Q4 '25 adj. EPS</div>
+        <div class="sub">A quieter year, still printing cash.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reset 3 -->
+  <section class="reset deep" data-chrome="light" data-screen-label="06 Reset · 100 cents">
+    <p class="quote">
+      Take a hundred cents.<br>
+      <span class="signal" style="font-style:normal;">Trace each one.</span>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       4) DOLLAR OF REVENUE
+  ============================================================ -->
+  <section class="dollar" data-chrome="light" data-screen-label="07 Dollar of revenue">
+    <span class="eyebrow"><span class="dot"></span>The bill · per dollar in</span>
+    <h2>What <span class="em">survives</span><br>the build.</h2>
+    <p class="lede" style="margin-top:6px;">
+      Of every dollar Generac earns, about <em>62¢</em> goes to making the thing.
+      Sixteen to selling it. Six to figuring out the next one.
+    </p>
+
+    <div class="cents-grid" id="centsGrid" aria-hidden="true">
+      <!-- 100 cents — populated by JS to color them by category -->
+    </div>
+
+    <div class="cents-legend">
+      <!-- Honor the supplied hex colors here only -->
+      <div class="cents-row"><span class="sw" style="background:#E05C5C"></span><span class="lab">Cost of revenue</span><span class="pct">62¢</span></div>
+      <div class="cents-row"><span class="sw" style="background:#5B8FD4"></span><span class="lab">SG&amp;A</span><span class="pct">16¢</span></div>
+      <div class="cents-row"><span class="sw" style="background:#F5A623"></span><span class="lab">Research &amp; development</span><span class="pct">6¢</span></div>
+      <div class="cents-row"><span class="sw" style="background:#7ED6A0"></span><span class="lab">Amortization of intangibles</span><span class="pct">4¢</span></div>
+      <div class="cents-row"><span class="sw" style="background:#B57BDB"></span><span class="lab">Capital expenditures</span><span class="pct">4¢</span></div>
+      <div class="cents-row survive"><span class="sw"></span><span class="lab">What survives — operating margin</span><span class="pct">≈ 7¢</span></div>
+    </div>
+
+    <p class="dollar-survive">
+      Seven cents make it out per dollar in.<br>
+      <span class="signal">Then the buybacks line up.</span>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       5) FOOTPRINT — concentric voltage rings
+  ============================================================ -->
+  <section class="footprint" data-chrome="light" data-screen-label="08 Footprint">
+    <span class="eyebrow"><span class="dot"></span>The footprint · 80% domestic</span>
+    <h2>Eighty cents of every<br>dollar comes <span class="ital signal">from home.</span></h2>
+    <p class="lede" style="margin-top:8px;">
+      The footprint is U.S.-shaped. Manufacturing reaches into the UK, Mexico, Brazil, Italy —
+      but the customer base does not.
+    </p>
+
+    <div class="rings-wrap">
+      <svg viewBox="0 0 360 360" aria-hidden="true">
+        <defs>
+          <radialGradient id="ringGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(255,106,61,0.85)"/>
+            <stop offset="50%" stop-color="rgba(255,106,61,0.35)"/>
+            <stop offset="100%" stop-color="rgba(255,106,61,0)"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Faint reference grid -->
+        <g stroke="rgba(20,20,20,0.06)" fill="none">
+          <circle cx="180" cy="180" r="40"/>
+          <circle cx="180" cy="180" r="80"/>
+          <circle cx="180" cy="180" r="120"/>
+          <circle cx="180" cy="180" r="160"/>
+        </g>
+
+        <!-- Rest of world (4%) — outermost dotted -->
+        <circle id="ring4" cx="180" cy="180" r="160" stroke="rgba(20,20,20,0.55)" stroke-width="1" fill="none" stroke-dasharray="2 6"/>
+        <text x="180" y="34" text-anchor="middle"
+              font-family="Geist Mono" font-size="9" letter-spacing="1.4"
+              fill="rgba(20,20,20,0.55)">REST · 4%</text>
+
+        <!-- Latin America (6%) -->
+        <circle id="ring3" cx="180" cy="180" r="120" stroke="rgba(20,20,20,0.7)" stroke-width="1" fill="none" stroke-dasharray="3 5"/>
+        <text x="312" y="184" text-anchor="end"
+              font-family="Geist Mono" font-size="9" letter-spacing="1.4"
+              fill="rgba(20,20,20,0.7)">LATAM · 6%</text>
+
+        <!-- Europe (10%) -->
+        <circle id="ring2" cx="180" cy="180" r="80" stroke="rgba(20,20,20,0.85)" stroke-width="1" fill="none" stroke-dasharray="5 4"/>
+        <text x="180" y="93" text-anchor="middle"
+              font-family="Geist Mono" font-size="9" letter-spacing="1.4"
+              fill="rgba(20,20,20,0.85)">EUROPE · 10%</text>
+
+        <!-- Domestic core (80%) — the loud one -->
+        <circle cx="180" cy="180" r="64" fill="url(#ringGrad)"/>
+        <circle id="ring1" cx="180" cy="180" r="40" fill="var(--signal)"/>
+        <text x="180" y="174" text-anchor="middle"
+              font-family="Instrument Serif" font-style="italic"
+              font-size="34" fill="#FFFFFF">80%</text>
+        <text x="180" y="194" text-anchor="middle"
+              font-family="Geist Mono" font-size="9" letter-spacing="1.4"
+              fill="rgba(255,255,255,0.85)">US · CANADA</text>
+
+        <!-- Pulsing ring -->
+        <circle cx="180" cy="180" r="40" fill="none"
+                stroke="var(--signal)" stroke-width="1.5">
+          <animate attributeName="r" from="40" to="100" dur="2.6s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" from="0.6" to="0" dur="2.6s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+
+    <div class="rings-legend">
+      <div class="rings-row dom">
+        <span class="pct">80%</span>
+        <span class="reg">United States &amp; Canada
+          <span class="small">Headquarters · Waukesha, WI</span>
+        </span>
+      </div>
+      <div class="rings-row">
+        <span class="pct">10%</span>
+        <span class="reg">Europe
+          <span class="small">UK · Italy · manufacturing</span>
+        </span>
+      </div>
+      <div class="rings-row">
+        <span class="pct">6%</span>
+        <span class="reg">Latin America
+          <span class="small">Mexico · Brazil</span>
+        </span>
+      </div>
+      <div class="rings-row">
+        <span class="pct">4%</span>
+        <span class="reg">Rest of world</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reset 4 -->
+  <section class="reset dark" data-chrome="dark" data-screen-label="09 Reset · transfer switch">
+    <p class="quote">
+      A transfer switch decides<br>
+      <span class="signal">where the next dollar goes.</span>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       6) THE BET
+  ============================================================ -->
+  <section class="bet" data-chrome="dark" data-screen-label="10 The bet">
+    <span class="eyebrow dark"><span class="dot"></span>The bet · capital out</span>
+    <h2>The bill bends<br>toward <span class="em">data centers.</span></h2>
+    <p class="lede">
+      Generac is not paying a meaningful dividend — only <em>$293K</em> across the year.
+      The cash goes back into shares, into bolt-ons, and onto the jobsite where the
+      next decade of demand looks loudest.
+    </p>
+
+    <!-- Transfer switch SVG -->
+    <div class="switch">
+      <svg viewBox="0 0 380 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- Two source labels -->
+        <text x="40" y="34" font-family="Geist Mono" font-size="10" letter-spacing="1.4"
+              fill="rgba(255,255,255,0.55)">UTILITY · OUTAGES</text>
+        <text x="340" y="34" text-anchor="end" font-family="Geist Mono" font-size="10" letter-spacing="1.4"
+              fill="var(--signal)">DATA CENTERS · 24/7</text>
+
+        <!-- Two source bars -->
+        <line x1="20" y1="60" x2="160" y2="60" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+        <line x1="220" y1="60" x2="360" y2="60" stroke="var(--signal)" stroke-width="2"/>
+
+        <!-- Switch box -->
+        <rect x="160" y="48" width="60" height="24" rx="4" fill="none" stroke="rgba(255,255,255,0.4)"/>
+        <text x="190" y="65" text-anchor="middle" font-family="Geist Mono" font-size="9"
+              fill="rgba(255,255,255,0.6)" letter-spacing="1.2">XFER</text>
+
+        <!-- the switch contact — currently closed toward DCs (right) -->
+        <line id="switchArm" x1="190" y1="60" x2="220" y2="60"
+              stroke="var(--signal)" stroke-width="2.2"/>
+        <circle cx="190" cy="60" r="2.5" fill="var(--signal)"/>
+        <circle cx="220" cy="60" r="2.5" fill="var(--signal)"/>
+
+        <!-- Drop to load -->
+        <line x1="190" y1="72" x2="190" y2="170" stroke="var(--signal)" stroke-width="1.8"
+              stroke-dasharray="5 7">
+          <animate attributeName="stroke-dashoffset" from="0" to="-120" dur="3.5s" repeatCount="indefinite"/>
+        </line>
+
+        <!-- Load: a stacked rack -->
+        <g transform="translate(150 170)">
+          <rect x="0" y="0" width="80" height="42" rx="3" fill="none" stroke="rgba(255,255,255,0.5)"/>
+          <line x1="0" y1="10" x2="80" y2="10" stroke="rgba(255,255,255,0.35)"/>
+          <line x1="0" y1="20" x2="80" y2="20" stroke="rgba(255,255,255,0.35)"/>
+          <line x1="0" y1="30" x2="80" y2="30" stroke="rgba(255,255,255,0.35)"/>
+          <!-- led indicators -->
+          <circle cx="6" cy="6" r="1.5" fill="var(--signal)" class="flicker"/>
+          <circle cx="6" cy="16" r="1.5" fill="var(--signal)"/>
+          <circle cx="6" cy="26" r="1.5" fill="var(--signal)" class="flicker"/>
+          <circle cx="6" cy="36" r="1.5" fill="var(--signal)"/>
+          <text x="40" y="60" text-anchor="middle" font-family="Geist Mono"
+                font-size="9" letter-spacing="1.2"
+                fill="rgba(255,255,255,0.5)">C&amp;I LOAD</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="bet-stack">
+      <div class="bet-row">
+        <span class="num">$500M</span>
+        <span class="lab">New buyback authorization
+          <span class="small">Approved Feb 2026 · 24-month window</span>
+        </span>
+        <span class="when">Forward</span>
+      </div>
+      <div class="bet-row">
+        <span class="num">$148M</span>
+        <span class="lab">Shares repurchased in '25
+          <span class="small">≈1.1M shares · capital back to holders</span>
+        </span>
+        <span class="when">FY '25</span>
+      </div>
+      <div class="bet-row">
+        <span class="num">+1</span>
+        <span class="lab">Acquired Allmand
+          <span class="small">Mobile C&amp;I power equipment · jobsites &amp; light towers</span>
+        </span>
+        <span class="when">Jan '26</span>
+      </div>
+      <div class="bet-row">
+        <span class="num">$170M</span>
+        <span class="lab">Capital expenditures
+          <span class="small">FY '25 · $268M free cash flow after</span>
+        </span>
+        <span class="when">FY '25</span>
+      </div>
+      <div class="bet-row">
+        <span class="num">$293K</span>
+        <span class="lab">Dividends paid
+          <span class="small">Effectively rounding error · no dividend story</span>
+        </span>
+        <span class="when">FY '25</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reset 5 -->
+  <section class="reset band" data-chrome="light" data-screen-label="11 Reset · they share a bus">
+    <p class="quote">
+      Three rivals on the same bus.<br>
+      <span class="signal" style="font-style:normal;">Generac is not the biggest.</span>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       7) COMPETITION — transformers on a bus
+  ============================================================ -->
+  <section class="compete" data-chrome="light" data-screen-label="12 Competition">
+    <span class="eyebrow"><span class="dot"></span>The room · sized in market cap</span>
+    <h2>Cummins is seven<br>times the <span class="em">size.</span></h2>
+    <p class="lede">
+      In dollars-of-equity, Generac is mid-pack. In product overlap with Cummins,
+      it is the smaller cousin pointed at the same customer.
+    </p>
+
+    <div class="rivals">
+      <!-- Rivals sized against Cummins (the largest) for the bar -->
+      <!-- Cummins -->
+      <div class="rival" data-cap="86.65">
+        <div class="rival-head">
+          <span class="rival-name">Cummins<span class="tk">CMI</span></span>
+          <span class="rival-cap">$86.7B</span>
+        </div>
+        <div class="rival-bar-wrap"><div class="rival-bar" style="--target:100%"></div></div>
+        <div class="rival-meta">
+          <span>REV <span class="v">$33.7B</span></span>
+          <span>P/E <span class="v">30.5×</span></span>
+          <span>YoY <span class="v">−1.3%</span></span>
+        </div>
+        <p class="rival-desc">
+          The most direct large-scale rival — diesel and natural gas generators, transfer switches,
+          and power systems competing for the same dealer and distributor networks.
+        </p>
+      </div>
+
+      <!-- Generac (self) -->
+      <div class="rival self" data-cap="12.45">
+        <div class="rival-head">
+          <span class="rival-name">Generac<span class="tk">· GNRC</span></span>
+          <span class="rival-cap">$12.45B</span>
+        </div>
+        <div class="rival-bar-wrap"><div class="rival-bar" style="--target:14.4%"></div></div>
+        <div class="rival-meta">
+          <span>REV <span class="v">$4.21B</span></span>
+          <span>OP MARGIN <span class="v">6.9%</span></span>
+          <span>YoY <span class="v">−2.0%</span></span>
+        </div>
+        <p class="rival-desc">
+          The lights-stay-on company. Smaller bill, same customer.
+        </p>
+      </div>
+
+      <!-- Regal Rexnord -->
+      <div class="rival" data-cap="13.67">
+        <div class="rival-head">
+          <span class="rival-name">Regal Rexnord<span class="tk">RRX</span></span>
+          <span class="rival-cap">$13.7B</span>
+        </div>
+        <div class="rival-bar-wrap"><div class="rival-bar" style="--target:15.8%"></div></div>
+        <div class="rival-meta">
+          <span>REV <span class="v">$5.93B</span></span>
+          <span>P/E <span class="v">48.9×</span></span>
+          <span>YoY <span class="v">−1.7%</span></span>
+        </div>
+        <p class="rival-desc">
+          Motors, drives, and grid-edge power management — circling the same data-center
+          and industrial backup markets Generac is leaning into for C&amp;I growth.
+        </p>
+      </div>
+
+      <!-- Mueller Industries -->
+      <div class="rival" data-cap="13.50">
+        <div class="rival-head">
+          <span class="rival-name">Mueller Industries<span class="tk">MLI</span></span>
+          <span class="rival-cap">$13.5B</span>
+        </div>
+        <div class="rival-bar-wrap"><div class="rival-bar" style="--target:15.6%"></div></div>
+        <div class="rival-meta">
+          <span>REV <span class="v">$4.18B</span></span>
+          <span>P/E <span class="v">17.7×</span></span>
+          <span>YoY <span class="v">+10.9%</span></span>
+        </div>
+        <p class="rival-desc">
+          Copper and brass components for HVAC, refrigeration, and the power infrastructure
+          that intersects Generac's energy management and standby installations.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       8) CLOSE — inversion
+  ============================================================ -->
+  <section class="close" data-chrome="dark" data-screen-label="13 Close">
+    <div class="close-glow"></div>
+    <span class="eyebrow dark"><span class="dot"></span>The takeaway</span>
+    <h2>
+      The lights stayed on.<br>
+      <span class="em">The customer<br>moved indoors.</span>
+    </h2>
+    <p class="lede">
+      The page opened with the grid going dark. It closes with the grid changing customers.
+      For sixty-seven years Generac sold the moment after a storm. The next decade,
+      it is selling the seconds a server rack cannot lose.
+    </p>
+
+    <div class="close-mark">
+      <div class="row"><span class="lab">Then</span><span class="val">A basement freezer in a thunderstorm.</span></div>
+      <div class="row"><span class="lab">Now</span><span class="val">A rack that cannot blink.</span></div>
+      <div class="row"><span class="lab">Bet</span><span class="val"><span class="em">$500M</span> back to holders. <span class="em">+1</span> bolt-on. C&amp;I leaning into the data center.</span></div>
+      <div class="row"><span class="lab">Score</span><span class="val"><span class="em">$4.21B</span> in. <span class="em">$268M</span> out the bottom. <span class="em">$12.45B</span> on the tape.</span></div>
+    </div>
+
+    <div class="colophon">
+      GNRC · NYSE · FY '25 RECAP<br>
+      <span class="signal">Source · 10-K · earnings · public filings</span><br>
+      Not investment advice.
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ---------------------------------------------------------
+   Scroll progress bar in chrome
+--------------------------------------------------------- */
+(function () {
+  const fill = document.getElementById('progressFill');
+  const chrome = document.getElementById('chrome');
+
+  function onScroll() {
+    const doc = document.documentElement;
+    const max = doc.scrollHeight - window.innerHeight;
+    const p = Math.max(0, Math.min(1, window.scrollY / max));
+    fill.style.width = (p * 100) + '%';
+
+    // Chrome theme switch — based on the section under the chrome
+    const cy = 30;
+    const sections = document.querySelectorAll('[data-chrome]');
+    let active = null;
+    sections.forEach(s => {
+      const r = s.getBoundingClientRect();
+      if (r.top <= cy && r.bottom > cy) active = s;
+    });
+    if (active) {
+      const dark = active.dataset.chrome === 'dark';
+      chrome.classList.toggle('dark', dark);
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+/* ---------------------------------------------------------
+   IntersectionObserver — reveal + trigger
+--------------------------------------------------------- */
+(function () {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        if (e.target.dataset.once === 'true') io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18 });
+
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.dataset.once = 'true';
+    io.observe(el);
+  });
+})();
+
+/* ---------------------------------------------------------
+   Count-up numbers
+--------------------------------------------------------- */
+(function () {
+  const counters = document.querySelectorAll('.count');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const target = parseFloat(el.dataset.target);
+      const decimals = parseInt(el.dataset.decimals || '0', 10);
+      const dur = 1400;
+      const start = performance.now();
+      function tick(t) {
+        const p = Math.min(1, (t - start) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const v = target * eased;
+        if (decimals === 0) {
+          el.textContent = Math.round(v).toLocaleString();
+        } else {
+          el.textContent = v.toFixed(decimals);
+        }
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      io.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(c => io.observe(c));
+})();
+
+/* ---------------------------------------------------------
+   Circuit bar fills
+--------------------------------------------------------- */
+(function () {
+  const circuits = document.querySelectorAll('.circuit');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const c = e.target;
+      const pct = parseFloat(c.dataset.pct);
+      const fill = c.querySelector('.circuit-bar .fill');
+      fill.style.width = pct + '%';
+      io.unobserve(c);
+    });
+  }, { threshold: 0.4 });
+  circuits.forEach(c => io.observe(c));
+})();
+
+/* ---------------------------------------------------------
+   Voltage wave drawing
+--------------------------------------------------------- */
+(function () {
+  const path = document.getElementById('livePath');
+  if (!path) return;
+  const len = path.getTotalLength();
+  path.style.strokeDasharray = len;
+  path.style.strokeDashoffset = len;
+  path.style.transition = 'stroke-dashoffset 1800ms cubic-bezier(0.22, 1, 0.36, 1)';
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      path.style.strokeDashoffset = '0';
+      io.unobserve(path);
+    });
+  }, { threshold: 0.4 });
+  io.observe(path);
+})();
+
+/* ---------------------------------------------------------
+   100-cent grid
+   Build a 10×10 grid sized & colored by biggest_costs.
+   Order: row-by-row, left to right.
+--------------------------------------------------------- */
+(function () {
+  const grid = document.getElementById('centsGrid');
+  if (!grid) return;
+  // Distribution: 62, 16, 6, 4, 4, then 7 surplus (operating margin)
+  // = 62+16+6+4+4 = 92; remainder 8 cents are "other" (we'll fold into surplus visual)
+  // To stay traceable: 62 cost, 16 SG&A, 6 R&D, 4 amort, 4 capex (= 92), and 8 "surplus / other"
+  const cats = [
+    { n: 62, color: '#E05C5C' },
+    { n: 16, color: '#5B8FD4' },
+    { n: 6,  color: '#F5A623' },
+    { n: 4,  color: '#7ED6A0' },
+    { n: 4,  color: '#B57BDB' },
+    { n: 8,  surplus: true }
+  ];
+  let i = 0;
+  const cells = [];
+  for (let r = 0; r < 10; r++) {
+    for (let c = 0; c < 10; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cent';
+      cells.push(cell);
+      grid.appendChild(cell);
+    }
+  }
+  // Animate fill row-by-row on view.
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      grid.classList.add('in-view');
+      // assign categories with stagger
+      let idx = 0;
+      cats.forEach(cat => {
+        for (let k = 0; k < cat.n; k++) {
+          const cell = cells[idx];
+          const delay = idx * 12;
+          setTimeout(() => {
+            if (cat.surplus) {
+              cell.classList.add('surplus');
+            } else {
+              cell.classList.add('lit');
+              cell.style.setProperty('--c', cat.color);
+            }
+          }, delay);
+          idx++;
+        }
+      });
+      io.unobserve(grid);
+    });
+  }, { threshold: 0.3 });
+  io.observe(grid);
+})();
+
+/* ---------------------------------------------------------
+   Rival bars
+--------------------------------------------------------- */
+(function () {
+  const rows = document.querySelectorAll('.rival');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const r = e.target;
+      const bar = r.querySelector('.rival-bar');
+      const target = bar.style.getPropertyValue('--target') || '0%';
+      requestAnimationFrame(() => { bar.style.width = target; });
+      io.unobserve(r);
+    });
+  }, { threshold: 0.3 });
+  rows.forEach(r => io.observe(r));
+})();
+
+/* ---------------------------------------------------------
+   Switch flip — periodically wobbles
+--------------------------------------------------------- */
+(function () {
+  const arm = document.getElementById('switchArm');
+  if (!arm) return;
+  // The arm starts pointing right (data centers). Briefly visit utility side, then return.
+  let visible = false;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      visible = e.isIntersecting;
+    });
+  }, { threshold: 0.3 });
+  io.observe(arm);
+
+  function loop() {
+    if (visible) {
+      // utility side: x2 = 160
+      arm.setAttribute('x2', '160');
+      arm.setAttribute('stroke', 'rgba(255,255,255,0.5)');
+      setTimeout(() => {
+        arm.setAttribute('x2', '220');
+        arm.setAttribute('stroke', 'var(--signal)');
+      }, 900);
+    }
+    setTimeout(loop, 3800);
+  }
+  loop();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,807 @@
+/* ============================================================
+   TXN recap — page styles (mobile, vertical scroll)
+   ============================================================ */
+
+#app {
+  width: 100%;
+  max-width: 440px;
+  min-width: 320px;
+  margin: 0 auto;
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---------- Sticky chrome ---------- */
+.chrome{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  background: color-mix(in srgb, var(--paper) 72%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+}
+.chrome-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 12px;
+}
+.chrome-left{ display: flex; align-items: baseline; gap: 10px; }
+.chrome-ticker{
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+.chrome-ticker .dot{
+  display:inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--coral-400);
+  margin-right: 6px;
+  transform: translateY(-2px);
+}
+.chrome-name{
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink-2);
+  letter-spacing: -0.005em;
+}
+.chrome-right{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.scroll-rail{
+  height: 1px;
+  background: transparent;
+  position: relative;
+}
+.scroll-rail .fill{
+  position: absolute; left:0; top:0; bottom:0;
+  background: var(--coral-400);
+  width: 0%;
+  transition: width 80ms linear;
+}
+
+/* ---------- Section skeleton ---------- */
+section{
+  position: relative;
+  padding: 0 24px;
+}
+.eyebrow{
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.eyebrow .num{
+  display:inline-block;
+  font-family: var(--mono);
+  color: var(--coral-500);
+}
+.eyebrow .bar{
+  flex: 0 0 18px;
+  height: 1px;
+  background: var(--ink-4);
+}
+
+.display{
+  font-family: var(--display);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+.italic { font-style: italic; }
+.coral { color: var(--coral-500); }
+.muted { color: var(--ink-2); }
+.subtle { color: var(--ink-3); }
+.mono { font-family: var(--mono); }
+
+p.lede{
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  text-wrap: pretty;
+  margin: 0;
+}
+p.body{
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  text-wrap: pretty;
+  margin: 0;
+}
+
+/* ---------- Reveal-on-scroll ---------- */
+.reveal{
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+}
+.reveal.in{ opacity:1; transform: none; }
+.reveal[data-delay="1"]{ transition-delay: 80ms; }
+.reveal[data-delay="2"]{ transition-delay: 160ms; }
+.reveal[data-delay="3"]{ transition-delay: 240ms; }
+.reveal[data-delay="4"]{ transition-delay: 320ms; }
+
+/* ============================================================
+   1. HERO — 300mm wafer
+   ============================================================ */
+.hero{
+  position: relative;
+  padding: 56px 24px 96px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.hero-eyebrow{ margin-bottom: 28px; }
+.hero h1{
+  font-family: var(--display);
+  font-size: clamp(48px, 14vw, 64px);
+  line-height: 0.94;
+  letter-spacing: -0.025em;
+  font-weight: 400;
+  color: var(--ink);
+  text-wrap: balance;
+  margin: 0 0 28px;
+}
+.hero h1 .em{ font-style: italic; color: var(--coral-500); }
+.hero-meta{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin-top: 36px;
+  border-top: 1px solid var(--line);
+}
+.hero-meta > div{
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.hero-meta > div + div { padding-left: 16px; }
+.hero-meta .k{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+.hero-meta .v{
+  font-family: var(--display);
+  font-size: 26px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.hero-meta .v small{
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-left: 4px;
+  letter-spacing: 0.04em;
+}
+
+.wafer-stage{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  margin: 28px auto 0;
+}
+.wafer-stage svg { width: 100%; height: 100%; overflow: visible; }
+
+/* ============================================================
+   RESET BEAT
+   ============================================================ */
+.reset{
+  padding: 36px 32px 36px;
+  background: var(--paper-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin: 0;
+}
+.reset p{
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.32;
+  color: var(--ink-2);
+  text-wrap: balance;
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+.reset p .hit{ color: var(--coral-500); font-style: italic; }
+
+/* ============================================================
+   2. HOW IT MAKES MONEY — signal chain
+   ============================================================ */
+.howmoney{ padding: 80px 24px 88px; }
+.howmoney h2{
+  font-family: var(--display);
+  font-size: 40px;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin: 18px 0 24px;
+}
+.howmoney h2 em { color: var(--coral-500); font-style: italic; }
+.signal-stage{ margin-top: 32px; }
+.signal-stage svg { width: 100%; height: auto; }
+
+.segments{
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-top: 36px;
+  border-top: 1px solid var(--line);
+}
+.seg-row{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: baseline;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.seg-row .pct{
+  font-family: var(--display);
+  font-size: 36px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  min-width: 64px;
+  color: var(--ink);
+}
+.seg-row .pct sup{
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  vertical-align: super;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  margin-left: 2px;
+  top: -0.6em;
+  position: relative;
+}
+.seg-row .label{
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+.seg-row .label strong{ font-weight: 500; color: var(--ink); display:block; font-size: 15px; }
+.seg-row .rev{
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.margins{
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 0;
+}
+.margins > div{ padding: 18px 16px; }
+.margins > div + div{ border-left: 1px solid var(--line); }
+.margins .k{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.margins .v{
+  font-family: var(--display);
+  font-size: 38px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-top: 6px;
+  color: var(--ink);
+}
+.margins .v small{
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  margin-left: 2px;
+}
+
+/* ============================================================
+   3. SCALE — count-ups + grid of 80,000
+   ============================================================ */
+.scale{ padding: 96px 24px 88px; }
+.scale h2{
+  font-family: var(--display);
+  font-size: 40px;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin: 18px 0 0;
+}
+.scale h2 em { color: var(--coral-500); font-style: italic; }
+.scale-lede{ margin-top: 22px; max-width: 36ch; }
+
+.bignums{
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+.bignums > div{
+  padding: 22px 0 22px;
+  border-bottom: 1px solid var(--line);
+}
+.bignums > div + div { border-left: 1px solid var(--line); padding-left: 18px; }
+.bignums:has(> :nth-child(3)) > div:nth-child(odd):not(:first-child){ border-left: 0; padding-left:0; }
+.bignums .k{
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: block;
+  margin-bottom: 6px;
+}
+.bignums .v{
+  font-family: var(--display);
+  font-size: 42px;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.bignums .v small{
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  margin-left: 4px;
+}
+
+/* product grid (80,000 dots) */
+.product-grid{
+  margin-top: 44px;
+  position: relative;
+}
+.product-grid svg { width: 100%; height: auto; display:block; }
+.product-grid .caption{
+  margin-top: 14px;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  text-wrap: balance;
+}
+.product-grid .caption .hit{ color: var(--coral-500); }
+
+/* ============================================================
+   4. WHERE THE MONEY GOES — the dollar
+   ============================================================ */
+.costs{ padding: 96px 24px 88px; background: var(--paper); }
+.costs h2{
+  font-family: var(--display);
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 18px 0 0;
+}
+.costs h2 em{ font-style: italic; color: var(--coral-500); }
+
+.dollar-stage{
+  margin: 48px auto 28px;
+  width: 100%;
+  position: relative;
+}
+.dollar-stage svg{ width: 100%; height: auto; }
+
+.cost-list{
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+}
+.cost-row{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+.cost-row .swatch{
+  width: 14px; height: 14px;
+  border-radius: 3px;
+}
+.cost-row .label{
+  font-family: var(--sans);
+  font-size: 14.5px;
+  color: var(--ink);
+  font-weight: 400;
+}
+.cost-row .pct{
+  font-family: var(--display);
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.cost-row .pct .c{ font-family: var(--mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.04em; margin-left: 2px;}
+
+.cost-footer{
+  margin-top: 24px;
+  display: flex; gap: 8px; align-items: baseline;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.45;
+  color: var(--ink-2);
+  text-wrap: balance;
+}
+.cost-footer .hit{ color: var(--coral-500); }
+
+/* ============================================================
+   5. GEOGRAPHY
+   ============================================================ */
+.geo{ padding: 96px 24px 96px; }
+.geo h2{
+  font-family: var(--display);
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 18px 0 24px;
+}
+.geo h2 em{ font-style: italic; color: var(--coral-500); }
+
+.geo-stage{
+  margin-top: 28px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  padding: 24px 18px 20px;
+  position: relative;
+}
+.geo-stage svg{ width: 100%; height: auto; }
+
+.geo-list{
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.geo-row{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid var(--line-2);
+}
+.geo-row:last-child{ border-bottom: 1px solid var(--line-2); }
+.geo-row .ord{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  width: 18px;
+}
+.geo-row .name{
+  font-family: var(--sans);
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.geo-row .pct{
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.geo-bar{
+  position: relative;
+  height: 2px;
+  background: var(--line);
+  margin-top: 4px;
+  grid-column: 1 / -1;
+}
+.geo-bar .fill{
+  position: absolute; left:0; top:0; bottom:0;
+  background: var(--coral-400);
+}
+
+/* ============================================================
+   6. THE BET — DARK fab interlude
+   ============================================================ */
+.bet{
+  background: #0C0A07;
+  color: #F4EFE5;
+  padding: 96px 24px 100px;
+  position: relative;
+  overflow: hidden;
+}
+.bet .eyebrow{ color: #8A867C; }
+.bet .eyebrow .num{ color: var(--coral-300); }
+.bet h2{
+  font-family: var(--display);
+  font-size: 44px;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  margin: 18px 0 20px;
+  color: #F4EFE5;
+  text-wrap: balance;
+}
+.bet h2 em{ font-style: italic; color: var(--coral-300); }
+.bet p.body{ color: #C9C3B7; }
+.bet .fab-stage{
+  margin-top: 36px;
+  position: relative;
+}
+.bet .fab-stage svg{ width: 100%; height: auto; }
+
+.bet-stats{
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid #2A2620;
+}
+.bet-stats > div{
+  padding: 18px 0;
+  border-bottom: 1px solid #2A2620;
+}
+.bet-stats > div + div{
+  border-left: 1px solid #2A2620;
+  padding-left: 16px;
+}
+.bet-stats .k{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: #8A867C;
+  text-transform: uppercase;
+}
+.bet-stats .v{
+  font-family: var(--display);
+  font-size: 36px;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin-top: 4px;
+  color: #F4EFE5;
+}
+.bet-stats .v small{
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #8A867C;
+  letter-spacing: 0.04em;
+  margin-left: 3px;
+}
+.bet .footer-line{
+  margin-top: 28px;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.45;
+  color: #C9C3B7;
+  text-wrap: balance;
+}
+.bet .footer-line .hit{ color: var(--coral-300); }
+
+/* ============================================================
+   7. COMPETITION
+   ============================================================ */
+.compete{ padding: 96px 24px 88px; }
+.compete h2{
+  font-family: var(--display);
+  font-size: 40px;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin: 18px 0 12px;
+}
+.compete h2 em{ font-style: italic; color: var(--coral-500); }
+
+.compete-stage{
+  margin-top: 36px;
+  position: relative;
+}
+.compete-stage svg{ width: 100%; height: auto; overflow: visible; }
+
+.rivals{
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.rival{
+  border-top: 1px solid var(--line);
+  padding: 22px 0;
+  cursor: pointer;
+}
+.rival:last-child{ border-bottom: 1px solid var(--line); }
+.rival-head{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: baseline;
+}
+.rival-name{
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.rival-ticker{
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+}
+.rival-stats{
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+.rival-stats .k{
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  display: block;
+}
+.rival-stats .v{
+  font-family: var(--display);
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-top: 4px;
+}
+.rival-stats .v small{
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  margin-left: 2px;
+}
+.rival-stats .delta-up{ color: #2BB673; }
+.rival-stats .delta-down{ color: var(--coral-600); }
+.rival-desc{
+  margin-top: 14px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 380ms var(--ease-out), opacity 280ms var(--ease-out);
+  opacity: 0;
+}
+.rival[aria-expanded="true"] .rival-desc{
+  max-height: 240px;
+  opacity: 1;
+}
+.rival-desc p{
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0;
+  padding-top: 8px;
+}
+.rival-toggle{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rival-toggle .chev{
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 240ms var(--ease-out);
+}
+.rival[aria-expanded="true"] .rival-toggle .chev{
+  transform: rotate(-135deg) translateY(-2px);
+}
+
+/* ============================================================
+   8. CAPITAL RETURN — 22 dividend rings
+   ============================================================ */
+.capret{ padding: 96px 24px 96px; background: var(--paper-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.capret h2{
+  font-family: var(--display);
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 18px 0 24px;
+}
+.capret h2 em{ font-style: italic; color: var(--coral-500); }
+.capret-stage{ margin-top: 32px; }
+.capret-stage svg{ width: 100%; height: auto; }
+.capret-stats{
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+.capret-stats > div{
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.capret-stats > div + div{ border-left: 1px solid var(--line); padding-left: 16px; }
+.capret-stats .k{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.capret-stats .v{
+  font-family: var(--display);
+  font-size: 36px;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin-top: 4px;
+  color: var(--ink);
+}
+.capret-stats .v small{
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  margin-left: 3px;
+}
+
+/* ============================================================
+   9. TAKEAWAY — closing thesis
+   ============================================================ */
+.takeaway{ padding: 110px 24px 140px; position: relative; }
+.takeaway h2{
+  font-family: var(--display);
+  font-size: 56px;
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  font-weight: 400;
+  margin: 18px 0 28px;
+  text-wrap: balance;
+}
+.takeaway h2 em{ font-style: italic; color: var(--coral-500); }
+.takeaway p.lede{ font-size: 17px; max-width: 36ch; }
+
+.takeaway-wafer{
+  margin: 56px auto 0;
+  width: 76%;
+  aspect-ratio: 1 / 1;
+  position: relative;
+}
+.takeaway-wafer svg{ width: 100%; height: 100%; }
+
+.colophon{
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}

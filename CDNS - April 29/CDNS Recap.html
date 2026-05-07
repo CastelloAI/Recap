@@ -1,0 +1,1230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CDNS · Recap FY '25</title>
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  /* ============ base ============ */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* The page itself is a mobile-width column. */
+  .page {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--paper);
+    position: relative;
+    /* subtle warmth */
+    box-shadow: 0 0 60px rgba(20,20,20,0.04);
+    min-height: 100vh;
+  }
+
+  /* ============ chrome ============ */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    background: rgba(251,250,247,0.78);
+    border-bottom: 1px solid rgba(228,225,217,0.6);
+  }
+  .chrome[data-theme="dark"] {
+    background: rgba(15,14,13,0.78);
+    border-bottom-color: rgba(60,58,55,0.6);
+  }
+  .chrome-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px 10px;
+  }
+  .chrome-left {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .chrome-ticker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .chrome-name {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-style: italic;
+    color: var(--ink-2);
+    letter-spacing: -0.005em;
+  }
+  .chrome-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .progress {
+    height: 1.5px;
+    background: var(--paper-3);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--coral-400);
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 80ms linear;
+  }
+
+  /* ============ section primitives ============ */
+  section {
+    position: relative;
+    padding: 72px 24px;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--coral-500);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--coral-400);
+    display: inline-block;
+  }
+  .display-xl {
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 1.0;
+    letter-spacing: -0.022em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .display-xl .l1, .display-xl .l2, .display-xl .l3 { display: block; }
+  .display-lg {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.95;
+    letter-spacing: -0.022em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .display-md {
+    font-family: var(--font-display);
+    font-size: 38px;
+    line-height: 1.0;
+    letter-spacing: -0.018em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .ital { font-style: italic; }
+  .coral { color: var(--coral-500); }
+  .ink-2 { color: var(--ink-2); }
+  .ink-3 { color: var(--ink-3); }
+
+  .body-text {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .body-text em { font-family: var(--font-display); font-style: italic; color: var(--coral-500); font-size: 1.05em; }
+  .caption {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+
+  /* ============ reset beats ============ */
+  .reset-beat {
+    background: var(--paper-2);
+    padding: 56px 32px;
+    text-align: left;
+  }
+  .reset-beat .quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.25;
+    letter-spacing: -0.012em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .reset-beat .quote .hit { color: var(--coral-500); }
+  .reset-beat .marker {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--ink-4);
+    margin-bottom: 18px;
+    text-transform: uppercase;
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    padding: 28px 24px 48px;
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-top {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+  .hero-art {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    margin: 12px 0 4px;
+  }
+  .hero-art svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+  .hero h1 .l1 { display: block; }
+  .hero h1 .l2 { display: block; font-style: italic; color: var(--coral-500); }
+  .hero h1 .l3 { display: block; }
+  .hero h1 .l1 .accent { font-style: italic; color: var(--coral-500); }
+  .hero-sub {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .hero-sub .col { flex: 1; }
+  .hero-sub .num {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .hero-sub .num .unit {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-left: 2px;
+    font-style: normal;
+    letter-spacing: 0.06em;
+  }
+  .hero-sub .lbl {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  /* ============ "the business" routing ============ */
+  .routing-art { width: 100%; }
+  .routing-art svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+  /* ============ scale dots ============ */
+  .dot-grid {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    gap: 4px;
+    margin-top: 18px;
+  }
+  .dot-grid .dot {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--paper-3);
+    transition: background 200ms;
+  }
+  .dot-grid .dot.on { background: var(--coral-400); }
+
+  .stat-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-row .label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .stat-row .value {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: -0.018em;
+    color: var(--ink);
+  }
+  .stat-row .value .unit {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+    margin-left: 3px;
+  }
+
+  /* ============ money trace ============ */
+  .money-svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .legend {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+  }
+  .legend-row .swatch {
+    width: 10px; height: 10px; border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .legend-row .name {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--ink);
+    flex: 1;
+  }
+  .legend-row .pct {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+  .legend-row.sub .name { color: var(--ink-3); font-style: italic; font-family: var(--font-display); font-size: 16px; }
+  .legend-row.sub .pct { color: var(--ink-3); }
+
+  /* ============ footprint ============ */
+  .footprint-art {
+    width: 100%;
+    aspect-ratio: 1.05 / 1;
+    position: relative;
+    margin: 18px 0 8px;
+  }
+  .footprint-art svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .geo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 12px;
+  }
+  .geo-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .geo-row:last-child { border-bottom: none; }
+  .geo-pct {
+    font-family: var(--font-display);
+    font-size: 28px;
+    line-height: 1;
+    width: 76px;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+  }
+  .geo-pct .pct-sym { font-size: 16px; color: var(--ink-3); font-family: var(--font-mono); margin-left: 1px; vertical-align: 6px; }
+  .geo-bar {
+    flex: 1;
+    height: 2px;
+    background: var(--paper-3);
+    position: relative;
+  }
+  .geo-bar > span {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: var(--coral-400);
+    width: var(--w, 0%);
+  }
+  .geo-name {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+  .asia-callout {
+    margin-top: 22px;
+    padding: 18px 20px;
+    background: var(--coral-50);
+    border-left: 2px solid var(--coral-400);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .asia-callout .pct {
+    font-style: normal;
+    color: var(--coral-500);
+    font-weight: 400;
+  }
+
+  /* ============ THE BET — dark interlude ============ */
+  .bet {
+    background: #0F0E0D;
+    color: #F4F2ED;
+    padding: 80px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bet .eyebrow { color: #FF8B6A; }
+  .bet .display-lg { color: #F4F2ED; }
+  .bet .body-text { color: #C9C6BF; }
+  .bet .body-text em { color: #FF8B6A; }
+  .bet .ink-2 { color: #C9C6BF; }
+  .bet .ink-3 { color: #8C8A84; }
+  .bet .stat-row { border-color: rgba(244,242,237,0.12); border-style: dashed; }
+  .bet .stat-row .label { color: #8C8A84; }
+  .bet .stat-row .value { color: #F4F2ED; }
+  .bet .stat-row .value .unit { color: #8C8A84; }
+
+  .bet-rd-art {
+    height: 220px;
+    width: 100%;
+    margin: 22px 0 8px;
+    position: relative;
+  }
+  .bet-rd-art svg { width: 100%; height: 100%; overflow: visible; }
+
+  .buyback-ticker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #8C8A84;
+    letter-spacing: 0.14em;
+    margin-top: 10px;
+    text-transform: uppercase;
+  }
+
+  /* ============ competition ============ */
+  .duo-art {
+    width: 100%;
+    margin: 16px 0 4px;
+  }
+  .duo-art svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+  .comp-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px 16px;
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .comp-row.first { border-top: 1px solid var(--ink); border-top-width: 1.5px; }
+  .comp-row .name {
+    font-family: var(--font-display);
+    font-size: 26px;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .comp-row .ticker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+  }
+  .comp-row .desc {
+    grid-column: 1 / -1;
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    margin-top: 2px;
+  }
+  .comp-row .desc .em { font-family: var(--font-display); font-style: italic; color: var(--coral-500); font-size: 15px; }
+
+  /* ============ close ============ */
+  .close {
+    padding: 96px 24px 80px;
+    background: var(--paper);
+    position: relative;
+  }
+  .close .closer {
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 0.95;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+  }
+  .close .closer .ital { font-style: italic; color: var(--coral-500); display: block; }
+  .close-foot {
+    margin-top: 64px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-4);
+    text-transform: uppercase;
+  }
+
+  /* ============ scroll-driven utilities ============ */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* trace stroke animations */
+  .trace {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ============ subtle grid/dot bg for hero ============ */
+  .die-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(20,20,20,0.06) 1px, transparent 1px);
+    background-size: 16px 16px;
+    background-position: 0 0;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 50%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 50%, transparent 100%);
+  }
+
+</style>
+</head>
+<body>
+  <div class="page" id="page">
+    <!-- chrome -->
+    <header class="chrome" id="chrome">
+      <div class="chrome-inner">
+        <div class="chrome-left">
+          <span class="chrome-ticker">CDNS</span>
+          <span class="chrome-name">Cadence</span>
+        </div>
+        <span class="chrome-label">Recap · FY '25</span>
+      </div>
+      <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="die-bg" aria-hidden="true"></div>
+
+      <div class="hero-top">
+        <span>NASDAQ</span>
+        <span>San Jose · 1988</span>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <!-- A stylized chip die with traces routing inward to a coral core -->
+        <svg viewBox="0 0 360 280" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <linearGradient id="dieGrad" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0" stop-color="#FBFAF7"/>
+              <stop offset="1" stop-color="#F4F2ED"/>
+            </linearGradient>
+          </defs>
+
+          <!-- die outline -->
+          <rect x="36" y="24" width="288" height="232" rx="8" fill="url(#dieGrad)" stroke="#3B3A37" stroke-width="1"/>
+          <!-- corner registration marks -->
+          <g stroke="#3B3A37" stroke-width="1" fill="none">
+            <path d="M52 40 L52 30 L62 30"/>
+            <path d="M308 30 L298 30 L298 40"/>
+            <path d="M52 240 L52 250 L62 250"/>
+            <path d="M298 250 L298 240 L308 240"/>
+          </g>
+
+          <!-- pin pads on outer edges -->
+          <g fill="#3B3A37">
+            <!-- top -->
+            <g id="padsTop"></g>
+          </g>
+
+          <!-- routing traces (thin ink) -->
+          <g class="trace" stroke="#3B3A37" stroke-width="1" id="inkTraces">
+            <path d="M48 60 H120 V100 H160"/>
+            <path d="M48 96 H100 V140 H160"/>
+            <path d="M48 132 H140 V172 H160"/>
+            <path d="M48 168 H120 V196 H160"/>
+            <path d="M48 204 H160"/>
+            <path d="M48 232 H88 V200 H160"/>
+
+            <path d="M312 60 H240 V100 H200"/>
+            <path d="M312 96 H260 V140 H200"/>
+            <path d="M312 132 H220 V172 H200"/>
+            <path d="M312 168 H240 V196 H200"/>
+            <path d="M312 204 H200"/>
+            <path d="M312 232 H272 V200 H200"/>
+          </g>
+
+          <!-- coral live trace -->
+          <path id="liveTrace" class="trace"
+                stroke="#FF7A57" stroke-width="2"
+                d="M48 140 H110 Q124 140 124 154 V174 Q124 188 138 188 H180 Q180 188 180 174 V146"/>
+
+          <!-- core die -->
+          <rect x="148" y="120" width="64" height="50" rx="3" fill="#0F0E0D"/>
+          <text x="180" y="151" text-anchor="middle"
+                font-family="Geist Mono, monospace" font-size="9" fill="#FBFAF7" letter-spacing="0.18em">CDNS</text>
+
+          <!-- bond wires (subtle) -->
+          <g stroke="#A4A29C" stroke-width="0.6" fill="none">
+            <path d="M148 132 L120 110"/>
+            <path d="M148 158 L120 178"/>
+            <path d="M212 132 L240 110"/>
+            <path d="M212 158 L240 178"/>
+          </g>
+
+          <!-- micro dots (transistor field) -->
+          <g fill="#CFCBC0" id="microDots"></g>
+        </svg>
+      </div>
+
+      <div>
+        <div style="margin-bottom: 14px;">
+          <span class="eyebrow"><span class="dot"></span>The thesis</span>
+        </div>
+        <h1 class="display-xl">
+          <span class="l1">Three <span class="accent">companies</span></span>
+          <span class="l3">design every</span>
+          <span class="l3">chip on Earth.</span>
+        </h1>
+        <p class="body-text" style="margin-top: 22px; max-width: 36ch;">
+          Cadence is one of them. The software that lays out transistors, routes the traces, and verifies the silicon — <em>before it's ever fabbed.</em>
+        </p>
+
+        <div class="hero-sub">
+          <div class="col">
+            <div class="num">$85.87<span class="unit">B</span></div>
+            <div class="lbl">Market cap</div>
+          </div>
+          <div class="col">
+            <div class="num">$5.30<span class="unit">B</span></div>
+            <div class="lbl">FY'25 revenue</div>
+          </div>
+          <div class="col">
+            <div class="num">28.2<span class="unit">%</span></div>
+            <div class="lbl">GAAP op margin</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESET BEAT 1 -->
+    <section class="reset-beat">
+      <div class="marker">— Interlude</div>
+      <div class="quote">
+        Every chip starts as a problem on a screen. <span class="hit">Someone has to solve it</span> before the silicon is ever cut.
+      </div>
+    </section>
+
+    <!-- THE BUSINESS -->
+    <section>
+      <span class="eyebrow"><span class="dot"></span>The business · Three product lines</span>
+      <h2 class="display-lg" style="margin-top: 14px;">
+        Software<br/><span class="ital coral">that designs</span><br/>silicon.
+      </h2>
+      <p class="body-text" style="margin-top: 18px;">
+        Cadence sells the tools chip companies use to build chips. <em>Core EDA</em> for digital, custom-analog, and verification. <em>IP</em> blocks — HBM, DDR, PCIe, UCIe — licensed by the design. <em>System Design & Analysis</em> for multiphysics simulation.
+      </p>
+
+      <!-- Three product lines as routed traces -->
+      <div class="routing-art" style="margin-top: 32px;">
+        <svg viewBox="0 0 360 260" preserveAspectRatio="xMidYMid meet">
+          <!-- left: three "input" pads -->
+          <g font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="0.14em">
+            <text x="8" y="44" text-transform="uppercase">CORE EDA</text>
+            <text x="8" y="128" text-transform="uppercase">IP</text>
+            <text x="8" y="212" text-transform="uppercase">SYSTEM D&amp;A</text>
+          </g>
+          <g fill="#0F0E0D">
+            <rect x="8" y="50" width="46" height="14" rx="2"/>
+            <rect x="8" y="134" width="46" height="14" rx="2"/>
+            <rect x="8" y="218" width="46" height="14" rx="2"/>
+          </g>
+
+          <!-- traces converging right to a single revenue node -->
+          <g class="trace" stroke="#3B3A37" stroke-width="1.2" fill="none">
+            <path d="M54 57 H140 Q156 57 156 73 V120"/>
+            <path d="M54 141 H156 V120"/>
+            <path d="M54 225 H140 Q156 225 156 209 V120"/>
+          </g>
+
+          <!-- coral: revenue trunk -->
+          <path class="trace" stroke="#FF7A57" stroke-width="3" stroke-linecap="round"
+                d="M156 120 L156 130 Q156 144 170 144 H320"/>
+
+          <!-- node (junction) -->
+          <circle cx="156" cy="120" r="5" fill="#0F0E0D"/>
+          <circle cx="156" cy="120" r="2" fill="#FF7A57"/>
+
+          <!-- right: revenue tag -->
+          <g>
+            <rect x="220" y="124" width="120" height="42" rx="4" fill="none" stroke="#FF7A57" stroke-width="1"/>
+            <text x="232" y="146" font-family="Instrument Serif, serif" font-size="22" fill="#0F0E0D" letter-spacing="-0.015em">$5.30B</text>
+            <text x="232" y="160" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="0.14em">FY'25 REVENUE</text>
+          </g>
+
+          <!-- captions on each line -->
+          <g font-family="Geist Mono, monospace" font-size="9" fill="#A4A29C" letter-spacing="0.1em">
+            <text x="62" y="53">digital · analog · verification</text>
+            <text x="62" y="137">HBM · DDR · PCIe · UCIe</text>
+            <text x="62" y="221">multiphysics</text>
+          </g>
+        </svg>
+      </div>
+
+      <p class="body-text" style="margin-top: 26px;">
+        The model is software-shaped. <em>Recurring subscriptions, royalties, maintenance.</em> Cost of revenue lands at just <strong style="font-family: var(--font-display); font-style: italic; color: var(--coral-500); font-weight: 400; font-size: 1.1em;">13.6%</strong> — every dollar that comes in arrives mostly intact.
+      </p>
+    </section>
+
+    <!-- THE SCALE -->
+    <section style="background: var(--paper-2); padding-top: 80px; padding-bottom: 80px;">
+      <span class="eyebrow"><span class="dot"></span>The scale · A 13,800-person company</span>
+      <h2 class="display-lg" style="margin-top: 14px;">
+        Small,<br/><span class="ital coral">by chip standards.</span>
+      </h2>
+      <p class="body-text" style="margin-top: 18px;">
+        13,800 employees worldwide. Roughly the size of a single TSMC fab — <em>except they design every TSMC fab's customers' chips.</em>
+      </p>
+
+      <!-- 138 dots = 13,800 people, 100 per dot -->
+      <div class="dot-grid" id="peopleGrid"></div>
+      <div class="caption" style="margin-top: 12px;">
+        <span style="color: var(--coral-500);">●</span> Each dot · 100 employees · 138 dots · 13,800 total
+      </div>
+
+      <div style="margin-top: 40px;">
+        <div class="stat-row">
+          <span class="label">Revenue · FY '25</span>
+          <span class="value">$5.30<span class="unit">B</span></span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Q4 '25 revenue</span>
+          <span class="value">$1.44<span class="unit">B</span></span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Q4 '25 EPS</span>
+          <span class="value">$1.99</span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Operating cash flow</span>
+          <span class="value">$1.73<span class="unit">B</span></span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Free cash flow</span>
+          <span class="value">$1.59<span class="unit">B</span></span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Capex</span>
+          <span class="value">$141.9<span class="unit">M</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESET BEAT 2 -->
+    <section class="reset-beat">
+      <div class="marker">— Interlude</div>
+      <div class="quote">
+        A dollar walks in. <span class="hit">Sixty-eight cents</span> walk back out as research.
+      </div>
+    </section>
+
+    <!-- WHERE THE MONEY GOES -->
+    <section>
+      <span class="eyebrow"><span class="dot"></span>Where the money goes · One dollar of revenue</span>
+      <h2 class="display-lg" style="margin-top: 14px;">
+        The dollar,<br/>routed.
+      </h2>
+      <p class="body-text" style="margin-top: 18px;">
+        Cadence's costs aren't factories. They're <em>people who think</em> — and the equity used to keep them. R&amp;D dwarfs everything else.
+      </p>
+
+      <!-- The dollar as a routing diagram: $1 enters left, splits into traces -->
+      <div style="margin-top: 28px;">
+        <svg class="money-svg" viewBox="0 0 360 320" preserveAspectRatio="xMidYMid meet">
+          <!-- entry node -->
+          <g>
+            <circle cx="34" cy="160" r="22" fill="#0F0E0D"/>
+            <text x="34" y="166" text-anchor="middle" font-family="Instrument Serif, serif" font-size="22" fill="#FBFAF7" font-style="italic">$1</text>
+          </g>
+
+          <!-- splits to 5 cost lanes; widths proportional to pct -->
+          <!-- R&D 35% -->
+          <path d="M56 160 Q140 160 140 60 H320" stroke="#E8734A" stroke-width="35" fill="none" stroke-linecap="butt" opacity="1"/>
+          <!-- COR 14% -->
+          <path d="M56 160 Q160 160 160 122 H320" stroke="#4F86C6" stroke-width="14" fill="none" stroke-linecap="butt"/>
+          <!-- S&M 13% -->
+          <path d="M56 160 Q180 160 180 162 H320" stroke="#6DBF82" stroke-width="13" fill="none" stroke-linecap="butt"/>
+          <!-- G&A 7% -->
+          <path d="M56 160 Q200 160 200 200 H320" stroke="#A97DC9" stroke-width="7" fill="none" stroke-linecap="butt"/>
+          <!-- Operating margin 28.2% -->
+          <path d="M56 160 Q140 160 140 268 H320" stroke="#0F0E0D" stroke-width="28" fill="none" stroke-linecap="butt"/>
+
+          <!-- labels -->
+          <g font-family="Geist Mono, monospace" font-size="10" fill="#0F0E0D" letter-spacing="0.06em">
+            <text x="232" y="42" text-anchor="end">R&amp;D</text>
+            <text x="320" y="42" text-anchor="end" font-family="Instrument Serif, serif" font-size="18" font-style="italic" fill="#E8734A">35¢</text>
+
+            <text x="232" y="108" text-anchor="end">COST OF REV</text>
+            <text x="320" y="108" text-anchor="end" font-family="Instrument Serif, serif" font-size="16" font-style="italic" fill="#4F86C6">14¢</text>
+
+            <text x="232" y="148" text-anchor="end">SALES &amp; MKTG</text>
+            <text x="320" y="148" text-anchor="end" font-family="Instrument Serif, serif" font-size="16" font-style="italic" fill="#6DBF82">13¢</text>
+
+            <text x="232" y="190" text-anchor="end">G&amp;A</text>
+            <text x="320" y="190" text-anchor="end" font-family="Instrument Serif, serif" font-size="14" font-style="italic" fill="#A97DC9">7¢</text>
+
+            <text x="232" y="252" text-anchor="end" fill="#FBFAF7" font-weight="500">OPERATING INCOME</text>
+            <text x="320" y="252" text-anchor="end" font-family="Instrument Serif, serif" font-size="20" font-style="italic" fill="#FBFAF7">28¢</text>
+
+            <!-- white text on dark band needs background — handled with dual passes -->
+          </g>
+
+          <!-- a small note line -->
+          <text x="34" y="200" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="0.14em">REVENUE</text>
+        </svg>
+      </div>
+
+      <div class="legend">
+        <div class="legend-row">
+          <span class="swatch" style="background:#E8734A"></span>
+          <span class="name">Research &amp; development</span>
+          <span class="pct">35%</span>
+        </div>
+        <div class="legend-row">
+          <span class="swatch" style="background:#4F86C6"></span>
+          <span class="name">Cost of revenue</span>
+          <span class="pct">14%</span>
+        </div>
+        <div class="legend-row">
+          <span class="swatch" style="background:#6DBF82"></span>
+          <span class="name">Sales &amp; marketing</span>
+          <span class="pct">13%</span>
+        </div>
+        <div class="legend-row">
+          <span class="swatch" style="background:#A97DC9"></span>
+          <span class="name">General &amp; admin</span>
+          <span class="pct">7%</span>
+        </div>
+        <div class="legend-row sub">
+          <span class="swatch" style="background:#F2C94C"></span>
+          <span class="name">of which, stock-based comp</span>
+          <span class="pct">10%</span>
+        </div>
+      </div>
+
+      <p class="body-text" style="margin-top: 26px;">
+        Five cost categories. <em>R&amp;D is bigger than the next three combined.</em> That's the shape of a company whose product is <em>knowing how</em>.
+      </p>
+    </section>
+
+    <!-- FOOTPRINT -->
+    <section style="background: var(--paper-2); padding-top: 80px;">
+      <span class="eyebrow"><span class="dot"></span>The footprint · Where the silicon is built</span>
+      <h2 class="display-lg" style="margin-top: 14px;">
+        Sixty-three<br/>cents on the<br/><span class="ital coral">Pacific.</span>
+      </h2>
+      <p class="body-text" style="margin-top: 18px;">
+        Cadence is a San Jose company that makes most of its money east of the Pacific. China, Taiwan, Korea, Japan — <em>where the chips are actually fabbed.</em>
+      </p>
+
+      <div class="footprint-art">
+        <svg viewBox="0 0 360 340" preserveAspectRatio="xMidYMid meet">
+          <!-- vertical anchor -->
+          <line x1="32" y1="20" x2="32" y2="320" stroke="#CFCBC0" stroke-width="1"/>
+
+          <!-- equator-ish dashed -->
+          <line x1="0" y1="170" x2="360" y2="170" stroke="#E4E1D9" stroke-dasharray="2 4" stroke-width="1"/>
+
+          <!-- Each region as a circle whose area scales w/ pct, positioned roughly per-geography horizontally -->
+          <!-- coords: x ≈ longitude proxy, y ≈ latitude proxy -->
+          <!-- Americas 26% -->
+          <g transform="translate(64,168)">
+            <circle r="40" fill="#FF7A57" fill-opacity="0.18" stroke="#FF7A57" stroke-width="1"/>
+            <circle r="6" fill="#FF7A57"/>
+            <text y="-50" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#0F0E0D" letter-spacing="0.12em">AMERICAS</text>
+            <text y="60" text-anchor="middle" font-family="Instrument Serif, serif" font-size="22" fill="#0F0E0D">26%</text>
+          </g>
+          <!-- Europe & Israel 7% -->
+          <g transform="translate(160,90)">
+            <circle r="22" fill="#FF7A57" fill-opacity="0.14" stroke="#FF7A57" stroke-width="1"/>
+            <circle r="3" fill="#FF7A57"/>
+            <text y="-30" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#0F0E0D" letter-spacing="0.12em">EU + IL</text>
+            <text y="38" text-anchor="middle" font-family="Instrument Serif, serif" font-size="14" fill="#0F0E0D">7%</text>
+          </g>
+          <!-- China 23% -->
+          <g transform="translate(244,160)">
+            <circle r="38" fill="#0F0E0D" fill-opacity="0.88"/>
+            <text y="7" text-anchor="middle" font-family="Instrument Serif, serif" font-size="22" fill="#FBFAF7">23%</text>
+            <text y="-48" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#0F0E0D" letter-spacing="0.12em">CHINA</text>
+          </g>
+          <!-- Taiwan 22% -->
+          <g transform="translate(174,238)">
+            <circle r="37" fill="#0F0E0D" fill-opacity="0.88"/>
+            <text y="7" text-anchor="middle" font-family="Instrument Serif, serif" font-size="22" fill="#FBFAF7">22%</text>
+            <text y="54" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#0F0E0D" letter-spacing="0.12em">TAIWAN</text>
+          </g>
+          <!-- Korea 10% -->
+          <g transform="translate(316,88)">
+            <circle r="24" fill="#0F0E0D" fill-opacity="0.88"/>
+            <text y="6" text-anchor="middle" font-family="Instrument Serif, serif" font-size="16" fill="#FBFAF7">10%</text>
+            <text y="-34" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#0F0E0D" letter-spacing="0.12em">KOREA</text>
+          </g>
+          <!-- Japan 8% -->
+          <g transform="translate(310,168)">
+            <circle r="22" fill="#0F0E0D" fill-opacity="0.88"/>
+            <text y="6" text-anchor="middle" font-family="Instrument Serif, serif" font-size="14" fill="#FBFAF7">8%</text>
+            <text y="34" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#0F0E0D" letter-spacing="0.12em">JAPAN</text>
+          </g>
+          <!-- Rest of Asia 4% -->
+          <g transform="translate(286,254)">
+            <circle r="14" fill="#0F0E0D" fill-opacity="0.55"/>
+            <text y="4" text-anchor="middle" font-family="Instrument Serif, serif" font-size="11" fill="#FBFAF7">4%</text>
+            <text y="30" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#0F0E0D" letter-spacing="0.12em">REST OF ASIA</text>
+          </g>
+
+          <!-- a thin coral arc connecting San Jose to Asia -->
+          <path d="M64 168 Q180 40 244 160" fill="none" stroke="#FF7A57" stroke-width="1" stroke-dasharray="3 3" opacity="0.55"/>
+          <text x="180" y="30" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#FF7A57" letter-spacing="0.16em">SAN JOSE → ASIA</text>
+        </svg>
+      </div>
+
+      <div class="asia-callout">
+        <span class="pct">63%</span> of revenue comes from <span style="font-style:normal;">East Asia</span> — where the world's chips are <em>actually made.</em>
+      </div>
+    </section>
+
+    <!-- RESET BEAT 3 -->
+    <section class="reset-beat">
+      <div class="marker">— Interlude</div>
+      <div class="quote">
+        Software-light companies don't borrow. <span class="hit">Until they do.</span>
+      </div>
+    </section>
+
+    <!-- THE BET — DARK -->
+    <section class="bet">
+      <span class="eyebrow"><span class="dot" style="background:#FF8B6A;"></span>The bet · Capital allocation</span>
+      <h2 class="display-lg" style="margin-top: 14px; color: #F4F2ED;">
+        $2.5B<br/>borrowed,<br/><span class="ital" style="color:#FF8B6A;">$925M bought back.</span>
+      </h2>
+      <p class="body-text" style="margin-top: 18px;">
+        Late 2024: Cadence raised <em>$2.5B</em> in senior notes at a <em>4.44%</em> weighted rate — its first material debt. The proceeds didn't fund a factory. They funded <em>itself.</em>
+      </p>
+
+      <!-- R&D vs capex — the asymmetry, visualized -->
+      <div class="bet-rd-art">
+        <svg viewBox="0 0 360 220" preserveAspectRatio="xMidYMid meet">
+          <!-- baseline -->
+          <line x1="0" y1="180" x2="360" y2="180" stroke="rgba(244,242,237,0.16)"/>
+          <!-- R&D bar (35%) -->
+          <g>
+            <rect x="40" y="40" width="60" height="140" fill="#FF8B6A" rx="2"/>
+            <text x="70" y="32" text-anchor="middle" font-family="Instrument Serif, serif" font-size="22" fill="#F4F2ED">$1.86B</text>
+            <text x="70" y="200" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#8C8A84" letter-spacing="0.14em">R&amp;D</text>
+            <text x="70" y="214" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#8C8A84" letter-spacing="0.12em">35% of revenue</text>
+          </g>
+          <!-- Buybacks (925M) -->
+          <g>
+            <rect x="148" y="110" width="60" height="70" fill="#F4F2ED" rx="2"/>
+            <text x="178" y="100" text-anchor="middle" font-family="Instrument Serif, serif" font-size="20" fill="#F4F2ED">$925M</text>
+            <text x="178" y="200" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#8C8A84" letter-spacing="0.14em">BUYBACKS</text>
+            <text x="178" y="214" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#8C8A84" letter-spacing="0.12em">≥50% of FCF policy</text>
+          </g>
+          <!-- Capex (141.87M) -->
+          <g>
+            <rect x="256" y="170" width="60" height="10" fill="#8C8A84" rx="1"/>
+            <text x="286" y="162" text-anchor="middle" font-family="Instrument Serif, serif" font-size="14" fill="#F4F2ED">$142M</text>
+            <text x="286" y="200" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#8C8A84" letter-spacing="0.14em">CAPEX</text>
+            <text x="286" y="214" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#8C8A84" letter-spacing="0.12em">2.7% of revenue</text>
+          </g>
+        </svg>
+      </div>
+
+      <p class="body-text" style="margin-top: 14px;">
+        No factories to fund. <em>No dividend</em> — capital returns happen through buybacks. The 2024 BETA CAE acquisition extended multiphysics simulation into automotive and aerospace — <em>bolt-on, not bet-the-company.</em>
+      </p>
+
+      <div style="margin-top: 36px;">
+        <div class="stat-row">
+          <span class="label">Total equity</span>
+          <span class="value">$5.47<span class="unit">B</span></span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Cash &amp; equivalents</span>
+          <span class="value">$3.00<span class="unit">B</span></span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Senior notes (Nov '24)</span>
+          <span class="value">$2.50<span class="unit">B</span></span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Weighted rate</span>
+          <span class="value">4.44<span class="unit">%</span></span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Goodwill</span>
+          <span class="value">$2.38<span class="unit">B</span></span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Acquired intangibles</span>
+          <span class="value">$595<span class="unit">M</span></span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Dividend</span>
+          <span class="value" style="font-style: italic; color:#8C8A84;">none</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESET BEAT 4 -->
+    <section class="reset-beat">
+      <div class="marker">— Interlude</div>
+      <div class="quote">
+        There are three companies. <span class="hit">Two of them</span> are within a percent of each other.
+      </div>
+    </section>
+
+    <!-- THE COMPETITION -->
+    <section>
+      <span class="eyebrow"><span class="dot"></span>The competition · A duopoly with a third</span>
+      <h2 class="display-lg" style="margin-top: 14px;">
+        Two<br/><span class="ital coral">indistinguishable</span><br/>giants.
+      </h2>
+      <p class="body-text" style="margin-top: 18px;">
+        Cadence and Synopsys are <em>nearly identical</em> in market value. Synopsys carries more revenue and a richer multiple; Cadence runs leaner. Siemens EDA looms behind them both — owned by a German industrial conglomerate, harder to size, impossible to ignore.
+      </p>
+
+      <!-- Duopoly visualization: two near-equal columns + a third silhouette -->
+      <div class="duo-art" style="margin-top: 28px;">
+        <svg viewBox="0 0 360 240" preserveAspectRatio="xMidYMid meet">
+          <line x1="20" y1="200" x2="340" y2="200" stroke="#CFCBC0"/>
+
+          <!-- CDNS column -->
+          <g>
+            <rect x="40" y="80" width="84" height="120" fill="#FF7A57"/>
+            <text x="82" y="72" text-anchor="middle" font-family="Instrument Serif, serif" font-size="20" fill="#0F0E0D">$85.87B</text>
+            <text x="82" y="220" text-anchor="middle" font-family="Geist Mono, monospace" font-size="11" fill="#0F0E0D" letter-spacing="0.16em">CDNS</text>
+            <text x="82" y="234" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="0.12em">$5.30B rev</text>
+          </g>
+
+          <!-- SNPS column -->
+          <g>
+            <rect x="142" y="80" width="84" height="120" fill="#0F0E0D"/>
+            <text x="184" y="72" text-anchor="middle" font-family="Instrument Serif, serif" font-size="20" fill="#0F0E0D">$86.12B</text>
+            <text x="184" y="220" text-anchor="middle" font-family="Geist Mono, monospace" font-size="11" fill="#0F0E0D" letter-spacing="0.16em">SNPS</text>
+            <text x="184" y="234" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="0.12em">$7.05B rev</text>
+          </g>
+
+          <!-- Siemens silhouette (uncertain) -->
+          <g>
+            <rect x="244" y="100" width="84" height="100" fill="none" stroke="#0F0E0D" stroke-width="1" stroke-dasharray="3 4"/>
+            <text x="286" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="16" fill="#6B6A65">private</text>
+            <text x="286" y="220" text-anchor="middle" font-family="Geist Mono, monospace" font-size="11" fill="#0F0E0D" letter-spacing="0.16em">SIE EDA</text>
+            <text x="286" y="234" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="0.12em">subsidiary</text>
+          </g>
+
+          <!-- delta marker between CDNS and SNPS -->
+          <g>
+            <path d="M124 60 H142" stroke="#0F0E0D" stroke-width="1"/>
+            <path d="M124 60 L130 56 M124 60 L130 64" stroke="#0F0E0D" stroke-width="1" fill="none"/>
+            <path d="M142 60 L136 56 M142 60 L136 64" stroke="#0F0E0D" stroke-width="1" fill="none"/>
+            <text x="133" y="46" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#FF7A57" letter-spacing="0.14em">Δ 0.3%</text>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Per-competitor row -->
+      <div style="margin-top: 18px;">
+        <div class="comp-row first">
+          <div class="name">Synopsys</div>
+          <div class="ticker">SNPS</div>
+          <div class="desc">
+            <span class="em">$86.12B</span> mcap · <span class="em">$7.05B</span> revenue · P/E 78.19 · YoY <span class="em">+31.88%</span>. Head-to-head across every product category.
+          </div>
+        </div>
+        <div class="comp-row">
+          <div class="name">Siemens EDA</div>
+          <div class="ticker">SIE</div>
+          <div class="desc">
+            Mentor Graphics, acquired by Siemens. Buried inside an industrial conglomerate's books — competitive across IT.
+          </div>
+        </div>
+        <div class="comp-row">
+          <div class="name">Ansys</div>
+          <div class="ticker">ANSS</div>
+          <div class="desc">
+            Adjacent in multiphysics simulation. The third axis of the simulation race.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THE CLOSE -->
+    <section class="close">
+      <span class="eyebrow"><span class="dot"></span>The close · A restated thesis</span>
+
+      <div style="margin-top: 28px;">
+        <p class="body-text" style="font-size: 18px;">
+          The chips inside your phone, your car, your AI cluster — <em>they were laid out somewhere</em>. By software. By people who use software.
+        </p>
+
+        <div style="margin: 48px 0 12px;">
+          <div class="closer">
+            Three companies.<br/>
+            <span class="ital">One of them</span><br/>
+            is Cadence.
+          </div>
+        </div>
+
+        <p class="body-text" style="margin-top: 28px;">
+          $5.30B in. 28¢ on the dollar out as operating income. <em>One of three</em> places the modern chip industry begins.
+        </p>
+      </div>
+
+      <div class="close-foot">
+        <span>CDNS · NASDAQ</span>
+        <span>Recap · FY '25</span>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ===== build people grid (138 dots, fill in waves with scroll) =====
+    (function() {
+      const grid = document.getElementById('peopleGrid');
+      const total = 138;
+      for (let i = 0; i < total; i++) {
+        const d = document.createElement('div');
+        d.className = 'dot';
+        grid.appendChild(d);
+      }
+    })();
+
+    // ===== build hero micro-dots (transistor field) =====
+    (function() {
+      const svg = document.querySelector('.hero-art svg');
+      const layer = svg.querySelector('#microDots');
+      const dotsW = 16, dotsH = 12;
+      for (let r = 0; r < dotsH; r++) {
+        for (let c = 0; c < dotsW; c++) {
+          const x = 60 + c * 16;
+          const y = 60 + r * 14;
+          // skip area covered by central die
+          if (x > 140 && x < 220 && y > 110 && y < 180) continue;
+          const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+          dot.setAttribute('cx', x);
+          dot.setAttribute('cy', y);
+          dot.setAttribute('r', 0.9);
+          layer.appendChild(dot);
+        }
+      }
+      // pin pads
+      const pads = svg.querySelector('#padsTop');
+      // top pads
+      for (let i = 0; i < 12; i++) {
+        const x = 60 + i * 22;
+        const pad = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        pad.setAttribute('x', x);
+        pad.setAttribute('y', 24);
+        pad.setAttribute('width', 4);
+        pad.setAttribute('height', 6);
+        pads.appendChild(pad);
+        const pad2 = pad.cloneNode();
+        pad2.setAttribute('y', 250);
+        pads.appendChild(pad2);
+      }
+    })();
+
+    // ===== scroll progress =====
+    const progressFill = document.getElementById('progressFill');
+    const page = document.getElementById('page');
+    function updateProgress() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const max = (document.documentElement.scrollHeight - window.innerHeight);
+      const t = max > 0 ? Math.min(1, scrollTop / max) : 0;
+      progressFill.style.transform = 'scaleX(' + t.toFixed(4) + ')';
+
+      // light up people grid as scroll passes that section
+      const grid = document.getElementById('peopleGrid');
+      if (grid) {
+        const rect = grid.getBoundingClientRect();
+        const vh = window.innerHeight;
+        // 0 when grid top at vh, 1 when grid bottom at 0
+        const visStart = vh * 0.85;
+        const visEnd = vh * 0.15;
+        const span = visStart - visEnd;
+        const into = Math.max(0, Math.min(1, (visStart - rect.top) / span));
+        const dots = grid.querySelectorAll('.dot');
+        const lit = Math.floor(into * dots.length);
+        dots.forEach((d, i) => {
+          d.classList.toggle('on', i < lit);
+        });
+      }
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+    updateProgress();
+
+    // ===== reveal on scroll =====
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      }
+    }, { threshold: 0.12 });
+    document.querySelectorAll('section > *').forEach(el => {
+      el.classList.add('reveal');
+      io.observe(el);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,629 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
+
+/* ===== Palette override for SW: kraft + ink, coral becomes a single signal warmth ===== */
+:root {
+  /* Paper / kraft tones — this is a paper company */
+  --kraft-50:  #F7F1E3;
+  --kraft-100: #EFE5CD;
+  --kraft-200: #E2D2A8;
+  --kraft-300: #C9AE74;
+  --kraft-400: #A88848;   /* main kraft */
+  --kraft-500: #8A6D31;
+  --kraft-600: #5E4A1F;
+  --kraft-700: #3A2D13;
+
+  --pulp:      #F1ECDD;   /* slight cream — pulp slurry */
+  --paper-tint:#F4EEDC;
+  --ink:       #161310;
+  --ink-2:     #3A332B;
+  --ink-3:     #6E665B;
+  --ink-4:     #A39B8E;
+  --line:      #DCD3BC;
+  --line-strong:#BFB39A;
+
+  /* Signal — a single warm rust, used like coral but earthier — appears in italic emphasis */
+  --signal:    #C0461A;
+  --signal-2:  #E26334;
+
+  /* Industrial blues — only in the cost chart (mandated) */
+  --c-blue:    #2563EB;
+  --c-green:   #16A34A;
+  --c-amber:   #D97706;
+  --c-red:     #DC2626;
+  --c-violet:  #7C3AED;
+
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--pulp);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Page lives in a fixed mobile column, centered, gutters off-page */
+.page {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  position: relative;
+  background: var(--pulp);
+  /* fiber grain */
+  background-image:
+    radial-gradient(rgba(110, 80, 30, 0.035) 1px, transparent 1px),
+    radial-gradient(rgba(110, 80, 30, 0.025) 1px, transparent 1px);
+  background-size: 3px 3px, 7px 7px;
+  background-position: 0 0, 1px 2px;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* Off-page tint outside the column on big screens — feels like newsprint margins */
+@media (min-width: 700px) {
+  body::before, body::after {
+    content: "";
+    position: fixed; top: 0; bottom: 0; width: calc((100vw - 420px) / 2);
+    background: linear-gradient(180deg, #ECE3CC, #DFD3B5);
+    z-index: 0;
+  }
+  body::before { left: 0; }
+  body::after { right: 0; }
+}
+
+/* ============ Persistent chrome ============ */
+.chrome {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  background: rgba(241, 236, 221, 0.72);
+  backdrop-filter: blur(16px) saturate(1.1);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  border-bottom: 0.5px solid var(--line);
+}
+.chrome-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px 10px;
+  gap: 12px;
+}
+.chrome-left { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.ticker {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+.ticker .dot { color: var(--signal); }
+.cname {
+  font-family: var(--font-display);
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.recap-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.progress-rail {
+  height: 1.5px;
+  background: transparent;
+  position: relative;
+}
+.progress-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0%;
+  background: linear-gradient(90deg, var(--signal), var(--kraft-400));
+  transition: width 80ms linear;
+}
+
+/* ============ Type ============ */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+.eyebrow .acc { color: var(--signal); }
+.eyebrow .num { color: var(--ink); }
+.display, .display-l, .display-xl {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 0.96;
+  color: var(--ink);
+}
+.italic { font-style: italic; }
+.signal { color: var(--signal); }
+.kraft { color: var(--kraft-500); }
+
+p { margin: 0; color: var(--ink-2); }
+
+/* ============ Section frames ============ */
+section {
+  position: relative;
+  padding: 64px 24px;
+}
+section.tight { padding: 40px 24px; }
+section.flush { padding: 0; }
+
+/* Reset beats — italic-serif on a slightly different tonal band */
+.reset-beat {
+  background: var(--paper-tint);
+  border-top: 0.5px solid var(--line);
+  border-bottom: 0.5px solid var(--line);
+  padding: 56px 28px;
+  text-align: left;
+}
+.reset-beat .quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 28px;
+  line-height: 1.18;
+  color: var(--ink-2);
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+.reset-beat .quote em { color: var(--signal); font-style: italic; }
+
+/* Dark interlude band — the one earned tonal departure (used for "the bill") */
+.dark-band {
+  background: #14110D;
+  color: #F1ECDD;
+  border-top: 0.5px solid #2A241A;
+  border-bottom: 0.5px solid #2A241A;
+}
+.dark-band p { color: #C9C0AB; }
+.dark-band .display { color: #F4EEDC; }
+.dark-band .eyebrow { color: #8A8270; }
+.dark-band .signal { color: #FFA47A; }
+
+/* ============ Hero ============ */
+.hero {
+  padding: 28px 24px 80px;
+  position: relative;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 56px;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  margin: 32px 0 24px;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.hero h1 em { font-style: italic; color: var(--signal); }
+.hero .lede {
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 36ch;
+}
+.hero .lede em { font-style: italic; font-family: var(--font-display); font-size: 19px; color: var(--signal); }
+
+.kpi-strip {
+  display: flex;
+  gap: 24px;
+  margin-top: 36px;
+  border-top: 0.5px solid var(--line);
+  padding-top: 18px;
+}
+.kpi { flex: 1; }
+.kpi .v {
+  font-family: var(--font-display);
+  font-size: 30px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1;
+}
+.kpi .v.italic { font-style: italic; color: var(--signal); }
+.kpi .l {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 8px;
+}
+
+/* ============ The big number ============ */
+.big-number {
+  font-family: var(--font-display);
+  font-size: 124px;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+.big-number em { font-style: italic; color: var(--signal); }
+.big-number .unit {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  vertical-align: top;
+  margin-left: 6px;
+}
+
+/* ============ Mill network / map dots ============ */
+.dot-grid { display: block; width: 100%; }
+
+/* ============ Cost stack — corrugated cross-section ============ */
+.flute-stack { display: block; width: 100%; }
+
+/* ============ Competitor boxes ============ */
+.box-row {
+  display: flex; align-items: flex-end; gap: 14px;
+  margin-top: 24px;
+  height: 280px;
+  padding: 0 4px;
+}
+.box-col { flex: 1; display: flex; flex-direction: column; align-items: center; }
+.box-col .box {
+  width: 100%;
+  background: var(--kraft-200);
+  border: 0.5px solid var(--kraft-400);
+  border-radius: 2px;
+  position: relative;
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0, transparent 5px, rgba(94,74,31,0.07) 5px, rgba(94,74,31,0.07) 6px);
+  box-shadow: inset 0 -8px 0 rgba(94,74,31,0.07);
+}
+.box-col.us .box {
+  background: var(--ink);
+  border-color: var(--ink);
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0, transparent 5px, rgba(255,255,255,0.04) 5px, rgba(255,255,255,0.04) 6px);
+}
+.box-col.us .box::after {
+  content: ""; position: absolute; left: 50%; top: 8px; transform: translateX(-50%);
+  width: 6px; height: 6px; border-radius: 50%; background: var(--signal);
+}
+.box-col .meta-row {
+  margin-top: 10px; text-align: center; min-height: 56px;
+}
+.box-col .ticker-tag {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--ink-3);
+}
+.box-col .name {
+  font-family: var(--font-display); font-size: 15px; line-height: 1.1; color: var(--ink);
+  margin-top: 2px;
+}
+.box-col .mc {
+  font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); margin-top: 4px;
+  letter-spacing: 0.06em;
+}
+
+/* ============ Geographic / footprint band ============ */
+.geo-row { margin-top: 28px; }
+.geo-item {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 16px 0;
+  border-bottom: 0.5px solid var(--line);
+}
+.geo-item:last-child { border-bottom: none; }
+.geo-pct {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-style: italic;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  width: 90px;
+  flex-shrink: 0;
+}
+.geo-pct .pp { font-size: 22px; color: var(--ink-3); font-style: normal; font-family: var(--font-mono); margin-left: 2px; vertical-align: top; }
+.geo-name {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  flex: 1;
+}
+.geo-bar {
+  height: 8px;
+  background: var(--line);
+  border-radius: 999px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.geo-bar-fill {
+  height: 100%;
+  background: var(--ink);
+  border-radius: 999px;
+  width: 0;
+  transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
+}
+.geo-item:nth-child(1) .geo-bar-fill { background: var(--ink); }
+.geo-item:nth-child(2) .geo-bar-fill { background: var(--kraft-500); }
+.geo-item:nth-child(3) .geo-bar-fill { background: var(--signal); }
+
+/* ============ Cost stack labels ============ */
+.cost-legend {
+  margin-top: 28px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.cost-legend .row {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 0.5px solid var(--line);
+}
+.cost-legend .row:last-child { border-bottom: none; }
+.cost-legend .swatch {
+  width: 14px; height: 14px; border-radius: 2px;
+}
+.cost-legend .lbl {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.cost-legend .pct {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+
+/* ============ Pipeline ============ */
+.pipeline {
+  display: flex; flex-direction: column; gap: 0;
+  margin-top: 28px;
+  position: relative;
+}
+.pipe-step {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 18px 0;
+  position: relative;
+}
+.pipe-step .icon-col {
+  width: 56px; flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center;
+  position: relative;
+}
+.pipe-step .text-col h4 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  font-weight: 400;
+  margin: 0 0 4px;
+}
+.pipe-step .text-col h4 em { font-style: italic; color: var(--signal); }
+.pipe-step .text-col p { font-size: 14px; color: var(--ink-3); }
+.pipe-step .text-col .figure {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+.pipe-step .icon-col svg { width: 36px; height: 36px; }
+.pipe-line {
+  position: absolute; left: 28px; top: 56px; bottom: -10px;
+  width: 1px; background: var(--line-strong);
+}
+.pipe-step:last-child .pipe-line { display: none; }
+
+/* ============ The merger fold ============ */
+.merge-figure { margin: 24px 0 8px; }
+.merge-figure svg { width: 100%; display: block; }
+
+/* ============ Capex deployment ============ */
+.bet-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px;
+  margin-top: 28px;
+}
+.bet-cell { display: flex; flex-direction: column; gap: 6px; }
+.bet-cell .v {
+  font-family: var(--font-display); font-size: 38px; letter-spacing: -0.02em; color: var(--ink); line-height: 1;
+}
+.bet-cell .v em { font-style: italic; color: var(--signal); }
+.bet-cell .l { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+.bet-cell .sub { font-size: 12px; color: var(--ink-3); line-height: 1.4; }
+
+.timeline-band { margin-top: 32px; }
+.timeline-band svg { width: 100%; display: block; }
+
+/* ============ Closing ============ */
+.close-section .big-number { font-size: 132px; }
+
+/* ============ Footer ============ */
+.foot {
+  padding: 56px 24px 80px;
+  text-align: left;
+}
+.foot .src {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ink-4);
+  text-transform: uppercase;
+  margin-top: 16px;
+}
+.foot .mark {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.foot .mark .dot { color: var(--signal); }
+
+/* Reveal-on-scroll */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 600ms var(--ease-out, cubic-bezier(0.22,1,0.36,1)),
+              transform 600ms var(--ease-out, cubic-bezier(0.22,1,0.36,1));
+}
+[data-reveal].in { opacity: 1; transform: none; }
+
+/* SVG drawables */
+.draw-path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.4s cubic-bezier(0.22,1,0.36,1); }
+.draw-path.in { stroke-dashoffset: 0; }
+
+/* Box height fills */
+.box-col .box {
+  height: 0;
+  transition: height 1.2s cubic-bezier(0.22,1,0.36,1);
+}
+
+/* Counter look */
+.counter { font-variant-numeric: tabular-nums; }
+
+/* Section header */
+.sec-head { margin-bottom: 18px; }
+.sec-head .eyebrow { display: block; margin-bottom: 14px; }
+.sec-head h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+.sec-head h2 em { font-style: italic; color: var(--signal); }
+.sec-head .kicker {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--ink-3);
+  margin-top: 14px;
+  line-height: 1.5;
+  max-width: 38ch;
+}
+.sec-head .kicker em { font-family: var(--font-display); font-style: italic; font-size: 17px; color: var(--ink); }
+
+/* ============ Flute hero shape ============ */
+.flute-hero {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  margin-top: 8px;
+  overflow: visible;
+}
+.flute-hero svg { width: 100%; height: 100%; display: block; }
+
+/* ============ The cost cross-section ============ */
+.cross-section {
+  margin-top: 18px;
+  position: relative;
+}
+.cross-section svg { width: 100%; display: block; }
+
+/* ============ Stat line emphasis ============ */
+.note {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--ink-2);
+  line-height: 1.4;
+  margin-top: 14px;
+  text-wrap: pretty;
+}
+.note em { color: var(--signal); }
+
+/* The 100-cent dollar grid */
+.dollar-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 3px;
+  margin-top: 24px;
+}
+.cent {
+  aspect-ratio: 1;
+  background: var(--line);
+  border-radius: 1px;
+  transition: background 600ms var(--ease-out, cubic-bezier(0.22,1,0.36,1));
+}
+
+/* Footprint metaphor — the fiber threads */
+.fiber-figure { margin-top: 12px; }
+.fiber-figure svg { width: 100%; display: block; }
+
+/* ============ Inline interactive: tap-to-reveal cards (for competitors only) ============ */
+.tap-row {
+  margin-top: 28px;
+  display: flex; flex-direction: column; gap: 1px;
+  background: var(--line);
+  border-top: 0.5px solid var(--line);
+  border-bottom: 0.5px solid var(--line);
+}
+.tap-card {
+  background: var(--pulp);
+  padding: 16px 4px;
+  cursor: pointer;
+  transition: background 200ms;
+}
+.tap-card:active { background: var(--paper-tint); }
+.tap-head {
+  display: flex; align-items: baseline; gap: 10px;
+}
+.tap-head .tk {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--ink-3);
+}
+.tap-head .nm {
+  font-family: var(--font-display); font-size: 22px; letter-spacing: -0.01em; color: var(--ink); flex: 1;
+}
+.tap-head .chev {
+  font-family: var(--font-mono); font-size: 14px; color: var(--ink-3); transition: transform 200ms;
+}
+.tap-card.open .tap-head .chev { transform: rotate(90deg); }
+.tap-stat-row {
+  display: flex; gap: 16px; margin-top: 10px;
+}
+.tap-stat .v {
+  font-family: var(--font-display); font-size: 22px; color: var(--ink); line-height: 1;
+}
+.tap-stat .v.italic { font-style: italic; color: var(--signal); }
+.tap-stat .l {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em; color: var(--ink-3);
+  text-transform: uppercase; margin-top: 4px;
+}
+.tap-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 320ms cubic-bezier(0.22,1,0.36,1), margin-top 320ms;
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.55;
+  margin-top: 0;
+}
+.tap-card.open .tap-body {
+  max-height: 280px;
+  margin-top: 12px;
+}
+
+/* ============ Pull quote ============ */
+.pullq {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 30px;
+  line-height: 1.16;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+.pullq em { color: var(--signal); }

@@ -1,0 +1,270 @@
+/* ===========================================================
+   Altria (MO) — Stock Recap
+   Mobile editorial broadsheet. Smoke, embers, ledger.
+   =========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Tobacco-aged palette: warm parchment → ember → ledger ink */
+  --paper:        #F2EBDC;   /* aged newsprint cream */
+  --paper-2:      #E8DEC8;   /* deeper aged paper */
+  --paper-3:      #DDD0B4;
+  --ink:          #1A140C;   /* ledger ink */
+  --ink-2:        #3B2F20;
+  --ink-3:        #6E5E48;
+  --ink-4:        #9A8A6E;
+  --line:         #C9BB9A;
+  --line-soft:    rgba(26,20,12,0.08);
+
+  /* Signal colors — embers and tobacco gold */
+  --ember:        #C8421C;   /* lit tip of cigarette */
+  --ember-deep:   #8B2A14;
+  --ember-glow:   #E76A3E;
+  --gold:         #B8853A;   /* aged tobacco leaf */
+  --gold-deep:    #7A5618;
+
+  /* Dark interlude (debt section) — almost black ledger */
+  --void:         #0B0907;
+  --void-2:       #15110C;
+  --void-ink:     #E8DEC8;
+
+  /* Type */
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #2a2520;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* The "device" itself — a single mobile column on a dark stage */
+.stage {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at top, #3a342c 0%, #1a1612 60%, #0d0b08 100%);
+}
+
+.page {
+  width: 100%;
+  max-width: 420px;
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+  /* Subtle paper grain */
+  background-image:
+    radial-gradient(rgba(26,20,12,0.025) 1px, transparent 1px),
+    radial-gradient(rgba(26,20,12,0.02) 1px, transparent 1px);
+  background-size: 3px 3px, 7px 7px;
+  background-position: 0 0, 1px 2px;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.4),
+    0 40px 80px rgba(0,0,0,0.6),
+    0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* ===== PERSISTENT CHROME ===== */
+.chrome {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  background: rgba(242, 235, 220, 0.78);
+  border-bottom: 1px solid rgba(26,20,12,0.08);
+}
+.chrome-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px 10px;
+}
+.chrome-ticker {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.chrome-ticker::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--ember);
+  box-shadow: 0 0 8px var(--ember-glow);
+  animation: emberPulse 2.4s ease-in-out infinite;
+}
+@keyframes emberPulse {
+  0%, 100% { box-shadow: 0 0 4px var(--ember-glow); opacity: 0.85; }
+  50% { box-shadow: 0 0 12px var(--ember-glow); opacity: 1; }
+}
+.chrome-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-style: italic;
+  color: var(--ink);
+  flex: 1;
+  letter-spacing: -0.01em;
+}
+.chrome-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.chrome-progress {
+  position: relative;
+  height: 1.5px;
+  background: rgba(26,20,12,0.08);
+}
+.chrome-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--scroll, 0%);
+  background: linear-gradient(90deg, var(--gold) 0%, var(--ember) 70%, var(--ember-deep) 100%);
+}
+
+/* ===== TYPOGRAPHY ===== */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--gold-deep);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.eyebrow .dot {
+  width: 4px; height: 4px; border-radius: 999px; background: var(--ember);
+  display: inline-block;
+}
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+}
+.italic { font-style: italic; }
+.ember { color: var(--ember); }
+.gold { color: var(--gold-deep); }
+.body {
+  font-family: var(--font-sans);
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0;
+}
+.body em, .em {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.08em;
+  color: var(--ember);
+  font-weight: 400;
+}
+.mono {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum";
+}
+
+/* ===== SECTION RHYTHM ===== */
+section {
+  position: relative;
+  padding: 64px 24px;
+}
+section.tight { padding: 40px 24px; }
+section.flush { padding: 0; }
+
+/* Reset beat — italic interlude on contrasting band */
+.reset {
+  padding: 56px 28px;
+  background: var(--paper-2);
+  position: relative;
+}
+.reset.dark {
+  background: var(--void);
+  color: var(--void-ink);
+}
+.reset blockquote {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+.reset.dark blockquote { color: var(--void-ink); }
+.reset .by {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 18px;
+}
+.reset.dark .by { color: rgba(232,222,200,0.55); }
+
+/* Counted-up numerics */
+.bignum {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  font-feature-settings: "lnum";
+}
+
+/* Footer */
+.foot {
+  padding: 40px 24px 60px;
+  background: var(--paper-2);
+  border-top: 1px solid var(--line-soft);
+}
+.foot .meta { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+
+/* Reveal-on-scroll baseline */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 700ms var(--ease-out, cubic-bezier(0.22,1,0.36,1)),
+              transform 700ms var(--ease-out, cubic-bezier(0.22,1,0.36,1));
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Utility */
+.row { display: flex; }
+.col { display: flex; flex-direction: column; }
+.center { align-items: center; justify-content: center; }
+.gap-1 { gap: 4px; } .gap-2 { gap: 8px; } .gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; } .gap-5 { gap: 24px; } .gap-6 { gap: 32px; }
+
+/* Hide scrollbar on the page itself but allow scrolling */
+body::-webkit-scrollbar { width: 0; }
+
+/* Prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  .reveal { opacity: 1; transform: none; }
+}

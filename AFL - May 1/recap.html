@@ -1,0 +1,1251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>AFL · Recap FY '25</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<style>
+  /* ---------- Aflac-tuned overrides on top of Zair system ---------- */
+  :root{
+    --aflac-red:    #C8202E;     /* the iconic mark-red, dialed slightly editorial */
+    --aflac-red-2:  #9A1822;
+    --aflac-cream:  #FBF7EE;     /* warmer paper for this story */
+    --aflac-cream-2:#F2EBDB;
+    --aflac-ink:    #1B1614;     /* warmer than system ink */
+    --aflac-ink-2:  #4A423D;
+    --aflac-ink-3:  #807770;
+    --aflac-line:   #E5DDC9;
+    --aflac-bill:   #F2C24A;     /* duck-bill mustard, used once */
+    --aflac-night:  #0E0B0A;     /* the one earned dark beat */
+
+    /* Override system shells for this page */
+    --bg: var(--aflac-cream);
+    --bg-raised: #FFFDF7;
+    --bg-sunken: var(--aflac-cream-2);
+    --fg: var(--aflac-ink);
+    --fg-muted: var(--aflac-ink-2);
+    --fg-subtle: var(--aflac-ink-3);
+    --accent: var(--aflac-red);
+    --accent-hover: var(--aflac-red-2);
+    --border: var(--aflac-line);
+    --shadow-coral: 0 12px 32px -12px rgba(200,32,46,0.28);
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; background:var(--bg); color:var(--fg); }
+  body{
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    /* mobile-shaped, but extend if viewport is bigger */
+    max-width: 440px;
+    margin: 0 auto;
+    min-height: 100vh;
+    box-shadow: 0 0 0 1px var(--border), 0 30px 80px -30px rgba(0,0,0,0.18);
+    position: relative;
+  }
+
+  /* selection */
+  ::selection{ background: var(--aflac-red); color: #fff; }
+
+  /* ===================== STICKY CHROME ===================== */
+  .chrome{
+    position: sticky; top:0; z-index: 50;
+    backdrop-filter: blur(16px) saturate(1.3);
+    -webkit-backdrop-filter: blur(16px) saturate(1.3);
+    background: rgba(251,247,238,0.78);
+    border-bottom: 1px solid var(--border);
+  }
+  .chrome-row{
+    display:flex; align-items:center; gap: 10px;
+    padding: 14px 20px 10px;
+  }
+  .chrome-tick{
+    font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--aflac-red);
+    background: #fff;
+    border:1px solid var(--border);
+    padding: 4px 7px; border-radius: 6px;
+  }
+  .chrome-name{
+    font-family: var(--font-sans); font-size: 14px; font-weight: 500;
+    color: var(--fg);
+    letter-spacing: -0.005em;
+  }
+  .chrome-label{
+    margin-left:auto;
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--fg-subtle);
+  }
+  .progress{
+    height: 1.5px; background: transparent; position: relative;
+  }
+  .progress-fill{
+    position:absolute; left:0; top:0; bottom:0;
+    width: 0%;
+    background: var(--aflac-red);
+    transition: width 60ms linear;
+  }
+
+  /* ===================== HERO ===================== */
+  section{ position: relative; }
+  .hero{
+    padding: 56px 24px 88px;
+    background:
+      radial-gradient(120% 80% at 80% 0%, rgba(200,32,46,0.06) 0%, transparent 60%),
+      var(--bg);
+    overflow: hidden;
+  }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--aflac-red);
+    font-weight: 500;
+  }
+  .eyebrow .dot{ display:inline-block; width:5px; height:5px; border-radius: 999px; background: var(--aflac-red); margin: 0 6px 1px; vertical-align: middle; }
+
+  .hero h1{
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    margin: 18px 0 0;
+    color: var(--fg);
+    text-wrap: pretty;
+  }
+  .hero h1 em{ font-style: italic; color: var(--aflac-red); }
+  .hero-sub{
+    margin-top: 22px;
+    font-family: var(--font-sans);
+    font-size: 15.5px; line-height: 1.55;
+    color: var(--fg-muted);
+    max-width: 32ch;
+  }
+  .hero-sub em{
+    font-family: var(--font-display); font-style: italic;
+    color: var(--aflac-red); font-size: 17px;
+  }
+  .hero-meta{
+    margin-top: 36px;
+    display:flex; align-items: baseline; gap: 18px;
+    color: var(--fg-subtle);
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .hero-meta b{
+    color: var(--fg); font-weight: 500;
+  }
+
+  /* duck silhouette */
+  .duck-wrap{
+    position: absolute; right: -18px; top: 80px;
+    width: 220px; height: 220px;
+    opacity: 0.95;
+    pointer-events: none;
+  }
+  .duck-wrap svg{ width:100%; height:100%; display:block; }
+
+  /* falling cash droplets in hero */
+  .drops{
+    position: absolute; inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .drop{
+    position: absolute;
+    width: 8px; height: 12px;
+    background: var(--aflac-red);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    opacity: 0.0;
+    transform: translateY(-20px);
+  }
+
+  /* ===================== RESET BEAT ===================== */
+  .reset{
+    padding: 48px 28px;
+    background: var(--aflac-cream-2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .reset p{
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.35;
+    color: var(--fg);
+    margin:0;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .reset p em{ font-style: italic; color: var(--aflac-red); }
+  .reset .mark{
+    display:block;
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--fg-subtle);
+    margin-bottom: 16px;
+  }
+
+  /* ===================== GENERIC SECTION ===================== */
+  .beat{
+    padding: 64px 24px;
+    position: relative;
+  }
+  .beat-eyebrow{
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--aflac-red); font-weight: 500;
+    display: flex; align-items:center; gap: 10px;
+    margin-bottom: 18px;
+  }
+  .beat-eyebrow:before{
+    content: ""; width: 18px; height: 1px; background: var(--aflac-red); display: inline-block;
+  }
+  .beat h2{
+    font-family: var(--font-display); font-weight: 400;
+    font-size: 36px; line-height: 1.05; letter-spacing: -0.02em;
+    color: var(--fg); margin: 0 0 16px;
+    text-wrap: pretty;
+  }
+  .beat h2 em{ font-style: italic; color: var(--aflac-red); }
+  .beat p.lede{
+    font-family: var(--font-sans); font-size: 15px; line-height: 1.6;
+    color: var(--fg-muted); margin: 0 0 24px;
+    max-width: 36ch;
+  }
+  .beat p.lede em{ font-family: var(--font-display); font-style: italic; color: var(--aflac-red); }
+
+  /* ===================== HOW IT WORKS — claim flow ===================== */
+  .flow{
+    position: relative;
+    margin-top: 28px;
+    padding: 24px 14px;
+    border: 1px solid var(--border);
+    background: var(--bg-raised);
+    border-radius: 18px;
+    overflow: hidden;
+  }
+  .flow svg{ width:100%; height: 320px; display:block; }
+  .flow-cap{
+    margin-top: 18px;
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--fg-subtle);
+    display:flex; gap: 16px; flex-wrap: wrap;
+  }
+  .flow-cap span b{ color: var(--fg); font-weight: 500; }
+
+  /* ===================== SCALE ===================== */
+  .scale-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .scale-cell{
+    background: var(--bg-raised);
+    padding: 22px 18px;
+  }
+  .scale-cell.span{ grid-column: 1 / -1; }
+  .scale-num{
+    font-family: var(--font-display);
+    font-size: 56px; line-height: 0.95;
+    letter-spacing: -0.025em; color: var(--fg);
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+  .scale-num em{ font-style: italic; color: var(--aflac-red); }
+  .scale-num .unit{
+    font-family: var(--font-display); font-style: italic;
+    font-size: 22px; color: var(--aflac-red); margin-left: 4px;
+    vertical-align: 22px;
+  }
+  .scale-label{
+    margin-top: 10px;
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--fg-subtle);
+  }
+  .scale-cell .sub{
+    font-family: var(--font-sans); font-size: 13px;
+    color: var(--fg-muted); margin-top: 6px;
+  }
+
+  /* ===================== COSTS — dollar in / dollar out ===================== */
+  .costs-bar{
+    margin-top: 12px;
+    height: 56px;
+    border-radius: 10px;
+    overflow: hidden;
+    display:flex;
+    border: 1px solid var(--border);
+    background: var(--bg-raised);
+  }
+  .costs-bar > div{
+    height: 100%;
+    display:flex; align-items:center; justify-content: center;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.08em;
+    width: 0%;
+    transition: width 1100ms var(--ease-out);
+  }
+  .costs-legend{
+    margin-top: 18px;
+    display:flex; flex-direction: column; gap: 10px;
+  }
+  .costs-row{
+    display:flex; align-items:center; gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    background: var(--bg-raised);
+    border-radius: 10px;
+  }
+  .swatch{ width: 14px; height: 14px; border-radius: 4px; flex-shrink:0; }
+  .costs-row .lbl{ font-family: var(--font-sans); font-size: 13.5px; color: var(--fg); flex: 1; }
+  .costs-row .pct{
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--fg-muted); letter-spacing: 0.04em;
+    font-feature-settings: "tnum" 1;
+  }
+
+  .penny-grid{
+    margin-top: 26px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 18px;
+  }
+  .penny-grid .pg-title{
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--fg-subtle);
+  }
+  .penny-cells{
+    margin-top: 14px;
+    display: grid; grid-template-columns: repeat(10, 1fr);
+    gap: 4px;
+  }
+  .penny{
+    aspect-ratio: 1/1;
+    border-radius: 3px;
+    background: var(--aflac-cream-2);
+    border: 1px solid var(--border);
+  }
+  .penny.benefits{ background: #4A90D9; border-color: #4A90D9; }
+  .penny.opex{ background: #E8734A; border-color: #E8734A; }
+  .penny.comp{ background: #6DBF67; border-color: #6DBF67; }
+  .penny.invest{ background: #F5C842; border-color: #F5C842; }
+  .penny.survive{ background: var(--aflac-red); border-color: var(--aflac-red); box-shadow: 0 0 0 2px rgba(200,32,46,0.18); }
+  .penny-foot{
+    margin-top: 14px;
+    font-family: var(--font-display); font-style: italic;
+    font-size: 17px; line-height: 1.4; color: var(--fg);
+  }
+  .penny-foot em{ color: var(--aflac-red); }
+
+  /* ===================== GEOGRAPHY ===================== */
+  .geo{
+    margin-top: 16px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px 20px;
+    overflow: hidden;
+  }
+  .geo-pillars{
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    align-items: end;
+    height: 240px;
+    margin-top: 12px;
+  }
+  .pillar{
+    position: relative;
+    background: var(--aflac-cream-2);
+    border: 1px solid var(--border);
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+    height: 0%;
+    transition: height 1200ms var(--ease-out);
+    display:flex; flex-direction: column; justify-content: flex-start;
+    padding: 14px 12px;
+    color: #fff;
+  }
+  .pillar.jp{ background: #1B1614; }
+  .pillar.us{ background: var(--aflac-red); }
+  .pillar .pct{
+    font-family: var(--font-display); font-size: 44px; line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .pillar .pct sup{ font-size: 18px; font-family: var(--font-display); font-style: italic; }
+  .pillar .name{
+    margin-top: 6px;
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; opacity: 0.85;
+  }
+  .pillar .note{
+    margin-top: auto;
+    font-family: var(--font-sans); font-size: 11.5px; line-height: 1.4;
+    opacity: 0.85;
+  }
+  .geo-axis{
+    margin-top: 0;
+    display:flex; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em;
+    color: var(--fg-subtle); text-transform: uppercase;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+  }
+
+  /* ===================== THE DARK BEAT (CAPITAL RETURNS) ===================== */
+  .dark{
+    background: var(--aflac-night);
+    color: #F4F0E6;
+    padding: 80px 24px 90px;
+    position: relative;
+    overflow: hidden;
+  }
+  .dark .beat-eyebrow{ color: #FF8E62; }
+  .dark .beat-eyebrow:before{ background: #FF8E62; }
+  .dark h2{ color: #F8F4EA; }
+  .dark h2 em{ color: #FFB48A; font-style: italic; }
+  .dark p.lede{ color: #C9C2B5; }
+  .dark p.lede em{ color: #FFB48A; }
+
+  .stairs{
+    margin-top: 28px;
+    height: 220px;
+    position: relative;
+    border-bottom: 1px solid #2C2521;
+  }
+  .stairs svg{ width: 100%; height: 100%; display:block; overflow: visible; }
+  .stairs-cap{
+    margin-top: 14px;
+    display:flex; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8A8278;
+  }
+  .stairs-cap b{ color: #F8F4EA; font-weight: 500; }
+
+  .returns-pair{
+    margin-top: 36px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  .return-cell{
+    border: 1px solid #2C2521;
+    background: #161210;
+    border-radius: 14px;
+    padding: 18px 16px;
+  }
+  .return-cell .num{
+    font-family: var(--font-display); font-size: 44px; line-height: 1;
+    letter-spacing: -0.02em; color: #F8F4EA;
+    font-feature-settings: "tnum" 1;
+  }
+  .return-cell .num em{ font-style: italic; color: #FFB48A; }
+  .return-cell .lbl{
+    margin-top: 10px;
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: #8A8278;
+  }
+  .return-cell .sub{
+    margin-top: 6px;
+    font-family: var(--font-sans); font-size: 12.5px; color: #C9C2B5;
+    line-height: 1.5;
+  }
+
+  /* ===================== COMPETITORS ===================== */
+  .compet{
+    margin-top: 18px;
+    display:flex; flex-direction: column; gap: 14px;
+  }
+  .comp-bar{
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+  .comp-head{
+    display:flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .comp-name{
+    font-family: var(--font-sans); font-size: 14px; font-weight: 500; color: var(--fg);
+  }
+  .comp-name .tk{
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em;
+    color: var(--fg-subtle); margin-left: 8px;
+  }
+  .comp-mc{
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--fg-muted);
+    font-feature-settings: "tnum" 1;
+  }
+  .comp-track{
+    height: 28px; background: var(--aflac-cream-2);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    position: relative;
+  }
+  .comp-fill{
+    height: 100%;
+    background: var(--aflac-ink);
+    width: 0%;
+    transition: width 1100ms var(--ease-out);
+  }
+  .comp-bar.aflac .comp-fill{ background: var(--aflac-red); }
+  .comp-bar.aflac .comp-name{ color: var(--aflac-red); font-weight: 500; }
+  .comp-detail{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 320ms var(--ease-out);
+    font-family: var(--font-sans); font-size: 13px; color: var(--fg-muted);
+    line-height: 1.55;
+  }
+  .comp-bar.open .comp-detail{
+    max-height: 240px;
+    margin-top: 10px;
+  }
+  .comp-detail em{ color: var(--aflac-red); font-family: var(--font-display); font-style: italic; }
+  .comp-tap{
+    margin-top: 8px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--fg-subtle);
+  }
+
+  /* ===================== CLOSE ===================== */
+  .close{
+    padding: 80px 24px 100px;
+    background:
+      radial-gradient(120% 80% at 0% 100%, rgba(200,32,46,0.07) 0%, transparent 60%),
+      var(--bg);
+    text-align: left;
+  }
+  .close-frame{
+    position: relative;
+  }
+  .close .label{
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--aflac-red); font-weight: 500;
+  }
+  .close h2{
+    margin-top: 18px;
+    font-family: var(--font-display); font-weight: 400;
+    font-size: 52px; line-height: 1.0; letter-spacing: -0.025em;
+    color: var(--fg);
+    text-wrap: pretty;
+  }
+  .close h2 em{ font-style: italic; color: var(--aflac-red); }
+  .close .penny-line{
+    margin-top: 28px;
+    display:flex; align-items: center; gap: 10px;
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--fg-muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .close .penny-line .dot{
+    width: 10px; height: 10px; border-radius: 999px; background: var(--aflac-red);
+  }
+  .close .footer{
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--fg-subtle);
+    display:flex; justify-content: space-between;
+  }
+
+  /* generic reveal */
+  .reveal{ opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
+  .reveal.in{ opacity: 1; transform: none; }
+
+  /* count-up dynamic */
+  [data-count]{ font-feature-settings: "tnum" 1, "lnum" 1; }
+
+  /* small util */
+  .mono{ font-family: var(--font-mono); }
+  .serif-it{ font-family: var(--font-display); font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- =============== STICKY CHROME =============== -->
+<div class="chrome">
+  <div class="chrome-row">
+    <div class="chrome-tick">AFL</div>
+    <div class="chrome-name">Aflac Inc.</div>
+    <div class="chrome-label">Recap · FY '25</div>
+  </div>
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<!-- =============== HERO =============== -->
+<section class="hero" data-screen-label="01 Hero">
+  <div class="drops" id="drops" aria-hidden="true"></div>
+
+  <div class="eyebrow">Recap<span class="dot"></span>Annual Report · FY 2025</div>
+  <h1>The cheque<br/>that <em>shows up</em><br/>when life doesn't.</h1>
+
+  <p class="hero-sub">
+    Aflac sells <em>supplemental</em> health and life insurance — and writes the cheque
+    directly to the policyholder when illness or injury fills the gap their primary plan won't.
+  </p>
+
+  <div class="hero-meta">
+    <div><b>NYSE: AFL</b></div>
+    <div>FY '25</div>
+    <div>Columbus, GA</div>
+  </div>
+
+  <div class="duck-wrap" aria-hidden="true">
+    <!-- editorial duck silhouette: simple, calm -->
+    <svg viewBox="0 0 220 220" fill="none">
+      <defs>
+        <radialGradient id="duckG" cx="40%" cy="35%" r="70%">
+          <stop offset="0%" stop-color="#FFFDF7"/>
+          <stop offset="100%" stop-color="#EFE7D2"/>
+        </radialGradient>
+      </defs>
+      <!-- body -->
+      <ellipse cx="115" cy="138" rx="78" ry="56" fill="url(#duckG)" stroke="#1B1614" stroke-width="1.4"/>
+      <!-- tail -->
+      <path d="M40 130 q -16 -6 -22 6 q 14 4 22 0 z" fill="url(#duckG)" stroke="#1B1614" stroke-width="1.4"/>
+      <!-- head -->
+      <circle cx="160" cy="80" r="34" fill="url(#duckG)" stroke="#1B1614" stroke-width="1.4"/>
+      <!-- eye -->
+      <circle cx="170" cy="75" r="2.8" fill="#1B1614"/>
+      <!-- bill -->
+      <path d="M188 80 q 22 4 22 12 q 0 7 -22 9 q -10 -1 -16 -10 q 6 -10 16 -11 z" fill="#F2C24A" stroke="#1B1614" stroke-width="1.4"/>
+      <path d="M174 92 q 12 4 30 0" stroke="#1B1614" stroke-width="1.2" fill="none"/>
+      <!-- wing -->
+      <path d="M70 110 q 30 -28 80 -22 q -10 26 -42 38 q -28 8 -38 -16 z" fill="#F2EBDB" stroke="#1B1614" stroke-width="1.2"/>
+      <!-- legs hinted -->
+      <path d="M100 192 v 14 M132 192 v 14" stroke="#1B1614" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+  </div>
+</section>
+
+<!-- =============== RESET BEAT 1 =============== -->
+<div class="reset">
+  <span class="mark">— Interlude</span>
+  <p>Health insurance pays the hospital. <em>Aflac pays you</em> — for the rent, the groceries, the months you can't work.</p>
+</div>
+
+<!-- =============== BEAT: HOW IT WORKS =============== -->
+<section class="beat" data-screen-label="02 How it works">
+  <div class="beat-eyebrow">The product · A claim becomes cash</div>
+  <h2 class="reveal">Premiums in.<br/><em>Cash benefits</em> out.</h2>
+  <p class="lede reveal">
+    Two segments, one mechanic. Policyholders pay premiums; Aflac invests the float;
+    when an eligible <em>illness or injury</em> hits, the cheque goes to them — not the hospital.
+  </p>
+
+  <div class="flow reveal">
+    <svg viewBox="0 0 360 320" preserveAspectRatio="xMidYMid meet" id="flowSvg" aria-hidden="true">
+      <!-- top: policyholders -->
+      <g>
+        <text x="20" y="26" font-family="Geist Mono" font-size="10" fill="#807770" letter-spacing="1.5">POLICYHOLDERS</text>
+        <!-- 5 figures -->
+        <g fill="#1B1614">
+          <circle cx="40" cy="56" r="6"/>
+          <rect x="34" y="62" width="12" height="14" rx="3"/>
+        </g>
+        <g fill="#1B1614">
+          <circle cx="80" cy="56" r="6"/>
+          <rect x="74" y="62" width="12" height="14" rx="3"/>
+        </g>
+        <g fill="#1B1614">
+          <circle cx="120" cy="56" r="6"/>
+          <rect x="114" y="62" width="12" height="14" rx="3"/>
+        </g>
+        <g fill="#1B1614">
+          <circle cx="160" cy="56" r="6"/>
+          <rect x="154" y="62" width="12" height="14" rx="3"/>
+        </g>
+        <g fill="#1B1614">
+          <circle cx="200" cy="56" r="6"/>
+          <rect x="194" y="62" width="12" height="14" rx="3"/>
+        </g>
+      </g>
+
+      <!-- aflac center pool -->
+      <g>
+        <ellipse cx="180" cy="170" rx="120" ry="34" fill="#FBF7EE" stroke="#C8202E" stroke-width="1.4"/>
+        <text x="180" y="167" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#C8202E">the pool</text>
+        <text x="180" y="186" text-anchor="middle" font-family="Geist Mono" font-size="9" fill="#807770" letter-spacing="1.3">$116.5B IN ASSETS · INVESTED FLOAT</text>
+      </g>
+
+      <!-- premium arrows in -->
+      <g id="premiumArrows" stroke="#1B1614" stroke-width="1.2" fill="none" stroke-dasharray="3 3" opacity="0">
+        <path d="M40 80 q 0 30 60 60" />
+        <path d="M80 80 q 0 30 50 60" />
+        <path d="M120 80 q 0 30 40 60"/>
+        <path d="M160 80 q 0 30 20 60" />
+        <path d="M200 80 q 0 30 0 60" />
+      </g>
+      <text x="20" y="116" font-family="Geist Mono" font-size="9.5" fill="#807770" letter-spacing="1.3">PREMIUMS →</text>
+
+      <!-- claim out arrow -->
+      <g id="claimArrow" stroke="#C8202E" stroke-width="1.6" fill="none" opacity="0">
+        <path d="M260 200 q 30 30 50 70" marker-end="url(#redArrow)"/>
+      </g>
+      <defs>
+        <marker id="redArrow" markerWidth="10" markerHeight="10" refX="6" refY="5" orient="auto">
+          <path d="M0 0 L8 5 L0 10 z" fill="#C8202E"/>
+        </marker>
+      </defs>
+
+      <!-- bottom: claim recipient -->
+      <g>
+        <text x="240" y="290" font-family="Geist Mono" font-size="10" fill="#C8202E" letter-spacing="1.5">CASH BENEFIT</text>
+        <rect x="246" y="298" width="80" height="14" rx="3" fill="#C8202E" id="cashBox" opacity="0"/>
+        <text x="286" y="308" text-anchor="middle" font-family="Geist Mono" font-size="9.5" fill="#fff" id="cashLbl" opacity="0">PAID DIRECTLY</text>
+      </g>
+
+      <!-- segment chips -->
+      <g>
+        <rect x="20" y="222" width="140" height="40" rx="8" fill="none" stroke="#1B1614" stroke-width="1"/>
+        <text x="32" y="240" font-family="Geist" font-size="11" fill="#1B1614" font-weight="500">Aflac Japan</text>
+        <text x="32" y="254" font-family="Geist Mono" font-size="9.5" fill="#807770" letter-spacing="1.2">CANCER · MEDICAL · WHOLE LIFE</text>
+      </g>
+      <g>
+        <rect x="170" y="222" width="170" height="40" rx="8" fill="none" stroke="#C8202E" stroke-width="1"/>
+        <text x="182" y="240" font-family="Geist" font-size="11" fill="#C8202E" font-weight="500">Aflac U.S.</text>
+        <text x="182" y="254" font-family="Geist Mono" font-size="9.5" fill="#807770" letter-spacing="1.2">ACCIDENT · DISABILITY · DENTAL</text>
+      </g>
+    </svg>
+
+    <div class="flow-cap">
+      <span><b>57%</b> Japan</span>
+      <span><b>43%</b> U.S.</span>
+      <span>FY'25 adjusted revenue</span>
+    </div>
+  </div>
+</section>
+
+<!-- =============== RESET BEAT 2 =============== -->
+<div class="reset">
+  <span class="mark">— Interlude</span>
+  <p>Sixty-nine years on, the model hasn't changed. <em>Only the scale has.</em></p>
+</div>
+
+<!-- =============== BEAT: SCALE =============== -->
+<section class="beat" data-screen-label="03 Scale">
+  <div class="beat-eyebrow">The scale · FY 2025</div>
+  <h2 class="reveal">A small idea<br/>at <em>industrial</em> size.</h2>
+  <p class="lede reveal">
+    Two countries. One model.
+    <em>$17.16B</em> through the door, <em>$3.65B</em> kept — and an investment portfolio
+    big enough to bankroll a mid-sized country.
+  </p>
+
+  <div class="scale-grid reveal">
+    <div class="scale-cell span">
+      <div class="scale-num"><span class="unit">$</span><span data-count="17.16" data-decimals="2">0.00</span><span class="unit">B</span></div>
+      <div class="scale-label">FY '25 Revenue</div>
+      <div class="sub">Net earned premiums + net investment income across both segments.</div>
+    </div>
+    <div class="scale-cell">
+      <div class="scale-num"><span class="unit">$</span><span data-count="3.65" data-decimals="2">0.00</span><span class="unit">B</span></div>
+      <div class="scale-label">Net income</div>
+    </div>
+    <div class="scale-cell">
+      <div class="scale-num"><span class="unit">$</span><span data-count="59.00" data-decimals="2">0.00</span><span class="unit">B</span></div>
+      <div class="scale-label">Market cap</div>
+    </div>
+    <div class="scale-cell">
+      <div class="scale-num"><span class="unit">$</span><span data-count="116.5" data-decimals="1">0.0</span><span class="unit">B</span></div>
+      <div class="scale-label">Total assets</div>
+    </div>
+    <div class="scale-cell">
+      <div class="scale-num"><span data-count="12700" data-decimals="0" data-comma="1">0</span></div>
+      <div class="scale-label">Employees</div>
+    </div>
+    <div class="scale-cell span">
+      <div class="scale-num"><span class="unit">$</span><span data-count="29.49" data-decimals="2">0.00</span><span class="unit">B</span> <span style="font-size: 22px; color: var(--fg-subtle); font-family: var(--font-mono); letter-spacing: 0.05em;">equity</span></div>
+      <div class="scale-label">Total equity · debt-to-equity 2.95×</div>
+      <div class="sub">$6.25B in cash. ~$260M goodwill. Operating cash flow $2.56B.</div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== RESET BEAT 3 =============== -->
+<div class="reset">
+  <span class="mark">— Interlude</span>
+  <p>Of every dollar that comes in, <em>nearly half goes right back out</em> — to the people who paid it.</p>
+</div>
+
+<!-- =============== BEAT: COSTS · A HUNDRED CENTS =============== -->
+<section class="beat" data-screen-label="04 Where the money goes">
+  <div class="beat-eyebrow">Where the money goes · A hundred cents in</div>
+  <h2 class="reveal">The cheque<br/>is the <em>cost</em>.</h2>
+  <p class="lede reveal">
+    For a supplemental insurer, the biggest line item is also the product: <em>benefits and claims</em>.
+    The bigger that bar grows, the more cheques landed in policyholders' mailboxes.
+  </p>
+
+  <div class="costs-bar reveal" id="costsBar">
+    <div data-pct="48" style="background:#4A90D9">48</div>
+    <div data-pct="20" style="background:#E8734A">20</div>
+    <div data-pct="12" style="background:#6DBF67">12</div>
+    <div data-pct="5"  style="background:#F5C842;color:#3B3A37">5</div>
+    <div data-pct="15" style="background:var(--aflac-red)">15</div>
+  </div>
+
+  <div class="costs-legend reveal">
+    <div class="costs-row"><div class="swatch" style="background:#4A90D9"></div><div class="lbl">Benefits & claims paid</div><div class="pct">48%</div></div>
+    <div class="costs-row"><div class="swatch" style="background:#E8734A"></div><div class="lbl">Operating expenses (SG&A)</div><div class="pct">20%</div></div>
+    <div class="costs-row"><div class="swatch" style="background:#6DBF67"></div><div class="lbl">Compensation & benefits</div><div class="pct">12%</div></div>
+    <div class="costs-row"><div class="swatch" style="background:#F5C842"></div><div class="lbl">Net investment losses / other</div><div class="pct">5%</div></div>
+    <div class="costs-row" style="border-color: var(--aflac-red); background: #FFF7F4;">
+      <div class="swatch" style="background: var(--aflac-red)"></div>
+      <div class="lbl" style="color: var(--aflac-red); font-weight:500;">What survives — net margin</div>
+      <div class="pct" style="color: var(--aflac-red)">~15%</div>
+    </div>
+  </div>
+
+  <div class="penny-grid reveal">
+    <div class="pg-title">$1.00 IN · WHAT EACH CENT BECOMES</div>
+    <div class="penny-cells" id="pennyCells"></div>
+    <div class="penny-foot">
+      Forty-eight cents go back out as <em>claims paid to people</em>. Twenty cover the lights. Twelve pay the people who run it. Five cover investment losses & other. <em>Fifteen survive.</em>
+    </div>
+  </div>
+</section>
+
+<!-- =============== BEAT: GEOGRAPHY · TWIN ENGINES =============== -->
+<section class="beat" data-screen-label="05 Footprint">
+  <div class="beat-eyebrow">Footprint · Two countries, two engines</div>
+  <h2 class="reveal">Tokyo<br/>and <em>Columbus</em>.</h2>
+  <p class="lede reveal">
+    The largest insurer in Japan by individual policies, and the largest provider of
+    guaranteed-renewable supplemental in the United States. <em>Each side roughly the size of the other.</em>
+  </p>
+
+  <div class="geo reveal">
+    <div class="geo-pillars" id="geoPillars">
+      <div class="pillar jp" data-h="100">
+        <div class="pct">57<sup>%</sup></div>
+        <div class="name">Japan</div>
+        <div class="note">Cancer, medical, nursing care, whole life. Distributed via Japan Post & Dai-ichi Life.</div>
+      </div>
+      <div class="pillar us" data-h="75">
+        <div class="pct">43<sup>%</sup></div>
+        <div class="name">United States</div>
+        <div class="note">Accident, disability, hospital indemnity, dental, vision. Sold worksite + digital.</div>
+      </div>
+    </div>
+    <div class="geo-axis"><span>Aflac Japan</span><span>Aflac U.S.</span></div>
+  </div>
+</section>
+
+<!-- =============== RESET BEAT 4 =============== -->
+<div class="reset">
+  <span class="mark">— Interlude</span>
+  <p>What's left after the cheques go out — Aflac sends back. <em>Forty-three years running.</em></p>
+</div>
+
+<!-- =============== DARK BEAT: CAPITAL RETURNS · STAIRS =============== -->
+<section class="beat dark" data-screen-label="06 Capital returns">
+  <div class="beat-eyebrow">The bet · Capital returned, not deployed</div>
+  <h2 class="reveal">Forty-three<br/><em>consecutive</em> raises.</h2>
+  <p class="lede reveal">
+    No big M&A. No transformational acquisition. Aflac's strategic move is the
+    <em>same move every year</em> — return capital. Buy stock back. Raise the dividend.
+  </p>
+
+  <div class="stairs reveal">
+    <svg viewBox="0 0 360 220" preserveAspectRatio="none" id="stairsSvg" aria-hidden="true">
+      <!-- baseline -->
+      <line x1="0" y1="200" x2="360" y2="200" stroke="#2C2521" stroke-width="1"/>
+      <!-- 43 steps drawing the staircase -->
+      <g id="stairsGroup" fill="none" stroke="#FF8E62" stroke-width="1.4" stroke-linecap="square" stroke-linejoin="miter"></g>
+      <!-- crown marker -->
+      <g id="crownMarker" opacity="0">
+        <circle cx="350" cy="20" r="4" fill="#FF8E62"/>
+        <text x="345" y="14" text-anchor="end" font-family="Geist Mono" font-size="9.5" fill="#FFB48A" letter-spacing="1.2">FY '25</text>
+      </g>
+      <text x="6" y="214" font-family="Geist Mono" font-size="9.5" fill="#8A8278" letter-spacing="1.2">1983</text>
+      <text x="354" y="214" text-anchor="end" font-family="Geist Mono" font-size="9.5" fill="#8A8278" letter-spacing="1.2">2025</text>
+    </svg>
+  </div>
+
+  <div class="stairs-cap">
+    <span><b>43</b> straight raises</span>
+    <span>One step a year</span>
+  </div>
+
+  <div class="returns-pair">
+    <div class="return-cell">
+      <div class="num"><em>$3.5</em>B</div>
+      <div class="lbl">FY '25 buybacks</div>
+      <div class="sub">A record. Repurchases are the bet.</div>
+    </div>
+    <div class="return-cell">
+      <div class="num"><em>$1.20</em>B</div>
+      <div class="lbl">FY '25 dividends</div>
+      <div class="sub">43 years and counting.</div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== RESET BEAT 5 =============== -->
+<div class="reset">
+  <span class="mark">— Interlude</span>
+  <p>The category is crowded. <em>The category leader is not.</em></p>
+</div>
+
+<!-- =============== BEAT: COMPETITORS =============== -->
+<section class="beat" data-screen-label="07 Competition">
+  <div class="beat-eyebrow">The competition · Sized at market cap</div>
+  <h2 class="reveal">In supplemental,<br/>Aflac is <em>the noun</em>.</h2>
+  <p class="lede reveal">
+    Bigger life insurers chase the worksite channel. Smaller specialists chase the policy.
+    Tap any rival to see how they line up.
+  </p>
+
+  <div class="compet reveal" id="compet">
+    <!-- Aflac (anchor) -->
+    <div class="comp-bar aflac" data-mc="59.00">
+      <div class="comp-head">
+        <div class="comp-name">Aflac Inc. <span class="tk">AFL</span></div>
+        <div class="comp-mc">$59.00B</div>
+      </div>
+      <div class="comp-track"><div class="comp-fill" style="--w: 100%"></div></div>
+      <div class="comp-detail">
+        Largest provider of guaranteed-renewable supplemental in the U.S. and largest insurer in Japan by individual policies in force.
+        <em>FY '25 revenue $17.16B · net income $3.65B.</em>
+      </div>
+    </div>
+
+    <div class="comp-bar" data-mc="50.91">
+      <div class="comp-head">
+        <div class="comp-name">MetLife <span class="tk">MET</span></div>
+        <div class="comp-mc">$50.91B</div>
+      </div>
+      <div class="comp-track"><div class="comp-fill" style="--w: 86%"></div></div>
+      <div class="comp-detail">
+        Competes directly in U.S. supplemental and group benefits — same worksite channel Aflac relies on.
+        <em>$77.08B revenue · P/E 15.07 · YoY growth 8.30%.</em>
+      </div>
+      <div class="comp-tap">Tap to expand →</div>
+    </div>
+
+    <div class="comp-bar" data-mc="52.10">
+      <div class="comp-head">
+        <div class="comp-name">Sun Life Financial <span class="tk">SLF</span></div>
+        <div class="comp-mc">$52.10B</div>
+      </div>
+      <div class="comp-track"><div class="comp-fill" style="--w: 88%"></div></div>
+      <div class="comp-detail">
+        Voluntary worksite benefits and stop-loss insurance overlap Aflac's U.S. segment.
+        <em>$8.99B quarterly revenue · P/E 13.91 · YoY growth 4.34%.</em>
+      </div>
+      <div class="comp-tap">Tap to expand →</div>
+    </div>
+
+    <div class="comp-bar" data-mc="11.86">
+      <div class="comp-head">
+        <div class="comp-name">Globe Life <span class="tk">GL</span></div>
+        <div class="comp-mc">$11.86B</div>
+      </div>
+      <div class="comp-track"><div class="comp-fill" style="--w: 20%"></div></div>
+      <div class="comp-detail">
+        Cancer, accident, life — sold to middle-income America via direct-to-consumer and worksite. The closest peer to Aflac's U.S. business model.
+        <em>$5.99B revenue · P/E 10.22 · YoY growth 3.74%.</em>
+      </div>
+      <div class="comp-tap">Tap to expand →</div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== CLOSE — INVERTS THE OPEN =============== -->
+<section class="close" data-screen-label="08 Close">
+  <div class="close-frame">
+    <div class="label">The takeaway</div>
+    <h2>
+      $17.16B walks in.<br/>
+      <em>Fifteen cents</em><br/>
+      walks out per dollar.<br/>
+      The rest <em>pays</em><br/>
+      somebody back.
+    </h2>
+
+    <div class="penny-line">
+      <span class="dot"></span>
+      <span>The cheque, again — only this time it's yours.</span>
+    </div>
+
+    <div class="footer">
+      <span>NYSE: AFL</span>
+      <span>Recap · FY '25</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  // ============== Progress + reveals ==============
+  const progress = document.getElementById('progressFill');
+  function updateProgress(){
+    const h = document.documentElement;
+    const max = (h.scrollHeight - h.clientHeight) || 1;
+    const p = Math.min(1, Math.max(0, h.scrollTop / max));
+    progress.style.width = (p * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // generic reveal-in observer
+  const revealIO = new IntersectionObserver((entries) => {
+    for (const e of entries){
+      if (e.isIntersecting){ e.target.classList.add('in'); revealIO.unobserve(e.target); }
+    }
+  }, { threshold: 0.18 });
+  document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+
+  // ============== Count-ups ==============
+  function countUp(el){
+    const target = parseFloat(el.dataset.count);
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    const useComma = el.dataset.comma === '1';
+    const dur = 1200;
+    const start = performance.now();
+    function fmt(v){
+      let s = v.toFixed(decimals);
+      if (useComma){
+        const [a,b] = s.split('.');
+        s = a.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (b ? '.'+b : '');
+      }
+      return s;
+    }
+    function tick(now){
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = fmt(target * eased);
+      if (t < 1) requestAnimationFrame(tick);
+      else el.textContent = fmt(target);
+    }
+    requestAnimationFrame(tick);
+  }
+  const countIO = new IntersectionObserver((entries) => {
+    for (const e of entries){
+      if (e.isIntersecting){ countUp(e.target); countIO.unobserve(e.target); }
+    }
+  }, { threshold: 0.4 });
+  document.querySelectorAll('[data-count]').forEach(el => countIO.observe(el));
+
+  // ============== Costs bar fill ==============
+  const costsBar = document.getElementById('costsBar');
+  const costsIO = new IntersectionObserver((entries) => {
+    for (const e of entries){
+      if (e.isIntersecting){
+        e.target.querySelectorAll('[data-pct]').forEach((d, i) => {
+          setTimeout(() => { d.style.width = d.dataset.pct + '%'; }, i * 90);
+        });
+        costsIO.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.4 });
+  if (costsBar) costsIO.observe(costsBar);
+
+  // ============== Penny grid (100 cents) ==============
+  (function buildPennies(){
+    const host = document.getElementById('pennyCells');
+    if (!host) return;
+    // 48 benefits, 20 opex, 12 comp, 5 invest, 15 survive
+    const order = [
+      ...Array(48).fill('benefits'),
+      ...Array(20).fill('opex'),
+      ...Array(12).fill('comp'),
+      ...Array(5).fill('invest'),
+      ...Array(15).fill('survive'),
+    ];
+    order.forEach((cls, i) => {
+      const d = document.createElement('div');
+      d.className = 'penny ' + cls;
+      d.style.opacity = '0';
+      d.style.transition = 'opacity 18ms linear';
+      host.appendChild(d);
+    });
+  })();
+  const pennyIO = new IntersectionObserver((entries) => {
+    for (const e of entries){
+      if (e.isIntersecting){
+        const cells = e.target.querySelectorAll('.penny');
+        cells.forEach((c, i) => setTimeout(() => { c.style.opacity = '1'; }, i * 14));
+        pennyIO.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.3 });
+  const pgrid = document.querySelector('.penny-grid');
+  if (pgrid) pennyIO.observe(pgrid);
+
+  // ============== Geo pillars rise ==============
+  const geoIO = new IntersectionObserver((entries) => {
+    for (const e of entries){
+      if (e.isIntersecting){
+        e.target.querySelectorAll('.pillar').forEach((p, i) => {
+          setTimeout(() => { p.style.height = p.dataset.h + '%'; }, i * 180);
+        });
+        geoIO.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.4 });
+  const geoEl = document.getElementById('geoPillars');
+  if (geoEl) geoIO.observe(geoEl);
+
+  // ============== Stairs (43 steps) ==============
+  (function buildStairs(){
+    const g = document.getElementById('stairsGroup');
+    if (!g) return;
+    const steps = 43;
+    const W = 360, H = 220;
+    const x0 = 6, x1 = 354;
+    const y0 = 200, y1 = 24;
+    const stepW = (x1 - x0) / steps;
+    const stepH = (y0 - y1) / steps;
+    let d = '';
+    let x = x0, y = y0;
+    d += `M ${x.toFixed(2)} ${y.toFixed(2)}`;
+    for (let i = 0; i < steps; i++){
+      // up then right
+      y -= stepH;
+      d += ` L ${x.toFixed(2)} ${y.toFixed(2)}`;
+      x += stepW;
+      d += ` L ${x.toFixed(2)} ${y.toFixed(2)}`;
+    }
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('vector-effect', 'non-scaling-stroke');
+    g.appendChild(path);
+    // length-based draw-on
+    const len = path.getTotalLength();
+    path.style.strokeDasharray = len;
+    path.style.strokeDashoffset = len;
+    path.style.transition = 'stroke-dashoffset 1800ms cubic-bezier(0.22, 1, 0.36, 1)';
+
+    // tick dots at every 10th year
+    for (let i = 10; i <= steps; i += 10){
+      const cx = x0 + i * stepW;
+      const cy = y0 - i * stepH;
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', cx);
+      dot.setAttribute('cy', cy);
+      dot.setAttribute('r', 2.4);
+      dot.setAttribute('fill', '#FF8E62');
+      dot.setAttribute('opacity', '0');
+      dot.style.transition = 'opacity 240ms ease-out';
+      dot.style.transitionDelay = (1500 + i * 16) + 'ms';
+      g.appendChild(dot);
+      // year label
+      const yr = 1983 + i;
+      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      t.setAttribute('x', cx);
+      t.setAttribute('y', cy - 8);
+      t.setAttribute('text-anchor', 'middle');
+      t.setAttribute('font-family', 'Geist Mono');
+      t.setAttribute('font-size', '8.5');
+      t.setAttribute('letter-spacing', '1.1');
+      t.setAttribute('fill', '#8A8278');
+      t.setAttribute('opacity', '0');
+      t.style.transition = 'opacity 240ms ease-out';
+      t.style.transitionDelay = (1600 + i * 16) + 'ms';
+      t.textContent = yr;
+      g.appendChild(t);
+      // mark for animation
+      dot.classList.add('stair-tick');
+      t.classList.add('stair-tick');
+    }
+
+    const stairsIO = new IntersectionObserver((entries) => {
+      for (const e of entries){
+        if (e.isIntersecting){
+          requestAnimationFrame(() => { path.style.strokeDashoffset = '0'; });
+          g.querySelectorAll('.stair-tick').forEach(el => el.setAttribute('opacity', '1'));
+          const crown = document.getElementById('crownMarker');
+          if (crown){ crown.style.transition = 'opacity 400ms ease-out 1900ms'; crown.style.opacity = '1'; }
+          stairsIO.unobserve(e.target);
+        }
+      }
+    }, { threshold: 0.3 });
+    stairsIO.observe(document.querySelector('.stairs'));
+  })();
+
+  // ============== Flow scene reveal ==============
+  const flowIO = new IntersectionObserver((entries) => {
+    for (const e of entries){
+      if (e.isIntersecting){
+        const arrows = document.getElementById('premiumArrows');
+        const claim = document.getElementById('claimArrow');
+        const cb = document.getElementById('cashBox');
+        const cl = document.getElementById('cashLbl');
+        if (arrows){
+          arrows.style.transition = 'opacity 600ms ease-out';
+          arrows.style.opacity = '1';
+        }
+        setTimeout(() => {
+          if (claim){ claim.style.transition = 'opacity 700ms ease-out'; claim.style.opacity = '1'; }
+          if (cb){ cb.style.transition = 'opacity 600ms ease-out 200ms'; cb.style.opacity = '1'; }
+          if (cl){ cl.style.transition = 'opacity 600ms ease-out 400ms'; cl.style.opacity = '1'; }
+        }, 700);
+        flowIO.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.4 });
+  const flowEl = document.querySelector('.flow');
+  if (flowEl) flowIO.observe(flowEl);
+
+  // ============== Hero drops ==============
+  (function spawnDrops(){
+    const host = document.getElementById('drops');
+    if (!host) return;
+    const N = 14;
+    for (let i = 0; i < N; i++){
+      const d = document.createElement('div');
+      d.className = 'drop';
+      const left = 8 + Math.random() * 84;
+      d.style.left = left + '%';
+      const delay = Math.random() * 4000;
+      const dur = 3400 + Math.random() * 2400;
+      d.style.transition = `transform ${dur}ms linear, opacity 600ms ease-out`;
+      host.appendChild(d);
+      function loop(){
+        d.style.transform = 'translateY(-20px)';
+        d.style.opacity = '0';
+        // force reflow
+        // eslint-disable-next-line no-unused-expressions
+        d.offsetHeight;
+        d.style.opacity = '0.55';
+        d.style.transform = 'translateY(620px)';
+        setTimeout(loop, dur + 200);
+      }
+      setTimeout(loop, delay);
+    }
+  })();
+
+  // ============== Competitor expand-on-tap ==============
+  document.querySelectorAll('#compet .comp-bar').forEach(bar => {
+    bar.addEventListener('click', () => bar.classList.toggle('open'));
+  });
+
+  // ============== Comp track fills on view ==============
+  const compIO = new IntersectionObserver((entries) => {
+    for (const e of entries){
+      if (e.isIntersecting){
+        e.target.querySelectorAll('.comp-fill').forEach((f, i) => {
+          const w = f.style.getPropertyValue('--w') || '0%';
+          setTimeout(() => { f.style.width = w; }, i * 110);
+        });
+        compIO.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.3 });
+  const cEl = document.getElementById('compet');
+  if (cEl) compIO.observe(cEl);
+</script>
+</body>
+</html>

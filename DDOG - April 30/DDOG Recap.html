@@ -1,0 +1,1371 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=414, initial-scale=1, viewport-fit=cover" />
+<title>DDOG · Recap</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" />
+<style>
+  /* ===== Tokens (mirroring the Zair Naqvi DS, retuned for DDOG dark) ===== */
+  :root {
+    --paper:       #0B0B10;
+    --paper-2:     #131320;
+    --paper-3:     #1B1B2C;
+    --paper-deep:  #06060A;
+    --ink:         #F2F0EA;
+    --ink-2:       #C9C6BF;
+    --ink-3:       #8C8A93;
+    --ink-4:       #58566A;
+    --line:        #22223A;
+    --line-strong: #2E2E4D;
+
+    /* Datadog brand purple — used judiciously as the signal/accent */
+    --violet-300:  #B8A9FF;
+    --violet-400:  #9C87FF;
+    --violet-500:  #7E66F0;
+    --violet-600:  #5E47C9;
+    --violet-glow: rgba(156,135,255,0.35);
+
+    /* Coral retained for "alerts" — the editorial pop */
+    --coral-300:   #FF9E82;
+    --coral-400:   #FF7A57;
+    --coral-500:   #F25A37;
+
+    /* Cost palette (from JSON, kept verbatim) */
+    --c-cor: #4F86C6;
+    --c-rd:  #E8734A;
+    --c-sm:  #6DBF82;
+    --c-ga:  #A97DC9;
+
+    --font-display: 'Instrument Serif', 'Times New Roman', serif;
+    --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono:    'Geist Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+  body {
+    /* Subtle telemetry grid wash — barely-there dot grid */
+    background-image:
+      radial-gradient(circle at 50% 0%, rgba(156,135,255,0.06), transparent 60%),
+      radial-gradient(rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: auto, 20px 20px;
+    background-position: top center, 0 0;
+  }
+  ::selection { background: var(--violet-400); color: var(--paper); }
+
+  /* ====== PAGE FRAME ====== */
+  .page {
+    max-width: 440px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* ===== Persistent chrome ===== */
+  .chrome {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    background: rgba(11,11,16,0.72);
+    border-bottom: 1px solid var(--line);
+  }
+  .chrome-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 22px 12px;
+  }
+  .chrome-left { display: flex; align-items: baseline; gap: 10px; }
+  .ticker {
+    font-family: var(--font-mono);
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+  }
+  .ticker .dot {
+    display: inline-block; width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--violet-400);
+    box-shadow: 0 0 0 0 var(--violet-glow);
+    animation: pulse 1.8s var(--ease-out, ease-out) infinite;
+    margin-right: 7px;
+    vertical-align: middle;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(156,135,255,0.55); }
+    70% { box-shadow: 0 0 0 8px rgba(156,135,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(156,135,255,0); }
+  }
+  .name { font-size: 13px; color: var(--ink-3); font-weight: 400; }
+  .recap-label {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.16em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .progress {
+    height: 1.5px;
+    width: 100%;
+    background: linear-gradient(90deg, var(--violet-500), var(--violet-300));
+    transform-origin: left center;
+    transform: scaleX(0);
+    will-change: transform;
+  }
+
+  /* ===== Section primitives (NO cards) ===== */
+  section { padding: 88px 22px; position: relative; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--violet-400);
+    margin-bottom: 22px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .eyebrow .pip {
+    display: inline-block; width: 6px; height: 6px;
+    background: var(--violet-400); border-radius: 50%;
+  }
+  .eyebrow .num { color: var(--ink-3); }
+
+  h1, h2, h3 { margin: 0; }
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+  .display em, em.display, .italic { font-style: italic; }
+
+  .body, p { color: var(--ink-2); font-size: 16px; line-height: 1.55; }
+  p em { font-family: var(--font-display); font-style: italic; font-size: 1.12em; color: var(--violet-300); }
+
+  /* ===== Reveal on scroll ===== */
+  .rv { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease-out, ease-out), transform 600ms var(--ease-out, ease-out); }
+  .rv.in { opacity: 1; transform: none; }
+
+  /* ===== Reset beat (italic interlude) ===== */
+  .reset {
+    padding: 56px 26px;
+    background: linear-gradient(180deg, transparent 0%, rgba(156,135,255,0.06) 50%, transparent 100%);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+  }
+  .reset .quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1.25;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .reset .quote .pop { color: var(--coral-400); font-style: italic; }
+  .reset .quote .vio { color: var(--violet-300); font-style: italic; }
+  .reset .source {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    margin-top: 18px;
+  }
+
+  /* ===== HERO ===== */
+  .hero { padding-top: 72px; padding-bottom: 40px; min-height: 92vh; display:flex; flex-direction:column; justify-content:flex-end; }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: 76px;
+    line-height: 0.93;
+    letter-spacing: -0.025em;
+    margin-top: 32px;
+  }
+  .hero h1 em { font-style: italic; color: var(--violet-300); }
+  .hero .lede {
+    font-size: 16px; color: var(--ink-2);
+    margin-top: 28px; max-width: 36ch;
+  }
+  .hero .lede em { font-family: var(--font-display); font-style: italic; color: var(--coral-300); font-size: 1.1em; }
+
+  .signal-stage { position: relative; height: 220px; margin-top: 4px; }
+  .signal-stage svg { width: 100%; height: 100%; display:block; }
+
+  .hero-meta {
+    display: flex; gap: 20px; margin-top: 36px;
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+  }
+  .hero-meta .cell { flex: 1; }
+  .hero-meta .k {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .hero-meta .v {
+    font-family: var(--font-display);
+    font-size: 30px; color: var(--ink); margin-top: 6px; line-height: 1;
+  }
+  .hero-meta .v.italic { font-style: italic; color: var(--violet-300); }
+
+  /* ===== Section 2: Business — meter ===== */
+  .biz h2 {
+    font-family: var(--font-display);
+    font-size: 44px; line-height: 1.02; letter-spacing: -0.015em;
+  }
+  .biz h2 em { font-style: italic; color: var(--violet-300); }
+  .biz p { margin-top: 22px; max-width: 38ch; }
+
+  .meter-stage { margin-top: 44px; position: relative; }
+  .meter-readout {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em;
+    color: var(--ink-3); text-transform: uppercase;
+    display: flex; justify-content: space-between; margin-bottom: 12px;
+  }
+  .meter-readout .live { color: var(--violet-400); }
+  .meter-readout .live .blink { display:inline-block; width:6px; height:6px; background: var(--violet-400); border-radius:50%; margin-right:6px; vertical-align: middle; animation: pulse 1.6s ease-out infinite; }
+
+  .meter-bars {
+    display: grid;
+    grid-template-columns: repeat(28, 1fr);
+    gap: 3px;
+    height: 96px;
+    align-items: end;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 1px;
+  }
+  .meter-bars .b {
+    background: var(--violet-500);
+    border-radius: 1px 1px 0 0;
+    transform-origin: bottom;
+    opacity: 0.85;
+    transition: transform 800ms var(--ease-out, ease-out);
+  }
+  .meter-axis {
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 10px; color: var(--ink-4);
+    margin-top: 8px; letter-spacing: 0.1em;
+  }
+  .meter-callout {
+    margin-top: 26px;
+    font-family: var(--font-display);
+    font-size: 22px; line-height: 1.3;
+    color: var(--ink);
+  }
+  .meter-callout em { font-style: italic; color: var(--coral-400); }
+  .meter-callout .num {
+    font-family: var(--font-display); font-style: italic;
+    color: var(--violet-300); font-size: 1.1em;
+  }
+
+  /* ===== Section 3: Scale — counts ===== */
+  .scale h2 {
+    font-family: var(--font-display);
+    font-size: 56px; line-height: 0.95; letter-spacing: -0.02em;
+  }
+  .scale h2 em { font-style: italic; color: var(--violet-300); }
+
+  .stat-stack { margin-top: 52px; display: flex; flex-direction: column; gap: 0; }
+  .stat-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+    gap: 16px;
+  }
+  .stat-row:last-child { border-bottom: 1px solid var(--line); }
+  .stat-row .label {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .stat-row .label .sub { display:block; color: var(--ink-4); margin-top: 4px; font-size: 10px; letter-spacing: 0.1em; }
+  .stat-row .val {
+    font-family: var(--font-display);
+    font-size: 52px; line-height: 1; color: var(--ink); letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .stat-row .val .unit { font-size: 0.45em; color: var(--ink-3); margin-left: 2px; font-family: var(--font-mono); letter-spacing: 0.04em; }
+  .stat-row .val em { font-style: italic; color: var(--violet-300); }
+  .stat-row .val.signal em { color: var(--coral-400); }
+  .stat-row .spark { grid-column: 1 / -1; height: 28px; opacity: 0.5; margin-top: 2px; }
+
+  /* ===== Section 4: The bill — cost breakdown ===== */
+  .bill { background: var(--paper-2); }
+  .bill h2 {
+    font-family: var(--font-display);
+    font-size: 44px; line-height: 1.02; letter-spacing: -0.015em;
+  }
+  .bill h2 em { font-style: italic; color: var(--violet-300); }
+  .bill p { margin-top: 18px; max-width: 38ch; }
+
+  .cost-stage { margin-top: 40px; }
+  .cost-row {
+    display: grid;
+    grid-template-columns: 30px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 1px dashed var(--line);
+  }
+  .cost-row:last-of-type { border-bottom: 1px dashed var(--line); }
+  .cost-row .pct {
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--ink-3);
+  }
+  .cost-row .name {
+    font-family: var(--font-sans);
+    font-size: 14px; color: var(--ink);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .cost-row .name .swatch {
+    width: 10px; height: 10px; border-radius: 2px;
+  }
+  .cost-row .barwrap {
+    grid-column: 1 / -1;
+    height: 6px; background: rgba(255,255,255,0.04); border-radius: 1px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .cost-row .bar {
+    height: 100%;
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 1100ms var(--ease-out, ease-out);
+  }
+  .cost-row.in .bar { transform: scaleX(1); }
+  .cost-row .figure {
+    font-family: var(--font-display);
+    font-size: 28px; line-height: 1; color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .cost-row .figure em { font-style: italic; color: var(--violet-300); }
+
+  .cost-aside {
+    margin-top: 32px;
+    font-family: var(--font-display); font-style: italic;
+    font-size: 22px; line-height: 1.3;
+    color: var(--ink);
+  }
+  .cost-aside .pop { color: var(--coral-400); }
+
+  /* The "what survives" bottom-line block — restates inversion theme */
+  .survive {
+    margin-top: 44px;
+    padding: 26px 0;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .survive .label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+  .survive .figure {
+    font-family: var(--font-display);
+    font-size: 56px; line-height: 1; color: var(--ink); margin-top: 8px; letter-spacing: -0.02em;
+  }
+  .survive .figure em { font-style: italic; color: var(--coral-400); }
+  .survive .note { font-family: var(--font-display); font-style: italic; font-size: 18px; color: var(--ink-2); margin-top: 10px; }
+
+  /* ===== Section 5: Footprint — globe of nodes ===== */
+  .geo h2 {
+    font-family: var(--font-display);
+    font-size: 44px; line-height: 1.02; letter-spacing: -0.015em;
+  }
+  .geo h2 em { font-style: italic; color: var(--violet-300); }
+  .geo p { margin-top: 18px; max-width: 38ch; }
+
+  .geo-stage { margin-top: 40px; position: relative; height: 360px; }
+  .geo-stage svg { width: 100%; height: 100%; display: block; }
+
+  .geo-rows { margin-top: 32px; }
+  .geo-row {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+  }
+  .geo-row:last-child { border-bottom: 1px solid var(--line); }
+  .geo-row .marker {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--violet-400);
+    box-shadow: 0 0 12px var(--violet-glow);
+  }
+  .geo-row .region {
+    font-family: var(--font-sans); font-size: 15px; color: var(--ink);
+  }
+  .geo-row .pct {
+    font-family: var(--font-display);
+    font-size: 30px; color: var(--ink); letter-spacing: -0.01em;
+  }
+  .geo-row .pct em { font-style: italic; color: var(--violet-300); }
+
+  /* ===== Section 6: The bet ===== */
+  .bet { background: var(--paper-deep); }
+  .bet h2 {
+    font-family: var(--font-display);
+    font-size: 50px; line-height: 0.98; letter-spacing: -0.02em;
+  }
+  .bet h2 em { font-style: italic; color: var(--violet-300); }
+  .bet p { margin-top: 20px; max-width: 38ch; }
+
+  .bet-line {
+    margin-top: 48px;
+    height: 220px;
+    position: relative;
+  }
+  .bet-line svg { width: 100%; height: 100%; }
+
+  .bet-tiles {
+    margin-top: 36px;
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .bet-tile {
+    display: grid; grid-template-columns: auto 1fr; gap: 18px;
+    align-items: baseline;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+  }
+  .bet-tile:last-child { border-bottom: 1px solid var(--line); }
+  .bet-tile .v {
+    font-family: var(--font-display);
+    font-size: 40px; line-height: 1; color: var(--ink); letter-spacing: -0.015em;
+    min-width: 130px;
+  }
+  .bet-tile .v em { font-style: italic; color: var(--violet-300); }
+  .bet-tile .v .unit { font-size: 0.5em; color: var(--ink-3); font-family: var(--font-mono); margin-left: 3px; letter-spacing: 0.04em; }
+  .bet-tile .desc { color: var(--ink-2); font-size: 14px; line-height: 1.5; }
+  .bet-tile .desc em { font-family: var(--font-display); font-style: italic; color: var(--coral-300); font-size: 1.05em; }
+
+  /* ===== Section 7: Competition — rival traces ===== */
+  .rivals h2 {
+    font-family: var(--font-display);
+    font-size: 44px; line-height: 1.02; letter-spacing: -0.015em;
+  }
+  .rivals h2 em { font-style: italic; color: var(--violet-300); }
+  .rivals p { margin-top: 18px; max-width: 38ch; }
+
+  .traces { margin-top: 40px; }
+  .trace {
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+    cursor: pointer;
+  }
+  .trace:last-child { border-bottom: 1px solid var(--line); }
+  .trace-head {
+    display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center;
+  }
+  .trace-tk {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em;
+    background: rgba(255,255,255,0.05);
+    color: var(--ink-2);
+    padding: 4px 8px; border-radius: 3px;
+  }
+  .trace-name {
+    font-family: var(--font-sans);
+    font-size: 17px; color: var(--ink); font-weight: 500;
+  }
+  .trace-cap {
+    font-family: var(--font-display);
+    font-size: 24px; color: var(--ink); letter-spacing: -0.01em;
+  }
+  .trace-cap em { font-style: italic; color: var(--violet-300); }
+  .trace-bar {
+    margin-top: 14px;
+    position: relative;
+    height: 36px;
+  }
+  .trace-bar svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .trace-meta {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+    margin-top: 10px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+    color: var(--ink-3); text-transform: uppercase;
+  }
+  .trace-meta b { color: var(--ink); font-weight: 500; font-family: var(--font-mono); letter-spacing: 0.04em; text-transform: none; }
+  .trace.expanded .trace-detail { max-height: 420px; opacity: 1; padding-top: 14px; }
+  .trace-detail {
+    max-height: 0; opacity: 0; overflow: hidden;
+    transition: max-height 360ms var(--ease-out, ease-out), opacity 280ms ease-out, padding-top 280ms ease-out;
+  }
+  .trace-detail p { font-size: 13px; color: var(--ink-2); line-height: 1.55; }
+  .trace-cta {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    color: var(--ink-4); text-transform: uppercase;
+    margin-top: 10px; display: inline-block;
+  }
+  .trace.expanded .trace-cta { color: var(--violet-400); }
+
+  /* ===== Section 8: Takeaway — inversion ===== */
+  .takeaway {
+    background: var(--paper-deep);
+    padding: 110px 22px 130px;
+    text-align: left;
+    border-top: 1px solid var(--line);
+  }
+  .takeaway .frame {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--violet-400);
+    margin-bottom: 32px;
+  }
+  .takeaway h2 {
+    font-family: var(--font-display);
+    font-size: 64px; line-height: 0.97; letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  .takeaway h2 em { font-style: italic; color: var(--violet-300); }
+  .takeaway h2 .pop { font-style: italic; color: var(--coral-400); }
+  .takeaway .closing-line {
+    margin-top: 48px;
+    font-family: var(--font-display); font-style: italic;
+    font-size: 24px; line-height: 1.3; color: var(--ink-2);
+  }
+  .takeaway .closing-line em { color: var(--coral-300); }
+  .takeaway .footer {
+    margin-top: 80px;
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    color: var(--ink-4); text-transform: uppercase;
+  }
+
+  /* small helpers */
+  .num-mono { font-family: var(--font-mono); }
+
+  @media (max-width: 380px) {
+    .hero h1 { font-size: 64px; }
+    .scale h2, .takeaway h2 { font-size: 50px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================================================== -->
+<!-- Persistent chrome -->
+<!-- ===================================================== -->
+<div class="chrome">
+  <div class="chrome-inner">
+    <div class="chrome-left">
+      <span class="ticker"><span class="dot"></span>DDOG</span>
+      <span class="name">Datadog</span>
+    </div>
+    <span class="recap-label">Recap · FY '25</span>
+  </div>
+  <div class="progress" id="progress"></div>
+</div>
+
+<main class="page">
+
+  <!-- ===================================================== -->
+  <!-- 1. HERO -->
+  <!-- ===================================================== -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="eyebrow rv"><span class="pip"></span> Thesis · 01 <span class="num">/ 08</span></div>
+
+    <h1 class="display rv">
+      Everything <em>observable.</em><br/>
+      Everything <em>billable.</em>
+    </h1>
+
+    <p class="lede rv">
+      Datadog watches the cloud watch itself. <em>32,700 customers</em> stream their telemetry in — hosts, logs, traces, metrics — and Datadog charges by the byte.
+    </p>
+
+    <div class="signal-stage rv" aria-hidden="true">
+      <svg viewBox="0 0 414 220" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="signalFill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#9C87FF" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#9C87FF" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="signalEdgeFade" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#0B0B10"/>
+            <stop offset="6%" stop-color="#0B0B10" stop-opacity="0"/>
+            <stop offset="94%" stop-color="#0B0B10" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#0B0B10"/>
+          </linearGradient>
+        </defs>
+        <!-- baseline -->
+        <line x1="0" y1="180" x2="414" y2="180" stroke="#22223A" stroke-width="1"/>
+        <!-- gridlines -->
+        <line x1="0" y1="60"  x2="414" y2="60"  stroke="#22223A" stroke-width="0.5" stroke-dasharray="2 4"/>
+        <line x1="0" y1="120" x2="414" y2="120" stroke="#22223A" stroke-width="0.5" stroke-dasharray="2 4"/>
+        <!-- waveform area -->
+        <path id="wave-area" d="" fill="url(#signalFill)"/>
+        <!-- waveform line -->
+        <path id="wave-line" d="" fill="none" stroke="#9C87FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- secondary muted trace -->
+        <path id="wave-line-2" d="" fill="none" stroke="#FF7A57" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
+        <!-- moving probe dot -->
+        <circle id="probe" cx="207" cy="100" r="4" fill="#9C87FF">
+          <animate attributeName="r" values="3;6;3" dur="1.6s" repeatCount="indefinite"/>
+        </circle>
+        <rect width="414" height="220" fill="url(#signalEdgeFade)"/>
+      </svg>
+    </div>
+
+    <div class="hero-meta rv">
+      <div class="cell">
+        <div class="k">FY25 Rev</div>
+        <div class="v italic">$3.43<span style="font-size:0.5em;font-family:var(--font-mono);letter-spacing:0.04em;">B</span></div>
+      </div>
+      <div class="cell">
+        <div class="k">YoY</div>
+        <div class="v">+27.7<span style="font-size:0.5em;font-family:var(--font-mono);">%</span></div>
+      </div>
+      <div class="cell">
+        <div class="k">Mkt Cap</div>
+        <div class="v">$44.7<span style="font-size:0.5em;font-family:var(--font-mono);">B</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Reset Beat 1 ===== -->
+  <div class="reset rv">
+    <div class="quote">
+      The cloud is loud. <span class="vio">Datadog made the noise<br/>legible —</span> and put a meter on it.
+    </div>
+    <div class="source">Interlude · 01</div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- 2. THE BUSINESS — usage meter -->
+  <!-- ===================================================== -->
+  <section class="biz" data-screen-label="02 Business">
+    <div class="eyebrow rv"><span class="pip"></span> The business · 02 <span class="num">/ 08</span></div>
+    <h2 class="rv">
+      One platform.<br/>
+      One <em>meter.</em>
+    </h2>
+    <p class="rv">
+      Hosts, logs, traces, security events — all streamed to a single SaaS platform, all billed by volume. Customers come for one product. They stay because the meter only goes one way: <em>up.</em></p>
+
+    <div class="meter-stage rv">
+      <div class="meter-readout">
+        <span>Telemetry · usage-based</span>
+        <span class="live"><span class="blink"></span> LIVE</span>
+      </div>
+      <div class="meter-bars" id="meterBars"></div>
+      <div class="meter-axis">
+        <span>FY21</span><span>FY22</span><span>FY23</span><span>FY24</span><span>FY25</span>
+      </div>
+      <div class="meter-callout">
+        Gross margin holds at <em>80.0%</em> while revenue compounds at <span class="num">+27.68%</span> YoY. <em>Land. Expand.</em> Repeat.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- 3. SCALE -->
+  <!-- ===================================================== -->
+  <section class="scale" data-screen-label="03 Scale">
+    <div class="eyebrow rv"><span class="pip"></span> The scale · 03 <span class="num">/ 08</span></div>
+    <h2 class="rv">
+      Bigger<br/>than it <em>looks.</em>
+    </h2>
+
+    <div class="stat-stack">
+      <div class="stat-row rv">
+        <div class="label">FY2025 Revenue<span class="sub">USD, full year</span></div>
+        <div class="val">$<span data-count="3.43" data-decimals="2">0.00</span><span class="unit">B</span></div>
+        <svg class="spark" viewBox="0 0 200 28" preserveAspectRatio="none"><path d="M0 24 L20 22 L40 21 L60 18 L80 16 L100 14 L120 11 L140 8 L160 6 L180 4 L200 2" fill="none" stroke="#9C87FF" stroke-width="1.2"/></svg>
+      </div>
+      <div class="stat-row rv">
+        <div class="label">YoY growth<span class="sub">Revenue, FY24 → FY25</span></div>
+        <div class="val signal">+<span data-count="27.68" data-decimals="2">0.00</span><span class="unit">%</span></div>
+      </div>
+      <div class="stat-row rv">
+        <div class="label">Customers<span class="sub">Across 160+ countries</span></div>
+        <div class="val">~<span data-count="32700" data-decimals="0" data-format="comma">0</span></div>
+      </div>
+      <div class="stat-row rv">
+        <div class="label">Integrations<span class="sub">Cloud + 3rd-party tools</span></div>
+        <div class="val"><span data-count="1000" data-decimals="0" data-format="comma">0</span><span class="unit">+</span></div>
+      </div>
+      <div class="stat-row rv">
+        <div class="label">Headcount<span class="sub">Across 33 countries</span></div>
+        <div class="val">~<span data-count="7500" data-decimals="0" data-format="comma">0</span></div>
+      </div>
+      <div class="stat-row rv">
+        <div class="label">Q4'25 EPS<span class="sub">Reported</span></div>
+        <div class="val">$<span data-count="0.59" data-decimals="2">0.00</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Reset Beat 2 ===== -->
+  <div class="reset rv">
+    <div class="quote">
+      <span class="vio">Top-line up and to the right.</span><br/>
+      Operating margin? <span class="pop">Underwater.</span>
+    </div>
+    <div class="source">Interlude · 02 · The cost of capture</div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- 4. THE BILL — cost breakdown -->
+  <!-- ===================================================== -->
+  <section class="bill" data-screen-label="04 The Bill">
+    <div class="eyebrow rv"><span class="pip"></span> Where the dollar goes · 04 <span class="num">/ 08</span></div>
+    <h2 class="rv">
+      A hundred<br/>cents <em>in.</em>
+    </h2>
+    <p class="rv">
+      Of every revenue dollar Datadog books, the four colors below say where it goes. Almost half is poured into engineering. The rest holds the line.
+    </p>
+
+    <div class="cost-stage">
+      <!-- 44% R&D -->
+      <div class="cost-row rv" data-pct="44">
+        <div class="pct">01</div>
+        <div class="name"><span class="swatch" style="background:#E8734A"></span> Research &amp; Development</div>
+        <div class="figure"><em>44</em><span style="font-size:0.55em;color:var(--ink-3);font-family:var(--font-mono);">¢</span></div>
+        <div class="barwrap"><div class="bar" style="background:#E8734A; width:44%;"></div></div>
+      </div>
+      <!-- 22% S&M -->
+      <div class="cost-row rv" data-pct="22">
+        <div class="pct">02</div>
+        <div class="name"><span class="swatch" style="background:#6DBF82"></span> Sales &amp; Marketing</div>
+        <div class="figure">22<span style="font-size:0.55em;color:var(--ink-3);font-family:var(--font-mono);">¢</span></div>
+        <div class="barwrap"><div class="bar" style="background:#6DBF82; width:22%;"></div></div>
+      </div>
+      <!-- 20% Cost of Revenue -->
+      <div class="cost-row rv" data-pct="20">
+        <div class="pct">03</div>
+        <div class="name"><span class="swatch" style="background:#4F86C6"></span> Cost of Revenue</div>
+        <div class="figure">20<span style="font-size:0.55em;color:var(--ink-3);font-family:var(--font-mono);">¢</span></div>
+        <div class="barwrap"><div class="bar" style="background:#4F86C6; width:20%;"></div></div>
+      </div>
+      <!-- 7% G&A -->
+      <div class="cost-row rv" data-pct="7">
+        <div class="pct">04</div>
+        <div class="name"><span class="swatch" style="background:#A97DC9"></span> General &amp; Admin</div>
+        <div class="figure">7<span style="font-size:0.55em;color:var(--ink-3);font-family:var(--font-mono);">¢</span></div>
+        <div class="barwrap"><div class="bar" style="background:#A97DC9; width:7%;"></div></div>
+      </div>
+    </div>
+
+    <div class="cost-aside rv">
+      That leaves <span class="pop">7¢</span> of every dollar.<br/>
+      GAAP operating margin: <span class="pop">−1.3%.</span>
+    </div>
+
+    <div class="survive rv">
+      <div class="label">What survives — free cash flow</div>
+      <div class="figure">$<em>1.00</em><span style="font-size:0.45em;color:var(--ink-3);font-family:var(--font-mono);letter-spacing:0.04em;">B</span></div>
+      <div class="note">The accounting loses money. <span style="color:var(--coral-400);font-style:italic;">The cash doesn't.</span></div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- 5. FOOTPRINT -->
+  <!-- ===================================================== -->
+  <section class="geo" data-screen-label="05 Footprint">
+    <div class="eyebrow rv"><span class="pip"></span> Footprint · 05 <span class="num">/ 08</span></div>
+    <h2 class="rv">
+      160 countries.<br/>
+      One <em>signal.</em>
+    </h2>
+    <p class="rv">
+      Datadog's customers live everywhere, but the revenue still leans American. New York is HQ. Paris, Dublin, Tokyo, Singapore, Sydney are the relays.
+    </p>
+
+    <div class="geo-stage rv">
+      <svg viewBox="0 0 414 360">
+        <defs>
+          <radialGradient id="nodeGlow">
+            <stop offset="0%" stop-color="#9C87FF" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#9C87FF" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- world dot grid (abstract) -->
+        <g id="worldDots" fill="#2E2E4D"></g>
+
+        <!-- connection lines (drawn in JS to nodes) -->
+        <g id="geoLines" stroke="#9C87FF" stroke-width="0.6" fill="none" opacity="0.5"></g>
+
+        <!-- nodes -->
+        <g id="geoNodes"></g>
+      </svg>
+    </div>
+
+    <div class="geo-rows">
+      <div class="geo-row rv"><span class="marker"></span><span class="region">United States</span><span class="pct"><em>51</em>%</span></div>
+      <div class="geo-row rv"><span class="marker" style="background:#FF7A57;box-shadow:0 0 12px rgba(255,122,87,0.35);"></span><span class="region">Europe</span><span class="pct">28%</span></div>
+      <div class="geo-row rv"><span class="marker" style="background:#6DBF82;box-shadow:0 0 12px rgba(109,191,130,0.35);"></span><span class="region">Asia-Pacific</span><span class="pct">14%</span></div>
+      <div class="geo-row rv"><span class="marker" style="background:#A97DC9;box-shadow:0 0 12px rgba(169,125,201,0.35);"></span><span class="region">Rest of World</span><span class="pct">7%</span></div>
+    </div>
+  </section>
+
+  <!-- ===== Reset Beat 3 ===== -->
+  <div class="reset rv">
+    <div class="quote">
+      Cash flow funds the next product.<br/>
+      <span class="vio">Every product fights for the next dollar of telemetry.</span>
+    </div>
+    <div class="source">Interlude · 03 · The bet</div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- 6. THE BET -->
+  <!-- ===================================================== -->
+  <section class="bet" data-screen-label="06 The Bet">
+    <div class="eyebrow rv"><span class="pip"></span> The bet · 06 <span class="num">/ 08</span></div>
+    <h2 class="rv">
+      A <em>$187B</em><br/>market — <br/>by 2029.
+    </h2>
+    <p class="rv">
+      Datadog isn't returning capital. No dividends. No buybacks. Free cash flow goes back into the platform — into research, into bolt-ons, into a bet that the addressable market is six times their current revenue.
+    </p>
+
+    <div class="bet-line rv">
+      <svg viewBox="0 0 414 220" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="betFill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#9C87FF" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#9C87FF" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- TAM target dashed line -->
+        <line x1="0" y1="30" x2="414" y2="30" stroke="#FF7A57" stroke-width="0.8" stroke-dasharray="3 4" opacity="0.7"/>
+        <text x="402" y="22" font-family="Geist Mono" font-size="9" fill="#FF7A57" text-anchor="end" letter-spacing="1.4">TAM 2029 · $187B</text>
+
+        <!-- baseline -->
+        <line x1="0" y1="200" x2="414" y2="200" stroke="#22223A" stroke-width="1"/>
+
+        <!-- conviction line -->
+        <path id="betPath" d="" fill="url(#betFill)" />
+        <path id="betLine" d="" fill="none" stroke="#9C87FF" stroke-width="1.6" stroke-linecap="round"/>
+
+        <!-- now marker -->
+        <line x1="170" y1="200" x2="170" y2="135" stroke="#9C87FF" stroke-width="0.8" opacity="0.5"/>
+        <circle cx="170" cy="135" r="4" fill="#9C87FF"/>
+        <text x="178" y="138" font-family="Geist Mono" font-size="9" fill="#C9C6BF" letter-spacing="1.2">FY25 · $3.43B</text>
+
+        <!-- future marker -->
+        <line x1="380" y1="200" x2="380" y2="30" stroke="#FF7A57" stroke-width="0.8" stroke-dasharray="2 3" opacity="0.6"/>
+      </svg>
+    </div>
+
+    <div class="bet-tiles">
+      <div class="bet-tile rv">
+        <div class="v"><em>$1.0</em><span class="unit">B</span></div>
+        <div class="desc"><em>Convertible notes,</em> 2029. Issued December 2024 at a 0% coupon — capital, free, for the platform.</div>
+      </div>
+      <div class="bet-tile rv">
+        <div class="v">$<em>178</em><span class="unit">M</span></div>
+        <div class="desc">Three bolt-on <em>acquisitions</em> in the first nine months of 2025 — Eppo, Metaplane, and one more.</div>
+      </div>
+      <div class="bet-tile rv">
+        <div class="v"><em>44</em><span class="unit">%</span></div>
+        <div class="desc">Of operating spend pours into <em>R&amp;D.</em> The platform widens faster than the market does.</div>
+      </div>
+      <div class="bet-tile rv">
+        <div class="v">$<em>49.6</em><span class="unit">M</span></div>
+        <div class="desc"><em>CapEx.</em> Asset-light by design — Datadog runs on someone else's servers, and bills for watching them.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- 7. COMPETITION — rivals -->
+  <!-- ===================================================== -->
+  <section class="rivals" data-screen-label="07 Rivals">
+    <div class="eyebrow rv"><span class="pip"></span> The competition · 07 <span class="num">/ 08</span></div>
+    <h2 class="rv">
+      Three rival<br/>
+      <em>traces.</em>
+    </h2>
+    <p class="rv">
+      Each competitor is a parallel signal — a company growing into the same enterprise budget. Tap any to expand the trace.
+    </p>
+
+    <div class="traces" id="traces">
+      <!-- Dynatrace — most direct -->
+      <div class="trace rv" data-tk="DT" data-cap="10.62" data-rev="1.70" data-yoy="18.20" data-pe="57.53">
+        <div class="trace-head">
+          <span class="trace-tk">DT</span>
+          <span class="trace-name">Dynatrace</span>
+          <span class="trace-cap">$<em>10.6</em>B</span>
+        </div>
+        <div class="trace-bar" data-rel="0.24"></div>
+        <div class="trace-meta">
+          <span>Rev <b>$1.70B</b></span><span>YoY <b>+18.2%</b></span><span>P/E <b>57.5</b></span>
+        </div>
+        <div class="trace-detail">
+          <p>Datadog's most direct publicly traded competitor. A unified observability and security platform with AI-powered APM, infrastructure monitoring, log management, and cloud security. Competes for the same enterprise DevOps and SRE budgets across AWS, Azure, and GCP.</p>
+          <span class="trace-cta">Direct rival</span>
+        </div>
+      </div>
+
+      <!-- Snowflake -->
+      <div class="trace rv" data-tk="SNOW" data-cap="49.77" data-rev="4.68" data-yoy="29.16" data-pe="—">
+        <div class="trace-head">
+          <span class="trace-tk">SNOW</span>
+          <span class="trace-name">Snowflake</span>
+          <span class="trace-cap">$<em>49.8</em>B</span>
+        </div>
+        <div class="trace-bar" data-rel="1.11"></div>
+        <div class="trace-meta">
+          <span>Rev <b>$4.68B</b></span><span>YoY <b>+29.2%</b></span><span>P/E <b>—</b></span>
+        </div>
+        <div class="trace-detail">
+          <p>Increasingly overlapping with Datadog in log storage, querying, and pipeline use cases. The Data Cloud is converging on the same enterprise cloud monitoring budgets — a well-capitalized rival from an adjacent direction.</p>
+          <span class="trace-cta">Convergent rival</span>
+        </div>
+      </div>
+
+      <!-- Autodesk -->
+      <div class="trace rv" data-tk="ADSK" data-cap="51.07" data-rev="7.21" data-yoy="17.53" data-pe="45.43">
+        <div class="trace-head">
+          <span class="trace-tk">ADSK</span>
+          <span class="trace-name">Autodesk</span>
+          <span class="trace-cap">$<em>51.1</em>B</span>
+        </div>
+        <div class="trace-bar" data-rel="1.14"></div>
+        <div class="trace-meta">
+          <span>Rev <b>$7.21B</b></span><span>YoY <b>+17.5%</b></span><span>P/E <b>45.4</b></span>
+        </div>
+        <div class="trace-detail">
+          <p>A size-comparable SaaS peer rather than a direct rival — primarily design software. The most strategically relevant non-listed rival in Datadog's core market is <em>New Relic</em>, now private under Francisco Partners, head-on in APM and infrastructure monitoring.</p>
+          <span class="trace-cta">Size peer</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- 8. TAKEAWAY — inverts opening -->
+  <!-- ===================================================== -->
+  <section class="takeaway" data-screen-label="08 Takeaway">
+    <div class="frame">The takeaway · 08 / 08</div>
+    <h2 class="rv">
+      Everything <span class="pop">observable.</span><br/>
+      Almost nothing<br/><em>profitable —</em><br/>
+      <span style="color:var(--ink-3); font-style: italic;">yet.</span>
+    </h2>
+    <div class="closing-line rv">
+      Top line growing at <em>27.7%.</em> Operating margin still in the red. Free cash flow already at <em>$1B</em>. The market it's chasing is <em>$187B.</em>
+      <br/><br/>
+      The meter keeps ticking. The bet is the platform. The story is whether the bet pays — and so far, the cash says <em>it is.</em>
+    </div>
+    <div class="footer">
+      <span>DDOG · NASDAQ</span>
+      <span>FY '25 · Recap</span>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ============================================================
+   Scroll progress bar
+   ============================================================ */
+const progressEl = document.getElementById('progress');
+function updateProgress() {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const p = max > 0 ? Math.min(1, h.scrollTop / max) : 0;
+  progressEl.style.transform = `scaleX(${p})`;
+}
+document.addEventListener('scroll', updateProgress, { passive: true });
+updateProgress();
+
+/* ============================================================
+   Reveal-on-scroll
+   ============================================================ */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+/* ============================================================
+   Hero waveform — scroll-scrubbed telemetry
+   ============================================================ */
+const wavePath  = document.getElementById('wave-line');
+const waveArea  = document.getElementById('wave-area');
+const wavePath2 = document.getElementById('wave-line-2');
+const probe     = document.getElementById('probe');
+
+function buildWave(t) {
+  // t is a normalized scroll factor 0..1 within hero
+  const W = 414, H = 220, baseY = 130;
+  const pts = [];
+  const seedHeights = [0.4,0.7,0.5,0.85,0.6,0.95,0.55,0.7,0.45,0.8,0.5,0.9,0.65,0.75,0.4,0.6,0.85,0.55,0.7,0.5];
+  const cols = seedHeights.length;
+  let d = '';
+  let dArea = '';
+  for (let i = 0; i <= cols; i++) {
+    const x = (i / cols) * W;
+    const sh = seedHeights[Math.min(cols-1, i)] || 0.5;
+    // scroll amplifies the wave height
+    const amp = 50 + 30 * t;
+    const wob = Math.sin((i + t*8) * 0.9) * 6;
+    const y = baseY - sh * amp + wob;
+    pts.push([x, y]);
+    d += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+  }
+  // build smooth area
+  dArea = d + ` L ${W} 200 L 0 200 Z`;
+  wavePath.setAttribute('d', d);
+  waveArea.setAttribute('d', dArea);
+
+  // secondary trace, smaller and offset
+  let d2 = '';
+  for (let i = 0; i <= cols; i++) {
+    const x = (i / cols) * W;
+    const sh = seedHeights[Math.min(cols-1, (i+5) % cols)] || 0.5;
+    const y = 165 - sh * (22 + 14*t) + Math.cos((i+t*5)*0.8)*4;
+    d2 += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+  }
+  wavePath2.setAttribute('d', d2);
+
+  // probe travels with scroll
+  const px = 30 + (W - 60) * t;
+  // sample y at px from pts
+  let py = 130;
+  for (let i=0; i<pts.length-1; i++) {
+    if (pts[i][0] <= px && pts[i+1][0] >= px) {
+      const f = (px - pts[i][0]) / (pts[i+1][0] - pts[i][0] || 1);
+      py = pts[i][1] + (pts[i+1][1] - pts[i][1]) * f;
+      break;
+    }
+  }
+  probe.setAttribute('cx', px.toFixed(1));
+  probe.setAttribute('cy', py.toFixed(1));
+}
+function updateHeroWave() {
+  const heroEl = document.querySelector('.hero');
+  const r = heroEl.getBoundingClientRect();
+  const vh = window.innerHeight;
+  // 0 when hero top is at vh, 1 when hero bottom is at 0
+  const total = r.height + vh;
+  const seen  = vh - r.top;
+  const t = Math.max(0, Math.min(1, seen / total));
+  buildWave(t);
+}
+document.addEventListener('scroll', updateHeroWave, { passive: true });
+window.addEventListener('resize', updateHeroWave);
+updateHeroWave();
+
+/* ============================================================
+   Meter bars — usage growth, animated when in view
+   ============================================================ */
+const meterBars = document.getElementById('meterBars');
+// 28 bars = 5 years quarterly+, growth-shaped
+const heights = [];
+for (let i=0; i<28; i++) {
+  const t = i/27;
+  // exponential-ish growth with little noise
+  const base = Math.pow(t, 1.4);
+  const noise = (Math.sin(i*1.7) + Math.cos(i*0.9)) * 0.05;
+  heights.push(Math.max(0.08, Math.min(1, base * 0.95 + 0.05 + noise)));
+}
+heights.forEach((h, i) => {
+  const div = document.createElement('div');
+  div.className = 'b';
+  // last 5 bars in coral (recent / current)
+  if (i >= 23) div.style.background = 'var(--coral-400)';
+  div.style.height = '100%';
+  div.style.transform = `scaleY(0)`;
+  div.style.transitionDelay = (i * 22) + 'ms';
+  div.dataset.h = h;
+  meterBars.appendChild(div);
+});
+const meterIO = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      [...meterBars.children].forEach(b => {
+        b.style.transform = `scaleY(${b.dataset.h})`;
+      });
+      meterIO.disconnect();
+    }
+  });
+}, { threshold: 0.3 });
+meterIO.observe(meterBars);
+
+/* ============================================================
+   Count-up numbers
+   ============================================================ */
+function format(n, decimals, fmt) {
+  if (fmt === 'comma') return Math.round(n).toLocaleString('en-US');
+  return n.toFixed(decimals);
+}
+function countUp(el) {
+  const target = parseFloat(el.dataset.count);
+  const decimals = parseInt(el.dataset.decimals || '0');
+  const fmt = el.dataset.format;
+  const dur = 1400;
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min(1, (now - start) / dur);
+    // ease out cubic
+    const eased = 1 - Math.pow(1 - t, 3);
+    const v = target * eased;
+    el.textContent = format(v, decimals, fmt);
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+const countIO = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      countUp(e.target);
+      countIO.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('[data-count]').forEach(el => countIO.observe(el));
+
+/* ============================================================
+   Cost bars trigger
+   ============================================================ */
+const costIO = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      costIO.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.cost-row').forEach(r => costIO.observe(r));
+
+/* ============================================================
+   Geo nodes — abstract world dot grid + pulsing nodes
+   ============================================================ */
+(function geoSetup(){
+  const W = 414, H = 360;
+  const dotsG = document.getElementById('worldDots');
+  const linesG = document.getElementById('geoLines');
+  const nodesG = document.getElementById('geoNodes');
+
+  // crude landmass approximation — coordinates as % of W/H, then sample dot grid
+  // We'll just lay a sparse dot grid with density variation by region.
+  const dotData = [];
+  for (let y = 30; y < 320; y += 12) {
+    for (let x = 14; x < 400; x += 12) {
+      // Build rough continents using a multi-blob check
+      const inAmericas = (x > 30 && x < 130 && y > 60 && y < 280 && Math.sin(x*0.05+y*0.04) > -0.3);
+      const inEurAfr   = (x > 150 && x < 240 && y > 50 && y < 290 && Math.cos(x*0.04+y*0.03) > -0.4);
+      const inAsia     = (x > 240 && x < 360 && y > 40 && y < 240 && Math.sin(x*0.04-y*0.03) > -0.5);
+      const inOceania  = (x > 300 && x < 380 && y > 240 && y < 290);
+      if (inAmericas || inEurAfr || inAsia || inOceania) {
+        dotData.push([x,y]);
+      }
+    }
+  }
+  dotData.forEach(([x,y]) => {
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx', x); c.setAttribute('cy', y);
+    c.setAttribute('r', 1.1);
+    c.setAttribute('fill', '#2E2E4D');
+    dotsG.appendChild(c);
+  });
+
+  // nodes: NYC (HQ), Dublin, Paris, Amsterdam, Tokyo, Singapore, Sydney
+  const nodes = [
+    { x: 92,  y: 130, label: 'NYC',  color: '#9C87FF', size: 8, hq: true },
+    { x: 175, y: 110, label: 'DUB',  color: '#FF7A57', size: 5 },
+    { x: 188, y: 122, label: 'PAR',  color: '#FF7A57', size: 5 },
+    { x: 195, y: 105, label: 'AMS',  color: '#FF7A57', size: 4 },
+    { x: 330, y: 132, label: 'TYO',  color: '#6DBF82', size: 5 },
+    { x: 308, y: 200, label: 'SGP',  color: '#6DBF82', size: 4 },
+    { x: 355, y: 270, label: 'SYD',  color: '#6DBF82', size: 4 },
+    { x: 60,  y: 230, label: 'SAO',  color: '#A97DC9', size: 3 },
+    { x: 230, y: 230, label: 'DXB',  color: '#A97DC9', size: 3 },
+  ];
+
+  // arc lines from NYC to each
+  const hub = nodes[0];
+  for (let i = 1; i < nodes.length; i++) {
+    const n = nodes[i];
+    const cx = (hub.x + n.x) / 2;
+    const cy = Math.min(hub.y, n.y) - 30;
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', `M ${hub.x} ${hub.y} Q ${cx} ${cy} ${n.x} ${n.y}`);
+    const len = path.getTotalLength ? 0 : 0;
+    path.setAttribute('stroke-dasharray', '300');
+    path.setAttribute('stroke-dashoffset', '300');
+    path.style.transition = `stroke-dashoffset 1200ms ${i*120}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+    linesG.appendChild(path);
+  }
+
+  // node glyphs
+  nodes.forEach((n, i) => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    // glow circle
+    const glow = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    glow.setAttribute('cx', n.x); glow.setAttribute('cy', n.y); glow.setAttribute('r', n.size + 8);
+    glow.setAttribute('fill', 'url(#nodeGlow)');
+    g.appendChild(glow);
+
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx', n.x); c.setAttribute('cy', n.y);
+    c.setAttribute('r', n.size);
+    c.setAttribute('fill', n.color);
+    if (n.hq) {
+      const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      ring.setAttribute('cx', n.x); ring.setAttribute('cy', n.y);
+      ring.setAttribute('r', n.size + 5);
+      ring.setAttribute('fill', 'none');
+      ring.setAttribute('stroke', n.color);
+      ring.setAttribute('stroke-width', '1');
+      ring.setAttribute('opacity', '0.6');
+      const anim = document.createElementNS('http://www.w3.org/2000/svg','animate');
+      anim.setAttribute('attributeName', 'r');
+      anim.setAttribute('values', `${n.size+3};${n.size+12};${n.size+3}`);
+      anim.setAttribute('dur', '2.4s');
+      anim.setAttribute('repeatCount', 'indefinite');
+      ring.appendChild(anim);
+      const anim2 = document.createElementNS('http://www.w3.org/2000/svg','animate');
+      anim2.setAttribute('attributeName', 'opacity');
+      anim2.setAttribute('values', '0.6;0;0.6');
+      anim2.setAttribute('dur', '2.4s');
+      anim2.setAttribute('repeatCount', 'indefinite');
+      ring.appendChild(anim2);
+      g.appendChild(ring);
+    }
+    g.appendChild(c);
+
+    // label
+    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x', n.x + n.size + 6);
+    t.setAttribute('y', n.y + 3);
+    t.setAttribute('font-family', 'Geist Mono');
+    t.setAttribute('font-size', '9');
+    t.setAttribute('letter-spacing', '1.2');
+    t.setAttribute('fill', '#8C8A93');
+    t.textContent = n.label;
+    g.appendChild(t);
+    g.style.opacity = 0;
+    g.style.transition = `opacity 600ms ${300 + i*100}ms ease-out`;
+    nodesG.appendChild(g);
+  });
+
+  const stage = document.querySelector('.geo-stage');
+  const sIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        [...linesG.children].forEach(p => p.setAttribute('stroke-dashoffset', '0'));
+        [...nodesG.children].forEach(g => g.style.opacity = 1);
+        sIO.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+  sIO.observe(stage);
+})();
+
+/* ============================================================
+   Bet line — conviction curve
+   ============================================================ */
+(function betSetup(){
+  const W = 414;
+  // history: 5 years up to FY25 at x=170, projection up to FY29 at x=380
+  // y axis: 200 = 0, 30 = $200B
+  function yFor(rev) {
+    // map 0..200 -> 200..30
+    return 200 - (rev / 200) * 170;
+  }
+  const hist = [
+    [0,    0.1],   // FY20
+    [42,   0.6],   // FY21 ~$0.6B
+    [85,   1.0],   // FY22
+    [128,  1.7],   // FY23
+    [150,  2.7],   // FY24
+    [170,  3.43],  // FY25
+  ];
+  const proj = [
+    [200, 6],
+    [240, 14],
+    [290, 32],
+    [340, 78],
+    [380, 187],
+  ];
+  let d = '';
+  hist.forEach((p,i) => {
+    d += (i===0?'M':'L') + p[0] + ' ' + yFor(p[1]) + ' ';
+  });
+  // smooth curve into projection
+  proj.forEach((p,i) => {
+    d += 'L' + p[0] + ' ' + yFor(p[1]) + ' ';
+  });
+  // close area
+  const area = d + ` L ${proj[proj.length-1][0]} 200 L 0 200 Z`;
+  document.getElementById('betPath').setAttribute('d', area);
+  document.getElementById('betLine').setAttribute('d', d);
+})();
+
+/* ============================================================
+   Trace bars — competitor sizing relative to DDOG
+   ============================================================ */
+(function tracesSetup(){
+  // DDOG = 44.67B reference
+  document.querySelectorAll('.trace-bar').forEach(bar => {
+    const rel = parseFloat(bar.dataset.rel); // size relative to DDOG
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox', '0 0 400 36');
+    svg.setAttribute('preserveAspectRatio', 'none');
+
+    // baseline
+    const base = document.createElementNS('http://www.w3.org/2000/svg','line');
+    base.setAttribute('x1','0'); base.setAttribute('x2','400');
+    base.setAttribute('y1','30'); base.setAttribute('y2','30');
+    base.setAttribute('stroke','#22223A'); base.setAttribute('stroke-width','1');
+    svg.appendChild(base);
+
+    // DDOG reference (purple, dashed) at 50% width
+    const ddRef = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    ddRef.setAttribute('x','0'); ddRef.setAttribute('y','12');
+    ddRef.setAttribute('width','200'); ddRef.setAttribute('height','3');
+    ddRef.setAttribute('fill','#9C87FF'); ddRef.setAttribute('opacity','0.45');
+    svg.appendChild(ddRef);
+
+    // DDOG ref label
+    const lbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x','0'); lbl.setAttribute('y','9');
+    lbl.setAttribute('font-family','Geist Mono'); lbl.setAttribute('font-size','9');
+    lbl.setAttribute('fill','#9C87FF'); lbl.setAttribute('letter-spacing','1.2');
+    lbl.textContent = 'DDOG · $44.7B';
+    svg.appendChild(lbl);
+
+    // competitor bar (coral) at relative width
+    const w = Math.min(400, 200 * rel);
+    const comp = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    comp.setAttribute('x','0'); comp.setAttribute('y','19');
+    comp.setAttribute('width','0'); comp.setAttribute('height','3');
+    comp.setAttribute('fill','#FF7A57');
+    svg.appendChild(comp);
+
+    bar.appendChild(svg);
+
+    const tIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          comp.style.transition = 'width 1100ms cubic-bezier(0.22, 1, 0.36, 1)';
+          comp.setAttribute('width', String(w));
+          tIO.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+    tIO.observe(bar);
+  });
+
+  // tap to expand
+  document.querySelectorAll('.trace').forEach(t => {
+    t.addEventListener('click', () => {
+      t.classList.toggle('expanded');
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

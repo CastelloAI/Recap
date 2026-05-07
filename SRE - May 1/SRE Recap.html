@@ -1,0 +1,1610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>SRE · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   SEMPRA · SRE RECAP — utility-ledger editorial
+   Palette: warm paper + slate steel + a single signal coral (the bet)
+   Type:    Instrument Serif (display) · Geist (sans) · Geist Mono (meta)
+   ========================================================= */
+
+:root{
+  /* paper system (carried from Zair Naqvi DS) */
+  --paper:       #FBFAF7;
+  --paper-2:     #F4F2ED;
+  --paper-3:     #ECEAE3;
+  --ink:         #141414;
+  --ink-2:       #3B3A37;
+  --ink-3:       #6B6A65;
+  --ink-4:       #A4A29C;
+  --line:        #E4E1D9;
+  --line-strong: #CFCBC0;
+
+  /* Sempra-tuned utility palette: institutional steel + gas-flame */
+  --steel-50:    #EEF2F6;
+  --steel-100:   #DCE3EB;
+  --steel-200:   #B6C2CF;
+  --steel-300:   #8092A4;
+  --steel-400:   #4D6178;
+  --steel-500:   #2C3E55;
+  --steel-700:   #18283A;
+  --steel-900:   #0B1622;
+
+  --gas:         #2563EB;          /* matches biggest_costs cost-of-rev hex */
+  --grid:        #16A34A;          /* matches O&M hex */
+  --depreciation:#D97706;
+  --interest:    #DC2626;
+  --admin:       #7C3AED;
+
+  /* the single signal color — reserved for THE BET */
+  --signal:      #FF7A57;          /* coral pop */
+  --signal-soft: #FFE3D6;
+
+  /* type */
+  --f-display: 'Instrument Serif', 'Times New Roman', serif;
+  --f-sans:    'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --f-mono:    'Geist Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+}
+
+*{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body{ margin: 0; background: #1a1a1a; }
+body{
+  font-family: var(--f-sans);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- mobile artifact frame ---------- */
+.page{
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--paper);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---------- persistent chrome ---------- */
+.chrome{
+  position: sticky; top: 0; z-index: 50;
+  padding: 12px 20px 10px;
+  background: rgba(251,250,247,0.78);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid rgba(228,225,217,0.5);
+}
+.chrome-row{
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+}
+.chrome-left{ display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.ticker{
+  font-family: var(--f-mono); font-size: 13px; font-weight: 500;
+  color: var(--ink); letter-spacing: 0.04em;
+  padding: 3px 7px; background: var(--paper-2);
+  border: 1px solid var(--line); border-radius: 4px;
+}
+.coname{
+  font-family: var(--f-display); font-size: 18px; font-style: italic;
+  color: var(--ink-2); letter-spacing: -0.01em; line-height: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.recap-label{
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em;
+  color: var(--ink-3); text-transform: uppercase;
+}
+.progress-rail{ height: 1.5px; background: var(--line); margin-top: 10px; border-radius: 1px; overflow: hidden; }
+.progress-fill{ height: 100%; background: var(--steel-500); width: 0%; transition: width 60ms linear; }
+
+/* ---------- editorial primitives ---------- */
+.eyebrow{
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.eyebrow .dot{
+  width: 6px; height: 6px; border-radius: 999px;
+  background: var(--steel-400); display: inline-block;
+}
+.eyebrow.bet .dot{ background: var(--signal); box-shadow: 0 0 0 3px rgba(255,122,87,0.18); }
+
+.display{
+  font-family: var(--f-display);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+.italic{ font-style: italic; }
+.signal{ color: var(--signal); }
+.steel{ color: var(--steel-500); }
+
+.body{
+  font-family: var(--f-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.body em{ font-family: var(--f-display); font-style: italic; font-size: 1.06em; color: var(--ink); }
+.body strong{ font-weight: 500; color: var(--ink); }
+
+/* every "section" is a beat — no boxy cards */
+.beat{
+  padding: 64px 24px;
+  position: relative;
+}
+.beat-tight{ padding: 40px 24px; }
+
+/* reset beat: italic-serif interlude on a contrasting tonal band */
+.reset{
+  padding: 56px 28px;
+  background: var(--paper-2);
+  border-top: 1px solid rgba(228,225,217,0.6);
+  border-bottom: 1px solid rgba(228,225,217,0.6);
+}
+.reset.dark{ background: var(--steel-900); border-color: rgba(255,255,255,0.06); }
+.reset.dark .reset-q{ color: #DCE3EB; }
+.reset.dark .reset-q em.signal{ color: var(--signal); }
+.reset-q{
+  font-family: var(--f-display); font-style: italic;
+  font-size: 26px; line-height: 1.18;
+  color: var(--steel-700);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.reset-q em{ font-style: italic; }
+.reset-mark{
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.18em;
+  color: var(--ink-4); text-transform: uppercase; margin-bottom: 18px;
+}
+.reset.dark .reset-mark{ color: rgba(220,227,235,0.45); }
+
+/* ============================================================
+   BEAT 1 — THESIS / HERO
+   ============================================================ */
+.hero{
+  padding: 28px 24px 56px;
+  position: relative;
+  background: linear-gradient(180deg, var(--paper) 0%, var(--paper) 60%, var(--paper-2) 100%);
+}
+.hero-meta{
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 36px;
+}
+.hero-meta .pill{
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em;
+  color: var(--ink-3); text-transform: uppercase;
+  padding: 4px 9px; border: 1px solid var(--line); border-radius: 999px;
+}
+.hero-headline{
+  font-family: var(--f-display); font-weight: 400;
+  font-size: 64px; line-height: 0.92;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0 0 28px;
+}
+.hero-headline .num{
+  display: block;
+  font-size: 88px;
+  line-height: 0.88;
+  letter-spacing: -0.035em;
+  color: var(--steel-700);
+}
+.hero-headline .num em{ font-style: italic; color: var(--steel-500); }
+.hero-headline .one{
+  font-style: italic;
+  color: var(--ink-2);
+  font-size: 0.62em;
+  display: block;
+  margin-top: 4px;
+  line-height: 1.05;
+}
+.hero-sub{
+  font-family: var(--f-sans);
+  font-size: 16px; line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 32ch;
+  margin: 0 0 36px;
+}
+.hero-sub em{ font-family: var(--f-display); font-style: italic; color: var(--steel-700); font-size: 1.05em; }
+
+/* hero scene: three flowing currents (CA / TX / Infra) */
+.hero-scene{
+  margin: 0 -24px;
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-scene svg{ width: 100%; height: 100%; display: block; }
+.flow-label{
+  position: absolute; left: 24px;
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-3);
+  display: flex; align-items: center; gap: 6px;
+}
+.flow-label .sw{ width: 10px; height: 2px; }
+.flow-label.ca{ top: 30px; }
+.flow-label.tx{ top: 90px; }
+.flow-label.inf{ top: 150px; }
+
+/* hero stat row — small kpis */
+.hero-stats{
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  margin-top: 32px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+.hero-stat{ padding: 4px 0; }
+.hero-stat + .hero-stat{ border-left: 1px solid var(--line); padding-left: 14px; }
+.hero-stat .num{
+  font-family: var(--f-display); font-size: 28px;
+  line-height: 1; color: var(--ink); letter-spacing: -0.01em;
+}
+.hero-stat .lab{
+  font-family: var(--f-mono); font-size: 9.5px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-3); margin-top: 6px;
+}
+
+/* ============================================================
+   BEAT 2 — THE BUSINESS (three platforms)
+   ============================================================ */
+.platforms{ padding: 64px 24px 56px; }
+.platforms h2{
+  font-family: var(--f-display); font-weight: 400;
+  font-size: 38px; line-height: 1; letter-spacing: -0.02em;
+  margin: 14px 0 8px;
+}
+.platforms h2 em{ font-style: italic; color: var(--steel-500); }
+.platforms .lead{
+  font-family: var(--f-sans); font-size: 15px; line-height: 1.55;
+  color: var(--ink-2); margin: 0 0 36px; max-width: 36ch;
+}
+
+.plat{
+  position: relative;
+  padding: 24px 0 28px;
+  border-bottom: 1px dashed var(--line);
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.plat:last-child{ border-bottom: none; }
+.plat-icon{
+  width: 64px; height: 64px;
+  position: relative;
+}
+.plat-icon svg{ width: 100%; height: 100%; display: block; }
+.plat-name{
+  font-family: var(--f-display); font-size: 22px; line-height: 1.05;
+  color: var(--ink); margin: 0 0 4px;
+}
+.plat-name em{ font-style: italic; color: var(--steel-500); }
+.plat-tag{
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px;
+}
+.plat-desc{
+  font-family: var(--f-sans); font-size: 14px; line-height: 1.5;
+  color: var(--ink-2);
+}
+.plat-num{
+  font-family: var(--f-display); font-size: 26px;
+  color: var(--steel-700); line-height: 1; margin-top: 10px;
+  letter-spacing: -0.01em;
+}
+.plat-num small{
+  font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.12em;
+  color: var(--ink-3); text-transform: uppercase; display: block; margin-top: 5px;
+}
+
+/* ============================================================
+   BEAT 3 — THE SCALE (count-ups in editorial display)
+   ============================================================ */
+.scale{
+  padding: 72px 24px 64px;
+  background: var(--steel-900);
+  color: #DCE3EB;
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+}
+.scale::before{
+  /* dot grid texture */
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+  pointer-events: none;
+}
+.scale > *{ position: relative; z-index: 1; }
+.scale .eyebrow{ color: rgba(220,227,235,0.6); }
+.scale .eyebrow .dot{ background: rgba(255,255,255,0.4); }
+.scale h2{
+  font-family: var(--f-display); font-weight: 400;
+  font-size: 40px; line-height: 1; letter-spacing: -0.02em;
+  color: #fff; margin: 14px 0 24px; max-width: 14ch;
+}
+.scale h2 em{ font-style: italic; color: var(--steel-200); }
+.scale .lead{
+  font-family: var(--f-sans); font-size: 14px; line-height: 1.55;
+  color: rgba(220,227,235,0.72); margin-bottom: 40px; max-width: 38ch;
+}
+.scale-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 36px;
+}
+.scale-row{
+  display: grid; grid-template-columns: 1fr auto;
+  align-items: end; gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.scale-row:last-child{ border-bottom: none; }
+.scale-row .label{
+  font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(220,227,235,0.55);
+}
+.scale-row .v{
+  font-family: var(--f-display); font-size: 56px; line-height: 0.9;
+  color: #fff; letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+}
+.scale-row .v small{
+  font-family: var(--f-display); font-style: italic;
+  font-size: 24px; color: var(--steel-200); margin-left: 2px;
+}
+.scale-row .delta{
+  font-family: var(--f-mono); font-size: 11px;
+  color: var(--steel-200); letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.scale-row .delta.up::before{ content:'▲ '; color: #6EE7B7; font-size: 9px; }
+
+/* ============================================================
+   BEAT 4 — WHERE THE MONEY GOES (the dollar)
+   ============================================================ */
+.dollar{ padding: 72px 24px 64px; background: var(--paper); }
+.dollar h2{
+  font-family: var(--f-display); font-weight: 400;
+  font-size: 40px; line-height: 1; letter-spacing: -0.02em;
+  margin: 14px 0 8px;
+}
+.dollar h2 em{ font-style: italic; color: var(--steel-500); }
+.dollar .lead{
+  font-family: var(--f-sans); font-size: 15px; line-height: 1.55;
+  color: var(--ink-2); margin: 0 0 28px; max-width: 36ch;
+}
+
+.dollar-bar{
+  display: flex; height: 14px; border-radius: 999px; overflow: hidden;
+  margin: 12px 0 6px;
+  background: var(--paper-3);
+}
+.dollar-bar > span{
+  display: block; height: 100%;
+  transition: width 0.8s var(--ease-out, cubic-bezier(.22,1,.36,1));
+}
+.dollar-bar-meta{
+  display: flex; justify-content: space-between;
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.1em;
+  color: var(--ink-3); text-transform: uppercase;
+  margin-bottom: 22px;
+}
+
+/* 100-cent grid */
+.cents{
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  padding: 18px 0;
+}
+.cent{
+  aspect-ratio: 1/1;
+  border-radius: 3px;
+  background: var(--paper-3);
+  position: relative;
+  transition: transform 0.4s var(--ease-out, cubic-bezier(.22,1,.36,1)), background 0.4s;
+}
+.cent.lit{
+  background: var(--c, var(--steel-300));
+}
+.cent.surplus{
+  background: var(--ink);
+  box-shadow: 0 0 0 1.5px var(--paper), inset 0 0 0 1.5px var(--ink);
+}
+.cents-caption{
+  font-family: var(--f-mono); font-size: 10px;
+  letter-spacing: 0.1em; color: var(--ink-3); text-transform: uppercase;
+  display: flex; justify-content: space-between; margin-top: 10px;
+}
+
+.legend{ margin-top: 22px; }
+.legend-row{
+  display: grid; grid-template-columns: 14px 1fr auto;
+  align-items: center; gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.legend-row:last-child{ border-bottom: none; }
+.legend-sw{ width: 14px; height: 14px; border-radius: 3px; }
+.legend-lab{
+  font-family: var(--f-sans); font-size: 14px; color: var(--ink); font-weight: 500;
+}
+.legend-lab .desc{
+  display: block; font-family: var(--f-sans); font-weight: 400;
+  font-size: 12px; color: var(--ink-3); margin-top: 2px;
+}
+.legend-pct{
+  font-family: var(--f-display); font-size: 22px; color: var(--ink);
+  letter-spacing: -0.01em; line-height: 1;
+}
+.legend-pct small{ font-family: var(--f-display); font-style: italic; font-size: 14px; color: var(--ink-3); }
+
+.dollar-survives{
+  margin-top: 28px;
+  padding: 22px 18px;
+  background: var(--paper-2);
+  border-left: 2px solid var(--ink);
+}
+.dollar-survives .k{
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.dollar-survives .v{
+  font-family: var(--f-display); font-size: 36px; line-height: 1;
+  margin-top: 8px;
+}
+.dollar-survives .v em{ font-style: italic; color: var(--ink); }
+
+/* ============================================================
+   BEAT 5 — FOOTPRINT
+   ============================================================ */
+.footprint{ padding: 72px 24px 64px; }
+.footprint h2{
+  font-family: var(--f-display); font-weight: 400;
+  font-size: 40px; line-height: 1; letter-spacing: -0.02em;
+  margin: 14px 0 8px;
+}
+.footprint h2 em{ font-style: italic; color: var(--steel-500); }
+.footprint .lead{
+  font-family: var(--f-sans); font-size: 15px; line-height: 1.55;
+  color: var(--ink-2); margin: 0 0 24px; max-width: 36ch;
+}
+.map-frame{
+  margin: 0 -24px;
+  background: var(--paper-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 28px 0;
+  position: relative;
+}
+.map-frame svg{ width: 100%; height: auto; display: block; }
+
+.geo-rows{ margin-top: 28px; }
+.geo-row{
+  display: grid; grid-template-columns: 28px 1fr auto;
+  align-items: center; gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.geo-row:last-child{ border-bottom: none; }
+.geo-row .num{
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.1em;
+  color: var(--ink-3);
+}
+.geo-row .lab{
+  font-family: var(--f-sans); font-size: 14px; color: var(--ink); font-weight: 500;
+}
+.geo-row .lab small{
+  display: block; font-weight: 400; color: var(--ink-3);
+  font-size: 12px; margin-top: 2px;
+}
+.geo-row .pct{
+  font-family: var(--f-display); font-size: 24px; color: var(--steel-700);
+  letter-spacing: -0.01em; line-height: 1;
+}
+.geo-row .pct small{ font-style: italic; color: var(--ink-3); font-size: 14px; }
+.geo-bar{
+  grid-column: 1 / -1;
+  height: 2px; background: var(--paper-3);
+  margin-top: 10px; overflow: hidden; border-radius: 1px;
+}
+.geo-bar > span{
+  display: block; height: 100%;
+  background: var(--steel-500);
+  width: 0;
+  transition: width 0.9s var(--ease-out, cubic-bezier(.22,1,.36,1));
+}
+
+/* ============================================================
+   BEAT 6 — THE BET (capex / signal coral here ONLY)
+   ============================================================ */
+.bet{
+  padding: 80px 24px 64px;
+  background: linear-gradient(180deg, var(--paper-2) 0%, var(--paper) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.bet h2{
+  font-family: var(--f-display); font-weight: 400;
+  font-size: 44px; line-height: 0.96; letter-spacing: -0.025em;
+  margin: 14px 0 14px;
+}
+.bet h2 em{ font-style: italic; color: var(--signal); }
+.bet .lead{
+  font-family: var(--f-sans); font-size: 15px; line-height: 1.55;
+  color: var(--ink-2); margin: 0 0 28px; max-width: 36ch;
+}
+.bet .lead em{ font-family: var(--f-display); font-style: italic; color: var(--signal); font-size: 1.06em; }
+
+/* the cash-flow ledger: in vs out */
+.ledger{
+  margin: 16px 0 28px;
+  position: relative;
+}
+.ledger-row{
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-bottom: 28px;
+}
+.ledger-head{
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 8px;
+}
+.ledger-head .k{
+  font-family: var(--f-mono); font-size: 10px;
+  letter-spacing: 0.14em; color: var(--ink-3); text-transform: uppercase;
+}
+.ledger-head .v{
+  font-family: var(--f-display); font-size: 32px;
+  color: var(--ink); letter-spacing: -0.015em; line-height: 1;
+}
+.ledger-bar{
+  height: 24px; background: var(--paper-3); border-radius: 4px; overflow: hidden;
+  position: relative;
+}
+.ledger-bar .fill{
+  height: 100%; width: 0;
+  transition: width 1s var(--ease-out, cubic-bezier(.22,1,.36,1));
+}
+.ledger-bar .in{ background: var(--steel-500); }
+.ledger-bar .out{ background: var(--signal); }
+.ledger-note{
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.08em;
+  color: var(--ink-3); text-transform: uppercase; margin-top: 6px;
+}
+
+.bet-gap{
+  margin: 6px 0 28px;
+  padding: 22px 18px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 4px;
+}
+.bet-gap .k{
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.55); text-transform: uppercase;
+}
+.bet-gap .v{
+  font-family: var(--f-display); font-size: 40px; line-height: 1;
+  letter-spacing: -0.02em; color: var(--signal);
+  margin-top: 8px;
+}
+.bet-gap .desc{
+  font-family: var(--f-sans); font-size: 13px; color: rgba(255,255,255,0.75);
+  margin-top: 10px; line-height: 1.5;
+}
+.bet-gap .desc em{ font-family: var(--f-display); font-style: italic; color: #fff; font-size: 1.08em; }
+
+/* the $65B plan as a years-spread */
+.plan{
+  margin-top: 18px;
+  padding: 26px 0 8px;
+}
+.plan-head{
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 14px;
+}
+.plan-head .lab{
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em;
+  color: var(--ink-3); text-transform: uppercase;
+}
+.plan-head .v{
+  font-family: var(--f-display); font-size: 44px; line-height: 1;
+  color: var(--signal); letter-spacing: -0.025em;
+}
+.plan-head .v small{ font-family: var(--f-display); font-style: italic; color: var(--ink); font-size: 18px; }
+
+.plan-bars{
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+  align-items: end;
+  height: 96px;
+  margin-top: 10px;
+}
+.plan-bar{
+  background: var(--signal-soft);
+  border-radius: 3px 3px 0 0;
+  position: relative;
+  transition: height 1s var(--ease-out, cubic-bezier(.22,1,.36,1)) calc(var(--i, 0) * 80ms);
+  height: 0;
+  overflow: hidden;
+}
+.plan-bar::after{
+  content: '';
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 0;
+  background: var(--signal);
+  transition: height 1s var(--ease-out, cubic-bezier(.22,1,.36,1)) calc(var(--i, 0) * 80ms + 200ms);
+}
+.plan-bar.active{ height: 100%; }
+.plan-bar.active::after{ height: 70%; }
+.plan-axis{
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.06em;
+  color: var(--ink-3); text-transform: uppercase;
+  margin-top: 8px;
+}
+.plan-axis span{ text-align: center; }
+
+.plan-target{
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.plan-target .k{
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em;
+  color: var(--ink-3); text-transform: uppercase;
+}
+.plan-target .v{
+  font-family: var(--f-display); font-size: 36px;
+  margin-top: 6px; line-height: 1; letter-spacing: -0.015em;
+}
+.plan-target .v em{ font-style: italic; color: var(--signal); }
+.plan-target .desc{
+  font-family: var(--f-sans); font-size: 13px; color: var(--ink-2);
+  margin-top: 8px; line-height: 1.5;
+}
+
+/* ============================================================
+   BEAT 7 — THE COMPETITION (mass bubbles)
+   ============================================================ */
+.compete{ padding: 72px 24px 56px; }
+.compete h2{
+  font-family: var(--f-display); font-weight: 400;
+  font-size: 40px; line-height: 1; letter-spacing: -0.02em;
+  margin: 14px 0 8px;
+}
+.compete h2 em{ font-style: italic; color: var(--steel-500); }
+.compete .lead{
+  font-family: var(--f-sans); font-size: 15px; line-height: 1.55;
+  color: var(--ink-2); margin: 0 0 24px; max-width: 36ch;
+}
+
+.bubbles{
+  margin: 0 -24px;
+  height: 280px;
+  position: relative;
+  background: var(--paper-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.bubbles svg{ width: 100%; height: 100%; display: block; }
+
+.peer-rows{ margin-top: 30px; }
+.peer{
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.peer:last-child{ border-bottom: none; }
+.peer-head{
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.peer-name{
+  font-family: var(--f-display); font-size: 22px; line-height: 1;
+  color: var(--ink); letter-spacing: -0.01em;
+}
+.peer-tick{
+  font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.05em;
+  color: var(--ink-3); padding: 3px 7px;
+  border: 1px solid var(--line); border-radius: 4px;
+  margin-left: 8px;
+}
+.peer-cap{
+  font-family: var(--f-display); font-size: 22px; color: var(--steel-700);
+  letter-spacing: -0.01em;
+}
+.peer-cap small{ font-family: var(--f-display); font-style: italic; color: var(--ink-3); font-size: 14px; }
+.peer-bar{
+  height: 4px; background: var(--paper-3);
+  margin: 12px 0 12px; border-radius: 2px; overflow: hidden;
+}
+.peer-bar > span{
+  display: block; height: 100%; background: var(--steel-500);
+  width: 0; transition: width 1s var(--ease-out, cubic-bezier(.22,1,.36,1));
+}
+.peer.self .peer-bar > span{ background: var(--ink); }
+.peer-meta{
+  display: flex; gap: 16px;
+  font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.06em;
+  color: var(--ink-3); text-transform: uppercase;
+  margin-top: 4px;
+}
+.peer-meta b{ color: var(--ink); font-weight: 500; }
+.peer-desc{
+  font-family: var(--f-sans); font-size: 13px; line-height: 1.5;
+  color: var(--ink-2); margin-top: 12px;
+}
+.peer-desc em{ font-family: var(--f-display); font-style: italic; color: var(--ink); font-size: 1.05em; }
+
+/* ============================================================
+   BEAT 8 — TAKEAWAY (inverts thesis: scale → discipline)
+   ============================================================ */
+.close{
+  padding: 88px 24px 100px;
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+}
+.close::before{
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(20,20,20,0.06) 1px, transparent 1px);
+  background-size: 18px 18px;
+  pointer-events: none;
+}
+.close > *{ position: relative; }
+.close .eyebrow{ margin-bottom: 16px; }
+.close-title{
+  font-family: var(--f-display); font-weight: 400;
+  font-size: 56px; line-height: 0.92; letter-spacing: -0.03em;
+  color: var(--ink); margin: 0 0 12px;
+}
+.close-title em{ font-style: italic; color: var(--steel-500); }
+.close-title .num{
+  display: block; font-size: 96px; line-height: 0.86;
+  letter-spacing: -0.045em; color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.close-title .num em{ font-style: italic; color: var(--steel-500); }
+.close-sub{
+  font-family: var(--f-sans); font-size: 15px; line-height: 1.55;
+  color: var(--ink-2); margin: 24px 0 32px;
+}
+.close-sub em{ font-family: var(--f-display); font-style: italic; color: var(--ink); font-size: 1.06em; }
+
+/* dividend ladder visual: 15 years of raises */
+.ladder{
+  margin: 20px 0;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.ladder svg{ width: 100%; height: 110px; display: block; }
+.ladder-foot{
+  display: flex; justify-content: space-between;
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.1em;
+  color: var(--ink-3); text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.close-final{
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid var(--line);
+}
+.close-final .q{
+  font-family: var(--f-display); font-style: italic;
+  font-size: 22px; line-height: 1.25; color: var(--ink);
+}
+.close-final .q em{ font-style: italic; color: var(--steel-500); }
+
+.colophon{
+  padding: 32px 24px 56px;
+  text-align: center;
+  background: var(--paper-2);
+  border-top: 1px solid var(--line);
+}
+.colophon .l1{
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.18em;
+  color: var(--ink-3); text-transform: uppercase;
+}
+.colophon .l2{
+  font-family: var(--f-display); font-style: italic; font-size: 16px;
+  color: var(--ink-2); margin-top: 10px;
+}
+
+/* utility: scroll reveal */
+.reveal{
+  opacity: 0; transform: translateY(14px);
+  transition: opacity 0.7s var(--ease-out, cubic-bezier(.22,1,.36,1)), transform 0.7s var(--ease-out, cubic-bezier(.22,1,.36,1));
+}
+.reveal.in{ opacity: 1; transform: translateY(0); }
+
+/* tabular numerics everywhere a number lives */
+.num, .v, .pct, .delta{ font-variant-numeric: tabular-nums; }
+
+/* selection */
+::selection{ background: var(--signal); color: #fff; }
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <!-- ============== PERSISTENT CHROME ============== -->
+  <div class="chrome">
+    <div class="chrome-row">
+      <div class="chrome-left">
+        <span class="ticker">SRE</span>
+        <span class="coname">Sempra</span>
+      </div>
+      <span class="recap-label">Recap · FY '25</span>
+    </div>
+    <div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- ============== BEAT 1 — THESIS ============== -->
+  <section class="hero" data-screen-label="01 Thesis">
+    <div class="hero-meta">
+      <span class="pill">NYSE</span>
+      <span class="pill">Utilities · Multi-Energy</span>
+      <span class="pill">San Diego</span>
+    </div>
+
+    <h1 class="hero-headline">
+      <span class="num"><em>40</em> million</span>
+      <span class="one">meters. <em class="italic steel">One</em> company.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Sempra is the holding company behind <em>three</em> regulated grids — California gas, California power, and Texas electricity — plus a Gulf-Coast LNG arm now selling American molecules to global markets.
+    </p>
+
+    <!-- hero scene: three flowing currents -->
+    <div class="hero-scene" aria-hidden="true">
+      <svg viewBox="0 0 420 200" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="gFlowCA" x1="0" x2="1">
+            <stop offset="0" stop-color="#2C3E55" stop-opacity="0"/>
+            <stop offset=".15" stop-color="#2C3E55" stop-opacity=".55"/>
+            <stop offset="1" stop-color="#2C3E55" stop-opacity=".9"/>
+          </linearGradient>
+          <linearGradient id="gFlowTX" x1="0" x2="1">
+            <stop offset="0" stop-color="#4D6178" stop-opacity="0"/>
+            <stop offset=".2" stop-color="#4D6178" stop-opacity=".5"/>
+            <stop offset="1" stop-color="#4D6178" stop-opacity=".85"/>
+          </linearGradient>
+          <linearGradient id="gFlowInf" x1="0" x2="1">
+            <stop offset="0" stop-color="#8092A4" stop-opacity="0"/>
+            <stop offset=".25" stop-color="#8092A4" stop-opacity=".5"/>
+            <stop offset="1" stop-color="#8092A4" stop-opacity=".85"/>
+          </linearGradient>
+        </defs>
+
+        <!-- three flow lines, increasing thickness -->
+        <path id="lineCA" d="M0 50 C 90 50, 130 30, 230 36 S 380 60, 420 50" stroke="url(#gFlowCA)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path id="lineTX" d="M0 110 C 100 110, 140 90, 240 100 S 380 130, 420 116" stroke="url(#gFlowTX)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+        <path id="lineInf" d="M0 168 C 110 168, 150 150, 250 160 S 380 188, 420 176" stroke="url(#gFlowInf)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <!-- moving dots along each -->
+        <circle r="3.5" fill="#2C3E55"><animateMotion dur="6s" repeatCount="indefinite"><mpath href="#lineCA"/></animateMotion></circle>
+        <circle r="3" fill="#2C3E55" opacity=".55"><animateMotion dur="6s" begin="-2s" repeatCount="indefinite"><mpath href="#lineCA"/></animateMotion></circle>
+
+        <circle r="4" fill="#4D6178"><animateMotion dur="5.4s" repeatCount="indefinite"><mpath href="#lineTX"/></animateMotion></circle>
+        <circle r="3.5" fill="#4D6178" opacity=".55"><animateMotion dur="5.4s" begin="-1.6s" repeatCount="indefinite"><mpath href="#lineTX"/></animateMotion></circle>
+        <circle r="3" fill="#4D6178" opacity=".4"><animateMotion dur="5.4s" begin="-3.2s" repeatCount="indefinite"><mpath href="#lineTX"/></animateMotion></circle>
+
+        <circle r="3" fill="#8092A4"><animateMotion dur="7s" repeatCount="indefinite"><mpath href="#lineInf"/></animateMotion></circle>
+        <circle r="2.5" fill="#8092A4" opacity=".55"><animateMotion dur="7s" begin="-3s" repeatCount="indefinite"><mpath href="#lineInf"/></animateMotion></circle>
+
+        <!-- meter markers at terminus -->
+        <g transform="translate(395 50)" opacity=".7">
+          <circle r="6" fill="none" stroke="#2C3E55" stroke-width="1"/>
+          <circle r="2" fill="#2C3E55"/>
+        </g>
+        <g transform="translate(395 116)" opacity=".7">
+          <circle r="7" fill="none" stroke="#4D6178" stroke-width="1"/>
+          <circle r="2.5" fill="#4D6178"/>
+        </g>
+        <g transform="translate(395 176)" opacity=".7">
+          <rect x="-5" y="-5" width="10" height="10" fill="none" stroke="#8092A4" stroke-width="1"/>
+          <rect x="-1.5" y="-1.5" width="3" height="3" fill="#8092A4"/>
+        </g>
+      </svg>
+
+      <div class="flow-label ca"><span class="sw" style="background:#2C3E55"></span>CA · 25.6m customers</div>
+      <div class="flow-label tx"><span class="sw" style="background:#4D6178"></span>TX · 13m customers</div>
+      <div class="flow-label inf"><span class="sw" style="background:#8092A4"></span>Infra · LNG to global mkts</div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">$61.4<span style="font-style:italic;color:var(--ink-3);font-size:0.55em">B</span></div>
+        <div class="lab">Market cap</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">$96.2<span style="font-style:italic;color:var(--ink-3);font-size:0.55em">B</span></div>
+        <div class="lab">Total assets</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">16,773</div>
+        <div class="lab">Employees</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- reset 1 -->
+  <section class="reset">
+    <div class="reset-mark">— § —</div>
+    <p class="reset-q">Power moves quietly. <em>So does the bill.</em></p>
+  </section>
+
+  <!-- ============== BEAT 2 — THE BUSINESS ============== -->
+  <section class="platforms beat" data-screen-label="02 Business">
+    <span class="eyebrow"><span class="dot"></span>The business · three platforms</span>
+    <h2>Three currents, <em>one balance sheet.</em></h2>
+    <p class="lead">A holding company is just a wrapper. What matters is what it wraps. Sempra wraps three regulated grids — and a fourth, contracted, salt-water ambition.</p>
+
+    <div class="plat">
+      <div class="plat-icon">
+        <!-- CA: split bolt + flame -->
+        <svg viewBox="0 0 64 64">
+          <rect x="6" y="8" width="52" height="48" rx="3" fill="none" stroke="#2C3E55" stroke-width="1"/>
+          <line x1="32" y1="8" x2="32" y2="56" stroke="#2C3E55" stroke-width="1" stroke-dasharray="2 3" opacity=".5"/>
+          <!-- bolt -->
+          <path d="M22 16 L16 36 L22 36 L18 50 L28 30 L22 30 Z" fill="#2C3E55"/>
+          <!-- flame -->
+          <path d="M44 50 C 38 46 38 38 42 32 C 44 36 47 36 46 30 C 50 34 52 40 50 46 C 49 50 46 52 44 50 Z" fill="#4D6178"/>
+        </svg>
+      </div>
+      <div>
+        <div class="plat-tag">Sempra California</div>
+        <div class="plat-name">SDG&amp;E + <em>SoCalGas</em></div>
+        <div class="plat-desc">3.6 million electric customers. 22 million gas customers. The largest natural gas distribution utility in America, paired with the grid that keeps San Diego on.</div>
+        <div class="plat-num">25.6M<small>customers · CA</small></div>
+      </div>
+    </div>
+
+    <div class="plat">
+      <div class="plat-icon">
+        <!-- TX: transmission tower -->
+        <svg viewBox="0 0 64 64">
+          <path d="M32 6 L52 58 M32 6 L12 58" stroke="#2C3E55" stroke-width="1.4" fill="none"/>
+          <path d="M22 32 L42 32 M19 42 L45 42 M16 52 L48 52" stroke="#2C3E55" stroke-width="1.2"/>
+          <path d="M20 22 L44 22" stroke="#2C3E55" stroke-width="1.2"/>
+          <path d="M28 14 L36 14" stroke="#2C3E55" stroke-width="1.2"/>
+          <!-- crossing wires -->
+          <path d="M26 22 L38 32 M38 22 L26 32" stroke="#4D6178" stroke-width=".8" opacity=".7"/>
+          <circle cx="32" cy="6" r="2" fill="#2C3E55"/>
+        </svg>
+      </div>
+      <div>
+        <div class="plat-tag">Sempra Texas</div>
+        <div class="plat-name"><em>Oncor</em> Electric Delivery</div>
+        <div class="plat-desc">The largest electric T&amp;D system in Texas. 13 million customers and the biggest single load-growth story among U.S. utilities — data centers, semiconductors, the Permian.</div>
+        <div class="plat-num">13M<small>customers · TX</small></div>
+      </div>
+    </div>
+
+    <div class="plat">
+      <div class="plat-icon">
+        <!-- Infra: tank + ship -->
+        <svg viewBox="0 0 64 64">
+          <path d="M14 28 a14 8 0 0 1 36 0 v18 a14 8 0 0 1 -36 0 z" fill="none" stroke="#2C3E55" stroke-width="1"/>
+          <path d="M14 28 a14 8 0 0 0 36 0" fill="none" stroke="#2C3E55" stroke-width="1"/>
+          <line x1="14" y1="36" x2="50" y2="36" stroke="#2C3E55" stroke-width="0.7" opacity=".4"/>
+          <line x1="14" y1="42" x2="50" y2="42" stroke="#2C3E55" stroke-width="0.7" opacity=".4"/>
+          <!-- ship below -->
+          <path d="M8 56 L20 56 L18 60 L10 60 Z" fill="#4D6178"/>
+          <line x1="14" y1="50" x2="14" y2="56" stroke="#4D6178" stroke-width="1"/>
+        </svg>
+      </div>
+      <div>
+        <div class="plat-tag">Sempra Infrastructure</div>
+        <div class="plat-name"><em>Cameron</em> &amp; Port Arthur LNG</div>
+        <div class="plat-desc">American gas, liquefied at the Gulf, sailed to buyers who don't have it. A Louisiana plant in production, a Texas plant in build. The non-regulated bet inside a regulated empire.</div>
+        <div class="plat-num">2 plants<small>LA + TX · global mkts</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== BEAT 3 — THE SCALE ============== -->
+  <section class="scale beat" data-screen-label="03 Scale">
+    <span class="eyebrow"><span class="dot"></span>The scale · what it weighs</span>
+    <h2>It is <em>large.</em> It is supposed to be.</h2>
+    <p class="lead">Utilities are paid to be big — to be the boring, capital-heavy machine the modern economy plugs into. Sempra is, by every dimension, that machine.</p>
+
+    <div class="scale-grid">
+      <div class="scale-row">
+        <div>
+          <div class="label">Total assets</div>
+          <div class="v" data-count="96.2" data-suffix="B" data-prefix="$">$0.0<small>B</small></div>
+        </div>
+        <div class="delta up">FY '24</div>
+      </div>
+      <div class="scale-row">
+        <div>
+          <div class="label">Market cap</div>
+          <div class="v" data-count="61.43" data-suffix="B" data-prefix="$">$0.0<small>B</small></div>
+        </div>
+        <div class="delta">FY '25</div>
+      </div>
+      <div class="scale-row">
+        <div>
+          <div class="label">Total equity</div>
+          <div class="v" data-count="31.59" data-suffix="B" data-prefix="$">$0.0<small>B</small></div>
+        </div>
+        <div class="delta">10-K</div>
+      </div>
+      <div class="scale-row">
+        <div>
+          <div class="label">Revenue Q4 '23</div>
+          <div class="v" data-count="3.49" data-suffix="B" data-prefix="$">$0.0<small>B</small></div>
+        </div>
+        <div class="delta up">+3.79% TTM</div>
+      </div>
+      <div class="scale-row">
+        <div>
+          <div class="label">EPS Q4 '23</div>
+          <div class="v" data-count="1.13" data-suffix="" data-prefix="$">$0.00</div>
+        </div>
+        <div class="delta">P/S 5.17×</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- reset 2 -->
+  <section class="reset">
+    <div class="reset-mark">— § —</div>
+    <p class="reset-q">A regulated utility doesn't choose its size. <em class="italic">It buys it, brick by buried pipe.</em></p>
+  </section>
+
+  <!-- ============== BEAT 4 — WHERE THE MONEY GOES ============== -->
+  <section class="dollar beat" data-screen-label="04 Cost dollar">
+    <span class="eyebrow"><span class="dot"></span>A hundred cents in</span>
+    <h2>Of every <em>dollar</em> Sempra collects—</h2>
+    <p class="lead">More than half walks straight back out the door as the gas and power Sempra resold. The grid itself — wires, pipes, people — is the rest.</p>
+
+    <!-- 100-cent dollar grid: each row of 10 = 10¢ -->
+    <div class="cents" id="cents" aria-label="Cost-of-revenue dollar visualization"></div>
+    <div class="cents-caption">
+      <span>each square = 1¢ of revenue</span>
+      <span id="centsLit">86¢ accounted</span>
+    </div>
+
+    <div class="legend" id="costLegend">
+      <!-- populated from JS so swatches/colors match brief exactly -->
+    </div>
+
+    <div class="dollar-survives">
+      <div class="k">What survives</div>
+      <div class="v"><em>14¢</em> left over after operating, financing &amp; tax</div>
+    </div>
+  </section>
+
+  <!-- reset 3 -->
+  <section class="reset">
+    <div class="reset-mark">— § —</div>
+    <p class="reset-q">Geography is destiny <em class="italic">— and Sempra picked the two states everyone is moving to.</em></p>
+  </section>
+
+  <!-- ============== BEAT 5 — FOOTPRINT ============== -->
+  <section class="footprint beat" data-screen-label="05 Footprint">
+    <span class="eyebrow"><span class="dot"></span>Footprint · where the meters live</span>
+    <h2>California, <em>Texas,</em> and the coast in between.</h2>
+    <p class="lead">Eighty cents of every Sempra dollar comes from two states. The remaining twenty rides a tanker.</p>
+
+    <!-- map: stylized N. America with weighted regions -->
+    <div class="map-frame">
+      <svg viewBox="0 0 400 220" preserveAspectRatio="xMidYMid meet">
+        <!-- abstracted continent: hand-built blobs -->
+        <defs>
+          <pattern id="dotbg" width="14" height="14" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="0.7" fill="#CFCBC0"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="400" height="220" fill="url(#dotbg)" opacity=".7"/>
+
+        <!-- continent silhouette (very abstract) -->
+        <path d="M 30 60
+                 C 40 30, 90 30, 140 50
+                 C 175 30, 230 35, 300 60
+                 C 340 70, 360 100, 350 130
+                 C 340 165, 280 180, 230 178
+                 C 200 185, 165 188, 140 180
+                 C 100 175, 70 160, 50 130
+                 C 35 110, 22 85, 30 60 Z"
+              fill="#fff" stroke="#B6C2CF" stroke-width="1.2"/>
+
+        <!-- mexico tail -->
+        <path d="M 230 178
+                 C 248 200, 258 210, 240 215
+                 C 220 218, 195 200, 180 188
+                 Z"
+              fill="#fff" stroke="#B6C2CF" stroke-width="1.2"/>
+
+        <!-- CALIFORNIA region — biggest pulse -->
+        <g id="rCA">
+          <circle cx="68" cy="120" r="0" fill="#2C3E55" fill-opacity=".15">
+            <animate attributeName="r" values="14;28;14" dur="3.6s" repeatCount="indefinite"/>
+            <animate attributeName="fill-opacity" values=".18;0;.18" dur="3.6s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="68" cy="120" r="14" fill="#2C3E55"/>
+          <circle cx="68" cy="120" r="3" fill="#fff"/>
+        </g>
+        <text x="68" y="155" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#2C3E55" letter-spacing="1">CA · 42%</text>
+
+        <!-- TEXAS region -->
+        <g id="rTX">
+          <circle cx="200" cy="140" r="0" fill="#4D6178" fill-opacity=".12">
+            <animate attributeName="r" values="12;24;12" dur="4.4s" repeatCount="indefinite"/>
+            <animate attributeName="fill-opacity" values=".18;0;.18" dur="4.4s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="200" cy="140" r="12.5" fill="#4D6178"/>
+          <circle cx="200" cy="140" r="2.5" fill="#fff"/>
+        </g>
+        <text x="200" y="172" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#4D6178" letter-spacing="1">TX · 38%</text>
+
+        <!-- MEXICO / LNG -->
+        <g id="rMX">
+          <circle cx="215" cy="200" r="7" fill="#8092A4"/>
+        </g>
+        <text x="215" y="215" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8.5" fill="#6B6A65" letter-spacing="1">MX + LNG · 14%</text>
+
+        <!-- Gulf LNG -->
+        <g id="rGulf">
+          <circle cx="245" cy="158" r="4" fill="#A4A29C"/>
+        </g>
+        <text x="262" y="155" font-family="Geist Mono, monospace" font-size="8.5" fill="#6B6A65" letter-spacing="1">Gulf · 6%</text>
+
+        <!-- LNG shipping arc out to Pacific -->
+        <path d="M 245 158 Q 320 110, 380 90" stroke="#FF7A57" stroke-width="0.8" stroke-dasharray="2 3" fill="none" opacity=".6"/>
+        <text x="380" y="86" text-anchor="end" font-family="Geist Mono, monospace" font-size="8" fill="#FF7A57" letter-spacing="1.5">→ GLOBAL</text>
+      </svg>
+    </div>
+
+    <div class="geo-rows" id="geoRows"></div>
+  </section>
+
+  <!-- reset 4 — DARK editorial interlude leading into THE BET -->
+  <section class="reset dark">
+    <div class="reset-mark">— § —</div>
+    <p class="reset-q">You don't run America's grid on quarterly thinking. <em class="signal">You run it on five-year holes in the ground.</em></p>
+  </section>
+
+  <!-- ============== BEAT 6 — THE BET ============== -->
+  <section class="bet beat" data-screen-label="06 The bet">
+    <span class="eyebrow bet"><span class="dot"></span>The bet · capex 2025–2029</span>
+    <h2>Cash <em>out</em> exceeds<br/>cash <em>in.</em> By design.</h2>
+    <p class="lead">Sempra collected <strong>$4.57B</strong> in operating cash and spent <em>$10.61B</em> on capex. That's not a miss — that's the whole investment thesis.</p>
+
+    <!-- The ledger: cash in vs cash out -->
+    <div class="ledger">
+      <div class="ledger-row">
+        <div class="ledger-head">
+          <span class="k">Operating cash in</span>
+          <span class="v">$4.57<span style="font-style:italic;color:var(--ink-3);font-size:0.6em">B</span></span>
+        </div>
+        <div class="ledger-bar"><div class="fill in" data-w="43" style="width:0%"></div></div>
+        <div class="ledger-note">FY 2024</div>
+      </div>
+      <div class="ledger-row">
+        <div class="ledger-head">
+          <span class="k">Capex out</span>
+          <span class="v" style="color:var(--signal)">$10.61<span style="font-style:italic;color:var(--ink-3);font-size:0.6em">B</span></span>
+        </div>
+        <div class="ledger-bar"><div class="fill out" data-w="100" style="width:0%"></div></div>
+        <div class="ledger-note">FY 2024 · into the ground</div>
+      </div>
+    </div>
+
+    <div class="bet-gap">
+      <div class="k">Free cash flow</div>
+      <div class="v">−$6.05B</div>
+      <div class="desc">A negative number, on purpose. Every dollar borrowed today is rate-base tomorrow — and rate-base is what regulators let Sempra <em>earn on.</em></div>
+    </div>
+
+    <!-- $65B plan over 5 years -->
+    <div class="plan">
+      <div class="plan-head">
+        <div>
+          <div class="lab">Five-year capital plan</div>
+          <div class="v" data-count="65" data-prefix="$" data-suffix="B">$0<small>B</small></div>
+        </div>
+      </div>
+      <div class="plan-bars" id="planBars">
+        <div class="plan-bar" style="--i:0"></div>
+        <div class="plan-bar" style="--i:1"></div>
+        <div class="plan-bar" style="--i:2"></div>
+        <div class="plan-bar" style="--i:3"></div>
+        <div class="plan-bar" style="--i:4"></div>
+      </div>
+      <div class="plan-axis">
+        <span>'25</span><span>'26</span><span>'27</span><span>'28</span><span>'29</span>
+      </div>
+
+      <div class="plan-target">
+        <div class="k">Targeted rate base by 2029</div>
+        <div class="v">over <em>$91B</em></div>
+        <div class="desc">From today's footprint to a regulated asset stack the size of a Fortune-30 company — funded by a planned <em>45% sale</em> of Sempra Infrastructure Partners and the divestiture of Mexican assets.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== BEAT 7 — THE COMPETITION ============== -->
+  <section class="compete beat" data-screen-label="07 Peers">
+    <span class="eyebrow"><span class="dot"></span>The competition · regulated peers</span>
+    <h2>The neighbors <em>on the same block.</em></h2>
+    <p class="lead">Three other holding companies fish in the same pond — for the same dividend-hunting capital, the same rate-case approvals, the same Texas megaload growth.</p>
+
+    <!-- bubbles by market cap -->
+    <div class="bubbles">
+      <svg viewBox="0 0 420 280" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="gBubSelf">
+            <stop offset="0" stop-color="#141414"/>
+            <stop offset="1" stop-color="#141414" stop-opacity=".85"/>
+          </radialGradient>
+          <radialGradient id="gBubPeer">
+            <stop offset="0" stop-color="#4D6178"/>
+            <stop offset="1" stop-color="#2C3E55" stop-opacity=".9"/>
+          </radialGradient>
+        </defs>
+        <!-- subtle gridline -->
+        <line x1="0" y1="200" x2="420" y2="200" stroke="#CFCBC0" stroke-width="0.6" stroke-dasharray="2 4"/>
+        <text x="14" y="195" font-family="Geist Mono, monospace" font-size="9" fill="#A4A29C" letter-spacing="1">MARKET CAP →</text>
+
+        <!-- Sempra (self): $61.43B -->
+        <g class="bub" data-cap="61.43" transform="translate(110 130)">
+          <circle r="46" fill="url(#gBubSelf)"/>
+          <text y="-2" text-anchor="middle" font-family="Instrument Serif, serif" font-size="22" fill="#fff">SRE</text>
+          <text y="14" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" fill="rgba(255,255,255,0.7)" letter-spacing="1.5">$61.4B</text>
+        </g>
+
+        <!-- AEP: $72.65B (largest) -->
+        <g transform="translate(245 116)">
+          <circle r="50" fill="url(#gBubPeer)" opacity=".95"/>
+          <text y="-2" text-anchor="middle" font-family="Instrument Serif, serif" font-size="22" fill="#fff">AEP</text>
+          <text y="14" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" fill="rgba(255,255,255,0.7)" letter-spacing="1.5">$72.7B</text>
+        </g>
+
+        <!-- D: $54.86B -->
+        <g transform="translate(80 230)">
+          <circle r="42" fill="url(#gBubPeer)" opacity=".88"/>
+          <text y="-2" text-anchor="middle" font-family="Instrument Serif, serif" font-size="20" fill="#fff">D</text>
+          <text y="14" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9.5" fill="rgba(255,255,255,0.7)" letter-spacing="1.5">$54.9B</text>
+        </g>
+
+        <!-- ETR: $52.88B -->
+        <g transform="translate(330 220)">
+          <circle r="41" fill="url(#gBubPeer)" opacity=".82"/>
+          <text y="-2" text-anchor="middle" font-family="Instrument Serif, serif" font-size="20" fill="#fff">ETR</text>
+          <text y="14" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9.5" fill="rgba(255,255,255,0.7)" letter-spacing="1.5">$52.9B</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="peer-rows">
+      <div class="peer self">
+        <div class="peer-head">
+          <div>
+            <span class="peer-name">Sempra</span>
+            <span class="peer-tick">SRE</span>
+          </div>
+          <div class="peer-cap">$61.43<small>B</small></div>
+        </div>
+        <div class="peer-bar"><span data-w="84"></span></div>
+        <div class="peer-meta"><span>Rev TTM <b>+3.79%</b></span><span>P/S <b>5.17×</b></span></div>
+      </div>
+
+      <div class="peer">
+        <div class="peer-head">
+          <div>
+            <span class="peer-name">American Electric Power</span>
+            <span class="peer-tick">AEP</span>
+          </div>
+          <div class="peer-cap">$72.65<small>B</small></div>
+        </div>
+        <div class="peer-bar"><span data-w="100"></span></div>
+        <div class="peer-meta"><span>Rev YoY <b>+10.98%</b></span><span>P/E <b>20.29</b></span></div>
+        <div class="peer-desc">Most direct peer to Oncor. Same Texas T&amp;D market, same hunt for <em>large commercial &amp; industrial</em> load growth.</div>
+      </div>
+
+      <div class="peer">
+        <div class="peer-head">
+          <div>
+            <span class="peer-name">Dominion Energy</span>
+            <span class="peer-tick">D</span>
+          </div>
+          <div class="peer-cap">$54.86<small>B</small></div>
+        </div>
+        <div class="peer-bar"><span data-w="76"></span></div>
+        <div class="peer-meta"><span>Rev YoY <b>+16.90%</b></span><span>P/E <b>18.42</b></span></div>
+        <div class="peer-desc">Same playbook — regulated electric &amp; gas in <em>high-growth U.S. markets,</em> hunting the same dividend-buyer.</div>
+      </div>
+
+      <div class="peer">
+        <div class="peer-head">
+          <div>
+            <span class="peer-name">Entergy</span>
+            <span class="peer-tick">ETR</span>
+          </div>
+          <div class="peer-cap">$52.88<small>B</small></div>
+        </div>
+        <div class="peer-bar"><span data-w="73"></span></div>
+        <div class="peer-meta"><span>Rev YoY <b>+9.17%</b></span><span>P/E <b>29.82</b></span></div>
+        <div class="peer-desc">The geographic rival. Same Gulf Coast <em>where Port Arthur LNG lives</em> — and Oncor's expanding territory looks an awful lot like Entergy's.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- reset 5 — leading into close -->
+  <section class="reset">
+    <div class="reset-mark">— § —</div>
+    <p class="reset-q">Forty million meters is the scale. <em class="italic">The dividend is the contract.</em></p>
+  </section>
+
+  <!-- ============== BEAT 8 — TAKEAWAY ============== -->
+  <section class="close beat" data-screen-label="08 Close">
+    <span class="eyebrow"><span class="dot"></span>The close · the contract</span>
+    <h1 class="close-title">
+      <span class="num"><em>15</em></span>
+      <span style="display:block;font-size:32px;line-height:1.1;margin-top:6px;color:var(--ink-2)">consecutive years of dividend raises.</span>
+    </h1>
+    <p class="close-sub">Forty million meters is the scale. <em>$2.58 per share, raised every single year for fifteen years,</em> is what gets sent back. A regulated utility's <em>real</em> output isn't kilowatts — it's the cheque, on the same date, growing by a hair.</p>
+
+    <!-- ladder: 15 ascending steps -->
+    <div class="ladder">
+      <svg viewBox="0 0 380 110" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="gLadder" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#2C3E55"/>
+            <stop offset="1" stop-color="#2C3E55" stop-opacity=".25"/>
+          </linearGradient>
+        </defs>
+        <!-- baseline -->
+        <line x1="0" y1="100" x2="380" y2="100" stroke="#CFCBC0" stroke-width="0.8"/>
+        <!-- 15 step bars, each slightly taller -->
+        <g id="ladderBars"></g>
+        <!-- top callout -->
+        <text x="378" y="14" text-anchor="end" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="1.5">$2.58 / SH</text>
+        <text x="2" y="14" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="1.5">YR 1</text>
+      </svg>
+      <div class="ladder-foot">
+        <span>Raised, every year</span>
+        <span>$1.60B paid in FY '24</span>
+      </div>
+    </div>
+
+    <div class="close-final">
+      <p class="q">"Forty million meters in. <em>15 raises out.</em> Everything in between is just <em>the engineering.</em>"</p>
+    </div>
+  </section>
+
+  <div class="colophon">
+    <div class="l1">SRE · Recap · FY '25</div>
+    <div class="l2">Sempra. <span style="font-style:normal">San Diego, CA.</span></div>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================
+   Scroll progress + reveal + count-ups + bar fills
+   ========================================================= */
+(function(){
+  const page = document.getElementById('page');
+  const fill = document.getElementById('progressFill');
+
+  function onScroll(){
+    const doc = document.documentElement;
+    const max = (doc.scrollHeight - doc.clientHeight) || 1;
+    const p = Math.min(1, Math.max(0, (window.scrollY || doc.scrollTop) / max));
+    fill.style.width = (p * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ---------- 100-cent dollar grid ---------- */
+  const COSTS = [
+    { pct: 53, color: '#2563EB', label: 'Cost of Revenue', desc: 'Energy procurement & gas costs' },
+    { pct: 15, color: '#16A34A', label: 'Operations & Maintenance', desc: 'Running the wires, pipes, plants' },
+    { pct: 8,  color: '#D97706', label: 'Depreciation & Amortization', desc: 'The grid wearing out, on schedule' },
+    { pct: 6,  color: '#DC2626', label: 'Interest Expense', desc: 'The cost of all that debt' },
+    { pct: 4,  color: '#7C3AED', label: 'General & Administrative', desc: 'Headquarters, lawyers, audit' },
+  ];
+  const cents = document.getElementById('cents');
+  let cellIdx = 0;
+  const cells = [];
+  // build 100 cells
+  for (let i = 0; i < 100; i++){
+    const d = document.createElement('div');
+    d.className = 'cent';
+    cents.appendChild(d);
+    cells.push(d);
+  }
+  // assign colors per cost in order; remainder = surplus (the 14¢)
+  COSTS.forEach(c => {
+    for (let i = 0; i < c.pct; i++){
+      const cell = cells[cellIdx++];
+      cell.style.setProperty('--c', c.color);
+      cell.dataset.cost = c.label;
+    }
+  });
+  // mark remaining 14 as surplus
+  for (let i = cellIdx; i < 100; i++){
+    cells[i].dataset.cost = 'surplus';
+  }
+
+  /* legend */
+  const legend = document.getElementById('costLegend');
+  COSTS.forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'legend-row';
+    row.innerHTML = `
+      <span class="legend-sw" style="background:${c.color}"></span>
+      <span class="legend-lab">${c.label}<span class="desc">${c.desc}</span></span>
+      <span class="legend-pct">${c.pct}<small>%</small></span>
+    `;
+    legend.appendChild(row);
+  });
+  // surplus row
+  const surplusRow = document.createElement('div');
+  surplusRow.className = 'legend-row';
+  surplusRow.innerHTML = `
+    <span class="legend-sw" style="background:var(--ink)"></span>
+    <span class="legend-lab" style="font-style:italic;font-family:var(--f-display);font-size:18px">What survives<span class="desc" style="font-family:var(--f-sans);font-style:normal">After all of the above</span></span>
+    <span class="legend-pct">14<small>%</small></span>
+  `;
+  legend.appendChild(surplusRow);
+
+  /* ---------- geo rows ---------- */
+  const GEO = [
+    { pct: 42, region: 'California', sub: 'SDG&E + SoCalGas · 25.6m customers' },
+    { pct: 38, region: 'Texas',      sub: 'Oncor T&D · 13m customers' },
+    { pct: 14, region: 'Mexico & LNG', sub: 'Energy networks + Cameron LNG' },
+    { pct: 6,  region: 'Other / Gulf', sub: 'Port Arthur LNG (in build)' },
+  ];
+  const geoRows = document.getElementById('geoRows');
+  GEO.forEach((g, i) => {
+    const r = document.createElement('div');
+    r.className = 'geo-row';
+    r.innerHTML = `
+      <span class="num">0${i+1}</span>
+      <span class="lab">${g.region}<small>${g.sub}</small></span>
+      <span class="pct">${g.pct}<small>%</small></span>
+      <span class="geo-bar"><span data-w="${g.pct}"></span></span>
+    `;
+    geoRows.appendChild(r);
+  });
+
+  /* ---------- ladder bars ---------- */
+  const ladderBars = document.getElementById('ladderBars');
+  if (ladderBars){
+    const N = 15;
+    const baseY = 100;
+    const stepW = 380 / N;
+    const maxH = 72;
+    for (let i = 0; i < N; i++){
+      const h = 8 + (i / (N-1)) * maxH;
+      const x = i * stepW;
+      const y = baseY - h;
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', (x + stepW*0.18).toFixed(1));
+      rect.setAttribute('y', baseY);  // start at baseline, animate up
+      rect.setAttribute('width', (stepW * 0.62).toFixed(1));
+      rect.setAttribute('height', 0);
+      rect.setAttribute('fill', i === N - 1 ? '#141414' : 'url(#gLadder)');
+      rect.dataset.targetY = y;
+      rect.dataset.targetH = h.toFixed(1);
+      ladderBars.appendChild(rect);
+    }
+  }
+
+  /* ---------- intersection-driven reveal & count-up ---------- */
+  function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+
+  function countUp(el){
+    const target = parseFloat(el.dataset.count);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const dur = 1100;
+    const start = performance.now();
+    function tick(now){
+      const t = Math.min(1, (now - start) / dur);
+      const v = target * easeOutCubic(t);
+      let str;
+      if (target >= 100) str = v.toFixed(0);
+      else if (target >= 10) str = v.toFixed(1);
+      else str = v.toFixed(2);
+      // strip trailing zero for whole-ish numbers like 96
+      if (target >= 100 && t === 1) str = String(Math.round(v));
+      el.innerHTML = `${prefix}${str}${suffix ? `<small>${suffix}</small>` : ''}`;
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function activateBars(root){
+    root.querySelectorAll('[data-w]').forEach(el => {
+      const w = el.dataset.w;
+      requestAnimationFrame(() => { el.style.width = w + '%'; });
+    });
+  }
+
+  function activatePlanBars(){
+    document.querySelectorAll('#planBars .plan-bar').forEach(b => b.classList.add('active'));
+  }
+
+  function activateLadder(){
+    const bars = document.querySelectorAll('#ladderBars rect');
+    bars.forEach((b, i) => {
+      setTimeout(() => {
+        b.setAttribute('y', b.dataset.targetY);
+        b.setAttribute('height', b.dataset.targetH);
+        b.style.transition = 'all 480ms cubic-bezier(0.22, 1, 0.36, 1)';
+      }, i * 70);
+    });
+  }
+  // initialize ladder transition
+  document.querySelectorAll('#ladderBars rect').forEach(b => {
+    b.style.transition = 'all 0ms';
+  });
+
+  const seen = new WeakSet();
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      if (seen.has(el)) return;
+      seen.add(el);
+
+      // count-ups
+      if (el.dataset.count) countUp(el);
+
+      // section-level activations
+      if (el.id === 'cents'){
+        // light each cell sequentially
+        cells.forEach((c, i) => {
+          setTimeout(() => {
+            const cost = c.dataset.cost;
+            if (cost && cost !== 'surplus') c.classList.add('lit');
+            else if (cost === 'surplus') c.classList.add('surplus');
+          }, i * 12);
+        });
+      }
+      if (el.id === 'planBars') activatePlanBars();
+      if (el.id === 'ladderBars') activateLadder();
+
+      // bar fills inside the element's section
+      activateBars(el.closest('section') || document);
+    });
+  }, { threshold: 0.25, rootMargin: '0px 0px -10% 0px' });
+
+  // observe
+  document.querySelectorAll('[data-count], #cents, #planBars, #ladderBars, .ledger-bar .fill, .peer-bar span, .geo-bar span').forEach(el => {
+    io.observe(el);
+  });
+  // also observe each section so bars inside fill
+  document.querySelectorAll('section').forEach(s => io.observe(s));
+
+})();
+</script>
+
+</body>
+</html>

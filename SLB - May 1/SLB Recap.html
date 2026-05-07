@@ -1,0 +1,1762 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>SLB · Recap FY '25</title>
+<link rel="stylesheet" href="ds.css" />
+<style>
+  /* ============================================================
+     SLB Recap — derived palette
+     Warm sediment paper → deep ink, with molten coral as signal.
+     ============================================================ */
+  :root {
+    /* Override accent toward a hotter, more "molten" coral — reads as flame on derrick */
+    --molten:        #F25A37;
+    --molten-soft:   #FFB99F;
+    --molten-deep:   #A7311A;
+
+    /* Sediment palette — strata layers, derived from paper through ink */
+    --sed-1: #F5EFE3;   /* surface sand */
+    --sed-2: #E6D8BC;   /* loam */
+    --sed-3: #C9B189;   /* clay */
+    --sed-4: #8E724B;   /* shale brown */
+    --sed-5: #5A4530;   /* deep shale */
+    --sed-6: #2A1F16;   /* basement rock */
+
+    /* Brine / fluid */
+    --brine: #2B3F4A;
+    --brine-soft: #6B8A98;
+
+    /* Page chrome */
+    --page: var(--paper);
+    --page-2: #F1ECE0;
+    --rule: rgba(20,20,20,0.08);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #E8E4DA;
+    font-family: var(--font-sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* The mobile artifact frame — sized for thumb. No phone bezel. */
+  .stage {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--page);
+    position: relative;
+    overflow: hidden; /* SVGs break out otherwise */
+    box-shadow: 0 0 80px rgba(0,0,0,0.08);
+  }
+
+  /* ---------- Persistent chrome ---------- */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    background: rgba(251,250,247,0.78);
+    border-bottom: 1px solid var(--rule);
+  }
+  .chrome-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px 10px;
+  }
+  .ticker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    background: var(--ink);
+    color: var(--page);
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .co-name {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .co-name em { font-style: italic; color: var(--molten); }
+  .recap-label {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .progress-track {
+    height: 1.5px;
+    background: rgba(20,20,20,0.06);
+    width: 100%;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--molten);
+    width: 0%;
+    transform-origin: left;
+    transition: width 80ms linear;
+  }
+
+  /* ---------- Depth rail ---------- */
+  /* A subtle wireline-log style depth rail down the left edge.
+     Numbers tick by as you scroll. */
+  .depth-rail {
+    position: fixed;
+    left: calc(50% - 210px + 10px);
+    top: 90px;
+    bottom: 24px;
+    width: 24px;
+    z-index: 40;
+    pointer-events: none;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: var(--ink-4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    mix-blend-mode: multiply;
+  }
+  .depth-rail .tick {
+    width: 1px;
+    height: 4px;
+    background: var(--ink-4);
+    opacity: 0.4;
+  }
+  .depth-rail .tick.major {
+    height: 8px;
+    background: var(--ink-3);
+    opacity: 0.7;
+  }
+  .depth-rail .label {
+    font-size: 9px;
+    color: var(--ink-3);
+    transform: rotate(-90deg);
+    transform-origin: center;
+    margin-top: 2px;
+  }
+
+  @media (max-width: 440px) {
+    .depth-rail { left: 6px; }
+  }
+
+  /* ---------- Section primitives ---------- */
+  section { position: relative; padding: 56px 28px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--molten);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--molten);
+    display: inline-block;
+  }
+  .eyebrow .num {
+    color: var(--ink-3);
+    font-weight: 400;
+  }
+
+  h1.display, h2.display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin: 0;
+  }
+  h1.display { font-size: 56px; }
+  h2.display { font-size: 40px; }
+  h2.display em, h1.display em { font-style: italic; }
+  h2.display .hot { color: var(--molten); font-style: italic; }
+
+  .lede {
+    font-family: var(--font-sans);
+    font-size: 16.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    margin-top: 18px;
+    text-wrap: pretty;
+  }
+  .lede em { font-family: var(--font-display); font-style: italic; font-size: 1.05em; }
+  .lede .hot { color: var(--molten); font-style: italic; font-family: var(--font-display); }
+
+  .meta-row {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  /* Reset beat — italic-serif on contrasting band */
+  .reset {
+    padding: 44px 32px;
+    background: var(--sed-6);
+    color: #E6D8BC;
+    text-align: left;
+    position: relative;
+  }
+  .reset.cream {
+    background: var(--sed-1);
+    color: var(--sed-5);
+  }
+  .reset.ink {
+    background: #0E0D0B;
+    color: #B6A98E;
+  }
+  .reset p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 24px;
+    line-height: 1.25;
+    color: inherit;
+    text-wrap: balance;
+    letter-spacing: -0.005em;
+    margin: 0;
+  }
+  .reset p .hot { color: var(--molten); font-style: italic; }
+  .reset .mark {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 36px 28px 64px;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 80% at 50% 0%, #FFE7D9 0%, transparent 55%),
+      var(--page);
+  }
+  .hero-meta {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hero-meta .pulse {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--molten);
+    box-shadow: 0 0 0 0 rgba(242,90,55,0.6);
+    animation: pulse 1.8s ease-out infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(242,90,55,0.5); }
+    100% { box-shadow: 0 0 0 12px rgba(242,90,55,0); }
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 76px;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .hero h1 em { font-style: italic; color: var(--molten); }
+  .hero h1 .small { font-size: 0.42em; vertical-align: 0.7em; color: var(--ink-3); font-style: normal; letter-spacing: 0; }
+  .hero-sub {
+    margin-top: 22px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 30ch;
+    text-wrap: pretty;
+  }
+  .hero-sub em { font-family: var(--font-display); font-style: italic; }
+  .hero-sub .hot { color: var(--molten); font-style: italic; font-family: var(--font-display); }
+
+  /* The hero scene: a stylized derrick + descending well, drawn as you scroll */
+  .derrick-scene {
+    position: relative;
+    margin: 28px -28px -64px;
+    height: 280px;
+    overflow: hidden;
+  }
+  .derrick-scene svg { display: block; width: 100%; height: 100%; }
+
+  /* ---------- The Business — four pipes ---------- */
+  .pipes-wrap {
+    margin: 8px -10px 0;
+    position: relative;
+  }
+  .pipe-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 24px;
+  }
+  .pipe {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+  }
+  .pipe:last-child { border-bottom: none; }
+  .pipe .pct {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    text-align: left;
+  }
+  .pipe .pct sup { font-size: 0.55em; color: var(--ink-3); margin-left: 2px; }
+  .pipe .name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+  .pipe .name span {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+  .pipe .bar-cell { padding-left: 12px; }
+  .pipe .bar {
+    height: 28px;
+    background: linear-gradient(180deg, var(--sed-3), var(--sed-4));
+    border-radius: 2px;
+    width: 0%;
+    transition: width 1.2s var(--ease-spring);
+    position: relative;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -2px 0 rgba(0,0,0,0.15);
+  }
+  .pipe.is-primary .bar { background: linear-gradient(180deg, var(--molten) 0%, var(--molten-deep) 100%); }
+  .pipe.is-secondary .bar { background: linear-gradient(180deg, var(--sed-4), var(--sed-5)); }
+  .pipe.is-tertiary .bar { background: linear-gradient(180deg, var(--sed-3), var(--sed-4)); }
+  .pipe.is-quaternary .bar { background: linear-gradient(180deg, var(--sed-2), var(--sed-3)); }
+
+  /* ---------- Scale block ---------- */
+  .scale-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+  .scale-cell {
+    padding: 22px 14px 22px 0;
+    border-bottom: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+  }
+  .scale-cell:nth-child(2n) { padding-right: 0; padding-left: 14px; border-right: none; }
+  .scale-cell:nth-last-child(-n+2) { border-bottom: none; }
+  .scale-cell .num {
+    font-family: var(--font-display);
+    font-size: 44px;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .scale-cell .num em { font-style: italic; color: var(--molten); }
+  .scale-cell .lab {
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    line-height: 1.4;
+  }
+
+  /* ---------- 100 cents grid ---------- */
+  .cents-wrap { margin-top: 20px; }
+  .cents-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 5px;
+    margin-top: 14px;
+  }
+  .cent {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--sed-2);
+    transition: background-color 0.6s var(--ease-out), transform 0.4s var(--ease-out);
+  }
+  .cent[data-cat="cor"] { background: #2563EB; }
+  .cent[data-cat="rd"]  { background: #16A34A; }
+  .cent[data-cat="sga"] { background: #DC2626; }
+  .cent[data-cat="da"]  { background: #9333EA; }
+  .cent[data-cat="net"] { background: var(--molten); box-shadow: 0 0 0 2px rgba(242,90,55,0.18); }
+
+  .cents-legend {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 16px;
+  }
+  .lg-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+  .lg-row .sw {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    transform: translateY(1px);
+  }
+  .lg-row .pct {
+    font-family: var(--font-mono);
+    color: var(--ink);
+    font-size: 12px;
+    margin-left: auto;
+    letter-spacing: 0.02em;
+  }
+  .lg-row .name { font-size: 11px; color: var(--ink-2); }
+
+  .survives {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .survives .big {
+    font-family: var(--font-display);
+    font-size: 64px;
+    color: var(--molten);
+    font-style: italic;
+    letter-spacing: -0.03em;
+    line-height: 0.9;
+  }
+  .survives .cap {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-2);
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  /* ---------- Footprint / globe ---------- */
+  .globe-wrap {
+    margin: 28px -28px 0;
+    padding: 28px 28px 12px;
+    background:
+      radial-gradient(70% 60% at 50% 50%, #1B2530 0%, #0B1117 100%);
+    color: #D7CDB6;
+    position: relative;
+  }
+  .globe-wrap .eyebrow { color: var(--molten); }
+  .globe-wrap h2.display { color: #F4EFE2; }
+  .globe-wrap .lede { color: #B5AC97; }
+  .globe-wrap .lede .hot { color: var(--molten); }
+  .globe-svg { display: block; margin: 12px auto 4px; width: 100%; max-width: 340px; }
+  .geo-list {
+    margin-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .geo-row {
+    display: grid;
+    grid-template-columns: 36px 1fr 80px;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .geo-row .pct {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: #F4EFE2;
+    letter-spacing: -0.01em;
+  }
+  .geo-row .lab {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: #D7CDB6;
+  }
+  .geo-row .meter {
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .geo-row .meter span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--molten), var(--molten-soft));
+    width: 0%;
+    transition: width 1.4s var(--ease-spring);
+  }
+
+  /* ---------- The bet ---------- */
+  .bet-block { margin-top: 24px; }
+  .bet-flow {
+    margin: 22px -8px 0;
+    padding: 18px 12px;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .flow-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 14px;
+    align-items: baseline;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .flow-row:last-child { border-bottom: none; }
+  .flow-row .amt {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .flow-row .amt em { font-style: italic; color: var(--molten); }
+  .flow-row .desc {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    color: var(--ink-2);
+    line-height: 1.4;
+  }
+  .flow-row .desc strong {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  /* Capex deployment "fuel gauge" */
+  .gauge {
+    margin: 22px 0 0;
+    background: var(--sed-1);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 16px;
+  }
+  .gauge-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .gauge-bar {
+    height: 14px;
+    background: var(--page);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+    position: relative;
+  }
+  .gauge-bar .fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--molten-deep), var(--molten));
+    transition: width 1.4s var(--ease-spring);
+  }
+  .gauge-bar .marker {
+    position: absolute;
+    top: -3px; bottom: -3px;
+    width: 1px;
+    background: var(--ink);
+  }
+  .gauge-foot {
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+  }
+  .gauge-foot em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--molten);
+    font-size: 13px;
+    letter-spacing: 0;
+  }
+
+  /* ---------- Competitors ---------- */
+  .comp-list { margin-top: 22px; }
+  .comp {
+    padding: 22px 0;
+    border-top: 1px solid var(--rule);
+    cursor: pointer;
+    transition: padding 0.3s var(--ease-out);
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .comp:last-child { border-bottom: 1px solid var(--rule); }
+  .comp-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .comp .name {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+  .comp .name em { font-style: italic; color: var(--molten); }
+  .comp .ticker-pill {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    border: 1px solid var(--rule);
+    padding: 3px 7px;
+    border-radius: 999px;
+  }
+  .comp-mc {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .comp-mc .meter {
+    flex: 1;
+    height: 8px;
+    background: var(--sed-1);
+    border-radius: 4px;
+    position: relative;
+    overflow: visible;
+  }
+  .comp-mc .meter .self {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: var(--ink);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 1.4s var(--ease-spring);
+  }
+  .comp-mc .meter .other {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: repeating-linear-gradient(45deg, var(--molten) 0 4px, transparent 4px 8px);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 1.4s var(--ease-spring);
+    transition-delay: 0.2s;
+    border: 1px solid var(--molten);
+    box-sizing: border-box;
+  }
+  .comp-mc .meter .label-self {
+    position: absolute;
+    left: 0; top: -16px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    text-transform: uppercase;
+  }
+  .comp-mc .mc-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    width: 64px;
+    text-align: right;
+  }
+  .comp .threat {
+    margin-top: 14px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s var(--ease-out), margin-top 0.5s var(--ease-out);
+  }
+  .comp .threat em { font-family: var(--font-display); font-style: italic; color: var(--ink); }
+  .comp .threat .hot { color: var(--molten); font-style: italic; font-family: var(--font-display); }
+  .comp.open .threat { max-height: 240px; }
+  .comp .tap-hint {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--ink-4);
+    text-transform: uppercase;
+    margin-top: 12px;
+    transition: color 0.2s;
+  }
+  .comp.open .tap-hint { color: var(--molten); }
+  .comp .tap-hint .arr { display: inline-block; transition: transform 0.3s; margin-left: 6px;}
+  .comp.open .tap-hint .arr { transform: rotate(90deg); }
+
+  /* ---------- The bill (debt — dark beat) ---------- */
+  .bill {
+    background: #0B0A09;
+    color: #D2C8B0;
+    margin: 0;
+    padding: 56px 28px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bill .eyebrow { color: var(--molten); }
+  .bill h2.display { color: #F4EFE2; }
+  .bill h2.display em { color: var(--molten); }
+  .bill .lede { color: #A89E84; }
+  .bill .lede em { color: #F4EFE2; }
+  .bill .lede .hot { color: var(--molten); }
+  .scales-svg { display: block; width: 100%; max-width: 360px; margin: 28px auto 12px; }
+  .bill .num-row {
+    margin-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 18px;
+  }
+  .bill .num-row .col { flex: 1; }
+  .bill .num-row .v {
+    font-family: var(--font-display);
+    font-size: 36px;
+    color: #F4EFE2;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .bill .num-row .v em { font-style: italic; color: var(--molten); }
+  .bill .num-row .l {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #8A8068;
+  }
+
+  /* ---------- Close ---------- */
+  .close {
+    padding: 64px 28px 80px;
+    background: var(--page);
+    text-align: left;
+  }
+  .close h2.display {
+    font-size: 56px;
+    line-height: 0.95;
+  }
+  .close .stamp {
+    margin-top: 32px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ---------- 100-year timeline (in scale section) ---------- */
+  .century {
+    margin-top: 26px;
+    padding: 18px 0 6px;
+    border-top: 1px solid var(--rule);
+  }
+  .century-bar {
+    position: relative;
+    height: 36px;
+    margin-top: 12px;
+  }
+  .century-bar .line {
+    position: absolute;
+    top: 18px; left: 0; right: 0;
+    height: 1px;
+    background: var(--ink-3);
+  }
+  .century-bar .marker {
+    position: absolute;
+    top: 12px;
+    width: 1px;
+    height: 14px;
+    background: var(--ink-3);
+  }
+  .century-bar .marker.major { background: var(--ink); height: 22px; top: 8px; }
+  .century-bar .label {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    top: 0;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .century-bar .now {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    color: var(--molten);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 14px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* helpers */
+  .hot { color: var(--molten); }
+  .ital { font-family: var(--font-display); font-style: italic; }
+  .mono { font-family: var(--font-mono); }
+
+  /* Reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Section eyebrow with chapter number */
+  .chap {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ink-3);
+    letter-spacing: 0.22em;
+    margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- ============== PERSISTENT CHROME ============== -->
+  <header class="chrome">
+    <div class="chrome-row">
+      <span class="ticker">SLB</span>
+      <span class="co-name">Schlumberger<em>.</em></span>
+      <span class="recap-label">Recap · FY '25</span>
+    </div>
+    <div class="progress-track"><div class="progress-bar" id="progress"></div></div>
+  </header>
+
+  <!-- Depth rail -->
+  <div class="depth-rail" id="depthRail">
+    <div class="label" id="depthLabel">0 ft</div>
+  </div>
+
+  <!-- ============== HERO / THESIS ============== -->
+  <section class="hero">
+    <div class="hero-meta">
+      <span class="pulse"></span>
+      <span>NYSE · Oilfield Services · Founded 1926</span>
+    </div>
+
+    <h1>
+      One hundred<br>
+      years <em>deep.</em>
+    </h1>
+
+    <p class="hero-sub">
+      Six continents. <em>One hundred and eleven thousand</em> people. The largest oilfield services company on Earth — <span class="hot">$35.71B</span> last year, drilling for everyone else.
+    </p>
+
+    <!-- Hero scene: derrick + drill bit + descending well -->
+    <div class="derrick-scene" id="heroScene">
+      <svg viewBox="0 0 420 280" preserveAspectRatio="none" aria-hidden="true">
+        <!-- Strata bands underneath the derrick -->
+        <defs>
+          <linearGradient id="stratGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#F5EFE3"/>
+            <stop offset="100%" stop-color="#C9B189"/>
+          </linearGradient>
+          <pattern id="grain" patternUnits="userSpaceOnUse" width="3" height="3">
+            <rect width="3" height="3" fill="transparent"/>
+            <circle cx="1" cy="1" r="0.4" fill="#8E724B" opacity="0.18"/>
+          </pattern>
+        </defs>
+
+        <!-- Sky / horizon glow -->
+        <rect x="0" y="0" width="420" height="120" fill="url(#stratGrad)" opacity="0"/>
+
+        <!-- Sediment layers -->
+        <g id="strata">
+          <rect x="0" y="120" width="420" height="22" fill="#E6D8BC"/>
+          <rect x="0" y="142" width="420" height="22" fill="#C9B189"/>
+          <rect x="0" y="164" width="420" height="26" fill="#8E724B"/>
+          <rect x="0" y="190" width="420" height="34" fill="#5A4530"/>
+          <rect x="0" y="224" width="420" height="56" fill="#2A1F16"/>
+          <rect x="0" y="120" width="420" height="160" fill="url(#grain)"/>
+        </g>
+
+        <!-- Horizon line -->
+        <line x1="0" y1="120" x2="420" y2="120" stroke="#8E724B" stroke-width="0.5" opacity="0.5"/>
+
+        <!-- Derrick (4-leg lattice) -->
+        <g id="derrick" transform="translate(210, 0)">
+          <!-- legs -->
+          <line x1="-30" y1="120" x2="-8" y2="20" stroke="#1A1815" stroke-width="2"/>
+          <line x1="30" y1="120" x2="8" y2="20" stroke="#1A1815" stroke-width="2"/>
+          <line x1="-30" y1="120" x2="-8" y2="20" stroke="#1A1815" stroke-width="2" opacity="0.5"/>
+          <line x1="30" y1="120" x2="8" y2="20" stroke="#1A1815" stroke-width="2" opacity="0.5"/>
+          <!-- crown -->
+          <rect x="-10" y="14" width="20" height="6" fill="#1A1815"/>
+          <rect x="-3" y="6" width="6" height="10" fill="#1A1815"/>
+          <!-- lattice cross-bracing -->
+          <g stroke="#1A1815" stroke-width="1" opacity="0.85">
+            <line x1="-26" y1="100" x2="26" y2="100"/>
+            <line x1="-22" y1="80" x2="22" y2="80"/>
+            <line x1="-18" y1="60" x2="18" y2="60"/>
+            <line x1="-14" y1="40" x2="14" y2="40"/>
+            <!-- diagonals -->
+            <line x1="-30" y1="120" x2="22" y2="80"/>
+            <line x1="30" y1="120" x2="-22" y2="80"/>
+            <line x1="-22" y1="80" x2="14" y2="40"/>
+            <line x1="22" y1="80" x2="-14" y2="40"/>
+            <line x1="-14" y1="40" x2="8" y2="20"/>
+            <line x1="14" y1="40" x2="-8" y2="20"/>
+          </g>
+
+          <!-- drill string descending into earth -->
+          <line id="drillString" x1="0" y1="20" x2="0" y2="120" stroke="#1A1815" stroke-width="2.5"/>
+
+          <!-- the well — dynamic length based on scroll -->
+          <line id="wellPath" x1="0" y1="120" x2="0" y2="280" stroke="#0B0A09" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+
+          <!-- drill bit / hot tip -->
+          <g id="drillBit" transform="translate(0,120)">
+            <circle r="6" fill="#F25A37"/>
+            <circle r="11" fill="#F25A37" opacity="0.25"/>
+          </g>
+
+          <!-- ground line -->
+          <line x1="-90" y1="120" x2="90" y2="120" stroke="#0B0A09" stroke-width="1.5"/>
+        </g>
+
+        <!-- Floating ticker on the side -->
+        <g transform="translate(28, 24)" font-family="Geist Mono, monospace" font-size="9" fill="#6B6A65" letter-spacing="0.6">
+          <text>↓ DEPTH</text>
+          <text x="0" y="14" font-size="8">0 FT</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Reset beat 1 -->
+  <div class="reset cream">
+    <span class="mark">↓ DRILLING</span>
+    <p>It is the company you've never thought about <span class="hot">that holds the wells up.</span></p>
+  </div>
+
+  <!-- ============== THE BUSINESS ============== -->
+  <section id="sec-business">
+    <div class="eyebrow reveal">
+      <span class="dot"></span>
+      <span class="chap">CH 01</span>
+      <span>The business · four divisions</span>
+    </div>
+
+    <h2 class="display reveal">
+      Four pipes,<br>
+      <em>one wellbore.</em>
+    </h2>
+
+    <p class="lede reveal">
+      SLB makes its money in four operating divisions — <em>technology, equipment, and increasingly software</em> sold to oil and gas operators in more than a hundred countries. <span class="hot">Production Systems</span> leads the mix.
+    </p>
+
+    <div class="pipes-wrap reveal">
+      <div class="pipe-row" id="pipes">
+        <div class="pipe is-primary" data-w="74">
+          <div class="pct">37<sup>%</sup></div>
+          <div class="bar-cell"><div class="bar" style="width:0;"></div></div>
+          <div class="name" style="grid-column: 2 / 4; padding-left: 12px; padding-top: 10px;">
+            Production Systems
+            <span>Wellheads · trees · artificial lift</span>
+          </div>
+        </div>
+        <div class="pipe is-secondary" data-w="66">
+          <div class="pct">33<sup>%</sup></div>
+          <div class="bar-cell"><div class="bar" style="width:0;"></div></div>
+          <div class="name" style="grid-column: 2 / 4; padding-left: 12px; padding-top: 10px;">
+            Well Construction
+            <span>Drilling fluids · rigs · cementing</span>
+          </div>
+        </div>
+        <div class="pipe is-tertiary" data-w="38">
+          <div class="pct">19<sup>%</sup></div>
+          <div class="bar-cell"><div class="bar" style="width:0;"></div></div>
+          <div class="name" style="grid-column: 2 / 4; padding-left: 12px; padding-top: 10px;">
+            Reservoir Characterization
+            <span>Wireline · seismic · evaluation</span>
+          </div>
+        </div>
+        <div class="pipe is-quaternary" data-w="16">
+          <div class="pct">8<sup>%</sup></div>
+          <div class="bar-cell"><div class="bar" style="width:0;"></div></div>
+          <div class="name" style="grid-column: 2 / 4; padding-left: 12px; padding-top: 10px;">
+            Digital &amp; Integration
+            <span>Software · AI · subsurface modeling</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== THE SCALE ============== -->
+  <section id="sec-scale" style="background: var(--page-2);">
+    <div class="eyebrow reveal">
+      <span class="dot"></span>
+      <span class="chap">CH 02</span>
+      <span>The scale · FY '25</span>
+    </div>
+
+    <h2 class="display reveal">
+      Big enough to <em class="hot">underwrite</em><br>
+      a continent.
+    </h2>
+
+    <p class="lede reveal">
+      A century of compounding. Numbers the size of nation-state ministries.
+    </p>
+
+    <div class="scale-grid reveal">
+      <div class="scale-cell">
+        <div class="num" data-count="35.71" data-suffix="B" data-prefix="$">$0.00<span style="font-size:0.6em">B</span></div>
+        <div class="lab">FY '25 revenue · ↘ 1.6% YoY</div>
+      </div>
+      <div class="scale-cell">
+        <div class="num" data-count="79.05" data-suffix="B" data-prefix="$">$0.00<span style="font-size:0.6em">B</span></div>
+        <div class="lab">Market capitalization</div>
+      </div>
+      <div class="scale-cell">
+        <div class="num" data-count="111" data-suffix="K">0<span style="font-size:0.6em">K</span></div>
+        <div class="lab">Employees worldwide</div>
+      </div>
+      <div class="scale-cell">
+        <div class="num" data-count="100" data-suffix="+">0<span style="font-size:0.6em">+</span></div>
+        <div class="lab">Countries with operations</div>
+      </div>
+    </div>
+
+    <!-- 100-year timeline -->
+    <div class="century reveal">
+      <div class="meta-row" style="justify-content: space-between;">
+        <span>↳ FOUNDED 1926</span>
+        <span>CENTURY · 100 YRS</span>
+      </div>
+      <div class="century-bar">
+        <div class="line"></div>
+        <div class="marker major" style="left: 0%;"></div>
+        <div class="label" style="left: 0%; transform: none;">'26</div>
+        <div class="marker" style="left: 25%;"></div>
+        <div class="marker" style="left: 50%;"></div>
+        <div class="label" style="left: 50%;">'76</div>
+        <div class="marker" style="left: 75%;"></div>
+        <div class="marker major" style="left: 100%;"></div>
+        <div class="now" style="right: -2px; transform: translateX(0);">'26</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reset beat 2 -->
+  <div class="reset">
+    <span class="mark">↓ THE BILL</span>
+    <p>You don't run a hundred-year service business <span class="hot">on margin alone</span> — you run it on volume.</p>
+  </div>
+
+  <!-- ============== WHERE THE MONEY GOES ============== -->
+  <section id="sec-cents">
+    <div class="eyebrow reveal">
+      <span class="dot"></span>
+      <span class="chap">CH 03</span>
+      <span>A hundred cents in</span>
+    </div>
+
+    <h2 class="display reveal">
+      Of every dollar,<br>
+      <em class="hot">82¢</em> leaves<br>
+      to do the work.
+    </h2>
+
+    <p class="lede reveal">
+      Oilfield services is a <em>volume game.</em> Cost of revenue swallows the bulk of the top line; what survives is what's measured against the century.
+    </p>
+
+    <div class="cents-wrap reveal">
+      <!-- 100-cent grid: 10x10 -->
+      <div class="cents-grid" id="centsGrid"></div>
+
+      <div class="cents-legend">
+        <div class="lg-row">
+          <span class="sw" style="background:#2563EB;"></span>
+          <span class="name">Cost of revenue</span>
+          <span class="pct">82%</span>
+        </div>
+        <div class="lg-row">
+          <span class="sw" style="background:#9333EA;"></span>
+          <span class="name">Depreciation</span>
+          <span class="pct">4%</span>
+        </div>
+        <div class="lg-row">
+          <span class="sw" style="background:#16A34A;"></span>
+          <span class="name">R&amp;D</span>
+          <span class="pct">3%</span>
+        </div>
+        <div class="lg-row">
+          <span class="sw" style="background:#DC2626;"></span>
+          <span class="name">SG&amp;A</span>
+          <span class="pct">3%</span>
+        </div>
+      </div>
+
+      <div class="survives">
+        <div class="big">9.4¢</div>
+        <div class="cap">survives to net income — <em>$3.37B</em> on $35.71B sold.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== FOOTPRINT ============== -->
+  <section style="padding-top: 40px; padding-bottom: 12px;">
+    <div class="globe-wrap">
+      <div class="eyebrow reveal" style="color: var(--molten);">
+        <span class="dot"></span>
+        <span class="chap" style="color:#7A7159">CH 04</span>
+        <span>The footprint</span>
+      </div>
+
+      <h2 class="display reveal">
+        Not an<br>
+        <em class="hot">American</em> company.
+      </h2>
+
+      <p class="lede reveal">
+        North America books only <em>21¢</em> of the global revenue dollar. The rest is the <span class="hot">Eastern Hemisphere</span> — Riyadh, Stavanger, Lagos, Dubai. That is where the wells are.
+      </p>
+
+      <!-- Hand-built world map abstract — dots representing presence weighted by region -->
+      <svg class="globe-svg reveal" viewBox="0 0 320 200" aria-hidden="true">
+        <defs>
+          <radialGradient id="globeShine" cx="0.3" cy="0.3" r="0.8">
+            <stop offset="0%" stop-color="#3A4A56" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#0B1117" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- meridians / latitudes (subtle) -->
+        <g stroke="#3A4A56" stroke-width="0.5" fill="none" opacity="0.55">
+          <ellipse cx="160" cy="100" rx="150" ry="70"/>
+          <ellipse cx="160" cy="100" rx="100" ry="58"/>
+          <ellipse cx="160" cy="100" rx="50" ry="46"/>
+          <line x1="10" y1="100" x2="310" y2="100"/>
+        </g>
+
+        <!-- Continents as dot fields. Roughly placed -->
+        <!-- North America -->
+        <g id="reg-na" fill="#5C6F7C">
+          <circle cx="62" cy="78" r="2.4"/>
+          <circle cx="56" cy="86" r="2.4"/>
+          <circle cx="68" cy="84" r="2.4"/>
+          <circle cx="74" cy="92" r="2.4"/>
+          <circle cx="62" cy="96" r="2.4"/>
+          <circle cx="80" cy="100" r="2.4"/>
+          <circle cx="68" cy="106" r="2.4"/>
+          <circle cx="86" cy="112" r="2.4"/>
+        </g>
+        <!-- Latin America -->
+        <g id="reg-la" fill="#5C6F7C">
+          <circle cx="92" cy="120" r="2.4"/>
+          <circle cx="100" cy="130" r="2.4"/>
+          <circle cx="108" cy="142" r="2.4"/>
+          <circle cx="100" cy="150" r="2.4"/>
+          <circle cx="96" cy="160" r="2.4"/>
+          <circle cx="106" cy="166" r="2.4"/>
+        </g>
+        <!-- Europe / CIS / Africa (stretches across vertical column) -->
+        <g id="reg-ecaf" fill="#5C6F7C">
+          <circle cx="160" cy="62" r="2.4"/>
+          <circle cx="170" cy="68" r="2.4"/>
+          <circle cx="180" cy="60" r="2.4"/>
+          <circle cx="156" cy="76" r="2.4"/>
+          <circle cx="172" cy="82" r="2.4"/>
+          <circle cx="184" cy="76" r="2.4"/>
+          <circle cx="166" cy="98" r="2.4"/>
+          <circle cx="180" cy="110" r="2.4"/>
+          <circle cx="170" cy="122" r="2.4"/>
+          <circle cx="184" cy="134" r="2.4"/>
+          <circle cx="172" cy="148" r="2.4"/>
+          <circle cx="180" cy="160" r="2.4"/>
+        </g>
+        <!-- MENA -->
+        <g id="reg-mena" fill="#5C6F7C">
+          <circle cx="200" cy="92" r="2.4"/>
+          <circle cx="210" cy="100" r="2.4"/>
+          <circle cx="218" cy="92" r="2.4"/>
+          <circle cx="208" cy="84" r="2.4"/>
+          <circle cx="226" cy="106" r="2.4"/>
+          <circle cx="234" cy="98" r="2.4"/>
+          <circle cx="218" cy="112" r="2.4"/>
+          <circle cx="226" cy="120" r="2.4"/>
+          <circle cx="208" cy="118" r="2.4"/>
+        </g>
+
+        <!-- Region halos animate in -->
+        <circle id="halo-mena" cx="218" cy="102" r="0" fill="none" stroke="#F25A37" stroke-width="1.2" opacity="0.85"/>
+        <circle id="halo-ecaf" cx="172" cy="108" r="0" fill="none" stroke="#F25A37" stroke-width="1.0" opacity="0.7"/>
+        <circle id="halo-na" cx="70" cy="92" r="0" fill="none" stroke="#F25A37" stroke-width="0.8" opacity="0.55"/>
+        <circle id="halo-la" cx="100" cy="142" r="0" fill="none" stroke="#F25A37" stroke-width="0.8" opacity="0.55"/>
+
+        <!-- Pin labels -->
+        <g font-family="Geist Mono, monospace" font-size="8" fill="#D7CDB6" letter-spacing="0.5">
+          <text x="218" y="78" text-anchor="middle">MENA · 34%</text>
+          <text x="160" y="180" text-anchor="middle">EUR · CIS · AFR · 27%</text>
+          <text x="70" y="68" text-anchor="middle">N.AMERICA · 21%</text>
+          <text x="100" y="180" text-anchor="middle">LATAM · 18%</text>
+        </g>
+      </svg>
+
+      <div class="geo-list reveal" id="geoList">
+        <div class="geo-row" data-w="34">
+          <div class="pct">34<span style="font-size:0.55em; color:#8B8268; margin-left:1px;">%</span></div>
+          <div>
+            <div class="lab">Middle East &amp; North Africa</div>
+            <div class="meter"><span style="width:0;"></span></div>
+          </div>
+          <div class="lab" style="text-align:right; font-family: var(--font-mono); font-size: 9.5px; color:#8B8268; letter-spacing: 0.1em;">LARGEST</div>
+        </div>
+        <div class="geo-row" data-w="27">
+          <div class="pct">27<span style="font-size:0.55em; color:#8B8268; margin-left:1px;">%</span></div>
+          <div>
+            <div class="lab">Europe, CIS &amp; Africa</div>
+            <div class="meter"><span style="width:0;"></span></div>
+          </div>
+          <div class="lab" style="text-align:right; font-family: var(--font-mono); font-size: 9.5px; color:#8B8268;"></div>
+        </div>
+        <div class="geo-row" data-w="21">
+          <div class="pct">21<span style="font-size:0.55em; color:#8B8268; margin-left:1px;">%</span></div>
+          <div>
+            <div class="lab">North America</div>
+            <div class="meter"><span style="width:0;"></span></div>
+          </div>
+          <div class="lab" style="text-align:right; font-family: var(--font-mono); font-size: 9.5px; color:#8B8268;"></div>
+        </div>
+        <div class="geo-row" data-w="18">
+          <div class="pct">18<span style="font-size:0.55em; color:#8B8268; margin-left:1px;">%</span></div>
+          <div>
+            <div class="lab">Latin America</div>
+            <div class="meter"><span style="width:0;"></span></div>
+          </div>
+          <div class="lab" style="text-align:right; font-family: var(--font-mono); font-size: 9.5px; color:#8B8268;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reset beat 3 -->
+  <div class="reset ink">
+    <span class="mark">↓ THE BET</span>
+    <p>A century of services has taught one lesson: <span class="hot">own the chemistry, not just the rig.</span></p>
+  </div>
+
+  <!-- ============== THE BET ============== -->
+  <section id="sec-bet">
+    <div class="eyebrow reveal">
+      <span class="dot"></span>
+      <span class="chap">CH 05</span>
+      <span>The bet · ChampionX</span>
+    </div>
+
+    <h2 class="display reveal">
+      Two companies,<br>
+      one <em class="hot">artificial lift.</em>
+    </h2>
+
+    <p class="lede reveal">
+      Closed in <em>2025.</em> An all-stock deal that brings ChampionX's production-chemistry and artificial-lift book under SLB's wellbore — every liter pumped, every barrel raised.
+    </p>
+
+    <div class="bet-flow reveal">
+      <div class="flow-row">
+        <div class="amt">$7<em>B</em></div>
+        <div class="desc">Total shareholder returns targeted across <strong>2024–25</strong>, dividends + buybacks combined.</div>
+      </div>
+      <div class="flow-row">
+        <div class="amt">$2.3<em>B</em></div>
+        <div class="desc">Accelerated share <strong>repurchase program</strong>, announced alongside Q4 '24 results.</div>
+      </div>
+      <div class="flow-row">
+        <div class="amt">$1.69<em>B</em></div>
+        <div class="desc">Capex deployed in FY '25 — <strong>capital-intensive but well-managed.</strong></div>
+      </div>
+      <div class="flow-row">
+        <div class="amt">$1.60<em>B</em></div>
+        <div class="desc">Returned in <strong>cash dividends</strong> over the year.</div>
+      </div>
+    </div>
+
+    <div class="gauge reveal">
+      <div class="gauge-label">
+        <span>FREE CASH FLOW · FY '25</span>
+        <span>$4.79B</span>
+      </div>
+      <div class="gauge-bar">
+        <div class="fill" data-w="74"></div>
+        <div class="marker" style="left: 26%;"></div>
+      </div>
+      <div class="gauge-foot">
+        From <span style="color:var(--ink); font-family: var(--font-display); font-style: italic; font-size: 13px;">$6.49B</span> in operating cash. <em>26%</em> back into the ground; <em>74%</em> survives as free cash.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== THE COMPETITION ============== -->
+  <section id="sec-comp" style="background: var(--page-2);">
+    <div class="eyebrow reveal">
+      <span class="dot"></span>
+      <span class="chap">CH 06</span>
+      <span>The competition · three threats</span>
+    </div>
+
+    <h2 class="display reveal">
+      One direct rival,<br>
+      <em class="hot">two quiet thieves.</em>
+    </h2>
+
+    <p class="lede reveal">
+      Halliburton trades blow-for-blow on the rig. The bigger threat is <em>internalization</em> — operators and majors <span class="hot">building in-house</span> what SLB used to sell.
+    </p>
+
+    <div class="comp-list" id="compList">
+      <!-- Halliburton -->
+      <div class="comp" data-self="79.05" data-other="31.79">
+        <div class="comp-head">
+          <div class="name">Halliburton<em>.</em><br><span style="font-family:var(--font-mono); font-size:11px; letter-spacing:0.06em; color:var(--molten); text-transform:uppercase;">The direct rival</span></div>
+          <span class="ticker-pill">HAL</span>
+        </div>
+        <div class="comp-mc">
+          <div class="meter">
+            <span class="label-self">SLB</span>
+            <span class="self" style="width:0;"></span>
+            <span class="other" style="width:0;"></span>
+          </div>
+          <div class="mc-num">$31.79B</div>
+        </div>
+        <div class="threat">
+          Most <em>direct and formidable</em> competitor. Overlapping suite of well construction, completion, stimulation, reservoir evaluation. Particular dominance in <span class="hot">North American pressure pumping</span> and hydraulic fracturing — directly displaces SLB on operator contracts across U.S. shale plays. Revenue <em>$22.18B</em> annually; growth ↘ 3.31% YoY.
+        </div>
+        <div class="tap-hint">Tap to expand <span class="arr">→</span></div>
+      </div>
+
+      <!-- EOG -->
+      <div class="comp" data-self="79.05" data-other="68.80">
+        <div class="comp-head">
+          <div class="name">EOG Resources<em>.</em><br><span style="font-family:var(--font-mono); font-size:11px; letter-spacing:0.06em; color:var(--ink-3); text-transform:uppercase;">The internal builder</span></div>
+          <span class="ticker-pill">EOG</span>
+        </div>
+        <div class="comp-mc">
+          <div class="meter">
+            <span class="label-self">SLB</span>
+            <span class="self" style="width:0;"></span>
+            <span class="other" style="width:0;"></span>
+          </div>
+          <div class="mc-num">$68.80B</div>
+        </div>
+        <div class="threat">
+          A large independent E&amp;P operator that has <em>built drilling and completion technologies in-house</em>, reducing reliance on third-party services. <span class="hot">Directly displaces SLB</span> on well construction and reservoir characterization in key U.S. shale basins. Annual revenue <em>$22.63B</em>, P/E 13.82, growth ↘ 4.29% YoY.
+        </div>
+        <div class="tap-hint">Tap to expand <span class="arr">→</span></div>
+      </div>
+
+      <!-- BP -->
+      <div class="comp" data-self="79.05" data-other="90.22">
+        <div class="comp-head">
+          <div class="name">BP<em>.</em><br><span style="font-family:var(--font-mono); font-size:11px; letter-spacing:0.06em; color:var(--ink-3); text-transform:uppercase;">The integrated major</span></div>
+          <span class="ticker-pill">BP</span>
+        </div>
+        <div class="comp-mc">
+          <div class="meter">
+            <span class="label-self">SLB</span>
+            <span class="self" style="width:0;"></span>
+            <span class="other" style="width:0;"></span>
+          </div>
+          <div class="mc-num">$90.22B</div>
+        </div>
+        <div class="threat">
+          In-house technical services and <em>AI-driven reservoir management</em> overlap with SLB's Digital Integration and Reservoir Characterization. As <span class="hot">integrated majors internalize</span> high-margin technology services, market cap $90.22B, quarterly revenue $49.25B, growth +0.08% YoY.
+        </div>
+        <div class="tap-hint">Tap to expand <span class="arr">→</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== THE BILL — debt / dark beat ============== -->
+  <section class="bill" id="sec-bill">
+    <div class="eyebrow reveal">
+      <span class="dot"></span>
+      <span class="chap" style="color:#5A5343">CH 07</span>
+      <span>The weight</span>
+    </div>
+
+    <h2 class="display reveal">
+      $9.74B in debt,<br>
+      $26.11B in <em>equity.</em>
+    </h2>
+
+    <p class="lede reveal">
+      A capital-intensive balance sheet — but <em>well-managed.</em> Debt is <span class="hot">37¢ for every dollar of equity.</span> Goodwill from a century of acquisitions sits at $14.59B.
+    </p>
+
+    <!-- Hand-built scale -->
+    <svg class="scales-svg reveal" viewBox="0 0 320 200" aria-hidden="true">
+      <!-- pole + base -->
+      <line x1="160" y1="40" x2="160" y2="170" stroke="#D2C8B0" stroke-width="2"/>
+      <line x1="120" y1="170" x2="200" y2="170" stroke="#D2C8B0" stroke-width="2"/>
+      <line x1="160" y1="40" x2="160" y2="36" stroke="#D2C8B0" stroke-width="2"/>
+
+      <!-- the beam — tilted toward equity (right) since equity > debt -->
+      <g id="beam" transform="rotate(-12, 160, 50)">
+        <line x1="60" y1="50" x2="260" y2="50" stroke="#D2C8B0" stroke-width="2.5"/>
+        <!-- left pan: debt -->
+        <line x1="80" y1="50" x2="80" y2="80" stroke="#D2C8B0" stroke-width="1"/>
+        <line x1="100" y1="50" x2="100" y2="80" stroke="#D2C8B0" stroke-width="1"/>
+        <ellipse cx="90" cy="84" rx="26" ry="5" fill="none" stroke="#D2C8B0" stroke-width="1.5"/>
+        <text x="90" y="105" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="22" fill="#F4EFE2">$9.74B</text>
+        <text x="90" y="120" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#8A8068" letter-spacing="0.08em">DEBT</text>
+
+        <!-- right pan: equity -->
+        <line x1="220" y1="50" x2="220" y2="78" stroke="#D2C8B0" stroke-width="1"/>
+        <line x1="240" y1="50" x2="240" y2="78" stroke="#D2C8B0" stroke-width="1"/>
+        <ellipse cx="230" cy="82" rx="34" ry="6" fill="none" stroke="#F25A37" stroke-width="1.5"/>
+        <rect x="208" y="68" width="44" height="14" fill="#F25A37" opacity="0.18" rx="1"/>
+        <text x="230" y="105" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="22" fill="#F25A37">$26.11B</text>
+        <text x="230" y="120" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#8A8068" letter-spacing="0.08em">EQUITY</text>
+      </g>
+
+      <!-- pivot dot -->
+      <circle cx="160" cy="50" r="3" fill="#F25A37"/>
+    </svg>
+
+    <div class="num-row reveal">
+      <div class="col">
+        <div class="v"><em>$3.54B</em></div>
+        <div class="l">Cash on hand</div>
+      </div>
+      <div class="col">
+        <div class="v"><em>$14.59B</em></div>
+        <div class="l">Goodwill</div>
+      </div>
+      <div class="col">
+        <div class="v"><em>$7.36B</em></div>
+        <div class="l">Net PP&amp;E</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reset beat 4 -->
+  <div class="reset cream">
+    <span class="mark">↓ TAKEAWAY</span>
+    <p>A hundred years deep. The wells will need someone <span class="hot">to hold them up.</span></p>
+  </div>
+
+  <!-- ============== CLOSE ============== -->
+  <section class="close" id="sec-close">
+    <div class="eyebrow reveal">
+      <span class="dot"></span>
+      <span>Takeaway</span>
+    </div>
+
+    <h2 class="display reveal">
+      One hundred years <em>deep.</em><br>
+      <em class="hot">9.4¢</em> to the bottom line.
+    </h2>
+
+    <p class="lede reveal">
+      $35.71B comes in. <em>$3.37B</em> survives. The rest goes back into <em>steel, salt water, and shale</em> — <span class="hot">the cost of being SLB.</span>
+    </p>
+
+    <div class="stamp">
+      <span>SLB · NYSE · FY '25</span>
+      <span>END OF RECAP ↓</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  /* ---------- Build 100-cent grid ---------- */
+  (function buildCents() {
+    const grid = document.getElementById('centsGrid');
+    if (!grid) return;
+    // 82 COR (blue), 4 D&A (purple), 3 R&D (green), 3 SG&A (red), 8 net (molten / unaccounted ~ net income margin ~9.4%)
+    // We total to 100. Using categories: cor=82, da=4, rd=3, sga=3, net=8 (approximation of remaining)
+    const seq = [];
+    function push(cat, n) { for (let i=0;i<n;i++) seq.push(cat); }
+    push('cor', 82);
+    push('da', 4);
+    push('rd', 3);
+    push('sga', 3);
+    push('net', 8);
+    seq.forEach(cat => {
+      const d = document.createElement('div');
+      d.className = 'cent';
+      d.dataset.cat = cat;
+      d.dataset.cat0 = cat;
+      // start neutral
+      d.style.background = '#E6D8BC';
+      grid.appendChild(d);
+    });
+  })();
+
+  /* ---------- Scroll progress + depth rail ---------- */
+  const progressEl = document.getElementById('progress');
+  const depthLabel = document.getElementById('depthLabel');
+  const stage = document.getElementById('stage');
+  // The well-bit moves with hero scroll
+  const drillBit = document.getElementById('drillBit');
+  const wellPath = document.getElementById('wellPath');
+
+  function onScroll() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    const p = Math.min(1, Math.max(0, scrollTop / docH));
+    progressEl.style.width = (p * 100) + '%';
+
+    // Depth rail label — abstract feet, scaled with progress
+    // A real well goes 0–10000 ft; we'll map 0..1 → 0..15000
+    const depth = Math.round(p * 15000 / 100) * 100;
+    depthLabel.textContent = depth.toLocaleString() + ' ft';
+
+    // Hero drill bit + well path animation, while hero is in viewport
+    if (wellPath && drillBit) {
+      const heroEnd = 540; // approx hero end
+      const tHero = Math.min(1, Math.max(0, scrollTop / heroEnd));
+      // The well grows downward
+      wellPath.setAttribute('stroke-dashoffset', String(100 - tHero * 100));
+      drillBit.setAttribute('transform', `translate(0, ${120 + tHero * 160})`);
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ---------- Reveal on scroll ---------- */
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+        // Trigger fills
+        if (e.target.id === 'pipes' || e.target.querySelector('.pipe-row')) {
+          const row = e.target.id === 'pipes' ? e.target : e.target.querySelector('.pipe-row');
+          if (row) {
+            row.querySelectorAll('.pipe').forEach((p, i) => {
+              const w = parseFloat(p.dataset.w);
+              setTimeout(() => {
+                p.querySelector('.bar').style.width = w + '%';
+              }, 100 + i * 140);
+            });
+          }
+        }
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => io.observe(el));
+
+  // Pipes are inside .pipes-wrap.reveal — handled above; ensure manual trigger:
+  const pipesWrap = document.querySelector('.pipes-wrap');
+  const pipeIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.pipe').forEach((p, i) => {
+          const w = parseFloat(p.dataset.w);
+          setTimeout(() => {
+            p.querySelector('.bar').style.width = w + '%';
+          }, 80 + i * 130);
+        });
+        pipeIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  if (pipesWrap) pipeIO.observe(pipesWrap);
+
+  /* ---------- Count-up numerics ---------- */
+  function countUp(el) {
+    const target = parseFloat(el.dataset.count);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const dur = 1400;
+    const t0 = performance.now();
+    const decimals = (target % 1 !== 0) ? 2 : 0;
+    function tick(now) {
+      const t = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const v = (target * eased);
+      el.innerHTML = prefix + v.toFixed(decimals) + '<span style="font-size:0.55em; vertical-align: 0.15em; color: var(--ink-3); margin-left: 1px;">' + suffix + '</span>';
+      if (t < 1) requestAnimationFrame(tick);
+      else el.innerHTML = prefix + v.toFixed(decimals) + '<span style="font-size:0.55em; vertical-align: 0.15em; color: var(--ink-3); margin-left: 1px;">' + suffix + '</span>';
+    }
+    requestAnimationFrame(tick);
+  }
+  document.querySelectorAll('.scale-cell .num').forEach(el => {
+    const oneShot = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          countUp(el);
+          oneShot.unobserve(el);
+        }
+      });
+    }, { threshold: 0.4 });
+    oneShot.observe(el);
+  });
+
+  /* ---------- 100-cent grid color reveal ---------- */
+  const centsGrid = document.getElementById('centsGrid');
+  if (centsGrid) {
+    const centsIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const cents = centsGrid.querySelectorAll('.cent');
+          cents.forEach((c, i) => {
+            setTimeout(() => {
+              const cat = c.dataset.cat0;
+              c.dataset.cat = cat; // CSS handles color
+              // Apply explicit color via CSS rule already
+              const colors = {
+                cor: '#2563EB', rd: '#16A34A', sga: '#DC2626', da: '#9333EA', net: '#F25A37'
+              };
+              c.style.background = colors[cat];
+              if (cat === 'net') c.style.boxShadow = '0 0 0 2px rgba(242,90,55,0.18)';
+            }, 8 * i);
+          });
+          centsIO.unobserve(centsGrid);
+        }
+      });
+    }, { threshold: 0.25 });
+    centsIO.observe(centsGrid);
+  }
+
+  /* ---------- Geo meters ---------- */
+  document.querySelectorAll('.geo-row').forEach(row => {
+    const w = parseFloat(row.dataset.w);
+    const ro = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          row.querySelector('.meter > span').style.width = (w * 100 / 34) + '%';
+          ro.unobserve(row);
+        }
+      });
+    }, { threshold: 0.4 });
+    ro.observe(row);
+  });
+
+  /* Globe halos */
+  const haloIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const halos = [
+          { id: 'halo-mena', target: 22 },
+          { id: 'halo-ecaf', target: 18 },
+          { id: 'halo-na', target: 14 },
+          { id: 'halo-la', target: 12 },
+        ];
+        halos.forEach((h, i) => {
+          const el = document.getElementById(h.id);
+          if (!el) return;
+          setTimeout(() => {
+            const t0 = performance.now();
+            const dur = 1200;
+            function tick(now) {
+              const t = Math.min(1, (now - t0) / dur);
+              const eased = 1 - Math.pow(1 - t, 3);
+              el.setAttribute('r', String(h.target * eased));
+              if (t < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+          }, i * 250);
+        });
+        haloIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  const globe = document.querySelector('.globe-svg');
+  if (globe) haloIO.observe(globe);
+
+  /* ---------- Competitor meters + tap to expand ---------- */
+  document.querySelectorAll('.comp').forEach(comp => {
+    const self = parseFloat(comp.dataset.self); // SLB mcap
+    const other = parseFloat(comp.dataset.other);
+    const max = Math.max(self, other);
+    const ro = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          comp.querySelector('.self').style.width = (self / max * 100) + '%';
+          comp.querySelector('.other').style.width = (other / max * 100) + '%';
+          ro.unobserve(comp);
+        }
+      });
+    }, { threshold: 0.3 });
+    ro.observe(comp);
+
+    comp.addEventListener('click', () => {
+      comp.classList.toggle('open');
+    });
+  });
+
+  /* ---------- Gauge fill ---------- */
+  const gauge = document.querySelector('.gauge .fill');
+  if (gauge) {
+    const w = parseFloat(gauge.dataset.w);
+    const gIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          gauge.style.width = w + '%';
+          gIO.unobserve(gauge);
+        }
+      });
+    }, { threshold: 0.4 });
+    gIO.observe(gauge);
+  }
+</script>
+
+</body>
+</html>

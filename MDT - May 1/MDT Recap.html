@@ -1,0 +1,1419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=420, initial-scale=1, viewport-fit=cover" />
+<title>MDT · Recap FY25</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   MEDTRONIC RECAP — clinical editorial
+   Adapted from Zair Naqvi DS: paper/ink + signal red (cardiac)
+   ============================================================ */
+:root{
+  --paper:#FBFAF7;
+  --paper-2:#F4F2ED;
+  --paper-3:#ECEAE3;
+  --ink:#141414;
+  --ink-2:#3B3A37;
+  --ink-3:#6B6A65;
+  --ink-4:#A4A29C;
+  --line:#E4E1D9;
+  --line-strong:#CFCBC0;
+
+  /* Signal — Medtronic-leaning clinical red, used like a heart trace */
+  --signal:#D63737;
+  --signal-soft:#FBE3E1;
+  --signal-deep:#8E1F1F;
+
+  /* Editorial dark for the gravity beat */
+  --ink-deep:#0E0D0C;
+
+  --font-display:'Instrument Serif','Times New Roman',serif;
+  --font-sans:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --font-mono:'Geist Mono','SF Mono',ui-monospace,Menlo,monospace;
+
+  --pad: 24px;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{ -webkit-text-size-adjust:100%; }
+body{
+  font-family:var(--font-sans);
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+
+/* The page is mobile-sized. Center on wider screens. */
+.page{
+  width:100%;
+  max-width:420px;
+  margin:0 auto;
+  position:relative;
+  background:var(--paper);
+  overflow:hidden;
+}
+
+/* ---------- CHROME ---------- */
+.chrome{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  background: rgba(251,250,247,0.78);
+  border-bottom:1px solid var(--line);
+}
+.chrome-inner{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 14px var(--pad) 12px;
+  gap:12px;
+}
+.tk{
+  font-family:var(--font-mono);
+  font-size:12px; letter-spacing:0.06em;
+  color:var(--ink); display:flex; gap:8px; align-items:center;
+}
+.tk .dot{
+  width:6px;height:6px;border-radius:999px;background:var(--signal);
+  box-shadow:0 0 0 0 rgba(214,55,55,0.55);
+  animation: pulse 1.6s var(--ease-out, ease) infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(214,55,55,0.55)}
+  70%{box-shadow:0 0 0 10px rgba(214,55,55,0)}
+  100%{box-shadow:0 0 0 0 rgba(214,55,55,0)}
+}
+.tk .name{ color:var(--ink-3); font-family:var(--font-sans); font-size:12px; letter-spacing:0; text-transform:none; margin-left:4px; }
+.recap-label{
+  font-family:var(--font-mono);
+  font-size:10px; letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--ink-3);
+}
+.progress{
+  height:1.5px; width:100%; background:transparent; position:relative;
+}
+.progress::before{
+  content:""; position:absolute; left:0; top:0; bottom:0;
+  width:var(--progress, 0%);
+  background:var(--signal);
+  transition: width 80ms linear;
+}
+
+/* ---------- TYPE ---------- */
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:11px; letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--ink-3);
+  display:flex; align-items:center; gap:10px;
+}
+.eyebrow .bar{
+  display:inline-block; width:18px; height:1px; background:var(--signal);
+}
+.eyebrow .accent{ color:var(--signal); }
+h1,h2,h3,h4,p{margin:0}
+.display{
+  font-family:var(--font-display); font-weight:400; line-height:0.98;
+  letter-spacing:-0.02em; color:var(--ink);
+}
+.italic{ font-family:var(--font-display); font-style:italic; }
+.body{
+  font-family:var(--font-sans); font-size:16px; line-height:1.55; color:var(--ink-2);
+  text-wrap:pretty;
+}
+.body em, .body i{ font-family:var(--font-display); font-style:italic; color:var(--ink); }
+.body em.signal, .body i.signal{ color:var(--signal); }
+.mono{ font-family:var(--font-mono); }
+.cap{ text-transform:uppercase; letter-spacing:0.12em; }
+
+/* ---------- LAYOUT BASE ---------- */
+section{ position:relative; padding: 56px var(--pad) 56px; }
+section .eyebrow{ margin-bottom:20px; }
+
+/* Reset beats — italic interludes on contrasting band */
+.reset{
+  background:var(--paper-2);
+  padding: 40px var(--pad);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.reset p{
+  font-family:var(--font-display); font-style:italic; font-weight:400;
+  font-size:24px; line-height:1.25; letter-spacing:-0.005em;
+  color:var(--ink);
+}
+.reset p .signal{ color:var(--signal); }
+
+/* ============================================================
+   1. HERO — "The world's pulse is monitored from Minneapolis."
+   ============================================================ */
+.hero{
+  padding-top: 36px;
+  padding-bottom: 64px;
+  position:relative;
+  overflow:hidden;
+}
+.hero .eyebrow{ margin-bottom:32px; }
+.hero h1.display{
+  font-size: 64px; line-height:0.95; letter-spacing:-0.025em;
+  margin-bottom: 28px;
+}
+.hero h1 .signal{ color:var(--signal); }
+.hero h1 .it{ font-style:italic; }
+.hero .lede{
+  font-size:17px; line-height:1.5; color:var(--ink-2);
+  max-width:340px; margin-bottom:36px;
+}
+.hero .lede em{ font-family:var(--font-display); font-style:italic; color:var(--ink); }
+
+.hero-stats{
+  display:grid; grid-template-columns:1fr 1fr; gap: 28px 18px;
+  border-top:1px solid var(--line); padding-top:28px;
+}
+.hero-stats .s .v{
+  font-family:var(--font-display); font-size:42px; line-height:1;
+  letter-spacing:-0.02em; color:var(--ink);
+}
+.hero-stats .s .v sup{ font-size:18px; vertical-align:top; line-height:1; margin-left:2px; color:var(--ink-3);}
+.hero-stats .s .l{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--ink-3); margin-top:8px;
+}
+
+/* The ECG canvas drawn behind the hero, extends down through the page as the "spine" */
+.ecg-spine{
+  position:absolute;
+  left:0; right:0;
+  top:240px;
+  height:240px;
+  z-index:0; pointer-events:none;
+}
+.ecg-spine svg{ width:100%; height:100%; display:block; }
+.ecg-spine .trace{
+  fill:none; stroke:var(--signal); stroke-width:1.6;
+  stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray: var(--len, 2000);
+  stroke-dashoffset: var(--off, 2000);
+}
+.ecg-spine .trace.faint{ stroke:var(--line-strong); stroke-width:1; }
+
+.hero-art{
+  position:relative; height:160px; margin: 0 -8px 30px;
+}
+.hero-art svg{ width:100%; height:100%; display:block; }
+
+/* ============================================================
+   2. THE BUSINESS — four segments anatomy
+   ============================================================ */
+.segments{
+  background:var(--paper);
+  position:relative;
+}
+.segments h2{
+  font-family:var(--font-display); font-size:42px; line-height:1.0;
+  letter-spacing:-0.02em; margin-bottom:14px;
+}
+.segments h2 .it{ font-style:italic; color:var(--signal); }
+.segments .body{ max-width:340px; margin-bottom:36px; }
+
+.seg-list{ display:flex; flex-direction:column; gap:0; }
+.seg{
+  display:grid; grid-template-columns: 56px 1fr auto;
+  align-items:flex-start; gap:18px;
+  padding:22px 0;
+  border-bottom:1px solid var(--line);
+  position:relative;
+}
+.seg:last-child{ border-bottom:none; }
+.seg .icon{
+  width:56px; height:56px; display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--line); border-radius:14px; background:var(--paper-2);
+  flex-shrink:0;
+}
+.seg .icon svg{ width:34px; height:34px; }
+.seg .meta-line{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--ink-3); margin-bottom:6px;
+}
+.seg h3{
+  font-family:var(--font-display); font-size:24px; line-height:1.1;
+  letter-spacing:-0.01em; margin-bottom:6px; color:var(--ink);
+}
+.seg p{ font-size:13px; line-height:1.45; color:var(--ink-3); max-width:230px; }
+.seg .num{
+  text-align:right; font-family:var(--font-display); font-size:30px; line-height:1;
+  color:var(--ink);
+}
+.seg .num .sub{
+  display:block; font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--ink-3); margin-top:6px;
+}
+.seg .bar{
+  position:absolute; left: 74px; right:0; bottom:-1px;
+  height:1px; background:var(--signal);
+  width: var(--w, 0%); transition: width 800ms var(--ease, cubic-bezier(.22,1,.36,1));
+  opacity:0.7;
+}
+
+/* ============================================================
+   3. SCALE — count-ups
+   ============================================================ */
+.scale{
+  background:var(--paper);
+  border-top:1px solid var(--line);
+}
+.scale h2{
+  font-family:var(--font-display); font-size:46px; line-height:1.0;
+  letter-spacing:-0.02em; margin-bottom:14px;
+}
+.scale h2 .it{ font-style:italic; }
+.scale .body{ max-width:340px; margin-bottom:36px; }
+
+.scale-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:0;
+  border-top:1px solid var(--line);
+  border-left:1px solid var(--line);
+}
+.scale-grid .cell{
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  padding: 22px 18px;
+  background:var(--paper);
+}
+.scale-grid .cell .v{
+  font-family:var(--font-display); font-size:48px; line-height:1;
+  letter-spacing:-0.02em; color:var(--ink);
+}
+.scale-grid .cell .v sup{ font-size:18px; line-height:1; vertical-align:top; color:var(--ink-3); margin-left:1px;}
+.scale-grid .cell .l{
+  font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--ink-3); margin-top:10px;
+}
+.scale-grid .cell .note{
+  font-family:var(--font-sans); font-size:12px; color:var(--ink-3); margin-top:6px; line-height:1.4;
+}
+.scale-grid .cell.wide{ grid-column: span 2; }
+.scale-grid .cell.wide .v{ font-size:64px; }
+
+/* ============================================================
+   4. WHERE THE MONEY GOES — 100-cent grid
+   ============================================================ */
+.cents{
+  background:var(--paper);
+  border-top:1px solid var(--line);
+}
+.cents h2{
+  font-family:var(--font-display); font-size:42px; line-height:1.0;
+  letter-spacing:-0.02em; margin-bottom:12px;
+}
+.cents .lede{
+  font-family:var(--font-display); font-style:italic; font-size:20px; line-height:1.3;
+  color:var(--ink); max-width:340px; margin-bottom:32px;
+}
+.cents .lede .signal{ color:var(--signal); }
+
+.dollar{
+  display:grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap:3px;
+  padding: 18px;
+  background:var(--paper-2);
+  border:1px solid var(--line);
+  border-radius:14px;
+  margin-bottom: 22px;
+}
+.dollar .cent{
+  aspect-ratio:1/1;
+  border-radius:3px;
+  background:var(--paper-3);
+  position:relative;
+  transition: background 600ms var(--ease, cubic-bezier(.22,1,.36,1));
+  transition-delay: var(--d, 0ms);
+}
+.dollar.lit .cent{ background: var(--c, var(--paper-3)); }
+
+.legend{ display:flex; flex-direction:column; gap:10px; margin-top: 8px;}
+.legend .row{
+  display:grid; grid-template-columns: 14px 1fr auto auto; align-items:center; gap:12px;
+  padding: 8px 0; border-bottom:1px solid var(--line);
+  font-family:var(--font-sans); font-size:13px;
+}
+.legend .row:last-child{ border-bottom:none; }
+.legend .sw{ width:14px; height:14px; border-radius:3px; }
+.legend .lab{ color:var(--ink); }
+.legend .pct{ font-family:var(--font-mono); font-size:13px; color:var(--ink); }
+.legend .ct{ font-family:var(--font-mono); font-size:11px; color:var(--ink-3); width:38px; text-align:right; }
+
+.cents .survives{
+  margin-top: 36px; padding-top: 28px;
+  border-top:1px solid var(--line);
+  display:flex; align-items:baseline; gap:18px;
+}
+.cents .survives .big{
+  font-family:var(--font-display); font-size:84px; line-height:1; letter-spacing:-0.03em;
+  color:var(--signal); font-style:italic;
+}
+.cents .survives .lab{
+  font-family:var(--font-display); font-style:italic; font-size:18px; line-height:1.3; color:var(--ink-2); max-width:170px;
+}
+
+/* ============================================================
+   5. FOOTPRINT — globe with pulses
+   ============================================================ */
+.footprint{
+  background:var(--paper);
+  border-top:1px solid var(--line);
+}
+.footprint h2{
+  font-family:var(--font-display); font-size:42px; line-height:1.0;
+  letter-spacing:-0.02em; margin-bottom:14px;
+}
+.footprint .body{ max-width:340px; margin-bottom:32px;}
+.globe-wrap{
+  position:relative; aspect-ratio: 1 / 1; margin: 0 -8px 32px;
+}
+.globe-wrap svg{ width:100%; height:100%; display:block; }
+.geo-list{
+  display:flex; flex-direction:column; gap:0;
+  border-top:1px solid var(--line);
+}
+.geo-row{
+  display:grid; grid-template-columns: 1fr auto; align-items:center;
+  padding: 16px 0; border-bottom:1px solid var(--line);
+  position:relative;
+}
+.geo-row .lab{
+  font-family:var(--font-sans); font-size:15px; color:var(--ink);
+}
+.geo-row .pct{
+  font-family:var(--font-display); font-size:28px; line-height:1; color:var(--ink); letter-spacing:-0.01em;
+}
+.geo-row .pct sup{ font-size:14px; color:var(--ink-3); }
+.geo-row .track{
+  position:absolute; left:0; right:0; bottom:-1px; height:1px;
+  background:var(--signal); width: var(--w,0%); opacity:0.55;
+  transition: width 900ms var(--ease, cubic-bezier(.22,1,.36,1));
+}
+
+/* ============================================================
+   6. THE BET — dark gravity beat
+   ============================================================ */
+.bet{
+  background: var(--ink-deep);
+  color:#F4F2ED;
+  padding: 64px var(--pad);
+  position:relative;
+  overflow:hidden;
+}
+.bet .eyebrow{ color: rgba(244,242,237,0.7); }
+.bet .eyebrow .bar{ background:#FF8B6A; }
+.bet .eyebrow .accent{ color:#FF8B6A; }
+.bet h2{
+  font-family:var(--font-display); font-size:46px; line-height:1.0;
+  letter-spacing:-0.02em; margin-bottom:18px; color:#F4F2ED;
+}
+.bet h2 .it{ font-style:italic; color:#FF8B6A; }
+.bet .body{ color:rgba(244,242,237,0.7); max-width:340px; margin-bottom:36px; }
+.bet .body em{ color:#F4F2ED; }
+
+.streak{
+  margin: 12px 0 36px; position:relative;
+  padding: 28px 22px; border-radius:16px;
+  border:1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, rgba(255,139,106,0.06), rgba(255,255,255,0.01));
+  overflow:hidden;
+}
+.streak .num{
+  font-family:var(--font-display); font-size:96px; line-height:0.9;
+  letter-spacing:-0.04em;
+  font-style:italic;
+  background:linear-gradient(180deg, #FFE3D8 0%, #FF8B6A 70%, #D63737 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.streak .lab{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.18em; text-transform:uppercase;
+  color: rgba(244,242,237,0.7); margin-top:10px;
+}
+.streak .ticks{
+  display:grid; grid-template-columns: repeat(48, 1fr); gap:2px;
+  margin-top: 22px;
+}
+.streak .ticks span{
+  height:14px; background: rgba(255,139,106,0.22); border-radius:1px;
+  transform: scaleY(0.4); transform-origin:bottom;
+  transition: transform 600ms var(--ease, cubic-bezier(.22,1,.36,1));
+  transition-delay: var(--d, 0ms);
+}
+.streak.lit .ticks span{ transform: scaleY(1); background: rgba(255,139,106, var(--a, 0.35)); }
+
+.bet .bullets{
+  display:flex; flex-direction:column; gap:0;
+  border-top:1px solid rgba(255,255,255,0.08);
+}
+.bet .bullets .b{
+  padding: 22px 0; border-bottom:1px solid rgba(255,255,255,0.08);
+  display:grid; grid-template-columns: auto 1fr; gap:18px;
+}
+.bet .bullets .b:last-child{ border-bottom:none; }
+.bet .bullets .b .v{
+  font-family:var(--font-display); font-size:36px; line-height:1; color:#FFE3D8; letter-spacing:-0.02em;
+}
+.bet .bullets .b .v.it{ font-style:italic; }
+.bet .bullets .b .t{
+  font-family:var(--font-sans); font-size:14px; line-height:1.45; color: rgba(244,242,237,0.8);
+}
+.bet .bullets .b .t em{ font-family:var(--font-display); font-style:italic; color:#FF8B6A; }
+
+/* ============================================================
+   7. COMPETITION — comparative bars (market caps)
+   ============================================================ */
+.competition{
+  background:var(--paper);
+  border-top:1px solid var(--line);
+}
+.competition h2{
+  font-family:var(--font-display); font-size:42px; line-height:1.0;
+  letter-spacing:-0.02em; margin-bottom:14px;
+}
+.competition .body{ max-width:340px; margin-bottom:36px;}
+.competition .body em{ color:var(--ink); font-family:var(--font-display); font-style:italic; }
+
+.rivals{ display:flex; flex-direction:column; gap:28px; }
+.rival{
+  position:relative;
+  padding: 18px 0 22px;
+  border-top:1px solid var(--line);
+}
+.rival.first{ border-top:1px solid var(--ink); }
+.rival .head{
+  display:flex; align-items:baseline; justify-content:space-between; gap:14px; margin-bottom:14px;
+}
+.rival .name{
+  font-family:var(--font-display); font-size:24px; line-height:1.05; letter-spacing:-0.01em;
+}
+.rival .ticker{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.12em; color:var(--ink-3); }
+.rival .cap{
+  font-family:var(--font-display); font-size:30px; line-height:1; color:var(--ink); letter-spacing:-0.01em;
+}
+.rival .cap sup{ font-size:14px; color:var(--ink-3); margin-left:2px;}
+.rival .barwrap{
+  position:relative; height:10px; background:var(--paper-2);
+  border-radius:6px; overflow:hidden; margin-bottom:14px;
+}
+.rival .barfill{
+  position:absolute; left:0; top:0; bottom:0;
+  background: var(--c, var(--ink));
+  width: var(--w, 0%);
+  transition: width 1100ms var(--ease, cubic-bezier(.22,1,.36,1));
+}
+.rival.self .barfill{ background:var(--signal); }
+.rival .stats{
+  display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-bottom:14px;
+}
+.rival .stats .s{ }
+.rival .stats .s .v{
+  font-family:var(--font-mono); font-size:13px; color:var(--ink);
+}
+.rival .stats .s .v.up{ color:#1F8A4C; }
+.rival .stats .s .l{
+  font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--ink-3); margin-top:4px;
+}
+.rival .desc{
+  font-family:var(--font-sans); font-size:13px; line-height:1.45; color:var(--ink-3);
+}
+.rival .desc em{ font-family:var(--font-display); font-style:italic; color:var(--ink); }
+
+/* MDT marker */
+.rival.self{ border-top:1px solid var(--signal); }
+.rival.self .name{ color:var(--signal); }
+
+/* ============================================================
+   8. CLOSE — inverted thesis
+   ============================================================ */
+.close{
+  background:var(--paper);
+  border-top:1px solid var(--line);
+  padding: 80px var(--pad) 100px;
+  text-align:left;
+  position:relative;
+  overflow:hidden;
+}
+.close .eyebrow{ margin-bottom:36px; }
+.close .display{
+  font-size:54px; line-height:0.98; letter-spacing:-0.025em;
+  margin-bottom:36px;
+}
+.close .display .signal{ color:var(--signal); }
+.close .display .it{ font-style:italic; }
+.close .body{
+  max-width:340px;
+  font-size:16px; line-height:1.55; color:var(--ink-2);
+}
+.close .body em{ color:var(--ink); font-family:var(--font-display); font-style:italic; }
+
+.close .pulse{
+  margin-top: 56px;
+  height: 80px; position:relative;
+}
+.close .pulse svg{ width:100%; height:100%; display:block; }
+.close .pulse .trace{
+  fill:none; stroke:var(--signal); stroke-width:1.6;
+  stroke-dasharray: var(--len, 1000);
+  stroke-dashoffset: var(--off, 1000);
+}
+
+.colophon{
+  margin-top:56px;
+  padding-top:24px;
+  border-top:1px solid var(--line);
+  display:flex; justify-content:space-between; align-items:center; gap:14px;
+  font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--ink-3);
+}
+
+/* ---------- Reveal animation ---------- */
+.r{ opacity:0; transform: translateY(14px); transition: opacity 700ms var(--ease, cubic-bezier(.22,1,.36,1)), transform 700ms var(--ease, cubic-bezier(.22,1,.36,1)); }
+.r.in{ opacity:1; transform: translateY(0); }
+.r.d1{ transition-delay: 80ms; }
+.r.d2{ transition-delay: 160ms; }
+.r.d3{ transition-delay: 240ms; }
+.r.d4{ transition-delay: 320ms; }
+
+/* Tap-to-deepen */
+.tap{ cursor:pointer; }
+.tap-hint{
+  display:inline-block; margin-top:10px;
+  font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--ink-3);
+}
+.expand{
+  max-height:0; overflow:hidden;
+  transition: max-height 480ms var(--ease, cubic-bezier(.22,1,.36,1));
+}
+.expand.open{ max-height: 280px; }
+
+/* iOS-feel motion easing var */
+:root{ --ease: cubic-bezier(.22,1,.36,1); }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation: none !important; transition: none !important; }
+  .r{ opacity:1; transform:none; }
+}
+</style>
+</head>
+<body>
+<div class="page" data-screen-label="01 MDT Recap">
+
+  <!-- ==================== CHROME ==================== -->
+  <header class="chrome">
+    <div class="chrome-inner">
+      <div class="tk">
+        <span class="dot" aria-hidden="true"></span>
+        <span>MDT</span>
+        <span class="name">Medtronic plc</span>
+      </div>
+      <div class="recap-label">Recap · FY ’25</div>
+    </div>
+    <div class="progress" id="progress"></div>
+  </header>
+
+  <!-- ==================== 1. HERO ==================== -->
+  <section class="hero" data-screen-label="02 Hero">
+    <div class="ecg-spine" aria-hidden="true">
+      <svg viewBox="0 0 420 240" preserveAspectRatio="none">
+        <!-- soft baseline -->
+        <path class="trace faint" d="M0 120 L420 120"></path>
+        <!-- live trace -->
+        <path id="ecg-hero" class="trace"
+          d="M0 120
+             L60 120
+             L75 120 L82 90 L90 150 L98 60 L106 180 L114 120
+             L160 120
+             L175 120 L182 100 L190 140 L198 80 L206 160 L214 120
+             L260 120
+             L275 120 L282 100 L290 140 L298 80 L306 160 L314 120
+             L420 120"></path>
+      </svg>
+    </div>
+
+    <div class="eyebrow r"><span class="bar"></span><span>The thesis · <span class="accent">FY 2025</span></span></div>
+
+    <h1 class="display r d1">
+      The world’s <span class="it signal">pulse</span><br/>
+      is monitored from<br/>
+      <span class="it">Minneapolis.</span>
+    </h1>
+
+    <p class="lede body r d2">
+      Founded in <em>1949</em> as a medical-equipment repair shop. Seventy-six years on, <em>the largest medical device company on earth</em> — keeping seventy human conditions in rhythm.
+    </p>
+
+    <div class="hero-stats">
+      <div class="s r d1">
+        <div class="v">$33.54<sup>B</sup></div>
+        <div class="l">FY25 revenue</div>
+      </div>
+      <div class="s r d2">
+        <div class="v">$110.66<sup>B</sup></div>
+        <div class="l">Market cap</div>
+      </div>
+      <div class="s r d3">
+        <div class="v">95<sup>K+</sup></div>
+        <div class="l">Employees</div>
+      </div>
+      <div class="s r d4">
+        <div class="v">150+</div>
+        <div class="l">Countries</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== RESET BEAT 1 ==================== -->
+  <div class="reset" data-screen-label="03 Reset · the body keeps rhythm">
+    <p class="r">
+      <span>The body keeps a <span class="signal">rhythm</span>. Medtronic builds the instruments that <span class="signal">keep listening</span> when it forgets.</span>
+    </p>
+  </div>
+
+  <!-- ==================== 2. THE BUSINESS — four-segment anatomy ==================== -->
+  <section class="segments" data-screen-label="04 Anatomy of the business">
+    <div class="eyebrow r"><span class="bar"></span><span>The business · <span class="accent">four portfolios</span></span></div>
+    <h2 class="r d1">
+      Anatomy of <span class="it">a</span><br/><span class="it">$33B</span> machine.
+    </h2>
+    <p class="body r d2" style="margin-top:14px">
+      Four portfolios, treating <em>seventy</em> conditions, sold into one hundred and fifty countries. The cardiovascular line still <em class="signal">runs the show</em>.
+    </p>
+
+    <div class="seg-list" style="margin-top:36px">
+
+      <div class="seg r" style="--w:37%">
+        <div class="icon" aria-hidden="true">
+          <!-- Heart -->
+          <svg viewBox="0 0 32 32" fill="none">
+            <path d="M16 27 C 6 20, 3 14, 5 9.5 C 7 5.5, 12 5, 16 9.5 C 20 5, 25 5.5, 27 9.5 C 29 14, 26 20, 16 27 Z"
+              stroke="#D63737" stroke-width="1.4" fill="none"/>
+            <path d="M7 16 L11 16 L13 12 L16 20 L19 14 L21 16 L25 16" stroke="#D63737" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="meta-line">37% of revenue</div>
+          <h3>Cardiovascular</h3>
+          <p>Pulsed field ablation, TAVR, cardiac rhythm management.</p>
+        </div>
+        <div class="num">$12.5<span style="font-size:18px;color:var(--ink-3)">B</span><span class="sub">FY25</span></div>
+        <div class="bar"></div>
+      </div>
+
+      <div class="seg r d1" style="--w:29%">
+        <div class="icon" aria-hidden="true">
+          <!-- Brain / spine -->
+          <svg viewBox="0 0 32 32" fill="none">
+            <path d="M11 9 C 7 9, 5 12, 6 15 C 4 17, 6 20, 9 20 C 9 23, 13 24, 15 22 L 15 9 C 14 7, 12 7, 11 9 Z" stroke="#141414" stroke-width="1.3" fill="none"/>
+            <path d="M21 9 C 25 9, 27 12, 26 15 C 28 17, 26 20, 23 20 C 23 23, 19 24, 17 22 L 17 9 C 18 7, 20 7, 21 9 Z" stroke="#141414" stroke-width="1.3" fill="none"/>
+            <path d="M16 9 L16 24" stroke="#D63737" stroke-width="1.3"/>
+          </svg>
+        </div>
+        <div>
+          <div class="meta-line">29% of revenue</div>
+          <h3>Neuroscience</h3>
+          <p>Spine, neuromodulation, specialty therapies.</p>
+        </div>
+        <div class="num">$9.8<span style="font-size:18px;color:var(--ink-3)">B</span><span class="sub">FY25</span></div>
+        <div class="bar"></div>
+      </div>
+
+      <div class="seg r d2" style="--w:26%">
+        <div class="icon" aria-hidden="true">
+          <!-- Scalpel / robotic arm -->
+          <svg viewBox="0 0 32 32" fill="none">
+            <path d="M6 22 L18 10 L22 14 L10 26 Z" stroke="#141414" stroke-width="1.3" fill="none" stroke-linejoin="round"/>
+            <path d="M18 10 L25 5" stroke="#141414" stroke-width="1.3" stroke-linecap="round"/>
+            <circle cx="22" cy="14" r="1.4" fill="#D63737"/>
+          </svg>
+        </div>
+        <div>
+          <div class="meta-line">26% of revenue</div>
+          <h3>Medical Surgical</h3>
+          <p>Surgical tools, robotics (Hugo RAS), acute care monitoring.</p>
+        </div>
+        <div class="num">$8.7<span style="font-size:18px;color:var(--ink-3)">B</span><span class="sub">FY25</span></div>
+        <div class="bar"></div>
+      </div>
+
+      <div class="seg r d3" style="--w:8%">
+        <div class="icon" aria-hidden="true">
+          <!-- Insulin droplet -->
+          <svg viewBox="0 0 32 32" fill="none">
+            <path d="M16 5 C 10 13, 8 17, 8 21 C 8 25.5, 11.5 28, 16 28 C 20.5 28, 24 25.5, 24 21 C 24 17, 22 13, 16 5 Z" stroke="#141414" stroke-width="1.3" fill="none"/>
+            <path d="M13 21 C 13 23, 14.5 24.5, 16 24.5" stroke="#D63737" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="meta-line">8% of revenue · spinning off</div>
+          <h3>Diabetes</h3>
+          <p>Insulin pumps, CGM systems. <em style="font-family:var(--font-display);font-style:italic;color:#D63737">Pending spin-off.</em></p>
+        </div>
+        <div class="num">$2.8<span style="font-size:18px;color:var(--ink-3)">B</span><span class="sub">FY25</span></div>
+        <div class="bar"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== 3. SCALE ==================== -->
+  <section class="scale" data-screen-label="05 Scale">
+    <div class="eyebrow r"><span class="bar"></span><span>The scale · <span class="accent">growth still hums</span></span></div>
+    <h2 class="r d1">A quarter, <span class="it">a hum</span>,<br/>a heartbeat <span class="it">larger.</span></h2>
+    <p class="body r d2" style="margin-top:14px">
+      Most recent quarter: revenue of <em>$9.02B</em> and EPS of <em>$1.36</em> — organic momentum from <em class="signal">PFA</em> and <em class="signal">TAVR</em> still showing in the trace.
+    </p>
+
+    <div class="scale-grid" style="margin-top:36px">
+      <div class="cell r">
+        <div class="v" data-count="9.02" data-prefix="$" data-suffix="B" data-decimals="2">$0.00<sup>B</sup></div>
+        <div class="l">Q3 ’26 revenue</div>
+      </div>
+      <div class="cell r d1">
+        <div class="v" data-count="1.36" data-prefix="$" data-decimals="2">$0.00</div>
+        <div class="l">Q3 ’26 EPS</div>
+      </div>
+      <div class="cell r d2">
+        <div class="v" data-count="65.3" data-suffix="%" data-decimals="1">0.0%</div>
+        <div class="l">Gross margin</div>
+        <div class="note">Cost of revenue 34.7%</div>
+      </div>
+      <div class="cell r d3">
+        <div class="v" data-count="17.8" data-suffix="%" data-decimals="1">0.0%</div>
+        <div class="l">Operating margin</div>
+        <div class="note">FY 2025</div>
+      </div>
+      <div class="cell wide r d4">
+        <div class="v" data-count="70" data-suffix="">0</div>
+        <div class="l">Conditions treated, end to end</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== RESET BEAT 2 ==================== -->
+  <div class="reset" data-screen-label="06 Reset · cost of staying ahead">
+    <p class="r">
+      <span>You don’t lead a hundred and fifty countries cheaply. <span class="signal italic">Every dollar that comes in</span> has somewhere to be.</span>
+    </p>
+  </div>
+
+  <!-- ==================== 4. WHERE THE MONEY GOES ==================== -->
+  <section class="cents" data-screen-label="07 Where the money goes">
+    <div class="eyebrow r"><span class="bar"></span><span>A hundred cents in · <span class="accent">where they go</span></span></div>
+    <h2 class="r d1">A dollar of <span class="it">revenue,</span><br/>broken open.</h2>
+    <p class="lede r d2" style="margin-top:14px">
+      Cost of revenue takes <span class="signal">thirty-five</span>. SG&amp;A another twenty-four. R&amp;D — the price of staying inventive — keeps a steady nine.
+    </p>
+
+    <div class="dollar" id="dollar"></div>
+
+    <div class="legend">
+      <div class="row">
+        <div class="sw" style="background:#4F86C6"></div>
+        <div class="lab">Cost of revenue</div>
+        <div class="pct">35%</div>
+        <div class="ct">35¢</div>
+      </div>
+      <div class="row">
+        <div class="sw" style="background:#F4A261"></div>
+        <div class="lab">SG&amp;A</div>
+        <div class="pct">24%</div>
+        <div class="ct">24¢</div>
+      </div>
+      <div class="row">
+        <div class="sw" style="background:#2A9D8F"></div>
+        <div class="lab">R&amp;D</div>
+        <div class="pct">9%</div>
+        <div class="ct">9¢</div>
+      </div>
+      <div class="row">
+        <div class="sw" style="background:#E76F51"></div>
+        <div class="lab">Amortization of intangibles</div>
+        <div class="pct">7%</div>
+        <div class="ct">7¢</div>
+      </div>
+      <div class="row">
+        <div class="sw" style="background:#A8DADC"></div>
+        <div class="lab">Restructuring &amp; other</div>
+        <div class="pct">3%</div>
+        <div class="ct">3¢</div>
+      </div>
+      <div class="row">
+        <div class="sw" style="background:var(--signal)"></div>
+        <div class="lab"><em style="font-family:var(--font-display);font-style:italic;color:var(--signal)">What survives</em></div>
+        <div class="pct">22%</div>
+        <div class="ct">22¢</div>
+      </div>
+    </div>
+
+    <div class="survives r">
+      <div class="big" id="survives">22<span style="font-size:48px">¢</span></div>
+      <div class="lab">make it through to operating margin, every dollar in.</div>
+    </div>
+  </section>
+
+  <!-- ==================== 5. FOOTPRINT ==================== -->
+  <section class="footprint" data-screen-label="08 Footprint">
+    <div class="eyebrow r"><span class="bar"></span><span>Footprint · <span class="accent">150+ countries</span></span></div>
+    <h2 class="r d1">Half the revenue<br/>is <span class="it">American.</span></h2>
+    <p class="body r d2" style="margin-top:14px">
+      The other half is everywhere else — Europe’s healthcare systems, Asia-Pacific’s rising hospitals, the slow long tail of the world.
+    </p>
+
+    <div class="globe-wrap r d2">
+      <svg viewBox="0 0 360 360" id="globe">
+        <defs>
+          <radialGradient id="g-glow" cx="50%" cy="45%" r="55%">
+            <stop offset="0%" stop-color="#FBE3E1" stop-opacity="1"/>
+            <stop offset="80%" stop-color="#FBE3E1" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect x="0" y="0" width="360" height="360" fill="transparent"/>
+        <circle cx="180" cy="180" r="160" fill="url(#g-glow)"/>
+        <circle cx="180" cy="180" r="140" fill="none" stroke="#E4E1D9" stroke-width="1"/>
+        <!-- meridians -->
+        <ellipse cx="180" cy="180" rx="140" ry="60" fill="none" stroke="#E4E1D9" stroke-width="0.8"/>
+        <ellipse cx="180" cy="180" rx="140" ry="100" fill="none" stroke="#ECEAE3" stroke-width="0.8"/>
+        <ellipse cx="180" cy="180" rx="60" ry="140" fill="none" stroke="#E4E1D9" stroke-width="0.8"/>
+        <ellipse cx="180" cy="180" rx="100" ry="140" fill="none" stroke="#ECEAE3" stroke-width="0.8"/>
+
+        <!-- dotted continents (simplified abstract dot map) -->
+        <g id="dots" fill="#CFCBC0"></g>
+
+        <!-- pulse markers -->
+        <g id="pulses">
+          <!-- US (Minneapolis) -->
+          <g transform="translate(118,148)" class="pulse" data-region="us" data-pct="50">
+            <circle r="22" fill="#D63737" fill-opacity="0.10"/>
+            <circle r="13" fill="#D63737" fill-opacity="0.18"/>
+            <circle r="5" fill="#D63737"/>
+          </g>
+          <!-- Europe (Galway) -->
+          <g transform="translate(196,140)" class="pulse" data-region="eu" data-pct="25">
+            <circle r="14" fill="#D63737" fill-opacity="0.10"/>
+            <circle r="9" fill="#D63737" fill-opacity="0.18"/>
+            <circle r="4" fill="#D63737"/>
+          </g>
+          <!-- Asia-Pacific -->
+          <g transform="translate(258,182)" class="pulse" data-region="ap" data-pct="16">
+            <circle r="11" fill="#D63737" fill-opacity="0.10"/>
+            <circle r="7" fill="#D63737" fill-opacity="0.18"/>
+            <circle r="3.4" fill="#D63737"/>
+          </g>
+          <!-- ROW -->
+          <g transform="translate(214,242)" class="pulse" data-region="row" data-pct="9">
+            <circle r="8" fill="#D63737" fill-opacity="0.10"/>
+            <circle r="5" fill="#D63737" fill-opacity="0.18"/>
+            <circle r="2.6" fill="#D63737"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="geo-list">
+      <div class="geo-row r" style="--w:50%">
+        <div class="lab">United States</div>
+        <div class="pct">50<sup>%</sup></div>
+        <div class="track"></div>
+      </div>
+      <div class="geo-row r d1" style="--w:25%">
+        <div class="lab">Europe</div>
+        <div class="pct">25<sup>%</sup></div>
+        <div class="track"></div>
+      </div>
+      <div class="geo-row r d2" style="--w:16%">
+        <div class="lab">Asia-Pacific</div>
+        <div class="pct">16<sup>%</sup></div>
+        <div class="track"></div>
+      </div>
+      <div class="geo-row r d3" style="--w:9%">
+        <div class="lab">Rest of World</div>
+        <div class="pct">9<sup>%</sup></div>
+        <div class="track"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== RESET BEAT 3 ==================== -->
+  <div class="reset" data-screen-label="09 Reset · the bet">
+    <p class="r">
+      <span>Then there is the <span class="signal italic">part of the balance sheet</span> that is not about the past — but about <span class="signal italic">what gets bet next.</span></span>
+    </p>
+  </div>
+
+  <!-- ==================== 6. THE BET ==================== -->
+  <section class="bet" data-screen-label="10 The bet">
+    <div class="eyebrow r"><span class="bar"></span><span>The bet · <span class="accent">capital allocation</span></span></div>
+    <h2 class="r d1">Forty-eight years <span class="it">of</span><br/>not skipping a <span class="it">beat.</span></h2>
+    <p class="body r d2">
+      Operating cash flow of <em>$7.04B</em>. Free cash flow of <em>$5.18B</em>. <em>$3.59B paid in dividends</em> — the forty-eighth consecutive year of increases. The Diabetes spin-off signals where the next <em>weight</em> is going.
+    </p>
+
+    <div class="streak r d2" id="streak">
+      <div class="num" id="streakNum">0</div>
+      <div class="lab">Consecutive years · annual dividend increases</div>
+      <div class="ticks" id="streakTicks" aria-hidden="true"></div>
+    </div>
+
+    <div class="bullets">
+      <div class="b r">
+        <div class="v">$1.86<span style="font-size:18px;color:rgba(244,242,237,0.5)">B</span></div>
+        <div class="t">Capex in FY25 — sustaining factories, devices, and the <em>robotic arm</em> that has to catch up to da Vinci.</div>
+      </div>
+      <div class="b r d1">
+        <div class="v it">$372<span style="font-size:18px;color:rgba(244,242,237,0.5)">M</span></div>
+        <div class="t">Buybacks last quarter — modest by design. Capital is favoring <em>dividends and tuck-ins</em> over share retirement.</div>
+      </div>
+      <div class="b r d2">
+        <div class="v">$53.4<span style="font-size:18px;color:rgba(244,242,237,0.5)">B</span></div>
+        <div class="t">Goodwill &amp; intangibles on the books — a <em>library of acquisitions</em>, $41.7B of it goodwill alone.</div>
+      </div>
+      <div class="b r d3">
+        <div class="v it">Spin-off</div>
+        <div class="t">Diabetes — 8% of revenue — leaving the parent. A bet that the <em>core</em> deserves all the oxygen.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 7. COMPETITION ==================== -->
+  <section class="competition" data-screen-label="11 Competition">
+    <div class="eyebrow r"><span class="bar"></span><span>The competition · <span class="accent">three rivals</span></span></div>
+    <h2 class="r d1">Three rivals,<br/>each <span class="it">larger</span> by market cap.</h2>
+    <p class="body r d2" style="margin-top:14px">
+      Revenue still favors Medtronic — <em>$33.5B</em> against the field. But each of three rivals is <em class="signal" style="color:var(--signal)">growing faster</em>, and the market is paying them more for it.
+    </p>
+
+    <div class="rivals" style="margin-top:36px">
+
+      <div class="rival self first r" style="--w:67.9%; --c:var(--signal)">
+        <div class="head">
+          <div>
+            <div class="name">Medtronic</div>
+            <div class="ticker">MDT · MED DEVICES</div>
+          </div>
+          <div class="cap">$110.66<sup>B</sup></div>
+        </div>
+        <div class="barwrap"><div class="barfill"></div></div>
+        <div class="stats">
+          <div class="s"><div class="v">$33.54B</div><div class="l">Revenue</div></div>
+          <div class="s"><div class="v">17.8%</div><div class="l">Op margin</div></div>
+          <div class="s"><div class="v">~3%</div><div class="l">Yo Y growth*</div></div>
+        </div>
+        <div class="desc"><em>The incumbent.</em> Cardiac, neuro, surgical robotics, diabetes — the broadest portfolio in the room.</div>
+      </div>
+
+      <div class="rival r d1 tap" data-target="ex-isrg" style="--w:100%; --c:#141414">
+        <div class="head">
+          <div>
+            <div class="name">Intuitive Surgical</div>
+            <div class="ticker">ISRG · da Vinci</div>
+          </div>
+          <div class="cap">$163.00<sup>B</sup></div>
+        </div>
+        <div class="barwrap"><div class="barfill"></div></div>
+        <div class="stats">
+          <div class="s"><div class="v">$10.06B</div><div class="l">Revenue</div></div>
+          <div class="s"><div class="v">57.07×</div><div class="l">P/E TTM</div></div>
+          <div class="s"><div class="v up">+20.51%</div><div class="l">Rev YoY</div></div>
+        </div>
+        <div class="desc">The dominant incumbent in surgical robotics — the platform Medtronic’s <em>Hugo RAS</em> must displace to make robotics a meaningful pillar.</div>
+        <div class="expand" id="ex-isrg"><div style="padding-top:14px"><p style="font-size:13px;line-height:1.5;color:var(--ink-3)">Medtronic is a <em style="font-family:var(--font-display);font-style:italic;color:var(--ink)">late entrant</em> here, still expanding FDA-cleared indications. The price the market is willing to pay for ISRG (57× earnings) is the price of incumbency in this category.</p></div></div>
+        <span class="tap-hint">Tap to expand →</span>
+      </div>
+
+      <div class="rival r d2 tap" data-target="ex-syk" style="--w:80.7%; --c:#141414">
+        <div class="head">
+          <div>
+            <div class="name">Stryker</div>
+            <div class="ticker">SYK · ORTHOPEDICS</div>
+          </div>
+          <div class="cap">$131.49<sup>B</sup></div>
+        </div>
+        <div class="barwrap"><div class="barfill"></div></div>
+        <div class="stats">
+          <div class="s"><div class="v">$25.12B</div><div class="l">Revenue</div></div>
+          <div class="s"><div class="v">40.51×</div><div class="l">P/E TTM</div></div>
+          <div class="s"><div class="v up">+11.16%</div><div class="l">Rev YoY</div></div>
+        </div>
+        <div class="desc">Head-to-head in surgical robotics (<em>Mako vs. Hugo</em>), spine, neurovascular, and ENT. <em>Outgrowing</em> MDT in orthopedics.</div>
+        <div class="expand" id="ex-syk"><div style="padding-top:14px"><p style="font-size:13px;line-height:1.5;color:var(--ink-3)">Mako’s installed base in joint replacement is the asset Medtronic is defending against in spine and neuro — a category where SYK has been steady share-gainer for a decade.</p></div></div>
+        <span class="tap-hint">Tap to expand →</span>
+      </div>
+
+      <div class="rival r d3 tap" data-target="ex-bsx" style="--w:59.2%; --c:#141414">
+        <div class="head">
+          <div>
+            <div class="name">Boston Scientific</div>
+            <div class="ticker">BSX · CARDIAC</div>
+          </div>
+          <div class="cap">$96.53<sup>B</sup></div>
+        </div>
+        <div class="barwrap"><div class="barfill"></div></div>
+        <div class="stats">
+          <div class="s"><div class="v">$20.07B</div><div class="l">Revenue</div></div>
+          <div class="s"><div class="v">33.30×</div><div class="l">P/E TTM</div></div>
+          <div class="s"><div class="v up">+19.88%</div><div class="l">Rev YoY</div></div>
+        </div>
+        <div class="desc">The most aggressive share-gainer against MDT in <em>pulsed field ablation</em>, structural heart, and spinal cord stimulation.</div>
+        <div class="expand" id="ex-bsx"><div style="padding-top:14px"><p style="font-size:13px;line-height:1.5;color:var(--ink-3)">PFA — the catheter technology rewriting cardiac ablation — is exactly the high-growth slice Medtronic is leading on. BSX is the closest pursuer, and the market is rewarding the chase.</p></div></div>
+        <span class="tap-hint">Tap to expand →</span>
+      </div>
+
+    </div>
+
+    <p class="body" style="margin-top:30px;font-size:12px;color:var(--ink-4)">
+      *FY25 revenue $33.54B vs. prior reflects organic growth momentum cited in filings; trailing values are point-in-time.
+    </p>
+  </section>
+
+  <!-- ==================== 8. CLOSE — invert the open ==================== -->
+  <section class="close" data-screen-label="12 Close">
+    <div class="eyebrow r"><span class="bar"></span><span>The takeaway · <span class="accent">FY ’25</span></span></div>
+    <h1 class="display r d1">
+      Seventy <span class="it">conditions.</span><br/>
+      One <span class="it signal">heartbeat</span> at<br/>
+      a time.
+    </h1>
+    <p class="body r d2">
+      The world’s pulse, monitored from Minneapolis. Cardiac and neuro carrying the rhythm; <em>diabetes preparing to leave</em>; robotics still chasing. <em>$33.54 billion</em> arrives — <em class="signal">twenty-two cents</em> on the dollar survives — and the dividend, <em>forty-eight years running</em>, gets paid again.
+    </p>
+
+    <div class="pulse" aria-hidden="true">
+      <svg viewBox="0 0 380 80" preserveAspectRatio="none">
+        <path id="ecg-close" class="trace"
+          d="M0 40
+             L80 40
+             L96 40 L104 18 L112 64 L120 8 L128 70 L136 40
+             L200 40
+             L216 40 L224 24 L232 60 L240 14 L248 60 L256 40
+             L380 40"></path>
+      </svg>
+    </div>
+
+    <div class="colophon">
+      <div>MDT · NYSE</div>
+      <div>Recap · FY ’25</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   1) Reveal-on-scroll for .r elements
+   ============================================================ */
+const io = new IntersectionObserver((entries)=>{
+  for(const e of entries){
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  }
+},{ rootMargin:'0px 0px -8% 0px', threshold: 0.05 });
+document.querySelectorAll('.r').forEach(el=>io.observe(el));
+
+/* ============================================================
+   2) Scroll progress bar in chrome
+   ============================================================ */
+const progress = document.getElementById('progress');
+function updateProgress(){
+  const h = document.documentElement;
+  const max = h.scrollHeight - window.innerHeight;
+  const pct = Math.min(100, Math.max(0, (h.scrollTop || document.body.scrollTop) / Math.max(1,max) * 100));
+  progress.style.setProperty('--progress', pct + '%');
+}
+document.addEventListener('scroll', updateProgress, {passive:true});
+window.addEventListener('resize', updateProgress);
+updateProgress();
+
+/* ============================================================
+   3) ECG draw-on — both hero & close traces, scrubbed by view
+   ============================================================ */
+function setupTrace(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const len = el.getTotalLength();
+  el.style.setProperty('--len', len);
+  el.style.setProperty('--off', len);
+
+  function update(){
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    // 0 when bottom of svg reaches viewport bottom, 1 when top reaches viewport top
+    const start = vh;
+    const end = -rect.height * 0.4;
+    const t = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
+    el.style.setProperty('--off', len * (1 - t));
+  }
+  document.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', update);
+  update();
+}
+setupTrace('ecg-hero');
+setupTrace('ecg-close');
+
+/* ============================================================
+   4) Count-up numerics in the SCALE grid
+   ============================================================ */
+const countObs = new IntersectionObserver((entries)=>{
+  for(const e of entries){
+    if(!e.isIntersecting) continue;
+    const el = e.target;
+    const target = parseFloat(el.dataset.count);
+    const dec = parseInt(el.dataset.decimals || '0', 10);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const dur = 1100;
+    const t0 = performance.now();
+    function tick(now){
+      const t = Math.min(1, (now - t0)/dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const v = (target * eased).toFixed(dec);
+      // Preserve sup styling for B/% suffix elsewhere
+      el.textContent = prefix + v + suffix;
+      if(t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    countObs.unobserve(el);
+  }
+},{threshold:0.4});
+document.querySelectorAll('[data-count]').forEach(el=>countObs.observe(el));
+
+/* ============================================================
+   5) Dollar grid — 100 cents, lit by category
+   ============================================================ */
+(function buildDollar(){
+  const wrap = document.getElementById('dollar');
+  if(!wrap) return;
+  const allocations = [
+    {pct:35, color:'#4F86C6'},
+    {pct:24, color:'#F4A261'},
+    {pct:9,  color:'#2A9D8F'},
+    {pct:7,  color:'#E76F51'},
+    {pct:3,  color:'#A8DADC'},
+    {pct:22, color:'#D63737'} // what survives — signal
+  ];
+  // build assignment array of length 100 in row-major (top→bottom)
+  const cells = new Array(100).fill(null);
+  let idx = 0;
+  for(const a of allocations){
+    for(let i=0;i<a.pct && idx<100;i++,idx++){
+      cells[idx] = a.color;
+    }
+  }
+  // Fill grid top→bottom (10 rows of 10)
+  for(let i=0;i<100;i++){
+    const c = document.createElement('div');
+    c.className = 'cent';
+    c.style.setProperty('--c', cells[i] || 'var(--paper-3)');
+    // staggered delay top→bottom, left→right
+    const row = Math.floor(i/10), col = i%10;
+    c.style.setProperty('--d', (row*60 + col*8) + 'ms');
+    wrap.appendChild(c);
+  }
+  // light up when in view
+  const dObs = new IntersectionObserver((entries)=>{
+    for(const e of entries){
+      if(e.isIntersecting){
+        wrap.classList.add('lit');
+        dObs.unobserve(wrap);
+      }
+    }
+  },{threshold:0.3});
+  dObs.observe(wrap);
+})();
+
+/* ============================================================
+   6) Streak — 48 ticks count and animate
+   ============================================================ */
+(function streak(){
+  const ticks = document.getElementById('streakTicks');
+  const num = document.getElementById('streakNum');
+  if(!ticks || !num) return;
+  for(let i=0;i<48;i++){
+    const s = document.createElement('span');
+    s.style.setProperty('--d', (i*22) + 'ms');
+    // amplitude grows over the streak
+    const a = 0.18 + (i/48) * 0.55;
+    s.style.setProperty('--a', a.toFixed(2));
+    ticks.appendChild(s);
+  }
+  const root = document.getElementById('streak');
+  const obs = new IntersectionObserver((entries)=>{
+    for(const e of entries){
+      if(e.isIntersecting){
+        root.classList.add('lit');
+        // count up 0 -> 48
+        const t0 = performance.now();
+        const dur = 1200;
+        function tick(now){
+          const t = Math.min(1, (now - t0)/dur);
+          const eased = 1 - Math.pow(1 - t, 3);
+          num.textContent = Math.round(48 * eased);
+          if(t < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        obs.unobserve(root);
+      }
+    }
+  },{threshold:0.3});
+  obs.observe(root);
+})();
+
+/* ============================================================
+   7) Geo bars — fill widths when in view
+   ============================================================ */
+const geoObs = new IntersectionObserver((entries)=>{
+  for(const e of entries){
+    if(e.isIntersecting){
+      const t = e.target.querySelector('.track');
+      if(t){
+        const w = getComputedStyle(e.target).getPropertyValue('--w').trim();
+        t.style.width = w;
+      }
+      geoObs.unobserve(e.target);
+    }
+  }
+},{threshold:0.5});
+document.querySelectorAll('.geo-row').forEach(el=>geoObs.observe(el));
+
+/* ============================================================
+   8) Segment bars — fill widths when in view
+   ============================================================ */
+const segObs = new IntersectionObserver((entries)=>{
+  for(const e of entries){
+    if(e.isIntersecting){
+      const bar = e.target.querySelector('.bar');
+      if(bar){
+        const w = getComputedStyle(e.target).getPropertyValue('--w').trim();
+        bar.style.width = `calc(${w} * (1 - 74/${e.target.clientWidth}))`;
+        // simpler: just set width based on content area
+        bar.style.left = '74px';
+        bar.style.width = w;
+      }
+      segObs.unobserve(e.target);
+    }
+  }
+},{threshold:0.4});
+document.querySelectorAll('.seg').forEach(el=>segObs.observe(el));
+
+/* ============================================================
+   9) Rival bars
+   ============================================================ */
+const rivalObs = new IntersectionObserver((entries)=>{
+  for(const e of entries){
+    if(e.isIntersecting){
+      const f = e.target.querySelector('.barfill');
+      const w = getComputedStyle(e.target).getPropertyValue('--w').trim();
+      if(f) f.style.width = w;
+      rivalObs.unobserve(e.target);
+    }
+  }
+},{threshold:0.35});
+document.querySelectorAll('.rival').forEach(el=>rivalObs.observe(el));
+
+/* ============================================================
+   10) Tap to deepen — rivals
+   ============================================================ */
+document.querySelectorAll('.tap').forEach(el=>{
+  el.addEventListener('click',()=>{
+    const id = el.dataset.target;
+    if(!id) return;
+    const t = document.getElementById(id);
+    if(!t) return;
+    t.classList.toggle('open');
+    const hint = el.querySelector('.tap-hint');
+    if(hint){
+      hint.textContent = t.classList.contains('open') ? '↑ Tap to collapse' : 'Tap to expand →';
+    }
+  });
+});
+
+/* ============================================================
+   11) Globe — abstract dot map
+   ============================================================ */
+(function buildDots(){
+  const g = document.getElementById('dots');
+  if(!g) return;
+  // Generate dots only inside the circle, with denser bands suggesting continents.
+  // Coordinates roughly normalized to viewBox 360x360, center 180,180, r 140.
+  const cx=180, cy=180, R=138;
+  // Continent "blobs" as ellipses to bias dot placement
+  const blobs = [
+    // North America
+    {cx:118, cy:148, rx:32, ry:34, density:0.85},
+    // South America
+    {cx:142, cy:226, rx:22, ry:38, density:0.75},
+    // Europe
+    {cx:198, cy:140, rx:18, ry:18, density:0.85},
+    // Africa
+    {cx:204, cy:206, rx:24, ry:34, density:0.75},
+    // Asia
+    {cx:248, cy:148, rx:42, ry:32, density:0.7},
+    // Australia
+    {cx:268, cy:228, rx:18, ry:14, density:0.7},
+  ];
+
+  function inCircle(x,y){
+    const dx=x-cx, dy=y-cy;
+    return dx*dx+dy*dy <= R*R;
+  }
+
+  // Stippling: for each blob, sample points
+  for(const b of blobs){
+    const area = Math.PI * b.rx * b.ry;
+    const count = Math.floor(area * 0.06 * b.density);
+    for(let i=0;i<count;i++){
+      // random within ellipse
+      const a = Math.random()*Math.PI*2;
+      const r = Math.sqrt(Math.random());
+      const x = b.cx + Math.cos(a)*b.rx*r;
+      const y = b.cy + Math.sin(a)*b.ry*r;
+      if(!inCircle(x,y)) continue;
+      const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx', x.toFixed(1));
+      c.setAttribute('cy', y.toFixed(1));
+      c.setAttribute('r', (Math.random()*0.6 + 0.7).toFixed(2));
+      g.appendChild(c);
+    }
+  }
+})();
+
+/* ============================================================
+   12) Pulses — animate circles outward (CSS keyframes via JS)
+   ============================================================ */
+(function pulseAnim(){
+  // Inject keyframes once
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes pulseRing {
+      0% { transform: scale(0.9); opacity: 0.9; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+    #pulses g.pulse circle:nth-child(1){
+      transform-origin:center; transform-box: fill-box;
+      animation: pulseRing 2.8s ease-out infinite;
+    }
+    #pulses g.pulse circle:nth-child(2){
+      transform-origin:center; transform-box: fill-box;
+      animation: pulseRing 2.8s ease-out infinite;
+      animation-delay: 0.9s;
+    }
+  `;
+  document.head.appendChild(style);
+})();
+</script>
+</body>
+</html>

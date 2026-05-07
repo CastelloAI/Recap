@@ -1,0 +1,1530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>BAC · Recap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    /* Brand-adapted palette — institutional banking */
+    --paper:        #F5F1E8;     /* warm parchment / ledger */
+    --paper-2:      #EDE7D7;     /* raised ledger surface */
+    --paper-3:      #E2DBC7;     /* divider / inset */
+    --ink:          #0B1426;     /* deep navy ink — primary text */
+    --ink-2:        #25324A;
+    --ink-3:        #5C6477;
+    --ink-4:        #9197A4;
+    --line:         #DCD5C2;
+    --line-strong:  #C7BFA8;
+
+    --navy-900:     #07101F;
+    --navy-800:     #0B1426;
+    --navy-700:     #15233E;
+    --navy-600:     #1F3358;
+    --navy-500:     #2E4A78;
+    --navy-300:     #6F84A8;
+    --navy-100:     #C9D1E1;
+
+    --signal:       #C8102E;     /* BAC red — earned, sparingly */
+    --signal-soft:  #F2D7DC;
+    --gold:         #B8893E;
+    --mint:         #2BB673;
+
+    /* costs (from json) */
+    --c-personnel:  #4F86C6;
+    --c-tech:       #F4A261;
+    --c-credit:     #E76F51;
+    --c-occupancy:  #2A9D8F;
+    --c-marketing:  #8338EC;
+
+    --font-display: 'Instrument Serif', 'Times New Roman', serif;
+    --font-sans:    'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono:    'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+    --ease-out:     cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{
+    max-width:430px;
+    margin:0 auto;
+    overflow-x:hidden;
+    background:var(--paper);
+    position:relative;
+    /* faint ledger grain */
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(11,20,38,0.04) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+
+  /* outer page frame on wider viewports */
+  @media (min-width:600px){
+    html{background:#1a1a1a}
+    body{box-shadow:0 0 0 1px rgba(255,255,255,0.04), 0 40px 120px rgba(0,0,0,0.6)}
+  }
+
+  /* ============ STICKY CHROME ============ */
+  .chrome{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    background:rgba(245,241,232,0.78);
+    border-bottom:1px solid var(--line);
+  }
+  .chrome-inner{
+    display:flex; align-items:center; gap:10px;
+    padding:14px 20px 10px;
+  }
+  .ticker{
+    font-family:var(--font-mono);
+    font-size:13px; font-weight:500;
+    letter-spacing:0.06em;
+    color:var(--ink);
+    background:var(--ink);
+    color:var(--paper);
+    padding:4px 8px;
+    border-radius:4px;
+  }
+  .co-name{
+    font-family:var(--font-sans);
+    font-size:13px; font-weight:500;
+    color:var(--ink);
+    flex:1;
+    letter-spacing:-0.005em;
+  }
+  .recap-label{
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+  }
+  .recap-label .dot{
+    color:var(--signal);
+    font-weight:700;
+    margin:0 4px;
+  }
+  .progress-track{
+    height:1.5px; background:transparent; position:relative;
+  }
+  .progress-fill{
+    position:absolute; left:0; top:0; bottom:0; width:0%;
+    background:var(--signal);
+    transition: width 80ms linear;
+  }
+
+  /* ============ TYPE ============ */
+  .display{
+    font-family:var(--font-display);
+    font-weight:400;
+    line-height:0.92;
+    letter-spacing:-0.022em;
+  }
+  .italic{font-family:var(--font-display); font-style:italic}
+  .mono{font-family:var(--font-mono)}
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow .signal{color:var(--signal)}
+  .eyebrow::before{
+    content:""; width:18px; height:1px; background:var(--ink-3);
+  }
+  .eyebrow.no-rule::before{display:none}
+
+  p.body{
+    font-family:var(--font-sans);
+    font-size:15.5px;
+    line-height:1.55;
+    color:var(--ink-2);
+  }
+  p.body em{font-family:var(--font-display); font-style:italic; color:var(--ink); font-size:1.12em; letter-spacing:-0.01em}
+  p.body .red{color:var(--signal)}
+
+  /* ============ LAYOUT ============ */
+  section{
+    padding: 56px 24px;
+    position:relative;
+  }
+  section.tight{padding:36px 24px}
+  section.flush-top{padding-top:32px}
+
+  /* ============ RESET BEATS ============ */
+  .reset{
+    padding: 36px 32px;
+    background: var(--navy-800);
+    color: var(--paper);
+    text-align:left;
+    position:relative;
+    overflow:hidden;
+  }
+  .reset::before{
+    content:"";
+    position:absolute; left:32px; top:18px; width:24px; height:1px;
+    background:var(--signal);
+  }
+  .reset p{
+    font-family:var(--font-display);
+    font-size:24px;
+    line-height:1.3;
+    color:#E8E2D2;
+    letter-spacing:-0.012em;
+    margin-top:14px;
+  }
+  .reset p em{font-style:italic; color:#fff}
+  .reset p .signal{color:#FF6B7E; font-style:italic}
+
+  /* ============ HERO ============ */
+  .hero{
+    padding: 28px 24px 64px;
+    position:relative;
+    min-height: 88vh;
+    display:flex; flex-direction:column; justify-content:flex-end;
+  }
+  .hero-eyebrow{margin-bottom:24px}
+  .hero h1{
+    font-size: clamp(56px, 17vw, 76px);
+    line-height:0.92;
+    letter-spacing:-0.025em;
+  }
+  .hero h1 .num{
+    font-style:italic;
+    color:var(--ink);
+    display:block;
+  }
+  .hero h1 .one{
+    display:block;
+    color:var(--ink-3);
+    font-style:italic;
+  }
+  .hero-sub{
+    margin-top:28px;
+    display:flex; align-items:flex-end; justify-content:space-between;
+    gap:16px;
+  }
+  .hero-stat{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.1em;
+    color:var(--ink-3);
+    text-transform:uppercase;
+  }
+  .hero-stat b{
+    display:block;
+    font-family:var(--font-display);
+    font-size:30px;
+    color:var(--ink);
+    font-weight:400;
+    letter-spacing:-0.015em;
+    margin-top:4px;
+    text-transform:none;
+  }
+  .hero-stat b .dot{color:var(--signal)}
+
+  /* hero scene: rising columns of customers */
+  .hero-scene{
+    position:absolute;
+    inset:auto 0 0 0;
+    height: 36vh;
+    pointer-events:none;
+    z-index:0;
+  }
+  .hero-scene svg{width:100%; height:100%; display:block}
+  .hero-content{position:relative; z-index:1}
+
+  /* ============ THESIS — CUSTOMER GRID ============ */
+  .grid-scene{
+    margin-top:32px;
+    background:var(--ink);
+    color:var(--paper);
+    padding:36px 24px 32px;
+    border-radius:2px;
+    position:relative;
+    overflow:hidden;
+  }
+  .grid-scene .eyebrow{color:#9DA9C2}
+  .grid-scene .eyebrow::before{background:#9DA9C2}
+  .grid-scene h2{
+    margin-top:14px;
+    font-family:var(--font-display);
+    font-size:36px;
+    color:var(--paper);
+    line-height:1.05;
+    letter-spacing:-0.012em;
+  }
+  .grid-scene h2 em{font-style:italic; color:#FF8B95}
+  .dot-grid-host{
+    margin-top:24px;
+    height:200px;
+    position:relative;
+  }
+  .dot-grid-host svg{width:100%; height:100%}
+  .grid-caption{
+    margin-top:16px;
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:0.12em;
+    color:#7B8AA8;
+    text-transform:uppercase;
+    display:flex; gap:14px; align-items:center;
+  }
+  .grid-caption .lit{
+    width:8px; height:8px; background:var(--signal); display:inline-block;
+  }
+  .grid-caption .un{
+    width:8px; height:8px; background:#2A3550; display:inline-block;
+  }
+
+  /* ============ ENGINES (4 segments) ============ */
+  .engines{
+    display:flex; flex-direction:column; gap:0;
+    margin-top:8px;
+  }
+  .engine{
+    display:flex; align-items:flex-end; gap:14px;
+    padding: 18px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .engine:last-child{border-bottom:none}
+  .engine .num{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--ink-3);
+    width:24px;
+    flex:none;
+  }
+  .engine .meta{flex:1; min-width:0}
+  .engine .name{
+    font-family:var(--font-display);
+    font-size:24px;
+    line-height:1.1;
+    color:var(--ink);
+    letter-spacing:-0.012em;
+  }
+  .engine .desc{
+    font-family:var(--font-sans);
+    font-size:12.5px;
+    color:var(--ink-3);
+    margin-top:4px;
+    letter-spacing:0.005em;
+  }
+  .engine .pillar{
+    flex:none;
+    width:36px;
+    display:flex; align-items:flex-end; justify-content:center;
+  }
+  .engine .pillar-bar{
+    width:18px;
+    background: linear-gradient(180deg, var(--navy-600), var(--navy-800));
+    border-radius:1px 1px 0 0;
+    height:0;
+    transition: height 900ms var(--ease-out);
+    position:relative;
+  }
+  .engine .pillar-bar::after{
+    content:"";
+    position:absolute; left:-4px; right:-4px; bottom:0;
+    height:3px; background:var(--ink); 
+  }
+
+  /* ============ THE SCALE — count-ups ============ */
+  .scale-scene{
+    padding: 56px 24px 48px;
+  }
+  .scale-row{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+    margin-top:32px;
+  }
+  .scale-tile{
+    border-top:1px solid var(--line);
+    padding-top:18px;
+  }
+  .scale-tile .label{
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+  }
+  .scale-tile .figure{
+    font-family:var(--font-display);
+    font-size:64px;
+    line-height:0.95;
+    color:var(--ink);
+    margin-top:8px;
+    letter-spacing:-0.022em;
+  }
+  .scale-tile .figure em{font-style:italic}
+  .scale-tile .figure .unit{
+    font-size:0.45em;
+    font-style:italic;
+    color:var(--ink-3);
+    margin-left:4px;
+    letter-spacing:0;
+  }
+  .scale-tile .note{
+    margin-top:6px;
+    font-family:var(--font-sans);
+    font-size:13px;
+    color:var(--ink-3);
+  }
+  .scale-tile .note .up{color:var(--mint); font-weight:500}
+
+  /* ============ COSTS — ledger bars ============ */
+  .costs{
+    padding: 56px 24px;
+    background: var(--paper-2);
+  }
+  .costs h2{
+    margin-top:14px;
+    font-family:var(--font-display);
+    font-size:42px;
+    line-height:1.0;
+    letter-spacing:-0.018em;
+  }
+  .costs h2 em{font-style:italic}
+  .costs h2 .red{color:var(--signal)}
+  .costs-intro{
+    margin-top:14px;
+    font-size:14.5px;
+    color:var(--ink-2);
+    line-height:1.5;
+  }
+  .ledger{
+    margin-top:32px;
+    background:#fff;
+    padding:20px 18px 22px;
+    border:1px solid var(--line);
+    box-shadow: 0 1px 0 rgba(11,20,38,0.04);
+    position:relative;
+  }
+  .ledger::before{
+    content:"FY '25 · NONINTEREST EXPENSE";
+    position:absolute; top:-9px; left:14px;
+    background:var(--paper-2);
+    padding:0 6px;
+    font-family:var(--font-mono);
+    font-size:9.5px;
+    letter-spacing:0.16em;
+    color:var(--ink-3);
+  }
+  .cost-row{
+    display:grid;
+    grid-template-columns: 1fr auto;
+    align-items:center;
+    gap:8px 12px;
+    padding:10px 0;
+    border-bottom:1px dotted var(--line);
+  }
+  .cost-row:last-child{border-bottom:none}
+  .cost-row .lab{
+    font-family:var(--font-sans);
+    font-size:13px;
+    color:var(--ink);
+    display:flex; align-items:center; gap:10px;
+  }
+  .cost-row .lab .swatch{
+    width:10px; height:10px; flex:none;
+    border-radius:1px;
+  }
+  .cost-row .pct{
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--ink);
+    font-weight:500;
+    letter-spacing:0.02em;
+  }
+  .cost-row .bar-wrap{
+    grid-column: 1 / -1;
+    height:10px;
+    background:var(--paper-3);
+    position:relative;
+    overflow:hidden;
+  }
+  .cost-row .bar-fill{
+    position:absolute; left:0; top:0; bottom:0;
+    width:0;
+    transition: width 1100ms var(--ease-out);
+  }
+  .cost-foot{
+    margin-top:14px;
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:0.12em;
+    color:var(--ink-3);
+    text-transform:uppercase;
+    display:flex; justify-content:space-between;
+    border-top:1px solid var(--ink);
+    padding-top:8px;
+  }
+
+  /* ============ FOOTPRINT ============ */
+  .footprint{
+    padding: 64px 24px 56px;
+  }
+  .footprint h2{
+    font-family:var(--font-display);
+    font-size:42px;
+    margin-top:14px;
+    line-height:1.0;
+    letter-spacing:-0.018em;
+  }
+  .footprint h2 em{font-style:italic}
+  .geo-scene{
+    margin-top:36px;
+    height:230px;
+    position:relative;
+  }
+  .geo-scene svg{width:100%; height:100%; overflow:visible}
+  .geo-list{
+    margin-top:8px;
+    display:flex; flex-direction:column;
+  }
+  .geo-row{
+    display:grid;
+    grid-template-columns: 38px 1fr auto;
+    align-items:center;
+    gap:14px;
+    padding: 14px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .geo-row:last-child{border-bottom:none}
+  .geo-row .pct{
+    font-family:var(--font-display);
+    font-size:30px;
+    line-height:1;
+    color:var(--ink);
+    letter-spacing:-0.02em;
+  }
+  .geo-row .pct em{font-style:italic}
+  .geo-row .region{
+    font-family:var(--font-sans);
+    font-size:14px;
+    color:var(--ink-2);
+  }
+  .geo-row .meter{
+    width:64px; height:6px; background:var(--paper-3); position:relative;
+  }
+  .geo-row .meter > span{
+    position:absolute; left:0; top:0; bottom:0;
+    background: var(--navy-700);
+    width:0;
+    transition: width 1100ms var(--ease-out);
+  }
+  .geo-row.us .pct{color:var(--signal)}
+
+  /* ============ THE BET — buyback ============ */
+  .bet{
+    background: var(--navy-900);
+    color: var(--paper);
+    padding: 64px 24px 60px;
+    position:relative;
+    overflow:hidden;
+  }
+  .bet .eyebrow{color:#9DA9C2}
+  .bet .eyebrow::before{background:#9DA9C2}
+  .bet h2{
+    font-family:var(--font-display);
+    font-size:46px;
+    line-height:1.0;
+    margin-top:14px;
+    letter-spacing:-0.018em;
+    color:var(--paper);
+  }
+  .bet h2 em{font-style:italic; color:#FF8B95}
+  .bet .lede{
+    margin-top:16px;
+    font-size:15px;
+    color:#C9CFDB;
+    line-height:1.55;
+  }
+  .bet .lede em{font-family:var(--font-display); font-style:italic; font-size:1.12em; color:#fff}
+
+  .buyback-scene{
+    margin-top:36px;
+    height:230px;
+    position:relative;
+  }
+  .buyback-scene svg{width:100%; height:100%; display:block}
+
+  .bet-stats{
+    margin-top:8px;
+    display:grid; grid-template-columns:1fr 1fr; gap:20px 24px;
+  }
+  .bet-stats .tile{
+    border-top:1px solid #1F2B45;
+    padding-top:14px;
+  }
+  .bet-stats .tile .lab{
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    color:#7E8BA6;
+    text-transform:uppercase;
+  }
+  .bet-stats .tile .val{
+    margin-top:6px;
+    font-family:var(--font-display);
+    font-size:34px;
+    line-height:1;
+    color:var(--paper);
+    letter-spacing:-0.018em;
+  }
+  .bet-stats .tile .val em{font-style:italic}
+  .bet-stats .tile .note{
+    margin-top:6px; font-size:12px; color:#9DA9C2;
+  }
+
+  .ratings{
+    margin-top:30px;
+    border-top:1px solid #1F2B45;
+    padding-top:14px;
+    display:flex; gap:18px;
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.1em;
+    color:#9DA9C2;
+  }
+  .ratings b{
+    display:block;
+    font-family:var(--font-display);
+    font-size:20px;
+    color:var(--paper);
+    letter-spacing:0.04em;
+    font-weight:400;
+    margin-top:2px;
+  }
+
+  /* ============ COMPETITION ============ */
+  .compete{
+    padding: 64px 24px 64px;
+  }
+  .compete h2{
+    font-family:var(--font-display);
+    font-size:42px;
+    margin-top:14px;
+    line-height:1.0;
+    letter-spacing:-0.018em;
+  }
+  .compete h2 em{font-style:italic}
+  .compete-intro{
+    margin-top:14px; font-size:14.5px; color:var(--ink-2); line-height:1.55;
+  }
+  .compete-intro em{font-family:var(--font-display); font-style:italic; color:var(--ink); font-size:1.1em}
+
+  .rivals{
+    margin-top:30px;
+    position:relative;
+  }
+  .rival{
+    margin-top:22px;
+    padding-bottom:22px;
+    border-bottom:1px solid var(--line);
+  }
+  .rival:last-child{border-bottom:none}
+  .rival-head{
+    display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+  }
+  .rival-name{
+    font-family:var(--font-display);
+    font-size:26px;
+    line-height:1;
+    letter-spacing:-0.012em;
+  }
+  .rival-name em{font-style:italic}
+  .rival-tkr{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.1em;
+    color:var(--ink-3);
+    background:var(--paper-2);
+    padding:4px 7px;
+    border-radius:3px;
+  }
+  .rival-bar{
+    margin-top:14px;
+    position:relative; height:30px;
+    display:flex; align-items:center;
+  }
+  .rival-bar .track{
+    position:absolute; left:0; right:0; top:50%;
+    height:1px; background:var(--line);
+  }
+  .rival-bar .me, .rival-bar .them{
+    position:absolute; top:50%; transform:translateY(-50%);
+    height:14px;
+    display:flex; align-items:center;
+  }
+  .rival-bar .me{
+    background:var(--ink);
+    width:0;
+    transition: width 1200ms var(--ease-out);
+  }
+  .rival-bar .them{
+    background:var(--signal);
+    width:0;
+    transition: width 1200ms var(--ease-out) 200ms;
+  }
+  .rival-bar .me::after, .rival-bar .them::after{
+    content:attr(data-cap);
+    position:absolute; right:-4px;
+    transform: translate(100%, 0);
+    padding-left:8px;
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:0.06em;
+    color:var(--ink-3);
+    white-space:nowrap;
+  }
+  .rival-bar .me::after{color:var(--ink)}
+  .rival-bar .them::after{color:var(--signal)}
+  .rival-desc{
+    margin-top:14px;
+    font-size:13.5px;
+    color:var(--ink-2);
+    line-height:1.55;
+  }
+  .rival-desc em{font-family:var(--font-display); font-style:italic; color:var(--ink); font-size:1.08em}
+  .rival-meta{
+    margin-top:10px;
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:0.1em;
+    color:var(--ink-3);
+    text-transform:uppercase;
+    display:flex; gap:10px; flex-wrap:wrap;
+  }
+  .rival-meta span{
+    border:1px solid var(--line);
+    padding:3px 7px;
+  }
+  .rival-meta .up{color:var(--mint); border-color:var(--mint)}
+
+  .scale-key{
+    margin-top:0;
+    display:flex; gap:14px; align-items:center;
+    font-family:var(--font-mono);
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+    padding-bottom:8px;
+  }
+  .scale-key .sw{display:inline-block; width:14px; height:8px; margin-right:6px; vertical-align:middle}
+  .scale-key .ink-sw{background:var(--ink)}
+  .scale-key .red-sw{background:var(--signal)}
+
+  /* ============ CLOSE ============ */
+  .close{
+    background: var(--ink);
+    color: var(--paper);
+    padding: 80px 24px 96px;
+    position:relative;
+    overflow:hidden;
+  }
+  .close .eyebrow{color:#9DA9C2}
+  .close .eyebrow::before{background:#9DA9C2}
+  .close h2{
+    margin-top:18px;
+    font-family:var(--font-display);
+    font-size:62px;
+    line-height:0.95;
+    letter-spacing:-0.022em;
+    color:var(--paper);
+  }
+  .close h2 em{font-style:italic; color:#FF8B95}
+  .close .lede{
+    margin-top:24px;
+    font-size:15.5px;
+    color:#C9CFDB;
+    line-height:1.6;
+    max-width:42ch;
+  }
+  .close .lede em{font-family:var(--font-display); font-style:italic; font-size:1.12em; color:#fff}
+  .close .signoff{
+    margin-top:48px;
+    border-top:1px solid #1F2B45;
+    padding-top:18px;
+    display:flex; justify-content:space-between; align-items:flex-end;
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#7E8BA6;
+  }
+  .close .signoff b{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-size:22px;
+    color:#fff;
+    font-weight:400;
+    letter-spacing:-0.01em;
+    text-transform:none;
+  }
+
+  /* reveal-on-scroll */
+  .reveal{
+    opacity:0; transform: translateY(14px);
+    transition: opacity 520ms var(--ease-out), transform 520ms var(--ease-out);
+  }
+  .reveal.in{opacity:1; transform:translateY(0)}
+  .reveal.delay-1{transition-delay:80ms}
+  .reveal.delay-2{transition-delay:160ms}
+  .reveal.delay-3{transition-delay:240ms}
+
+  /* tap-to-deepen tile state for cost rows */
+  .cost-row{cursor:pointer; transition: background 140ms var(--ease-out)}
+  .cost-row:hover{background:rgba(11,20,38,0.02)}
+  .cost-row .detail{
+    grid-column: 1 / -1;
+    max-height:0; overflow:hidden;
+    transition: max-height 320ms var(--ease-out);
+    font-family:var(--font-sans);
+    font-size:12px;
+    color:var(--ink-3);
+    line-height:1.5;
+  }
+  .cost-row.open .detail{max-height:60px; padding-top:6px}
+</style>
+</head>
+<body>
+
+  <!-- =================== STICKY CHROME =================== -->
+  <header class="chrome" id="chrome">
+    <div class="chrome-inner">
+      <span class="ticker">BAC</span>
+      <span class="co-name">Bank of America</span>
+      <span class="recap-label">Recap<span class="dot">·</span>FY '25</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+  </header>
+
+  <!-- =================== HERO =================== -->
+  <section class="hero">
+    <!-- background scene: skyline columns -->
+    <div class="hero-scene" aria-hidden="true">
+      <svg viewBox="0 0 430 280" preserveAspectRatio="xMidYMax slice">
+        <defs>
+          <linearGradient id="col-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1F3358"/>
+            <stop offset="1" stop-color="#07101F"/>
+          </linearGradient>
+        </defs>
+        <!-- ground line -->
+        <line x1="0" y1="270" x2="430" y2="270" stroke="#0B1426" stroke-width="1"/>
+        <!-- columns of varying heights — 'pillars' of a bank -->
+        <g id="hero-columns"></g>
+        <!-- subtle horizon haze -->
+        <rect x="0" y="240" width="430" height="32" fill="url(#col-grad)" opacity="0.04"/>
+      </svg>
+    </div>
+
+    <div class="hero-content">
+      <div class="eyebrow hero-eyebrow reveal in">
+        <span class="signal">●</span> The thesis · Infrastructure
+      </div>
+      <h1 class="display reveal in">
+        <span class="num">70 million</span>
+        <span class="num">Americans bank</span>
+        <span class="one">at one address<span style="color:var(--signal); font-style:normal">.</span></span>
+      </h1>
+
+      <div class="hero-sub reveal delay-1 in">
+        <div class="hero-stat">
+          FY '25 revenue
+          <b>$<span data-count="113.10" data-decimals="2">113.10</span>B</b>
+        </div>
+        <div class="hero-stat" style="text-align:right">
+          Market cap
+          <b>$<span data-count="386.89" data-decimals="2">386.89</span>B</b>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== THESIS / GRID =================== -->
+  <section class="tight">
+    <div class="grid-scene reveal">
+      <div class="eyebrow no-rule" style="color:#9DA9C2">A scale you can <em class="italic" style="color:#FF8B95">feel</em></div>
+      <h2 class="display">
+        Across <em>3,628</em> branches and <em>15,000</em> ATMs —
+        <span style="color:#9DA9C2">one in every five Americans
+        keeps an account here.</span>
+      </h2>
+      <div class="dot-grid-host">
+        <svg id="dot-grid" viewBox="0 0 380 200" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+      <div class="grid-caption">
+        <span><span class="lit"></span> Banks with BAC · 70M</span>
+        <span><span class="un"></span> U.S. adults · ≈260M</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 1 =================== -->
+  <div class="reset reveal">
+    <div class="eyebrow" style="color:#FF6B7E">Interlude · 01</div>
+    <p>A bank is not a building. It's a <em>promise</em> — to hold what you've earned, and to <span class="signal">put it to work somewhere else.</span></p>
+  </div>
+
+  <!-- =================== ENGINES =================== -->
+  <section>
+    <div class="eyebrow reveal">The engines · Four ways in</div>
+    <h2 class="display reveal" style="margin-top:14px; font-size:42px; letter-spacing:-0.018em; line-height:1.0">
+      Revenue <em class="italic">arrives</em><br/>
+      from four directions<span style="color:var(--signal)">.</span>
+    </h2>
+    <p class="body reveal" style="margin-top:14px; max-width:42ch">
+      Q1 '26 delivered <em>$30.43B</em> on <em>EPS of $1.11</em> — net interest income still the load-bearing column, but trading and wealth fees keep the rhythm steady.
+    </p>
+
+    <div class="engines reveal" style="margin-top:34px">
+      <div class="engine">
+        <div class="num">01</div>
+        <div class="meta">
+          <div class="name">Consumer Banking</div>
+          <div class="desc">Deposits · cards · consumer loans</div>
+        </div>
+        <div class="pillar"><div class="pillar-bar" data-h="160"></div></div>
+      </div>
+      <div class="engine">
+        <div class="num">02</div>
+        <div class="meta">
+          <div class="name">Global Wealth · <span class="italic">Merrill</span></div>
+          <div class="desc">Advisory · private banking</div>
+        </div>
+        <div class="pillar"><div class="pillar-bar" data-h="120"></div></div>
+      </div>
+      <div class="engine">
+        <div class="num">03</div>
+        <div class="meta">
+          <div class="name">Global Banking</div>
+          <div class="desc">Commercial lending · IB fees</div>
+        </div>
+        <div class="pillar"><div class="pillar-bar" data-h="100"></div></div>
+      </div>
+      <div class="engine">
+        <div class="num">04</div>
+        <div class="meta">
+          <div class="name">Global Markets</div>
+          <div class="desc">FICC · equities · FX</div>
+        </div>
+        <div class="pillar"><div class="pillar-bar" data-h="86"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== THE SCALE =================== -->
+  <section class="scale-scene">
+    <div class="eyebrow reveal">The numerals · FY '25</div>
+    <h2 class="display reveal" style="margin-top:14px; font-size:42px; letter-spacing:-0.018em; line-height:1.0">
+      The figures that <em class="italic">underwrite</em> everything else.
+    </h2>
+
+    <div class="scale-row">
+      <div class="scale-tile reveal">
+        <div class="label">Net interest income · FY '25</div>
+        <div class="figure">$<em><span data-count="62" data-decimals="0">62</span></em>B</div>
+        <div class="note"><span class="up">↑ 8% YoY</span> — the load-bearing line</div>
+      </div>
+      <div class="scale-tile reveal">
+        <div class="label">Verified digital users</div>
+        <div class="figure">$<em><span data-count="59" data-decimals="0">59</span></em><span class="unit">million</span></div>
+        <div class="note"><em>41M+</em> active on mobile alone</div>
+      </div>
+      <div class="scale-tile reveal">
+        <div class="label">Operating cash flow</div>
+        <div class="figure">$<em><span data-count="12.61" data-decimals="2">12.61</span></em>B</div>
+        <div class="note"><em>$231.8B</em> in cash · cushion intact</div>
+      </div>
+      <div class="scale-tile reveal">
+        <div class="label">Q1 '26 EPS</div>
+        <div class="figure">$<em><span data-count="1.11" data-decimals="2">1.11</span></em></div>
+        <div class="note">on <em>$30.43B</em> in quarterly revenue</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 2 =================== -->
+  <div class="reset reveal">
+    <div class="eyebrow" style="color:#FF6B7E">Interlude · 02</div>
+    <p>Revenue is the headline. <em>Cost is the character.</em> <span class="signal">Show me what a bank pays for, and I'll tell you what it is.</span></p>
+  </div>
+
+  <!-- =================== COSTS =================== -->
+  <section class="costs">
+    <div class="eyebrow reveal">The bill · Where it goes</div>
+    <h2 class="display reveal">
+      Most of the bank<br/>
+      walks in <em>every morning<span class="red">.</span></em>
+    </h2>
+    <p class="costs-intro reveal">
+      Of every dollar BAC spends to keep the lights on, <em class="italic" style="color:var(--ink)">one in three</em> goes to the people behind the desks, the desks behind the screens, and the bankers behind the deals.
+    </p>
+
+    <div class="ledger reveal">
+      <div class="cost-row" data-color="#4F86C6">
+        <div class="lab"><span class="swatch" style="background:#4F86C6"></span>Personnel &amp; Compensation</div>
+        <div class="pct">33%</div>
+        <div class="bar-wrap"><div class="bar-fill" data-w="100" style="background:#4F86C6"></div></div>
+        <div class="detail">213,000 employees globally — relationship managers, advisors, traders, technologists, branch staff.</div>
+      </div>
+      <div class="cost-row" data-color="#F4A261">
+        <div class="lab"><span class="swatch" style="background:#F4A261"></span>Technology &amp; Operations</div>
+        <div class="pct">14%</div>
+        <div class="bar-wrap"><div class="bar-fill" data-w="42" style="background:#F4A261"></div></div>
+        <div class="detail">Award-winning digital banking platform · 41M+ active mobile users to keep online and protected.</div>
+      </div>
+      <div class="cost-row" data-color="#E76F51">
+        <div class="lab"><span class="swatch" style="background:#E76F51"></span>Provision for Credit Losses</div>
+        <div class="pct">5%</div>
+        <div class="bar-wrap"><div class="bar-fill" data-w="15" style="background:#E76F51"></div></div>
+        <div class="detail">The reserve a bank sets aside in case borrowers don't pay back. A weather report, in cash.</div>
+      </div>
+      <div class="cost-row" data-color="#2A9D8F">
+        <div class="lab"><span class="swatch" style="background:#2A9D8F"></span>Occupancy &amp; Equipment</div>
+        <div class="pct">5%</div>
+        <div class="bar-wrap"><div class="bar-fill" data-w="15" style="background:#2A9D8F"></div></div>
+        <div class="detail">3,628 retail centers · 15,000 ATMs · the physical surface area of trust.</div>
+      </div>
+      <div class="cost-row" data-color="#8338EC">
+        <div class="lab"><span class="swatch" style="background:#8338EC"></span>Marketing &amp; Other</div>
+        <div class="pct">5%</div>
+        <div class="bar-wrap"><div class="bar-fill" data-w="15" style="background:#8338EC"></div></div>
+        <div class="detail">Brand, sponsorship, and the long tail of noninterest expense.</div>
+      </div>
+      <div class="cost-foot">
+        <span>Tap any row to expand</span>
+        <span>FY '25 · 10-K</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTPRINT =================== -->
+  <section class="footprint">
+    <div class="eyebrow reveal">The footprint · 35+ countries</div>
+    <h2 class="display reveal">
+      But the <em class="italic">center of gravity</em><br/>
+      sits squarely <span style="color:var(--signal)">at home.</span>
+    </h2>
+
+    <div class="geo-scene reveal">
+      <svg viewBox="0 0 380 230" preserveAspectRatio="xMidYMid meet">
+        <!-- US dominant disc + smaller satellite circles, sized by % -->
+        <g id="geo-circles"></g>
+      </svg>
+    </div>
+
+    <div class="geo-list reveal">
+      <div class="geo-row us">
+        <div class="pct"><em>88<span style="font-size:0.5em">%</span></em></div>
+        <div class="region">United States</div>
+        <div class="meter"><span data-w="88"></span></div>
+      </div>
+      <div class="geo-row">
+        <div class="pct"><em>6<span style="font-size:0.5em">%</span></em></div>
+        <div class="region">Europe &amp; United Kingdom</div>
+        <div class="meter"><span data-w="6"></span></div>
+      </div>
+      <div class="geo-row">
+        <div class="pct"><em>4<span style="font-size:0.5em">%</span></em></div>
+        <div class="region">Asia-Pacific</div>
+        <div class="meter"><span data-w="4"></span></div>
+      </div>
+      <div class="geo-row">
+        <div class="pct"><em>2<span style="font-size:0.5em">%</span></em></div>
+        <div class="region">Rest of World</div>
+        <div class="meter"><span data-w="2"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 3 =================== -->
+  <div class="reset reveal">
+    <div class="eyebrow" style="color:#FF6B7E">Interlude · 03</div>
+    <p>When a bank passes a <em>stress test</em>, the question turns. <span class="signal">Not "can it survive?" — but "what should it do with the surplus?"</span></p>
+  </div>
+
+  <!-- =================== THE BET — buyback =================== -->
+  <section class="bet">
+    <div class="eyebrow reveal">The bet · $40B</div>
+    <h2 class="display reveal">
+      The largest buyback in <em>BAC history</em>.
+    </h2>
+    <p class="lede reveal">
+      Authorized August 2025: a <em>$40B</em> repurchase program — about <em>$4.5B per quarter</em> — alongside an <em>8%</em> dividend bump to <em>$0.28</em> a share. The bank is betting on its own stock.
+    </p>
+
+    <!-- buyback scene: 40 chips falling back into the vault -->
+    <div class="buyback-scene reveal">
+      <svg viewBox="0 0 380 230" preserveAspectRatio="xMidYMid meet">
+        <!-- vault floor -->
+        <line x1="20" y1="200" x2="360" y2="200" stroke="#1F2B45" stroke-width="1"/>
+        <text x="20" y="220" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#5C6885">VAULT · BAC TREASURY</text>
+        <text x="360" y="220" text-anchor="end" font-family="Geist Mono" font-size="9" letter-spacing="2" fill="#5C6885">40 SHARES = $1B</text>
+        <!-- 40 chips representing $40B; each is $1B -->
+        <g id="chips"></g>
+        <!-- caption arrow -->
+        <g id="chip-caption" opacity="0">
+          <text x="190" y="40" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="16" fill="#FF8B95">$40B returning home</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="bet-stats">
+      <div class="tile reveal">
+        <div class="lab">Quarterly buyback</div>
+        <div class="val">$<em>4.5</em>B</div>
+        <div class="note">Run-rate through 2026</div>
+      </div>
+      <div class="tile reveal">
+        <div class="lab">Dividend · per share</div>
+        <div class="val">$<em>0.28</em></div>
+        <div class="note"><span style="color:#82E0B0">↑ 8%</span> · ~30% payout</div>
+      </div>
+      <div class="tile reveal">
+        <div class="lab">Total debt</div>
+        <div class="val">$<em>317.82</em>B</div>
+        <div class="note">vs. $303.24B equity</div>
+      </div>
+      <div class="tile reveal">
+        <div class="lab">Cash on hand</div>
+        <div class="val">$<em>231.8</em>B</div>
+        <div class="note">12/31/2025 · the cushion</div>
+      </div>
+    </div>
+
+    <div class="ratings reveal">
+      <div>Moody's<b>A1</b></div>
+      <div>S&amp;P<b>A-</b></div>
+      <div>Fitch<b>AA-</b></div>
+    </div>
+  </section>
+
+  <!-- =================== COMPETITION =================== -->
+  <section class="compete">
+    <div class="eyebrow reveal">The rivals · Sized by market cap</div>
+    <h2 class="display reveal">
+      One <em class="italic">giant</em> overhead.<br/>
+      One <em class="italic">peer</em> beside.<br/>
+      One <em class="italic">insurgent</em> below.
+    </h2>
+    <p class="compete-intro reveal">
+      Bank of America at <em>$386.89B</em> sits in the middle of a hierarchy: <em>JPMorgan</em> looms above, <em>Wells Fargo</em> hugs the same retail footprint, and <em>SoFi</em> is the digital-first challenger fighting for the <em>41M mobile users</em> BAC has spent a decade building.
+    </p>
+
+    <div class="scale-key reveal" style="margin-top:24px">
+      <span class="sw ink-sw"></span>BAC
+      <span class="sw red-sw"></span>Rival
+    </div>
+
+    <div class="rivals">
+      <div class="rival reveal">
+        <div class="rival-head">
+          <div class="rival-name"><em>JPMorgan</em> Chase</div>
+          <div class="rival-tkr">JPM</div>
+        </div>
+        <div class="rival-bar">
+          <div class="track"></div>
+          <div class="me" data-w="46" data-cap="BAC · $386.89B"></div>
+          <div class="them" data-w="100" data-cap="JPM · $836.86B"></div>
+        </div>
+        <div class="rival-desc">
+          <em>The most direct rival</em> across every line — consumer, wealth, corporate, and trading. Not in the listed peer pool, but no recap of BAC is honest without it.
+        </div>
+        <div class="rival-meta">
+          <span>Rev $50.54B Q</span>
+          <span>P/E 14.21</span>
+          <span class="up">↑ 108.98% YoY</span>
+        </div>
+      </div>
+
+      <div class="rival reveal">
+        <div class="rival-head">
+          <div class="rival-name"><em>Wells</em> Fargo</div>
+          <div class="rival-tkr">WFC</div>
+        </div>
+        <div class="rival-bar">
+          <div class="track"></div>
+          <div class="me" data-w="100" data-cap="BAC · $386.89B"></div>
+          <div class="them" data-w="64" data-cap="WFC · $248.97B"></div>
+        </div>
+        <div class="rival-desc">
+          Head-to-head for U.S. checking, mortgage, small-business lending, and the same <em>retail footprint</em> on the same Main Streets.
+        </div>
+        <div class="rival-meta">
+          <span>Rev $16.08B</span>
+          <span>P/E 11.48</span>
+          <span class="up">↑ 72.75% YoY</span>
+        </div>
+      </div>
+
+      <div class="rival reveal">
+        <div class="rival-head">
+          <div class="rival-name"><em>SoFi</em></div>
+          <div class="rival-tkr">SOFI</div>
+        </div>
+        <div class="rival-bar">
+          <div class="track"></div>
+          <div class="me" data-w="100" data-cap="BAC · $386.89B"></div>
+          <div class="them" data-w="6" data-cap="SOFI · $24.78B"></div>
+        </div>
+        <div class="rival-desc">
+          A fraction of the size — but growing <em>205.53%</em> a year and aimed straight at the millennials and Gen-Z holding BAC's mobile accounts.
+        </div>
+        <div class="rival-meta">
+          <span>Rev $1.01B Q</span>
+          <span>P/E 51.48</span>
+          <span class="up">↑ 205.53% YoY</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== RESET BEAT 4 =================== -->
+  <div class="reset reveal">
+    <div class="eyebrow" style="color:#FF6B7E">Interlude · 04</div>
+    <p>Scale, in banking, is the <em>floor</em>. <span class="signal">What you do once you've reached it is the actual story.</span></p>
+  </div>
+
+  <!-- =================== CLOSE =================== -->
+  <section class="close">
+    <div class="eyebrow reveal">The takeaway · One bank</div>
+    <h2 class="display reveal">
+      <em>70 million</em> reasons<br/>
+      to keep <span style="color:#9DA9C2">earning it<span style="color:#FF8B95">.</span></span>
+    </h2>
+    <p class="lede reveal">
+      The thesis closes where it opened. <em>70 million customers.</em> $113B a year. $30B a quarter. A $40B buyback says the bank believes it. The customers — the engineers, the advisors, the 213,000 people who walk through the door each morning — are the only proof that holds.
+    </p>
+
+    <div class="signoff reveal">
+      <div>
+        BAC · NYSE
+        <b>Bank of America</b>
+      </div>
+      <div style="text-align:right">
+        Recap · FY '25
+        <b style="font-style:normal; font-size:14px; letter-spacing:0.06em">END</b>
+      </div>
+    </div>
+  </section>
+
+<script>
+/* ============ HERO COLUMNS (skyline) ============ */
+(function(){
+  const g = document.getElementById('hero-columns');
+  if(!g) return;
+  const widths = [22,18,28,16,24,20,26,18,30,16,22,20,28,18,24,16,28,20,22];
+  let x = 0;
+  const gap = 1;
+  const total = widths.reduce((a,b)=>a+b,0) + gap*(widths.length-1);
+  const startX = (430 - total)/2;
+  x = startX;
+  widths.forEach((w,i)=>{
+    const seed = (i*17+13)%19;
+    const h = 60 + seed*7;
+    const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    r.setAttribute('x', x);
+    r.setAttribute('y', 270 - h);
+    r.setAttribute('width', w);
+    r.setAttribute('height', h);
+    r.setAttribute('fill', i%5===2 ? '#15233E' : '#0B1426');
+    r.setAttribute('opacity', 0.86);
+    g.appendChild(r);
+    // window dots — a few lit
+    const cols = Math.floor(w/6);
+    const rows = Math.floor(h/8);
+    for(let cy=0; cy<rows; cy++){
+      for(let cx=0; cx<cols; cx++){
+        if(((cx*7+cy*3+i)%9)===0){
+          const d = document.createElementNS('http://www.w3.org/2000/svg','rect');
+          d.setAttribute('x', x + 2 + cx*5);
+          d.setAttribute('y', 270 - h + 4 + cy*7);
+          d.setAttribute('width', 2);
+          d.setAttribute('height', 2);
+          d.setAttribute('fill', (cx+cy+i)%17===0 ? '#FF8B95' : '#F5E6A8');
+          d.setAttribute('opacity', 0.7);
+          g.appendChild(d);
+        }
+      }
+    }
+    x += w + gap;
+  });
+})();
+
+/* ============ DOT GRID — 70M of 260M, 5x14 = 70 dots, ~27% lit ============ */
+(function(){
+  const svg = document.getElementById('dot-grid');
+  if(!svg) return;
+  const cols = 24, rows = 10; // 240 dots
+  const W = 380, H = 200;
+  const padX = 8, padY = 10;
+  const stepX = (W - padX*2) / (cols-1);
+  const stepY = (H - padY*2) / (rows-1);
+  // 70/260 ≈ 27% lit, distributed pseudo-randomly but deterministic
+  const total = cols*rows; // 240
+  const lit = Math.round(total * 70/260); // ≈65
+  const litSet = new Set();
+  // pick lit indices via deterministic stride-shuffle
+  let i = 7;
+  while(litSet.size < lit){
+    litSet.add(i % total);
+    i = (i*17 + 13) % (total+1);
+  }
+  let n = 0;
+  for(let r=0; r<rows; r++){
+    for(let c=0; c<cols; c++){
+      const cx = padX + c*stepX;
+      const cy = padY + r*stepY;
+      const dot = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      dot.setAttribute('x', cx-3);
+      dot.setAttribute('y', cy-3);
+      dot.setAttribute('width', 6);
+      dot.setAttribute('height', 6);
+      dot.setAttribute('rx', 1);
+      const isLit = litSet.has(n);
+      dot.setAttribute('fill', isLit ? '#C8102E' : '#2A3550');
+      dot.setAttribute('opacity', 0);
+      dot.style.transition = `opacity 600ms cubic-bezier(0.22,1,0.36,1) ${(c*16 + r*40)%900}ms`;
+      svg.appendChild(dot);
+      n++;
+    }
+  }
+  // reveal when grid host is in view
+  const host = document.querySelector('.dot-grid-host');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        svg.querySelectorAll('rect').forEach(d=>d.setAttribute('opacity', d.getAttribute('fill')==='#C8102E' ? 0.95 : 0.35));
+        io.disconnect();
+      }
+    });
+  }, {threshold:0.3});
+  io.observe(host);
+})();
+
+/* ============ GEO CIRCLES ============ */
+(function(){
+  const g = document.getElementById('geo-circles');
+  if(!g) return;
+  // Concentric flow: US is dominant disc center-left, others orbit
+  const data = [
+    {pct:88, region:'US',  cx:140, cy:115, fill:'#0B1426', r: Math.sqrt(88)*9.0,  label:'United States · 88%', labelColor:'#C8102E'},
+    {pct:6,  region:'EU',  cx:280, cy:80,  fill:'#1F3358', r: Math.sqrt(6)*9.0,   label:'Europe & UK · 6%',    labelColor:'#5C6477'},
+    {pct:4,  region:'APAC',cx:320, cy:140, fill:'#2E4A78', r: Math.sqrt(4)*9.0,   label:'Asia-Pacific · 4%',   labelColor:'#5C6477'},
+    {pct:2,  region:'ROW', cx:285, cy:185, fill:'#6F84A8', r: Math.sqrt(2)*9.0,   label:'Rest · 2%',           labelColor:'#5C6477'},
+  ];
+  data.forEach((d,i)=>{
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx', d.cx);
+    c.setAttribute('cy', d.cy);
+    c.setAttribute('r', 0);
+    c.setAttribute('fill', d.fill);
+    c.setAttribute('opacity', i===0 ? 1 : 0.85);
+    c.style.transition = `r 900ms cubic-bezier(0.22,1,0.36,1) ${i*120}ms`;
+    g.appendChild(c);
+    // label
+    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x', i===0 ? d.cx : d.cx + d.r + 6);
+    t.setAttribute('y', i===0 ? d.cy + 4 : d.cy + 3);
+    t.setAttribute('text-anchor', i===0 ? 'middle' : 'start');
+    t.setAttribute('font-family', 'Geist Mono');
+    t.setAttribute('font-size', i===0 ? 11 : 9);
+    t.setAttribute('letter-spacing', '0.08em');
+    t.setAttribute('fill', i===0 ? '#F5F1E8' : d.labelColor);
+    t.setAttribute('opacity', 0);
+    t.style.transition = `opacity 500ms ease-out ${500 + i*120}ms`;
+    t.textContent = i===0 ? '88%' : d.label;
+    g.appendChild(t);
+    // store target r
+    c.dataset.r = d.r;
+  });
+  // tiny accent dot on US
+  const acc = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  acc.setAttribute('cx', 140);
+  acc.setAttribute('cy', 115 - data[0].r + 2);
+  acc.setAttribute('r', 3.5);
+  acc.setAttribute('fill', '#C8102E');
+  acc.setAttribute('opacity', 0);
+  acc.style.transition = 'opacity 400ms ease-out 1100ms';
+  g.appendChild(acc);
+
+  const host = document.querySelector('.geo-scene');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        g.querySelectorAll('circle').forEach(c=>{
+          if(c.dataset.r) c.setAttribute('r', c.dataset.r);
+        });
+        g.querySelectorAll('text').forEach(t=>t.setAttribute('opacity', 1));
+        acc.setAttribute('opacity', 1);
+        io.disconnect();
+      }
+    });
+  }, {threshold:0.3});
+  io.observe(host);
+})();
+
+/* ============ BUYBACK CHIPS — 40 chips falling into vault ============ */
+(function(){
+  const g = document.getElementById('chips');
+  const cap = document.getElementById('chip-caption');
+  if(!g) return;
+  // arrange 40 chips in a stacked pyramid on the floor
+  // bottom row 12, then 10, 8, 6, 4 = 40
+  const rowsCounts = [12,10,8,6,4];
+  const chipW = 22, chipH = 8;
+  const floorY = 200;
+  const cxBase = 190;
+  const chips = [];
+  for(let r=0; r<rowsCounts.length; r++){
+    const n = rowsCounts[r];
+    const rowW = n*chipW + (n-1)*2;
+    const startX = cxBase - rowW/2;
+    const y = floorY - (r+1)*chipH - r*1;
+    for(let i=0; i<n; i++){
+      const c = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      c.setAttribute('x', startX + i*(chipW+2));
+      c.setAttribute('y', -30); // start above
+      c.setAttribute('width', chipW);
+      c.setAttribute('height', chipH);
+      c.setAttribute('rx', 1.5);
+      // alternate signal red and pale gold for interest
+      const isRed = (r*7 + i*3) % 5 === 0;
+      c.setAttribute('fill', isRed ? '#C8102E' : '#B8893E');
+      c.setAttribute('opacity', 0);
+      g.appendChild(c);
+      chips.push({el:c, targetY: y, delay: (r*120 + i*45)});
+    }
+  }
+
+  const host = document.querySelector('.buyback-scene');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        chips.forEach(({el, targetY, delay})=>{
+          el.style.transition = `y 720ms cubic-bezier(0.34,1.56,0.64,1) ${delay}ms, opacity 240ms ease-out ${delay}ms`;
+          // can't transition svg attribute 'y' reliably across browsers — use transform
+          requestAnimationFrame(()=>{
+            el.setAttribute('opacity', 1);
+            // animate via CSS transform
+            const startY = -30;
+            const dy = targetY - startY;
+            el.style.transform = `translateY(${dy}px)`;
+            el.style.transition = `transform 760ms cubic-bezier(0.34,1.56,0.64,1) ${delay}ms, opacity 220ms ease-out ${delay}ms`;
+          });
+        });
+        setTimeout(()=>{ cap.setAttribute('opacity', 1); cap.style.transition='opacity 500ms ease-out'; }, 1400);
+        io.disconnect();
+      }
+    });
+  }, {threshold:0.25});
+  io.observe(host);
+})();
+
+/* ============ SCROLL PROGRESS BAR ============ */
+(function(){
+  const bar = document.getElementById('progress');
+  function tick(){
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const p = Math.min(1, Math.max(0, window.scrollY / Math.max(1, h)));
+    bar.style.width = (p*100).toFixed(2) + '%';
+  }
+  document.addEventListener('scroll', tick, {passive:true});
+  window.addEventListener('resize', tick);
+  tick();
+})();
+
+/* ============ REVEAL ON SCROLL + COUNT-UPS + BARS ============ */
+(function(){
+  const els = document.querySelectorAll('.reveal');
+  const animateCount = (el) => {
+    const target = parseFloat(el.dataset.count);
+    const dec = parseInt(el.dataset.decimals || '0', 10);
+    const dur = 1200;
+    const start = performance.now();
+    const from = 0;
+    function step(t){
+      const k = Math.min(1, (t-start)/dur);
+      const eased = 1 - Math.pow(1-k, 3);
+      const v = from + (target - from)*eased;
+      el.textContent = v.toFixed(dec);
+      if(k < 1) requestAnimationFrame(step);
+      else el.textContent = target.toFixed(dec);
+    }
+    requestAnimationFrame(step);
+  };
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        // count-ups inside
+        e.target.querySelectorAll('[data-count]').forEach(c=>{
+          if(!c.dataset.done){c.dataset.done = '1'; animateCount(c);}
+        });
+        // bar fills
+        e.target.querySelectorAll('.bar-fill').forEach(b=>{
+          const w = b.dataset.w; b.style.width = w + '%';
+        });
+        // pillar bars
+        e.target.querySelectorAll('.pillar-bar').forEach(p=>{
+          const h = p.dataset.h; p.style.height = h + 'px';
+        });
+        // geo meter
+        e.target.querySelectorAll('.meter > span').forEach(s=>{
+          const w = s.dataset.w; s.style.width = w + '%';
+        });
+        // rival bars
+        e.target.querySelectorAll('.rival-bar .me, .rival-bar .them').forEach(b=>{
+          const w = b.dataset.w; b.style.width = w + '%';
+        });
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.18, rootMargin:'0px 0px -10% 0px'});
+  els.forEach(el=>io.observe(el));
+
+  // also animate hero count-ups immediately (they're 'in' already)
+  document.querySelectorAll('.hero [data-count]').forEach(c=>{
+    if(!c.dataset.done){c.dataset.done = '1'; animateCount(c);}
+  });
+
+  // engines animate when section visible — already covered by reveal pillar logic above
+})();
+
+/* ============ COST ROWS — tap to expand (additive) ============ */
+(function(){
+  document.querySelectorAll('.cost-row').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      row.classList.toggle('open');
+    });
+  });
+})();
+
+/* ============ HERO SCENE PARALLAX ============ */
+(function(){
+  const scene = document.querySelector('.hero-scene');
+  if(!scene) return;
+  document.addEventListener('scroll', ()=>{
+    const y = window.scrollY;
+    if(y < 800){
+      scene.style.transform = `translateY(${y*0.18}px)`;
+    }
+  }, {passive:true});
+})();
+</script>
+</body>
+</html>

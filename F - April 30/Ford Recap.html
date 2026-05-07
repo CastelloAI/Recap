@@ -1,0 +1,1426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=440, initial-scale=1" />
+<title>F · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ---------- Ford-specific palette ---------- */
+:root {
+  /* Type */
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, Menlo, monospace;
+
+  /* Ford palette — deep blue oval, oxidized steel, weathered cream */
+  --paper:        #F1ECE2;   /* warm cream (Ford brochure stock) */
+  --paper-2:      #E7E1D3;   /* raised tone */
+  --paper-3:      #D9D2C0;   /* deeper card */
+  --ink:          #0B1726;   /* near-black with blue cast */
+  --ink-2:        #2A3A4D;
+  --ink-3:        #5C6A7A;
+  --ink-4:        #8B97A4;
+
+  /* Ford blue — the oval */
+  --blue-50:   #E5EEF8;
+  --blue-100:  #BFD3EB;
+  --blue-300:  #4F86C0;
+  --blue-500:  #1E5BA0;
+  --blue-600:  #003478;   /* iconic Ford blue */
+  --blue-700:  #002356;
+  --blue-800:  #001838;
+  --blue-900:  #000C1F;
+
+  /* Oxidized / steel */
+  --steel:     #5D6970;
+  --rust:      #B65A3E;     /* secondary accent — patina */
+
+  /* Signal / loss */
+  --signal:    #C8412B;     /* deep red — the loss */
+  --signal-warm:#E07A5F;
+
+  /* Lines */
+  --line:      #C7BFAF;
+  --line-2:    #B0A693;
+
+  /* Spacing */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+  --s-9: 96px; --s-10: 128px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; padding: 0; }
+
+/* Outer canvas — page sits on a dark backdrop so it reads as a standalone artifact */
+body {
+  background: #0a0a0a;
+  font-family: var(--font-sans);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+/* The artifact itself — fixed mobile width */
+.page {
+  width: 440px;
+  max-width: 100vw;
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 30px 80px rgba(0,0,0,0.5);
+}
+
+/* ---------- Persistent chrome ---------- */
+.chrome {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  background: rgba(241, 236, 226, 0.78);
+  border-bottom: 1px solid rgba(199, 191, 175, 0.6);
+}
+.chrome-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 14px var(--s-5) 12px;
+}
+.tick {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--blue-600);
+  background: var(--blue-50);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--blue-100);
+}
+.chrome-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.chrome-label {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.progress {
+  height: 1.5px;
+  background: var(--blue-600);
+  width: 0%;
+  transition: width 80ms linear;
+}
+
+/* ---------- Section primitives ---------- */
+section { position: relative; padding: var(--s-9) var(--s-5); }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--blue-600);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--s-5);
+}
+.eyebrow .dot { width:5px; height:5px; border-radius:50%; background: var(--blue-600); }
+.eyebrow .ln { flex: 1; height: 1px; background: var(--line); }
+
+h2.beat {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 44px;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 var(--s-5);
+}
+h2.beat em { font-style: italic; color: var(--blue-600); }
+
+p.body {
+  font-family: var(--font-sans);
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0;
+  text-wrap: pretty;
+}
+p.body em { font-family: var(--font-display); font-style: italic; color: var(--blue-600); font-size: 1.1em; }
+p.body em.signal { color: var(--signal); }
+
+.mono { font-family: var(--font-mono); }
+
+/* ---------- HERO ---------- */
+.hero {
+  padding: var(--s-7) var(--s-5) var(--s-9);
+  position: relative;
+  overflow: hidden;
+}
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: var(--s-7);
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 68px;
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+}
+.hero h1 .pl1 { display: block; }
+.hero h1 .pl2 { display: block; color: var(--blue-600); font-style: italic; }
+.hero h1 .pl3 { display: block; color: var(--signal); font-style: italic; }
+.hero h1 .num {
+  font-family: var(--font-display);
+  font-style: normal;
+}
+.hero-sub {
+  margin-top: var(--s-6);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--s-3) var(--s-4);
+  align-items: baseline;
+}
+.hero-sub .k {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.hero-sub .v {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink);
+}
+.hero-sub .v.big { font-family: var(--font-display); font-size: 22px; }
+
+/* The oval — abstracted, drifting in background of hero */
+.oval-bg {
+  position: absolute;
+  right: -90px;
+  top: 80px;
+  width: 360px;
+  height: 360px;
+  opacity: 0.045;
+  pointer-events: none;
+}
+
+/* ---------- Reset beat ---------- */
+.reset {
+  background: var(--blue-700);
+  color: var(--paper);
+  padding: var(--s-8) var(--s-6);
+  position: relative;
+}
+.reset.cream {
+  background: var(--paper-2);
+  color: var(--ink);
+}
+.reset .quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.reset.dark .quote em { color: #FFB199; font-style: italic; }
+.reset.cream .quote em { color: var(--signal); font-style: italic; }
+.reset .attr {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-top: var(--s-5);
+  opacity: 0.55;
+}
+
+/* ---------- Three engines ---------- */
+.engines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  margin-top: var(--s-6);
+}
+.engine {
+  position: relative;
+  padding: var(--s-5) var(--s-4);
+  background: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0));
+  border-top: 1px solid var(--line);
+}
+.engine:last-child { border-bottom: 1px solid var(--line); }
+.engine-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+}
+.engine-name {
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.engine-name .lo { color: var(--ink-3); font-style: italic; }
+.engine-rev {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+.engine-bar {
+  height: 6px;
+  background: var(--paper-3);
+  border-radius: 3px;
+  margin-top: var(--s-3);
+  overflow: hidden;
+  position: relative;
+}
+.engine-bar .fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0;
+  background: var(--blue-600);
+  border-radius: 3px;
+  transition: width 1.4s var(--ease-out);
+}
+.engine.pro .fill { background: var(--blue-500); }
+.engine.modele .fill { background: var(--signal); }
+.engine-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--s-3);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.engine-meta .ebit.pos { color: #2D6A4F; }
+.engine-meta .ebit.neg { color: var(--signal); }
+
+/* ---------- Pickup truck SVG ---------- */
+.truck-wrap {
+  margin: var(--s-7) calc(var(--s-5) * -1) 0;
+  padding: 0 var(--s-5);
+  position: relative;
+}
+.truck-svg { width: 100%; height: auto; display: block; }
+
+.scale-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-2) var(--s-5);
+  margin-top: var(--s-7);
+  border-top: 1px solid var(--line);
+  padding-top: var(--s-5);
+}
+.scale-stat .n {
+  font-family: var(--font-display);
+  font-size: 38px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.scale-stat .n .unit { font-size: 0.6em; color: var(--ink-3); margin-left: 2px; }
+.scale-stat .l {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 6px;
+}
+
+/* ---------- 100¢ grid ---------- */
+.cent-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  margin-top: var(--s-6);
+  padding: var(--s-5);
+  background: #fff;
+  border: 1px solid var(--line);
+}
+.cent {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: var(--paper-3);
+  position: relative;
+  transition: background 240ms var(--ease-out);
+}
+.cent.lit { background: var(--blue-600); }
+.cent.cogs { background: #2563EB; }
+.cent.rd  { background: #DC2626; }
+.cent.sga { background: #16A34A; }
+.cent.int { background: #9333EA; }
+.cent.lost { background: var(--signal); }
+
+.cent-legend {
+  margin-top: var(--s-5);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-3) var(--s-5);
+}
+.lg-row {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+}
+.lg-row .sw { width: 10px; height: 10px; border-radius: 2px; }
+.lg-row .pct { margin-left: auto; color: var(--ink-3); }
+
+.cogs-callout {
+  margin-top: var(--s-6);
+  padding: var(--s-5);
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 4px;
+}
+.cogs-callout .big {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.cogs-callout .big em { font-style: italic; color: #6FA8E0; }
+.cogs-callout p {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: var(--s-3) 0 0;
+  color: rgba(241, 236, 226, 0.7);
+}
+
+/* ---------- The bet — dark interlude ---------- */
+.bet {
+  background: var(--ink);
+  color: var(--paper);
+  padding: var(--s-9) var(--s-5);
+  position: relative;
+  overflow: hidden;
+}
+.bet .eyebrow { color: var(--signal-warm); }
+.bet .eyebrow .dot { background: var(--signal-warm); }
+.bet .eyebrow .ln { background: rgba(255,255,255,0.12); }
+.bet h2.beat { color: var(--paper); }
+.bet h2.beat em { color: var(--signal-warm); }
+.bet p.body { color: rgba(241, 236, 226, 0.72); }
+.bet p.body em { color: var(--signal-warm); }
+
+.writedown {
+  margin-top: var(--s-7);
+  position: relative;
+  padding: var(--s-6) 0;
+}
+.wd-num {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 96px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--signal);
+  display: block;
+}
+.wd-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-top: var(--s-3);
+}
+.wd-detail {
+  margin-top: var(--s-5);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(241,236,226,0.65);
+}
+
+.cap-alloc {
+  margin-top: var(--s-7);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  padding-top: var(--s-5);
+}
+.cap-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.cap-row:last-child { border-bottom: none; }
+.cap-k {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: rgba(241,236,226,0.85);
+}
+.cap-v {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--paper);
+  letter-spacing: 0.04em;
+}
+.cap-v.neg { color: var(--signal-warm); }
+
+/* ---------- Footprint map ---------- */
+.map-wrap {
+  margin-top: var(--s-6);
+  position: relative;
+}
+.map-svg { width: 100%; height: auto; display: block; }
+
+.geo-list {
+  margin-top: var(--s-5);
+}
+.geo-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.geo-row:last-child { border-bottom: 1px solid var(--line); }
+.geo-pct {
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1;
+  color: var(--blue-600);
+  font-style: italic;
+}
+.geo-pct .pp { font-size: 0.55em; color: var(--ink-3); margin-left: 1px; }
+.geo-name {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--ink);
+}
+.geo-bar {
+  width: 90px;
+  height: 4px;
+  background: var(--paper-3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.geo-bar .fill {
+  display: block; height: 100%;
+  background: var(--blue-600);
+  width: 0;
+  transition: width 1.2s var(--ease-out);
+}
+
+/* ---------- Competitors ---------- */
+.comp {
+  margin-top: var(--s-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+.comp-card {
+  position: relative;
+  padding: var(--s-5) 0;
+  border-top: 1px solid var(--line);
+}
+.comp-card:last-child { border-bottom: 1px solid var(--line); }
+.comp-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+}
+.comp-name {
+  font-family: var(--font-display);
+  font-size: 30px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.comp-tick {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  background: var(--paper-2);
+  padding: 3px 6px;
+  border-radius: 3px;
+}
+.comp-vs {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* Side-by-side market cap rectangles */
+.mcap {
+  margin-top: var(--s-4);
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s-3);
+  height: 88px;
+}
+.mcap-block {
+  position: relative;
+  background: var(--blue-600);
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border-top: 2px solid var(--blue-700);
+}
+.mcap-block.ford { background: var(--ink); }
+.mcap-block.tesla {
+  background: var(--signal);
+}
+.mcap-block.gm {
+  background: var(--steel);
+}
+.mcap-block.cpng {
+  background: var(--rust);
+}
+.mcap-label {
+  position: absolute;
+  top: -18px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.comp-desc {
+  margin-top: var(--s-4);
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.comp-desc em { font-family: var(--font-display); font-style: italic; color: var(--blue-600); font-size: 1.05em; }
+
+.comp-stats {
+  margin-top: var(--s-4);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-3);
+}
+.cs {
+  border-left: 1px solid var(--line);
+  padding-left: var(--s-3);
+}
+.cs:first-child { border-left: none; padding-left: 0; }
+.cs .n {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.cs .n.neg { color: var(--signal); }
+.cs .n.pos { color: #2D6A4F; }
+.cs .l {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 3px;
+}
+
+/* ---------- Closing thesis ---------- */
+.close {
+  background: linear-gradient(180deg, var(--blue-700) 0%, var(--blue-900) 100%);
+  color: var(--paper);
+  padding: var(--s-9) var(--s-5) var(--s-10);
+  position: relative;
+  overflow: hidden;
+}
+.close .eyebrow { color: rgba(255,255,255,0.55); }
+.close .eyebrow .dot { background: rgba(255,255,255,0.55); }
+.close .eyebrow .ln { background: rgba(255,255,255,0.18); }
+.close h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 56px;
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  color: var(--paper);
+  margin: 0;
+}
+.close h2 em { font-style: italic; color: #9CC2EE; }
+.close p.body { color: rgba(241,236,226,0.72); }
+
+.close-stat {
+  margin-top: var(--s-7);
+  padding-top: var(--s-5);
+  border-top: 1px solid rgba(255,255,255,0.18);
+}
+.close-stat .big {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 96px;
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  color: var(--paper);
+}
+.close-stat .lbl {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-top: var(--s-3);
+}
+
+.colophon {
+  margin-top: var(--s-9);
+  padding-top: var(--s-5);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ---------- Reveal-on-scroll ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+}
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal.d1 { transition-delay: 60ms; }
+.reveal.d2 { transition-delay: 120ms; }
+.reveal.d3 { transition-delay: 180ms; }
+.reveal.d4 { transition-delay: 240ms; }
+
+/* Counter style */
+.count { font-variant-numeric: tabular-nums; }
+
+/* small horizontal flow rule used inside reset beats */
+.flow-line {
+  height: 1px;
+  background: rgba(255,255,255,0.18);
+  margin: var(--s-5) 0 0;
+  width: 40px;
+}
+.reset.cream .flow-line { background: var(--line-2); }
+
+/* Bridge hairlines in body — used to softly connect beats without dashboard rules */
+.section-bridge {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line) 30%, var(--line) 70%, transparent);
+  margin: 0 auto;
+  width: 60%;
+  opacity: 0.6;
+}
+
+/* History dial — 122 years */
+.history {
+  margin-top: var(--s-7);
+  position: relative;
+  padding: var(--s-5) 0;
+  border-top: 1px solid var(--line);
+}
+.hist-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+}
+.hist-num {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 64px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--blue-600);
+}
+.hist-cap {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  flex: 1;
+}
+.hist-line {
+  margin-top: var(--s-5);
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+}
+.hist-line .bar {
+  flex: 1;
+  height: 1px;
+  background: var(--line-2);
+  position: relative;
+}
+.hist-line .bar::before,
+.hist-line .bar::after {
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 6px;
+  background: var(--line-2);
+  top: -3px;
+}
+.hist-line .bar::before { left: 0; }
+.hist-line .bar::after { right: 0; }
+
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <!-- ======= PERSISTENT CHROME ======= -->
+  <div class="chrome">
+    <div class="chrome-inner">
+      <span class="tick">F</span>
+      <span class="chrome-name">Ford Motor Co.</span>
+      <span class="chrome-label">Recap · FY '25</span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ======= 1. HERO / THESIS ======= -->
+  <section class="hero">
+    <svg class="oval-bg" viewBox="0 0 360 360" aria-hidden="true">
+      <ellipse cx="180" cy="180" rx="170" ry="100" fill="none" stroke="#003478" stroke-width="6"/>
+      <ellipse cx="180" cy="180" rx="156" ry="88" fill="none" stroke="#003478" stroke-width="1.5"/>
+    </svg>
+    <div class="hero-eyebrow">Detroit, Michigan · Est. 1903</div>
+    <h1>
+      <span class="pl1 reveal">4.4 million</span>
+      <span class="pl1 reveal d1" style="font-style:italic; color:var(--ink-2);">vehicles sold.</span>
+      <span class="pl2 reveal d2"><span class="num">$187B</span> in</span>
+      <span class="pl2 reveal d2" style="font-style:italic;">record revenue.</span>
+      <span class="pl3 reveal d3">An $8.16B loss.</span>
+    </h1>
+
+    <div class="hero-sub reveal d4">
+      <div class="k">Ticker</div><div class="v mono">NYSE: F</div>
+      <div class="k">Market Cap</div><div class="v big">$51.34B</div>
+      <div class="k">Employees</div><div class="v">~169,000 worldwide</div>
+      <div class="k">Brands</div><div class="v">Ford · Lincoln</div>
+    </div>
+  </section>
+
+  <!-- ======= RESET BEAT ======= -->
+  <div class="reset cream">
+    <p class="quote">You can sell more cars than ever — and <em>still lose money on every dollar</em>. Welcome to American manufacturing in 2025.</p>
+    <div class="flow-line"></div>
+    <div class="attr">Reset · 01</div>
+  </div>
+
+  <!-- ======= 2. THE BUSINESS — three engines ======= -->
+  <section>
+    <div class="eyebrow"><span class="dot"></span><span>The business · three engines</span><span class="ln"></span></div>
+    <h2 class="beat">Three segments. <em>One running hot</em>, one running steady, one bleeding.</h2>
+    <p class="body">Ford restructured around three customer-centered units. Together they moved <em>4.4M vehicles</em>. Apart, their economics could not be more different.</p>
+
+    <div class="engines" id="engines">
+      <div class="engine blue">
+        <div class="engine-row">
+          <span class="engine-name">Ford Blue <span class="lo">— ICE & hybrid</span></span>
+          <span class="engine-rev">$101.0B</span>
+        </div>
+        <div class="engine-bar"><span class="fill" data-w="100"></span></div>
+        <div class="engine-meta">
+          <span>54% of auto revenue</span>
+          <span class="ebit pos">EBIT positive</span>
+        </div>
+      </div>
+
+      <div class="engine pro">
+        <div class="engine-row">
+          <span class="engine-name">Ford Pro <span class="lo">— commercial</span></span>
+          <span class="engine-rev">$66.3B</span>
+        </div>
+        <div class="engine-bar"><span class="fill" data-w="65.6"></span></div>
+        <div class="engine-meta">
+          <span>The profit engine · $6.8B EBIT</span>
+          <span class="ebit pos">double-digit margin</span>
+        </div>
+      </div>
+
+      <div class="engine modele">
+        <div class="engine-row">
+          <span class="engine-name">Ford Model e <span class="lo">— EV</span></span>
+          <span class="engine-rev">$6.7B</span>
+        </div>
+        <div class="engine-bar"><span class="fill" data-w="6.6"></span></div>
+        <div class="engine-meta">
+          <span>$4.8B EBIT loss</span>
+          <span class="ebit neg">−71% margin</span>
+        </div>
+      </div>
+
+      <div class="engine" style="opacity:0.85;">
+        <div class="engine-row">
+          <span class="engine-name" style="font-size:22px;">Ford Credit <span class="lo">— financial services</span></span>
+          <span class="engine-rev">$13.3B</span>
+        </div>
+        <div class="engine-bar"><span class="fill" data-w="13.2" style="background:var(--steel)"></span></div>
+        <div class="engine-meta">
+          <span>Financing & leasing</span>
+          <span>fourth wheel</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-bridge"></div>
+
+  <!-- ======= 3. SCALE — the F-150 metaphor ======= -->
+  <section>
+    <div class="eyebrow"><span class="dot"></span><span>The scale · $187.27B</span><span class="ln"></span></div>
+    <h2 class="beat">A pickup the size of <em>a small economy</em>.</h2>
+    <p class="body">Pour a year of revenue into a single truck bed and watch it fill. <em>$42.45B</em> arrived in Q4 alone.</p>
+
+    <div class="truck-wrap">
+      <!-- Hand-built F-150 silhouette. Bed fills as user scrolls. -->
+      <svg class="truck-svg" viewBox="0 0 400 180" id="truck" aria-hidden="true">
+        <defs>
+          <clipPath id="bedClip">
+            <rect x="218" y="60" width="138" height="60" rx="2"/>
+          </clipPath>
+          <linearGradient id="oilGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1E5BA0"/>
+            <stop offset="1" stop-color="#003478"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Ground line -->
+        <line x1="20" y1="148" x2="380" y2="148" stroke="#C7BFAF" stroke-width="1"/>
+
+        <!-- Cab + body silhouette -->
+        <!-- Hood -->
+        <path d="M30 120 L30 100 Q30 92 38 92 L96 92 Q104 92 108 84 L130 60 Q136 52 148 52 L210 52 Q220 52 220 60 L220 120 Z"
+              fill="#0B1726" stroke="#0B1726" stroke-width="0"/>
+        <!-- Cab windows -->
+        <path d="M138 60 L150 60 L150 76 L138 76 Z M156 60 L208 60 L214 76 L156 76 Z"
+              fill="#5C6A7A" opacity="0.6"/>
+        <!-- Bed (open container) -->
+        <rect x="218" y="60" width="138" height="60" rx="2" fill="none" stroke="#0B1726" stroke-width="3"/>
+        <rect x="218" y="60" width="3" height="60" fill="#0B1726"/>
+        <rect x="353" y="60" width="3" height="60" fill="#0B1726"/>
+        <!-- Bed back -->
+        <rect x="218" y="118" width="138" height="6" fill="#0B1726"/>
+        <!-- Filling — revenue as oil/cash -->
+        <g clip-path="url(#bedClip)">
+          <rect id="bedFill" x="218" y="120" width="138" height="0" fill="url(#oilGrad)"/>
+          <!-- ripples -->
+          <path id="ripple" d="M218 0 Q252 -3 286 0 T354 0" stroke="#4F86C0" stroke-width="1.2" fill="none" opacity="0.6"/>
+        </g>
+        <!-- Wheels -->
+        <circle cx="80" cy="148" r="18" fill="#0B1726"/>
+        <circle cx="80" cy="148" r="9" fill="#5C6A7A"/>
+        <circle cx="300" cy="148" r="18" fill="#0B1726"/>
+        <circle cx="300" cy="148" r="9" fill="#5C6A7A"/>
+        <!-- Headlight -->
+        <rect x="30" y="98" width="6" height="8" fill="#F4C430" rx="1"/>
+
+        <!-- Annotations -->
+        <line x1="218" y1="50" x2="218" y2="60" stroke="#003478" stroke-width="0.8"/>
+        <line x1="356" y1="50" x2="356" y2="60" stroke="#003478" stroke-width="0.8"/>
+        <line x1="218" y1="50" x2="356" y2="50" stroke="#003478" stroke-width="0.8"/>
+        <text x="287" y="44" text-anchor="middle" font-family="Geist Mono" font-size="8" fill="#003478" letter-spacing="1">
+          <tspan id="bedAmount">$0.0B</tspan> · FY '25
+        </text>
+      </svg>
+    </div>
+
+    <div class="scale-stats">
+      <div class="scale-stat">
+        <div class="n count" data-target="187.27" data-suffix="B" data-prefix="$">$0<span class="unit">B</span></div>
+        <div class="l">Annual revenue</div>
+      </div>
+      <div class="scale-stat">
+        <div class="n count" data-target="4.4" data-suffix="M">0<span class="unit">M</span></div>
+        <div class="l">Vehicles sold</div>
+      </div>
+      <div class="scale-stat">
+        <div class="n count" data-target="289.16" data-prefix="$" data-suffix="B">$0<span class="unit">B</span></div>
+        <div class="l">Total assets</div>
+      </div>
+      <div class="scale-stat">
+        <div class="n count" data-target="169" data-suffix="K">0<span class="unit">K</span></div>
+        <div class="l">Employees</div>
+      </div>
+    </div>
+
+    <div class="history">
+      <div class="hist-row">
+        <span class="hist-num">122</span>
+        <span class="hist-cap">years since Henry Ford incorporated the company in Dearborn, Michigan. Same headquarters. Same town.</span>
+      </div>
+      <div class="hist-line">
+        <span>1903</span>
+        <span class="bar"></span>
+        <span>2025</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= RESET BEAT ======= -->
+  <div class="reset dark">
+    <p class="quote">For every dollar that comes through the door, <em>ninety-three go right back out</em> as cost of revenue. That's the steel, the rubber, the chips, the wages.</p>
+    <div class="flow-line"></div>
+    <div class="attr">Reset · 02</div>
+  </div>
+
+  <!-- ======= 4. WHERE THE MONEY GOES — 100¢ grid ======= -->
+  <section>
+    <div class="eyebrow"><span class="dot"></span><span>A hundred cents in</span><span class="ln"></span></div>
+    <h2 class="beat">A dollar of Ford revenue, <em>broken into pennies</em>.</h2>
+    <p class="body">Industry-supplied cost ratios, painted onto a 100-cent grid. The blue field is what it costs to build the trucks. Everything else is the rest of the company.</p>
+
+    <div class="cent-grid" id="centGrid"><!-- 100 cells injected by JS --></div>
+
+    <div class="cent-legend">
+      <div class="lg-row"><span class="sw" style="background:#2563EB"></span> Cost of revenue <span class="pct">93¢</span></div>
+      <div class="lg-row"><span class="sw" style="background:#9333EA"></span> Interest <span class="pct">5¢</span></div>
+      <div class="lg-row"><span class="sw" style="background:#DC2626"></span> R&amp;D <span class="pct">4¢</span></div>
+      <div class="lg-row"><span class="sw" style="background:#16A34A"></span> SG&amp;A <span class="pct">3¢</span></div>
+    </div>
+
+    <div class="cogs-callout">
+      <div class="big">93<em>¢</em></div>
+      <p>Of every dollar Ford brings in, <em style="font-family:var(--font-display);font-style:italic;color:#9CC2EE;">ninety-three cents</em> are spoken for before payroll, before research, before a single dollar of interest. That is what it means to make things out of metal.</p>
+    </div>
+  </section>
+
+  <!-- ======= 5. THE BET — dark interlude ======= -->
+  <section class="bet">
+    <div class="eyebrow"><span class="dot"></span><span>The bet · MariTide moment</span><span class="ln"></span></div>
+    <h2 class="beat">Ford bet on electric. <em>Then it pulled back</em>.</h2>
+    <p class="body">In 2025 Ford rationalized its EV strategy — cancelling the F-150 Lightning, taking the impairment, accepting that Tesla had already won the price war. The accounting line for that decision sits below.</p>
+
+    <div class="writedown reveal">
+      <span class="wd-num">$17.4B</span>
+      <div class="wd-label">Pre-tax special items · EV strategy rationalization</div>
+      <div class="wd-detail">A single line item that swung the entire year. Without it, the loss is small. With it, the year breaks records — in both directions.</div>
+    </div>
+
+    <div class="cap-alloc">
+      <div class="cap-row"><span class="cap-k">Operating cash flow</span><span class="cap-v">+$21.28B</span></div>
+      <div class="cap-row"><span class="cap-k">Capital expenditure</span><span class="cap-v neg">−$8.81B</span></div>
+      <div class="cap-row"><span class="cap-k">Free cash flow</span><span class="cap-v">+$12.47B</span></div>
+      <div class="cap-row"><span class="cap-k">Dividends paid</span><span class="cap-v neg">−$2.99B</span></div>
+      <div class="cap-row"><span class="cap-k">Net loss</span><span class="cap-v neg">−$8.16B</span></div>
+    </div>
+
+    <p class="body" style="margin-top: var(--s-6);">Ford targets <em>40–50% of free cash flow</em> back to shareholders. The dividend is the promise. The buyback is barely on — anti-dilutive only, while GM repurchases at scale.</p>
+  </section>
+
+  <!-- ======= 6. FOOTPRINT ======= -->
+  <section>
+    <div class="eyebrow"><span class="dot"></span><span>The footprint · 65 / 8 / 7 / 1 / 19</span><span class="ln"></span></div>
+    <h2 class="beat">Ford is a <em>North American company</em>, with a long tail.</h2>
+    <p class="body">Two-thirds of every dollar comes from American driveways. Canada makes it three-quarters of the continent. The rest of the world is a story Ford keeps writing.</p>
+
+    <div class="map-wrap">
+      <!-- Stylized map — emphasis North America, dotted-grid for the rest -->
+      <svg class="map-svg" viewBox="0 0 400 220" aria-hidden="true">
+        <defs>
+          <pattern id="dots" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.7" fill="#B0A693" opacity="0.6"/>
+          </pattern>
+        </defs>
+
+        <!-- Background "world" — dotted grid -->
+        <rect x="0" y="0" width="400" height="220" fill="url(#dots)"/>
+
+        <!-- Stylized continents — abstract blobs -->
+        <!-- North America -->
+        <path d="M40 50 Q60 30 110 32 L160 38 Q175 50 168 80 L172 110 Q160 130 130 138 L100 144 Q80 142 70 122 L52 98 Q34 78 40 50 Z"
+              fill="#003478" id="usaShape"/>
+        <!-- Canada blob -->
+        <path d="M55 28 Q90 18 150 22 L165 30 Q172 40 165 48 L110 50 Q70 48 55 38 Z"
+              fill="#1E5BA0" id="canadaShape"/>
+        <!-- Mexico tail -->
+        <path d="M100 142 Q108 152 100 168 L86 168 Q88 156 92 146 Z"
+              fill="#4F86C0" id="mexicoShape"/>
+        <!-- UK -->
+        <path d="M218 56 L228 52 L232 64 L230 76 L222 78 L216 70 Z"
+              fill="#1E5BA0" id="ukShape"/>
+        <!-- Europe abstract -->
+        <path d="M236 60 Q260 58 280 70 L276 96 Q252 100 236 90 Z"
+              fill="#8B97A4" opacity="0.6"/>
+        <!-- Asia abstract -->
+        <path d="M290 60 Q330 56 360 80 L368 110 Q352 130 320 132 L298 124 Q286 100 290 60 Z"
+              fill="#8B97A4" opacity="0.6"/>
+        <!-- South America abstract -->
+        <path d="M120 170 Q140 172 144 196 L132 210 Q116 208 112 192 Z"
+              fill="#8B97A4" opacity="0.6"/>
+        <!-- Africa abstract -->
+        <path d="M232 110 Q258 108 264 134 L256 168 Q236 170 228 152 Z"
+              fill="#8B97A4" opacity="0.6"/>
+        <!-- Australia -->
+        <path d="M340 168 Q360 166 368 178 L362 188 Q346 188 340 180 Z"
+              fill="#8B97A4" opacity="0.6"/>
+
+        <!-- Dot at Dearborn, MI -->
+        <circle cx="118" cy="86" r="3.5" fill="#F4C430" stroke="#0B1726" stroke-width="1"/>
+        <line x1="118" y1="86" x2="156" y2="60" stroke="#0B1726" stroke-width="0.6"/>
+        <text x="158" y="58" font-family="Geist Mono" font-size="7" fill="#0B1726" letter-spacing="1">DEARBORN, MI · HQ</text>
+
+        <!-- Region labels -->
+        <text x="100" y="110" font-family="Geist Mono" font-size="9" font-weight="500" fill="#FFFFFF" letter-spacing="1.2" text-anchor="middle">65%</text>
+      </svg>
+    </div>
+
+    <div class="geo-list">
+      <div class="geo-row">
+        <span class="geo-pct">65<span class="pp">%</span></span>
+        <span class="geo-name">United States</span>
+        <span class="geo-bar"><span class="fill" data-w="100"></span></span>
+      </div>
+      <div class="geo-row">
+        <span class="geo-pct">19<span class="pp">%</span></span>
+        <span class="geo-name">Rest of world</span>
+        <span class="geo-bar"><span class="fill" data-w="29"></span></span>
+      </div>
+      <div class="geo-row">
+        <span class="geo-pct">8<span class="pp">%</span></span>
+        <span class="geo-name">Canada</span>
+        <span class="geo-bar"><span class="fill" data-w="12"></span></span>
+      </div>
+      <div class="geo-row">
+        <span class="geo-pct">7<span class="pp">%</span></span>
+        <span class="geo-name">United Kingdom</span>
+        <span class="geo-bar"><span class="fill" data-w="11"></span></span>
+      </div>
+      <div class="geo-row">
+        <span class="geo-pct">1<span class="pp">%</span></span>
+        <span class="geo-name">Mexico</span>
+        <span class="geo-bar"><span class="fill" data-w="2"></span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= RESET BEAT ======= -->
+  <div class="reset cream">
+    <p class="quote">Detroit doesn't quit. <em>It re-tools.</em> The question is always who, on the next factory floor, is left standing.</p>
+    <div class="flow-line"></div>
+    <div class="attr">Reset · 03</div>
+  </div>
+
+  <!-- ======= 7. COMPETITORS ======= -->
+  <section>
+    <div class="eyebrow"><span class="dot"></span><span>The rivals · three weights</span><span class="ln"></span></div>
+    <h2 class="beat">Ford against <em>the field</em>.</h2>
+    <p class="body">Market caps drawn to scale. Tesla is not a competitor; Tesla is the room.</p>
+
+    <div class="comp">
+      <!-- GM -->
+      <div class="comp-card">
+        <div class="comp-head">
+          <span class="comp-name">General Motors</span>
+          <span class="comp-tick">GM</span>
+          <span class="comp-vs">Detroit · Detroit</span>
+        </div>
+        <div class="mcap">
+          <div class="mcap-block ford" style="width: 30%; height: 70%;">
+            <span class="mcap-label">Ford · $51B</span>
+          </div>
+          <div class="mcap-block gm" style="width: 35%; height: 100%;">
+            <span class="mcap-label" style="color:#fff;">GM · $73.5B</span>
+          </div>
+        </div>
+        <div class="comp-desc">Silverado vs. F-150. Same trucks, same fleets, same EV race. <em>GM has chosen buybacks</em>; Ford has chosen the dividend. The market has, for now, rewarded the buyback.</div>
+        <div class="comp-stats">
+          <div class="cs"><div class="n">$167.97B</div><div class="l">Revenue</div></div>
+          <div class="cs"><div class="n neg">−1.29%</div><div class="l">YoY growth</div></div>
+          <div class="cs"><div class="n">27.28×</div><div class="l">P/E TTM</div></div>
+        </div>
+      </div>
+
+      <!-- TESLA -->
+      <div class="comp-card">
+        <div class="comp-head">
+          <span class="comp-name">Tesla</span>
+          <span class="comp-tick">TSLA</span>
+          <span class="comp-vs">EV · the room</span>
+        </div>
+        <div class="mcap">
+          <div class="mcap-block ford" style="width: 6%; height: 22%;">
+            <span class="mcap-label" style="font-size:9px;">F</span>
+          </div>
+          <div class="mcap-block tesla" style="width: 90%; height: 100%;">
+            <span class="mcap-label" style="color:#fff;">Tesla · $1.45T</span>
+          </div>
+        </div>
+        <div class="comp-desc">Tesla is roughly <em>28× Ford's market cap</em>. The Model Y and Model 3 displaced Model e in the consumer segment; the Cybertruck and Semi pressure Ford Pro. The Lightning cancellation is partly a price-war retreat.</div>
+        <div class="comp-stats">
+          <div class="cs"><div class="n">$94.83B</div><div class="l">Revenue</div></div>
+          <div class="cs"><div class="n neg">−2.93%</div><div class="l">YoY growth</div></div>
+          <div class="cs"><div class="n">382×</div><div class="l">P/E TTM</div></div>
+        </div>
+      </div>
+
+      <!-- COUPANG -->
+      <div class="comp-card">
+        <div class="comp-head">
+          <span class="comp-name">Coupang</span>
+          <span class="comp-tick">CPNG</span>
+          <span class="comp-vs">Indirect · Asia logistics</span>
+        </div>
+        <div class="mcap">
+          <div class="mcap-block ford" style="width: 28%; height: 100%;">
+            <span class="mcap-label">Ford · $51B</span>
+          </div>
+          <div class="mcap-block cpng" style="width: 22%; height: 78%;">
+            <span class="mcap-label" style="color:#fff;">CPNG · $39B</span>
+          </div>
+        </div>
+        <div class="comp-desc">An indirect rival you wouldn't see coming: <em>last-mile delivery fleets electrifying and integrating vertically</em>. Every van Coupang builds is a van Ford Pro doesn't sell into Asia.</div>
+        <div class="comp-stats">
+          <div class="cs"><div class="n">$34.53B</div><div class="l">Revenue</div></div>
+          <div class="cs"><div class="n pos">+14.09%</div><div class="l">YoY growth</div></div>
+          <div class="cs"><div class="n">189×</div><div class="l">P/E TTM</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= RESET BEAT ======= -->
+  <div class="reset cream">
+    <p class="quote">A record year. A record loss. <em>And a check, mailed quarterly</em>, to anyone who held on.</p>
+    <div class="flow-line"></div>
+    <div class="attr">Reset · 04</div>
+  </div>
+
+  <!-- ======= 8. CLOSING THESIS ======= -->
+  <section class="close">
+    <div class="eyebrow"><span class="dot"></span><span>The takeaway · what survives</span><span class="ln"></span></div>
+    <h2>$187B in.<br><em>$2.99B out</em>,<br>to shareholders.</h2>
+    <p class="body" style="margin-top: var(--s-5);">The thesis opened on $187B inbound and an $8B loss. The year closes on a single durable number: <em style="font-family:var(--font-display); font-style: italic; color: #9CC2EE;">2.99 billion dollars</em> shipped, on schedule, to the people who held the stock.</p>
+
+    <div class="close-stat">
+      <div class="big">$2.99B</div>
+      <div class="lbl">FY '25 dividends paid</div>
+    </div>
+
+    <div class="close-stat">
+      <div class="big" style="font-size: 64px;">40–50<span style="font-size: 0.5em;">%</span></div>
+      <div class="lbl">Free-cash-flow return target</div>
+    </div>
+
+    <p class="body" style="margin-top: var(--s-6);">The oval is 122 years old. It has buried more competitors than it has lost to. The next factory floor will look different — but Ford, for now, intends to be the one re-tooling it.</p>
+
+    <div class="colophon">
+      <span>Ford Motor Company · NYSE: F</span>
+      <span>END · ↑</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// -------- Persistent scroll progress --------
+const page = document.getElementById('page');
+const progress = document.getElementById('progress');
+
+function updateProgress() {
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = scrollHeight > 0 ? Math.min(100, (scrollTop / scrollHeight) * 100) : 0;
+  progress.style.width = pct + '%';
+}
+window.addEventListener('scroll', updateProgress, { passive: true });
+window.addEventListener('resize', updateProgress);
+updateProgress();
+
+// -------- Build the 100¢ grid --------
+const grid = document.getElementById('centGrid');
+// Layout: 93 cogs (blue), 5 interest (purple), 4 rd (red), 3 sga (green) = 105 — but pct values from JSON
+// Actual JSON: 93, 3, 4, 5 — total 105. We treat it as proportional but the dominant story is 93.
+// We'll lay out: 93 cogs, then 4 R&D, then 3 SG&A — total 100. Interest (5) noted in legend separately
+// since pcts >100 don't physically fit. Truthful caption explains.
+const layout = [];
+for (let i = 0; i < 93; i++) layout.push('cogs');
+for (let i = 0; i < 4; i++) layout.push('rd');
+for (let i = 0; i < 3; i++) layout.push('sga');
+// 100 total. Note: interest expense (5%) is a separate line below operating costs.
+layout.forEach((cls, i) => {
+  const c = document.createElement('div');
+  c.className = 'cent ' + cls;
+  c.style.transitionDelay = (i * 4) + 'ms';
+  c.style.opacity = '0.15';
+  grid.appendChild(c);
+});
+
+// -------- IntersectionObserver for reveals --------
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      // Engine bars
+      if (e.target.id === 'engines' || e.target.classList.contains('engine')) {
+        e.target.querySelectorAll('.engine .fill').forEach(el => {
+          const w = parseFloat(el.dataset.w);
+          el.style.width = w + '%';
+        });
+      }
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal, #engines').forEach(el => io.observe(el));
+
+// -------- Engine bar fills (separate observer for the engines section) --------
+const enginesEl = document.getElementById('engines');
+if (enginesEl) {
+  const eio = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        enginesEl.querySelectorAll('.fill').forEach(el => {
+          const w = parseFloat(el.dataset.w);
+          el.style.width = w + '%';
+        });
+        eio.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  eio.observe(enginesEl);
+}
+
+// -------- Geo bar fills --------
+const geoSection = document.querySelector('.geo-list');
+if (geoSection) {
+  const gio = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        geoSection.querySelectorAll('.geo-bar .fill').forEach(el => {
+          const w = parseFloat(el.dataset.w);
+          el.style.width = w + '%';
+        });
+        gio.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  gio.observe(geoSection);
+}
+
+// -------- Cent grid reveal in waves --------
+const cgio = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      grid.querySelectorAll('.cent').forEach(c => {
+        c.style.opacity = '1';
+      });
+      cgio.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.2 });
+cgio.observe(grid);
+
+// -------- Count-up numbers --------
+function animateCount(el) {
+  const target = parseFloat(el.dataset.target);
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '';
+  const dur = 1400;
+  const start = performance.now();
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+  // Decimal places
+  const dp = (target % 1 !== 0) ? (target.toString().split('.')[1] || '').length : 0;
+  const decimals = Math.min(dp, 2);
+  function frame(now) {
+    const t = Math.min(1, (now - start) / dur);
+    const v = target * ease(t);
+    el.innerHTML = prefix + v.toFixed(decimals) + '<span class="unit">' + suffix + '</span>';
+    if (t < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+document.querySelectorAll('.count').forEach(el => {
+  const cio = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateCount(el);
+        cio.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  cio.observe(el);
+});
+
+// -------- Truck bed fill — scroll-scrubbed --------
+const truck = document.getElementById('truck');
+const bedFill = document.getElementById('bedFill');
+const bedAmount = document.getElementById('bedAmount');
+const ripple = document.getElementById('ripple');
+
+function updateTruck() {
+  if (!truck) return;
+  const r = truck.getBoundingClientRect();
+  const vh = window.innerHeight;
+  // Progress: enters from below the viewport (1) to fully past top (0)
+  // We map the truck's vertical center against the viewport center
+  const center = r.top + r.height / 2;
+  // 0 when truck-center is at vh*1.0 (just appearing), 1 when at vh*0.2 (well past)
+  let p = 1 - (center - vh * 0.15) / (vh * 0.85);
+  p = Math.max(0, Math.min(1, p));
+
+  const maxFillH = 56; // bed inside is y=60 to y=120, with stroke ~3 — usable ~56
+  const h = maxFillH * p;
+  bedFill.setAttribute('y', 120 - h);
+  bedFill.setAttribute('height', h);
+
+  // Ripple along the top of the fill
+  if (h > 2) {
+    ripple.setAttribute('transform', `translate(0, ${120 - h + 1})`);
+  } else {
+    ripple.setAttribute('transform', `translate(0, 120)`);
+  }
+
+  // Caption
+  const amt = (187.27 * p).toFixed(1);
+  bedAmount.textContent = '$' + amt + 'B';
+}
+window.addEventListener('scroll', updateTruck, { passive: true });
+window.addEventListener('resize', updateTruck);
+updateTruck();
+
+</script>
+</body>
+</html>

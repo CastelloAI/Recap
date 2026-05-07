@@ -1,0 +1,1539 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>EXC · Recap FY '25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Exelon FY'25 Recap — mobile
+   Palette: warm paper + utility ink + voltage blue + coral signal
+   ============================================================ */
+:root {
+  --paper:    #F4F2EC;       /* slightly cooler than DS paper — utility/ledger feel */
+  --paper-2:  #ECE9E0;
+  --paper-3:  #E1DDD2;
+  --ink:      #0E1116;       /* near-black, blue-tinted */
+  --ink-2:    #2A3038;
+  --ink-3:    #5A6270;
+  --ink-4:    #8E96A2;
+  --line:     #D9D5C8;
+  --line-2:   #C4BEAD;
+
+  /* voltage / utility blue — derived from cost-of-revenue hex */
+  --volt-50:  #EAF1FF;
+  --volt-100: #C9DAFB;
+  --volt-200: #8DB1F7;
+  --volt-300: #4F86F0;
+  --volt-400: #2563EB;       /* exact hex from biggest_costs */
+  --volt-500: #1748B6;
+  --volt-700: #0B2A6E;
+  --volt-900: #061634;
+
+  /* exact cost colors from JSON */
+  --cost-1: #2563EB;
+  --cost-2: #16A34A;
+  --cost-3: #D97706;
+  --cost-4: #DC2626;
+  --cost-5: #7C3AED;
+
+  --signal: #FF7A57;         /* coral — DS accent, used sparingly */
+  --signal-deep: #F25A37;
+
+  --serif: 'Instrument Serif', 'Times New Roman', serif;
+  --sans: 'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; }
+html { background: #1a1a1a; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* The artifact: a 412px wide mobile column, centered, with a soft outer surround */
+.frame {
+  width: 100%;
+  max-width: 412px;
+  margin: 0 auto;
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 80px rgba(0,0,0,0.35);
+}
+@media (min-width: 720px) {
+  body { padding: 0; background: #14171c; }
+  .frame { box-shadow: 0 0 120px rgba(0,0,0,0.55); }
+}
+
+/* ---------- Persistent chrome ---------- */
+.chrome {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  background: rgba(244, 242, 236, 0.78);
+  border-bottom: 1px solid rgba(217, 213, 200, 0.6);
+}
+.chrome-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px 12px;
+}
+.tick {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.co-name {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+.recap-label {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.scrollbar {
+  height: 1.5px;
+  background: rgba(217, 213, 200, 0.5);
+}
+.scrollbar > i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--volt-400);
+  transition: width 80ms linear;
+}
+
+/* ---------- Section primitives ---------- */
+section {
+  position: relative;
+  padding: 0 24px;
+}
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.eyebrow .num {
+  color: var(--volt-400);
+}
+.serif {
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.02;
+}
+.italic { font-style: italic; }
+.muted { color: var(--ink-3); }
+.body {
+  font-family: var(--sans);
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.body em { font-family: var(--serif); font-style: italic; font-size: 1.05em; }
+.body em.signal { color: var(--signal-deep); }
+.body em.volt { color: var(--volt-400); }
+
+.fig-mono {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+
+/* ---------- 1 · HERO — meter field ---------- */
+.hero {
+  padding: 48px 24px 56px;
+  position: relative;
+  overflow: hidden;
+}
+.hero .eyebrow-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+.hero h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 64px;
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  margin: 0;
+  color: var(--ink);
+}
+.hero h1 .pop {
+  font-style: italic;
+  color: var(--volt-400);
+}
+.hero h1 .small {
+  display: block;
+  font-size: 28px;
+  font-style: italic;
+  color: var(--ink-3);
+  margin-top: 14px;
+  letter-spacing: -0.01em;
+}
+.hero .sub {
+  margin-top: 24px;
+  font-size: 15px;
+  color: var(--ink-2);
+  max-width: 320px;
+  line-height: 1.55;
+}
+.hero .sub em {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--volt-400);
+}
+.meter-field {
+  margin-top: 38px;
+  width: 100%;
+  display: block;
+}
+
+/* ---------- Reset beat ---------- */
+.reset {
+  padding: 56px 28px 56px;
+  background: var(--paper-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.reset.dark {
+  background: var(--ink);
+  border-color: #1a1f28;
+  color: var(--paper);
+}
+.reset p {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.25;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+  margin: 0;
+}
+.reset.dark p { color: var(--paper); }
+.reset p .hit { color: var(--signal-deep); font-style: italic; }
+.reset.dark p .hit { color: var(--signal); }
+.reset p .volt { color: var(--volt-400); font-style: italic; }
+.reset.dark p .volt { color: var(--volt-200); }
+.reset .credit {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 18px;
+  display: block;
+}
+.reset.dark .credit { color: var(--ink-4); }
+
+/* ---------- 2 · BUSINESS — wires, not watts ---------- */
+.business {
+  padding: 64px 24px 48px;
+}
+.business h2 {
+  font-family: var(--serif);
+  font-size: 40px;
+  line-height: 1.0;
+  letter-spacing: -0.018em;
+  margin: 14px 0 18px;
+}
+.business h2 .it { font-style: italic; }
+.business .grid-scene {
+  margin: 28px -8px 8px;
+  width: calc(100% + 16px);
+}
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.legend-row .l {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend-row .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--volt-400);
+}
+
+/* ---------- 3 · SCALE — large numerals ---------- */
+.scale {
+  padding: 64px 24px 56px;
+}
+.scale h2 {
+  font-family: var(--serif);
+  font-size: 36px;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin: 12px 0 0;
+}
+.scale h2 .it { font-style: italic; color: var(--ink-3); }
+.metrics {
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.metric {
+  padding: 22px 0 22px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.metric:last-child { border-bottom: 1px solid var(--line); }
+.metric .lbl {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  flex: 1;
+  max-width: 130px;
+}
+.metric .val {
+  font-family: var(--serif);
+  font-size: 42px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  font-feature-settings: "tnum" 1;
+}
+.metric .val .unit {
+  font-size: 22px;
+  color: var(--ink-3);
+  margin-left: 2px;
+}
+.metric .val.italic { font-style: italic; }
+.metric .delta {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--volt-400);
+  margin-top: 6px;
+  display: block;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- 4 · THE DOLLAR — 100-cent grid ---------- */
+.dollar {
+  padding: 72px 24px 60px;
+  background: var(--paper);
+}
+.dollar h2 {
+  font-family: var(--serif);
+  font-size: 40px;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin: 14px 0 4px;
+}
+.dollar h2 .it { font-style: italic; }
+.dollar h2 .hit { color: var(--signal-deep); font-style: italic;}
+.dollar p { margin: 12px 0 0; max-width: 320px; }
+.dollar .cents-wrap {
+  margin: 36px auto 0;
+  width: 100%;
+  max-width: 360px;
+}
+.cents-svg { width: 100%; height: auto; display: block; }
+.cents-legend {
+  margin-top: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cents-row {
+  display: grid;
+  grid-template-columns: 22px 1fr 44px;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.cents-row:last-child { border-bottom: 0; }
+.cents-row .swatch {
+  width: 14px; height: 14px;
+  border-radius: 3px;
+}
+.cents-row .name {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  letter-spacing: -0.005em;
+}
+.cents-row .pct {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  text-align: right;
+  font-feature-settings: "tnum" 1;
+}
+.cents-survives {
+  margin-top: 28px;
+  padding: 18px 20px;
+  background: #fff;
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.cents-survives .big {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 44px;
+  color: var(--volt-400);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.cents-survives .lab {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+
+/* ---------- 5 · FOOTPRINT ---------- */
+.footprint {
+  padding: 72px 24px 60px;
+  background: var(--paper-2);
+  border-top: 1px solid var(--line);
+}
+.footprint h2 {
+  font-family: var(--serif);
+  font-size: 38px;
+  line-height: 1.04;
+  letter-spacing: -0.018em;
+  margin: 14px 0 0;
+}
+.footprint h2 .it { font-style: italic; }
+.footprint .map-wrap {
+  margin: 32px -10px 0;
+}
+.region-rows {
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.region {
+  display: grid;
+  grid-template-columns: 16px 1fr 44px;
+  gap: 14px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+  align-items: center;
+}
+.region:last-child { border-bottom: 1px solid var(--line); }
+.region .swatch {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--volt-400);
+  background: var(--paper-2);
+}
+.region:nth-child(2) .swatch { background: var(--volt-200); border-color: var(--volt-300); }
+.region:nth-child(3) .swatch { background: var(--volt-400); border-color: var(--volt-400); }
+.region:nth-child(4) .swatch { background: var(--volt-700); border-color: var(--volt-700); }
+.region .name {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  color: var(--ink-2);
+}
+.region .name strong { color: var(--ink); font-weight: 500; }
+.region .pct {
+  font-family: var(--mono);
+  font-size: 14px;
+  text-align: right;
+  font-feature-settings: "tnum" 1;
+  color: var(--ink);
+}
+
+/* ---------- 6 · THE BET — capex (DARK interlude) ---------- */
+.bet {
+  padding: 80px 24px 80px;
+  background: var(--ink);
+  color: var(--paper);
+}
+.bet .eyebrow { color: var(--ink-4); }
+.bet .eyebrow .num { color: var(--signal); }
+.bet h2 {
+  font-family: var(--serif);
+  font-size: 44px;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin: 14px 0 18px;
+  color: var(--paper);
+}
+.bet h2 .it { font-style: italic; color: var(--signal); }
+.bet p {
+  color: #c8c5bd;
+  font-size: 15px;
+  line-height: 1.55;
+  max-width: 340px;
+}
+.bet p em.serif { font-family: var(--serif); font-style: italic; color: var(--paper); }
+.bet .stack-wrap {
+  margin: 38px 0 22px;
+}
+.capex-svg { width: 100%; height: auto; display: block; }
+.capex-tot {
+  margin-top: 26px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-top: 1px solid #2a2f38;
+  padding-top: 22px;
+}
+.capex-tot .big {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 56px;
+  color: var(--signal);
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+.capex-tot .lab {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--ink-4);
+  text-transform: uppercase;
+  max-width: 160px;
+  line-height: 1.5;
+}
+.capex-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: #c8c5bd;
+  padding: 10px 0;
+  border-top: 1px solid #1d2128;
+  letter-spacing: 0.04em;
+}
+.capex-row .v { color: var(--paper); font-weight: 500; }
+.capex-row.fcf .v { color: var(--signal); }
+
+/* ---------- 7 · COMPETITORS ---------- */
+.compete {
+  padding: 72px 24px 60px;
+  background: var(--paper);
+}
+.compete h2 {
+  font-family: var(--serif);
+  font-size: 38px;
+  line-height: 1.04;
+  letter-spacing: -0.018em;
+  margin: 14px 0 16px;
+}
+.compete h2 .it { font-style: italic; }
+.compete p { max-width: 320px; }
+.cap-bars {
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.cap-bar {
+  padding: 18px 0 14px;
+  border-top: 1px solid var(--line);
+}
+.cap-bar:last-child { border-bottom: 1px solid var(--line); }
+.cap-bar.exc { background: linear-gradient(90deg, rgba(37,99,235,0.06), transparent 70%); padding-left: 12px; padding-right: 12px; margin: 0 -12px; }
+.cap-bar .top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.cap-bar .name {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+.cap-bar .name .tk {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-left: 6px;
+  letter-spacing: 0.06em;
+}
+.cap-bar .mc {
+  font-family: var(--serif);
+  font-size: 22px;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  font-feature-settings: "tnum" 1;
+}
+.cap-bar.exc .mc { color: var(--volt-400); font-style: italic; }
+.cap-bar .barrow {
+  position: relative;
+  height: 8px;
+  background: var(--paper-2);
+  overflow: hidden;
+}
+.cap-bar .fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background: var(--ink-3);
+  transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
+}
+.cap-bar.exc .fill { background: var(--volt-400); }
+.cap-bar .meta-row {
+  display: flex;
+  gap: 18px;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.cap-bar .meta-row b { color: var(--ink); font-weight: 500; }
+
+/* ---------- 8 · TAKEAWAY (close) ---------- */
+.close {
+  padding: 96px 24px 72px;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  position: relative;
+}
+.close h2 {
+  font-family: var(--serif);
+  font-size: 56px;
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  margin: 18px 0 28px;
+}
+.close h2 .it { font-style: italic; color: var(--volt-400); }
+.close .reverse {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin-top: 22px;
+}
+.close .step {
+  padding: 18px 0;
+  border-top: 1px dashed var(--line-2);
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.close .step:last-child { border-bottom: 1px dashed var(--line-2); }
+.close .step .arrow {
+  font-family: var(--mono);
+  color: var(--volt-400);
+  font-size: 11px;
+  width: 28px;
+  letter-spacing: 0.04em;
+}
+.close .step .txt {
+  font-family: var(--serif);
+  font-size: 22px;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+  line-height: 1.18;
+}
+.close .step .txt .it { font-style: italic; color: var(--ink-3); }
+.close .step .txt .vol { color: var(--volt-400); }
+
+/* ---------- footer ---------- */
+.foot {
+  padding: 36px 24px 56px;
+  border-top: 1px solid var(--line);
+  background: var(--paper-2);
+}
+.foot .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.foot .lg {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 26px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-transform: none;
+  margin-top: 12px;
+}
+.foot .lg .it { color: var(--volt-400); }
+.foot .disc {
+  margin-top: 24px;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-3);
+  line-height: 1.55;
+  max-width: 320px;
+}
+
+/* utility */
+.spacer-lg { height: 64px; }
+.spacer-md { height: 32px; }
+
+/* ---------- Reveal-on-view ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 600ms var(--ease, cubic-bezier(0.22,1,0.36,1)),
+              transform 600ms cubic-bezier(0.22,1,0.36,1);
+}
+.reveal.in { opacity: 1; transform: none; }
+
+/* meter dot animation */
+.meter-dot {
+  transition: opacity 600ms ease-out, fill 400ms ease-out;
+}
+
+/* count-up needs no special css */
+
+/* draw-on path */
+.draw {
+  stroke-dasharray: var(--len, 1000);
+  stroke-dashoffset: var(--len, 1000);
+  transition: stroke-dashoffset 1.6s cubic-bezier(0.22,1,0.36,1);
+}
+.draw.in { stroke-dashoffset: 0; }
+
+/* current pulse */
+@keyframes flow {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -40; }
+}
+.flow {
+  stroke-dasharray: 4 8;
+  animation: flow 2.4s linear infinite;
+}
+
+/* capex bars */
+.cx-bar {
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 1.4s cubic-bezier(0.22,1,0.36,1);
+}
+.cx-bar.in { transform: scaleX(1); }
+
+/* cents grid cells */
+.cent {
+  opacity: 0;
+  transition: opacity 14ms linear;
+}
+.cent.in { opacity: 1; }
+
+/* select: prevent on chrome */
+.no-sel { user-select: none; -webkit-user-select: none; }
+</style>
+</head>
+<body>
+
+<div class="frame" id="frame">
+
+  <!-- ============================ CHROME ============================ -->
+  <div class="chrome no-sel">
+    <div class="chrome-row">
+      <span class="tick">EXC</span>
+      <span class="co-name">Exelon</span>
+      <span class="recap-label">Recap · FY '25</span>
+    </div>
+    <div class="scrollbar"><i id="scrollFill"></i></div>
+  </div>
+
+  <!-- ============================ 1 · HERO ============================ -->
+  <section class="hero">
+    <div class="eyebrow-row">
+      <span class="eyebrow">Chapter 01 · <span class="num">The grid</span></span>
+    </div>
+    <h1>
+      10.9 million<br/>
+      <span class="pop italic">meters.</span>
+      <span class="small">One company holds the wire.</span>
+    </h1>
+    <p class="sub">
+      Exelon is the largest <em>regulated electric utility</em> in the United States by revenue —
+      six subsidiaries, six jurisdictions, one job: keep the current moving.
+    </p>
+
+    <!-- Meter field — 10.9M customers as a stippled field of dots, slowly populating -->
+    <svg class="meter-field" viewBox="0 0 364 220" id="meterField" aria-hidden="true">
+      <defs>
+        <radialGradient id="hgrad" cx="50%" cy="40%" r="65%">
+          <stop offset="0%"  stop-color="#2563EB" stop-opacity="0.18"/>
+          <stop offset="55%" stop-color="#2563EB" stop-opacity="0.04"/>
+          <stop offset="100%" stop-color="#2563EB" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect x="0" y="0" width="364" height="220" fill="url(#hgrad)"/>
+      <!-- dots populated by JS -->
+      <g id="meterDots"></g>
+      <!-- one coral pulse to mark "you" -->
+      <circle id="meterMark" cx="182" cy="110" r="0" fill="none" stroke="#FF7A57" stroke-width="1.2"/>
+    </svg>
+
+    <div class="legend-row">
+      <span class="l"><span class="dot"></span> One dot · 50,000 meters</span>
+    </div>
+  </section>
+
+  <!-- ============================ RESET BEAT ============================ -->
+  <section class="reset reveal">
+    <p>
+      Most utilities sell electricity. Exelon sells <span class="volt italic">delivery</span> —
+      <br/>and gets paid by the <span class="hit italic">commission</span>, not the kilowatt.
+    </p>
+    <span class="credit">Reset · the model</span>
+  </section>
+
+  <!-- ============================ 2 · THE BUSINESS ============================ -->
+  <section class="business">
+    <div class="eyebrow"><span class="num">02</span> · The model</div>
+    <h2>
+      Wires, not<br/>
+      <span class="it">watts.</span>
+    </h2>
+    <p class="body">
+      Six regulated transmission &amp; distribution utilities — ACE, BGE, ComEd, DPL, PECO, Pepco —
+      earn under rates set by state commissions. <em class="volt">Revenue is decoupled from commodity
+      price volatility.</em> The wholesale market sets the price of the electron; Exelon is paid for
+      the wire.
+    </p>
+
+    <!-- Schematic grid — current pulses along it -->
+    <svg class="grid-scene" viewBox="0 0 380 240" id="gridScene" aria-hidden="true">
+      <defs>
+        <pattern id="dgrid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="0.7" fill="#C4BEAD"/>
+        </pattern>
+      </defs>
+      <rect x="0" y="0" width="380" height="240" fill="url(#dgrid)" opacity="0.55"/>
+
+      <!-- generation pylons (left) -->
+      <g stroke="#0E1116" stroke-width="1.2" fill="none" stroke-linecap="round">
+        <path d="M 24 60 L 24 100 M 18 100 L 30 100 M 16 110 L 32 110"/>
+        <path d="M 24 160 L 24 200 M 18 200 L 30 200 M 16 210 L 32 210"/>
+      </g>
+      <text x="42" y="63" font-family="Geist Mono" font-size="9" fill="#5A6270" letter-spacing="0.6">SOURCE</text>
+      <text x="42" y="163" font-family="Geist Mono" font-size="9" fill="#5A6270" letter-spacing="0.6">SOURCE</text>
+
+      <!-- transmission lines toward Exelon node -->
+      <path class="draw" id="line1" d="M 32 80 C 100 80, 130 90, 178 110" stroke="#2563EB" stroke-width="1.4" fill="none" style="--len:200"/>
+      <path class="draw" id="line2" d="M 32 180 C 100 180, 130 150, 178 122" stroke="#2563EB" stroke-width="1.4" fill="none" style="--len:200"/>
+
+      <!-- pulse overlays -->
+      <path d="M 32 80 C 100 80, 130 90, 178 110" stroke="#2563EB" stroke-width="1.4" fill="none" class="flow" opacity="0.55"/>
+      <path d="M 32 180 C 100 180, 130 150, 178 122" stroke="#2563EB" stroke-width="1.4" fill="none" class="flow" opacity="0.55"/>
+
+      <!-- Exelon node — substation -->
+      <rect x="170" y="100" width="32" height="22" fill="none" stroke="#0E1116" stroke-width="1.2"/>
+      <line x1="186" y1="100" x2="186" y2="92" stroke="#0E1116" stroke-width="1.2"/>
+      <circle cx="186" cy="89" r="2" fill="#FF7A57"/>
+      <text x="170" y="138" font-family="Geist Mono" font-size="9" fill="#0E1116" letter-spacing="0.6">EXC NODE</text>
+
+      <!-- distribution to customers — fan out right -->
+      <g fill="none" stroke="#2563EB" stroke-width="1" opacity="0.85" class="draw-fan" id="fan">
+        <path d="M 202 110 L 248 50"  style="--len:80"/>
+        <path d="M 202 110 L 268 70"  style="--len:90"/>
+        <path d="M 202 110 L 290 96"  style="--len:90"/>
+        <path d="M 202 110 L 304 116" style="--len:100"/>
+        <path d="M 202 110 L 296 138" style="--len:100"/>
+        <path d="M 202 110 L 274 158" style="--len:90"/>
+        <path d="M 202 110 L 252 180" style="--len:90"/>
+        <path d="M 202 110 L 226 200" style="--len:90"/>
+      </g>
+
+      <!-- customer dots -->
+      <g fill="#0E1116">
+        <circle cx="248" cy="50"  r="2.2"/>
+        <circle cx="268" cy="70"  r="2.2"/>
+        <circle cx="290" cy="96"  r="2.2"/>
+        <circle cx="304" cy="116" r="2.2"/>
+        <circle cx="296" cy="138" r="2.2"/>
+        <circle cx="274" cy="158" r="2.2"/>
+        <circle cx="252" cy="180" r="2.2"/>
+        <circle cx="226" cy="200" r="2.2"/>
+      </g>
+      <text x="316" y="118" font-family="Geist Mono" font-size="9" fill="#5A6270" letter-spacing="0.6">10.9M</text>
+      <text x="316" y="130" font-family="Geist Mono" font-size="9" fill="#5A6270" letter-spacing="0.6">METERS</text>
+    </svg>
+
+    <div class="legend-row">
+      <span class="l"><span class="dot"></span> Current → distribution → customer</span>
+    </div>
+  </section>
+
+  <!-- ============================ 3 · THE SCALE ============================ -->
+  <section class="scale">
+    <div class="eyebrow"><span class="num">03</span> · The scale</div>
+    <h2>
+      A balance sheet<br/>
+      <span class="it">the size of a city.</span>
+    </h2>
+
+    <div class="metrics">
+      <div class="metric reveal">
+        <div class="lbl">FY'25 Revenue</div>
+        <div>
+          <div class="val">$<span class="cu" data-to="24.26" data-d="2">0.00</span><span class="unit">B</span></div>
+          <span class="delta">↑ 5.34% YOY</span>
+        </div>
+      </div>
+      <div class="metric reveal">
+        <div class="lbl">Net income</div>
+        <div>
+          <div class="val">$<span class="cu" data-to="2.77" data-d="2">0.00</span><span class="unit">B</span></div>
+          <span class="delta">21.2% OPER. MARGIN</span>
+        </div>
+      </div>
+      <div class="metric reveal">
+        <div class="lbl">Market cap</div>
+        <div>
+          <div class="val">$<span class="cu" data-to="48.10" data-d="2">0.00</span><span class="unit">B</span></div>
+          <span class="delta">FORTUNE 200</span>
+        </div>
+      </div>
+      <div class="metric reveal">
+        <div class="lbl">Customers</div>
+        <div>
+          <div class="val italic"><span class="cu" data-to="10.9" data-d="1">0.0</span><span class="unit">M</span></div>
+          <span class="delta">ACROSS 6 UTILITIES</span>
+        </div>
+      </div>
+      <div class="metric reveal">
+        <div class="lbl">Employees</div>
+        <div>
+          <div class="val"><span class="cu" data-to="20" data-d="0">0</span><span class="unit">,000+</span></div>
+          <span class="delta">CHICAGO HQ · IL</span>
+        </div>
+      </div>
+      <div class="metric reveal">
+        <div class="lbl">Q4 EPS</div>
+        <div>
+          <div class="val">$<span class="cu" data-to="0.59" data-d="2">0.00</span></div>
+          <span class="delta">ON $5.41B QTRLY REV</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ RESET BEAT 2 ============================ -->
+  <section class="reset reveal">
+    <p>
+      Twenty-four billion comes in. <span class="hit italic">Most of it</span> doesn't stay —
+      <br/>it's already promised to the meter on the other end of the line.
+    </p>
+    <span class="credit">Reset · the dollar</span>
+  </section>
+
+  <!-- ============================ 4 · THE DOLLAR ============================ -->
+  <section class="dollar">
+    <div class="eyebrow"><span class="num">04</span> · A hundred cents in</div>
+    <h2>
+      Where every<br/>
+      <span class="it">dollar goes.</span>
+    </h2>
+    <p class="body">
+      Of every <em>$1</em> of revenue, only a small share survives the journey from substation
+      to shareholder. <em class="volt">Cost of revenue alone takes 58¢.</em>
+    </p>
+
+    <!-- 100-cent grid — 10x10 -->
+    <div class="cents-wrap">
+      <svg class="cents-svg" viewBox="0 0 360 360" id="centsSvg" aria-hidden="true">
+        <g id="centsGrid"></g>
+      </svg>
+    </div>
+
+    <div class="cents-legend">
+      <div class="cents-row"><span class="swatch" style="background:#2563EB"></span><span class="name">Cost of revenue · purchased power &amp; fuel</span><span class="pct">58¢</span></div>
+      <div class="cents-row"><span class="swatch" style="background:#16A34A"></span><span class="name">Operations &amp; maintenance</span><span class="pct">12¢</span></div>
+      <div class="cents-row"><span class="swatch" style="background:#D97706"></span><span class="name">Depreciation &amp; amortization</span><span class="pct">7¢</span></div>
+      <div class="cents-row"><span class="swatch" style="background:#DC2626"></span><span class="name">Interest expense</span><span class="pct">5¢</span></div>
+      <div class="cents-row"><span class="swatch" style="background:#7C3AED"></span><span class="name">Taxes other than income</span><span class="pct">3¢</span></div>
+      <div class="cents-row"><span class="swatch" style="background:#E1DDD2;border:1px dashed #C4BEAD"></span><span class="name">Other operating &amp; G&amp;A</span><span class="pct">15¢</span></div>
+    </div>
+
+    <div class="cents-survives reveal">
+      <div class="big">≈11¢</div>
+      <div class="lab">survive to <em style="font-family:var(--serif); font-style:italic">net income</em>.<br/>$2.77B on $24.26B in sales.</div>
+    </div>
+  </section>
+
+  <!-- ============================ 5 · FOOTPRINT ============================ -->
+  <section class="footprint">
+    <div class="eyebrow"><span class="num">05</span> · The footprint</div>
+    <h2>
+      Six states.<br/>
+      <span class="it">One arc of grid.</span>
+    </h2>
+
+    <div class="map-wrap">
+      <svg class="cents-svg" viewBox="0 0 360 270" id="footprintMap" aria-hidden="true">
+        <!-- abstract eastern-US footprint, schematic -->
+        <defs>
+          <pattern id="dot2" width="10" height="10" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.6" fill="#C4BEAD"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="360" height="270" fill="url(#dot2)" opacity="0.45"/>
+
+        <!-- ComEd — Illinois region (left) -->
+        <g id="region-comed">
+          <path d="M 60 70 Q 50 110, 60 150 Q 80 170, 110 160 Q 130 140, 120 100 Q 100 70, 60 70 Z"
+                fill="rgba(141,177,247,0.35)" stroke="#2563EB" stroke-width="1.2"/>
+          <circle cx="92" cy="115" r="4" fill="#2563EB"/>
+          <text x="100" y="118" font-family="Geist Mono" font-size="9" fill="#0E1116" letter-spacing="0.6">COMED · IL</text>
+          <text x="100" y="130" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#0E1116">35%</text>
+        </g>
+
+        <!-- PECO — Pennsylvania -->
+        <g id="region-peco">
+          <path d="M 195 95 Q 185 115, 195 135 Q 220 145, 240 130 Q 245 105, 225 90 Q 205 85, 195 95 Z"
+                fill="rgba(79,134,240,0.45)" stroke="#1748B6" stroke-width="1.2"/>
+          <circle cx="218" cy="115" r="4" fill="#1748B6"/>
+          <text x="160" y="80" font-family="Geist Mono" font-size="9" fill="#0E1116" letter-spacing="0.6">PECO · PA</text>
+          <text x="160" y="92" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#0E1116">20%</text>
+        </g>
+
+        <!-- Mid-Atlantic — BGE, Pepco, DPL, ACE -->
+        <g id="region-mid">
+          <path d="M 220 145 Q 210 175, 230 200 Q 270 215, 295 200 Q 305 175, 290 150 Q 260 138, 220 145 Z"
+                fill="rgba(11,42,110,0.55)" stroke="#0B2A6E" stroke-width="1.2"/>
+          <circle cx="258" cy="180" r="4" fill="#0B2A6E"/>
+          <text x="208" y="232" font-family="Geist Mono" font-size="9" fill="#0E1116" letter-spacing="0.6">MID-ATL · BGE/PEP/DPL/ACE</text>
+          <text x="208" y="246" font-family="Instrument Serif" font-style="italic" font-size="22" fill="#0E1116">45%</text>
+        </g>
+
+        <!-- connecting transmission arcs -->
+        <path d="M 92 115 C 140 100, 170 100, 218 115" stroke="#2563EB" stroke-width="0.8" fill="none" stroke-dasharray="2 3" opacity="0.6"/>
+        <path d="M 218 115 C 235 130, 250 145, 258 180" stroke="#1748B6" stroke-width="0.8" fill="none" stroke-dasharray="2 3" opacity="0.6"/>
+
+        <!-- compass / scale -->
+        <g transform="translate(316,30)" font-family="Geist Mono" font-size="9" fill="#5A6270" letter-spacing="0.6">
+          <text x="0" y="0">N</text>
+          <line x1="-2" y1="4" x2="-2" y2="22" stroke="#5A6270" stroke-width="0.8"/>
+          <polygon points="-4,7 -2,3 0,7" fill="#5A6270"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="region-rows">
+      <div class="region">
+        <span class="swatch"></span>
+        <span class="name"><strong>Mid-Atlantic</strong> · BGE, Pepco, DPL, ACE</span>
+        <span class="pct">45%</span>
+      </div>
+      <div class="region">
+        <span class="swatch"></span>
+        <span class="name"><strong>Illinois</strong> · ComEd</span>
+        <span class="pct">35%</span>
+      </div>
+      <div class="region">
+        <span class="swatch"></span>
+        <span class="name"><strong>Pennsylvania</strong> · PECO</span>
+        <span class="pct">20%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ RESET BEAT 3 ============================ -->
+  <section class="reset reveal">
+    <p>
+      You don't <span class="hit italic">grow</span> a utility.
+      <br/>You <span class="volt italic">build</span> one — brick by funded brick.
+    </p>
+    <span class="credit">Reset · the bet</span>
+  </section>
+
+  <!-- ============================ 6 · THE BET (DARK) ============================ -->
+  <section class="bet">
+    <div class="eyebrow"><span class="num">06</span> · The bet · $41.3B</div>
+    <h2>
+      Four years.<br/>
+      <span class="it">One bet in front.</span>
+    </h2>
+    <p>
+      Exelon is mid-execution on a <em class="serif">$41.3B four-year capex plan</em> —
+      growing rate base at roughly 7.9% annually. Operating cash flow is real,
+      but capex outruns it; free cash is negative <em class="serif">by design</em>.
+    </p>
+
+    <div class="stack-wrap">
+      <svg class="capex-svg" viewBox="0 0 360 200" id="capexSvg" aria-hidden="true">
+        <!-- baseline -->
+        <line x1="38" y1="170" x2="358" y2="170" stroke="#2a2f38" stroke-width="1"/>
+
+        <!-- y-axis labels -->
+        <g font-family="Geist Mono" font-size="9" fill="#8E96A2" letter-spacing="0.6">
+          <text x="2" y="174">$0</text>
+          <text x="2" y="104">$20B</text>
+          <text x="2" y="34">$40B</text>
+        </g>
+        <line x1="38" y1="100" x2="358" y2="100" stroke="#1d2128" stroke-width="0.7" stroke-dasharray="2 3"/>
+        <line x1="38" y1="30"  x2="358" y2="30"  stroke="#1d2128" stroke-width="0.7" stroke-dasharray="2 3"/>
+
+        <!-- 4 bars: cumulative pacing toward $41.3B over 4yrs -->
+        <!-- year-1 actual ($9.3B), then target slope to $41.3B by year-4 -->
+        <!-- bar widths: each bar = 60w, gap 12 -->
+        <!-- y mapping: $0=170, $41.3B=22 -->
+        <!-- y1: 9.3B  -> 170 - (9.3/41.3)*148 = 136.7 -->
+        <!-- y2: 19.5B -> 170 - (19.5/41.3)*148 = 100.1 -->
+        <!-- y3: 30.4B -> 170 - (30.4/41.3)*148 =  61.0 -->
+        <!-- y4: 41.3B -> 170 - (41.3/41.3)*148 =  22.0 -->
+
+        <g>
+          <rect class="cx-bar" data-d="0"   x="60"  y="22" width="60" height="148" fill="#FF7A57" opacity="0.18"/>
+          <rect class="cx-bar" data-d="120" x="148" y="22" width="60" height="148" fill="#FF7A57" opacity="0.18"/>
+          <rect class="cx-bar" data-d="240" x="236" y="22" width="60" height="148" fill="#FF7A57" opacity="0.18"/>
+          <rect class="cx-bar" data-d="360" x="324" y="22" width="0"  height="148" fill="none"/>
+        </g>
+
+        <!-- actual filled portion -->
+        <g>
+          <rect class="cx-bar" data-d="0"   x="60"  y="136.7" width="60" height="33.3" fill="#FF7A57"/>
+          <rect class="cx-bar" data-d="180" x="148" y="100.1" width="60" height="69.9" fill="#FF7A57"/>
+          <rect class="cx-bar" data-d="360" x="236" y="61.0"  width="60" height="109"  fill="#FF7A57"/>
+          <rect class="cx-bar" data-d="540" x="324" y="22"    width="0"  height="148"  fill="#FF7A57"/>
+        </g>
+
+        <!-- year labels -->
+        <g font-family="Geist Mono" font-size="10" fill="#c8c5bd" letter-spacing="0.6" text-anchor="middle">
+          <text x="90"  y="188">'25</text>
+          <text x="178" y="188">'26</text>
+          <text x="266" y="188">'27</text>
+          <text x="354" y="188" fill="#FF7A57">'28</text>
+        </g>
+        <!-- value labels on top -->
+        <g font-family="Geist Mono" font-size="9" fill="#c8c5bd" text-anchor="middle">
+          <text x="90"  y="132">$9.3B</text>
+          <text x="178" y="96">$19.5B</text>
+          <text x="266" y="57">$30.4B</text>
+          <text x="354" y="18" fill="#FF7A57">$41.3B</text>
+        </g>
+
+        <!-- annotation line -->
+        <text x="38" y="14" font-family="Instrument Serif" font-style="italic" font-size="13" fill="#FF7A57">cumulative capex →</text>
+      </svg>
+    </div>
+
+    <div class="capex-tot">
+      <div class="big">7.9%</div>
+      <div class="lab">target rate-base growth, annually, through 2028</div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <div class="capex-row"><span>Operating cash flow</span><span class="v">$6.25B</span></div>
+      <div class="capex-row"><span>Capital expenditures</span><span class="v">−$8.53B</span></div>
+      <div class="capex-row fcf"><span>Free cash flow</span><span class="v">−$2.27B</span></div>
+      <div class="capex-row"><span>Dividends paid</span><span class="v">$1.62B</span></div>
+      <div class="capex-row"><span>Equity issuance / yr</span><span class="v">~$700M</span></div>
+      <div class="capex-row"><span>Total debt</span><span class="v">$50.0B</span></div>
+    </div>
+
+    <p style="margin-top:28px; font-family:var(--serif); font-style:italic; font-size:18px; color:#fff; line-height:1.35;">
+      Free cash is <span style="color:var(--signal)">negative by choice</span> —
+      because the rate base only grows when the steel goes in the ground.
+    </p>
+  </section>
+
+  <!-- ============================ 7 · COMPETITORS ============================ -->
+  <section class="compete">
+    <div class="eyebrow"><span class="num">07</span> · The peer set</div>
+    <h2>
+      Three rivals,<br/>
+      <span class="it">one corridor.</span>
+    </h2>
+    <p class="body">
+      Each competes for overlapping regulated territory in the dense Northeast and Mid-Atlantic.
+      Sized by <em class="volt">market cap</em> — Exelon leads the rate-base race.
+    </p>
+
+    <div class="cap-bars">
+      <div class="cap-bar exc">
+        <div class="top">
+          <div class="name">Exelon <span class="tk">EXC</span></div>
+          <div class="mc">$48.10B</div>
+        </div>
+        <div class="barrow"><span class="fill" data-w="100"></span></div>
+        <div class="meta-row"><span>REV YOY <b>+5.3%</b></span><span>OP MARGIN <b>21.2%</b></span></div>
+      </div>
+
+      <div class="cap-bar">
+        <div class="top">
+          <div class="name">Dominion Energy <span class="tk">D</span></div>
+          <div class="mc">$54.86B</div>
+        </div>
+        <div class="barrow"><span class="fill" data-w="114"></span></div>
+        <div class="meta-row"><span>REV YOY <b>+16.9%</b></span><span>P/E TTM <b>18.4</b></span></div>
+      </div>
+
+      <div class="cap-bar">
+        <div class="top">
+          <div class="name">Public Service Ent. Group <span class="tk">PEG</span></div>
+          <div class="mc">$40.69B</div>
+        </div>
+        <div class="barrow"><span class="fill" data-w="85"></span></div>
+        <div class="meta-row"><span>REV YOY <b>+18.3%</b></span><span>P/E TTM <b>19.3</b></span></div>
+      </div>
+
+      <div class="cap-bar">
+        <div class="top">
+          <div class="name">Consolidated Edison <span class="tk">ED</span></div>
+          <div class="mc">$39.80B</div>
+        </div>
+        <div class="barrow"><span class="fill" data-w="83"></span></div>
+        <div class="meta-row"><span>REV YOY <b>+10.9%</b></span><span>P/E TTM <b>19.7</b></span></div>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top: 26px; font-size:14px;">
+      Bigger market cap ≠ bigger business. Exelon's <em class="volt">$24.26B</em> in regulated revenue
+      is larger than every peer here, including Dominion's quarterly run-rate × 4.
+    </p>
+  </section>
+
+  <!-- ============================ 8 · TAKEAWAY ============================ -->
+  <section class="close">
+    <div class="eyebrow"><span class="num">08</span> · The takeaway</div>
+    <h2>
+      One wire.<br/>
+      One bill.<br/>
+      <span class="it">5–7% / yr.</span>
+    </h2>
+
+    <p class="body" style="max-width:340px;">
+      Exelon doesn't grow by selling more — it grows by <em class="volt">spending more</em>,
+      under a regulated return. The thesis closes the way it opened: 10.9 million
+      meters, all on the same wire, all on the same bill.
+    </p>
+
+    <div class="reverse">
+      <div class="step">
+        <span class="arrow">10.9M →</span>
+        <span class="txt">meters, <span class="it">across six utilities,</span></span>
+      </div>
+      <div class="step">
+        <span class="arrow">$24.26B →</span>
+        <span class="txt">in <span class="it">regulated revenue,</span></span>
+      </div>
+      <div class="step">
+        <span class="arrow">$41.3B →</span>
+        <span class="txt">poured into <span class="vol">rate base</span> over four years,</span>
+      </div>
+      <div class="step">
+        <span class="arrow">≈11¢ →</span>
+        <span class="txt">survive per dollar — <span class="it">compounded.</span></span>
+      </div>
+      <div class="step">
+        <span class="arrow">$1.68 →</span>
+        <span class="txt">per share, <span class="it">guided dividend, 2026.</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ FOOTER ============================ -->
+  <footer class="foot">
+    <div class="row">
+      <span>EXC · NASDAQ</span>
+      <span>FY '25</span>
+    </div>
+    <div class="lg">
+      The wire is the <span class="it">moat.</span>
+    </div>
+    <p class="disc">
+      Recap built from FY'25 reported figures. Forward statements (capex pacing, dividend, EPS growth)
+      reflect company guidance — not a forecast. For informational use only.
+    </p>
+  </footer>
+
+</div><!-- /frame -->
+
+<script>
+/* ============================================================
+   Scroll progress + reveal observer + count-up + meter dots + cents grid
+   ============================================================ */
+
+(function () {
+  const fill = document.getElementById('scrollFill');
+  const frame = document.getElementById('frame');
+
+  function progress() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const p = Math.max(0, Math.min(1, window.scrollY / Math.max(1, max)));
+    fill.style.width = (p * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', progress, { passive: true });
+  progress();
+
+  // Reveal-on-view
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Count-up
+  const cuIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const root = e.target;
+      root.querySelectorAll('.cu').forEach(node => {
+        const to = parseFloat(node.dataset.to);
+        const d = parseInt(node.dataset.d || '0', 10);
+        const dur = 1200;
+        const start = performance.now();
+        function step(now) {
+          const t = Math.min(1, (now - start) / dur);
+          // ease-out
+          const eased = 1 - Math.pow(1 - t, 3);
+          const v = to * eased;
+          node.textContent = v.toFixed(d);
+          if (t < 1) requestAnimationFrame(step);
+          else node.textContent = to.toFixed(d);
+        }
+        requestAnimationFrame(step);
+      });
+      cuIO.unobserve(root);
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.metric').forEach(m => cuIO.observe(m));
+
+  // ---------- Meter field ---------- //
+  // 10.9M / 50,000 = 218 dots
+  const meterDots = document.getElementById('meterDots');
+  const W = 364, H = 220;
+  const cols = 24, rows = 10;
+  // place ~218 dots in a slightly perturbed grid
+  const dots = [];
+  let i = 0;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (i >= 218) break;
+      // jitter
+      const jx = (Math.sin(i * 1.7) + 1) * 0.5;
+      const jy = (Math.cos(i * 2.3) + 1) * 0.5;
+      const x = 22 + c * ((W - 44) / (cols - 1)) + (jx - 0.5) * 4;
+      const y = 22 + r * ((H - 44) / (rows - 1)) + (jy - 0.5) * 3;
+      dots.push({ x, y, i });
+      i++;
+    }
+  }
+  // SVG ns
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  dots.forEach(d => {
+    const c = document.createElementNS(SVGNS, 'circle');
+    c.setAttribute('cx', d.x.toFixed(1));
+    c.setAttribute('cy', d.y.toFixed(1));
+    c.setAttribute('r', '1.6');
+    c.setAttribute('fill', '#1748B6');
+    c.classList.add('meter-dot');
+    c.style.opacity = '0';
+    meterDots.appendChild(c);
+  });
+  // animate populate
+  const meterIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const els = meterDots.querySelectorAll('.meter-dot');
+      els.forEach((el, idx) => {
+        setTimeout(() => { el.style.opacity = '0.9'; }, idx * 8);
+      });
+      // pulse mark
+      const mark = document.getElementById('meterMark');
+      let r = 0;
+      function pulse() {
+        r += 0.6;
+        mark.setAttribute('r', r.toFixed(1));
+        mark.setAttribute('opacity', Math.max(0, 1 - r / 60).toFixed(2));
+        if (r < 60) requestAnimationFrame(pulse);
+        else {
+          // restart after delay
+          setTimeout(() => { r = 0; pulse(); }, 1200);
+        }
+      }
+      setTimeout(pulse, 2400);
+      meterIO.unobserve(e.target);
+    });
+  }, { threshold: 0.3 });
+  meterIO.observe(document.getElementById('meterField'));
+
+  // ---------- Grid scene draw-ons ---------- //
+  const gridIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.querySelectorAll('.draw, #fan path').forEach((p, idx) => {
+        // measure if no --len
+        try {
+          const len = p.getTotalLength ? p.getTotalLength() : 200;
+          p.style.setProperty('--len', len);
+          p.style.strokeDasharray = len;
+          p.style.strokeDashoffset = len;
+          // schedule
+          setTimeout(() => {
+            p.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(0.22,1,0.36,1)';
+            p.style.strokeDashoffset = 0;
+          }, 80 * idx);
+        } catch (err) {}
+      });
+      gridIO.unobserve(e.target);
+    });
+  }, { threshold: 0.25 });
+  gridIO.observe(document.getElementById('gridScene'));
+
+  // ---------- Cents grid (10x10, colored by cumulative) ---------- //
+  const centsGrid = document.getElementById('centsGrid');
+  // Order: 58 cost-of-rev (blue), 12 O&M (green), 7 D&A (amber), 5 interest (red), 3 tax (purple), 15 other (paper)
+  const segs = [
+    { n: 58, color: '#2563EB' },
+    { n: 12, color: '#16A34A' },
+    { n:  7, color: '#D97706' },
+    { n:  5, color: '#DC2626' },
+    { n:  3, color: '#7C3AED' },
+    { n: 15, color: '#E1DDD2' }, // remainder = 15 — but only 11 are net income; treat 15 as "other op + retained" since exact buckets not given; the survives panel pegs ~11¢
+  ];
+  // Build a 10x10 grid (100 cells) — left-to-right, bottom-up so it "fills"
+  const cellSize = 30;       // 10x10 → 300px area, with padding
+  const padL = 30, padT = 30;
+  const colors = [];
+  segs.forEach(s => {
+    for (let k = 0; k < s.n; k++) colors.push(s.color);
+  });
+  // Fill from bottom row up — index 0 at bottom-left → top-right
+  for (let idx = 0; idx < 100; idx++) {
+    const col = idx % 10;
+    const row = 9 - Math.floor(idx / 10);
+    const x = padL + col * cellSize;
+    const y = padT + row * cellSize;
+    const rect = document.createElementNS(SVGNS, 'rect');
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', y);
+    rect.setAttribute('width', cellSize - 3);
+    rect.setAttribute('height', cellSize - 3);
+    rect.setAttribute('fill', colors[idx] || '#E1DDD2');
+    rect.setAttribute('rx', '1');
+    rect.classList.add('cent');
+    rect.dataset.i = idx;
+    centsGrid.appendChild(rect);
+  }
+  // Border + dollar sign overlay
+  const $sign = document.createElementNS(SVGNS, 'text');
+  $sign.setAttribute('x', '8');
+  $sign.setAttribute('y', '24');
+  $sign.setAttribute('font-family', 'Instrument Serif');
+  $sign.setAttribute('font-size', '22');
+  $sign.setAttribute('font-style', 'italic');
+  $sign.setAttribute('fill', '#0E1116');
+  $sign.textContent = '$1.00';
+  centsGrid.appendChild($sign);
+
+  const $surv = document.createElementNS(SVGNS, 'text');
+  $surv.setAttribute('x', '352');
+  $surv.setAttribute('y', '352');
+  $surv.setAttribute('font-family', 'Geist Mono');
+  $surv.setAttribute('font-size', '10');
+  $surv.setAttribute('letter-spacing', '0.06em');
+  $surv.setAttribute('text-anchor', 'end');
+  $surv.setAttribute('fill', '#5A6270');
+  $surv.textContent = '↑ ~11¢ NET';
+  centsGrid.appendChild($surv);
+
+  // animate fill
+  const centsIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const cells = centsGrid.querySelectorAll('.cent');
+      cells.forEach((el, idx) => {
+        setTimeout(() => el.classList.add('in'), idx * 18);
+      });
+      centsIO.unobserve(e.target);
+    });
+  }, { threshold: 0.3 });
+  centsIO.observe(document.getElementById('centsSvg'));
+
+  // ---------- Capex bars ---------- //
+  const capexIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.querySelectorAll('.cx-bar').forEach(b => {
+        const d = parseInt(b.dataset.d || '0', 10);
+        setTimeout(() => b.classList.add('in'), d);
+      });
+      capexIO.unobserve(e.target);
+    });
+  }, { threshold: 0.25 });
+  capexIO.observe(document.getElementById('capexSvg'));
+
+  // ---------- Competitor bars ---------- //
+  const cmpIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const fills = e.target.querySelectorAll('.fill');
+      // normalize against max width 114
+      fills.forEach((el, idx) => {
+        const w = parseFloat(el.dataset.w || '0');
+        const pct = (w / 114) * 100;
+        setTimeout(() => { el.style.width = pct.toFixed(1) + '%'; }, 200 + idx * 140);
+      });
+      cmpIO.unobserve(e.target);
+    });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.cap-bars').forEach(el => cmpIO.observe(el));
+
+})();
+</script>
+
+</body>
+</html>

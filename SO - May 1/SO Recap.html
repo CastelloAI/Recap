@@ -1,0 +1,2035 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SO · Recap · FY '23</title>
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  /* ============================================================
+     Southern Company · Stock Recap
+     Editorial mobile experience. ~420px column, scroll-driven.
+     Palette: warm paper, deep ink, coral signal, iris-electric.
+     ============================================================ */
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  img, svg { display: block; max-width: 100%; }
+  a { color: inherit; }
+
+  /* Custom palette additions for SO — utility/electric */
+  :root {
+    --so-ink:        #0E1116;       /* near-black, slate-tinted */
+    --so-ink-2:      #1B2028;
+    --so-paper:      #FBFAF7;       /* warm paper */
+    --so-paper-2:    #F2EFE8;       /* sunken paper band */
+    --so-paper-3:    #E8E4DA;
+    --so-line:       #DAD5C8;
+    --so-rule:       #C9C2B2;
+    --so-muted:      #5C5A55;
+    --so-subtle:     #8B8881;
+    /* Signal: coral (current) + steel-blue (water/grid coolant) */
+    --so-signal:     #F25A37;       /* hotter coral — "current on" */
+    --so-signal-2:   #FF8C66;
+    --so-signal-soft:#FFE3D7;
+    --so-cool:       #2B6FA8;
+    --so-cool-soft:  #DCE7F2;
+  }
+
+  /* ---------- LAYOUT FRAME ---------- */
+  .page {
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    position: relative;
+    background: var(--so-paper);
+    overflow: hidden;
+  }
+
+  /* ---------- PERSISTENT CHROME ---------- */
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(251,250,247,0.78);
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    border-bottom: 1px solid var(--so-line);
+  }
+  .chrome__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 20px 12px;
+  }
+  .chrome__id {
+    display: flex; align-items: baseline; gap: 10px;
+    min-width: 0;
+  }
+  .chrome__ticker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--so-ink);
+  }
+  .chrome__dot {
+    width: 6px; height: 6px; border-radius: 999px;
+    background: var(--so-signal);
+    display: inline-block;
+    box-shadow: 0 0 8px rgba(242,90,55,0.6);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50%      { opacity: 1.0; transform: scale(1.15); }
+  }
+  .chrome__name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--so-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chrome__label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--so-subtle);
+    white-space: nowrap;
+  }
+  .chrome__hairline {
+    height: 1.5px;
+    background: var(--so-line);
+    position: relative;
+    overflow: hidden;
+  }
+  .chrome__hairline::before {
+    content: "";
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: var(--scroll, 0%);
+    background: var(--so-signal);
+    transition: width 80ms linear;
+  }
+
+  /* ---------- TYPOGRAPHY HELPERS ---------- */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.022em;
+    color: var(--so-ink);
+  }
+  .display em, .ital { font-style: italic; }
+  .signal { color: var(--so-signal); }
+  .cool { color: var(--so-cool); }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--so-signal);
+  }
+  .eyebrow .num { color: var(--so-ink); margin-left: 6px; }
+  .eyebrow.muted { color: var(--so-subtle); }
+
+  .body {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--so-ink-2);
+    text-wrap: pretty;
+  }
+  .body em { font-family: var(--font-display); font-style: italic; font-size: 1.05em; color: var(--so-signal); }
+  .body strong { font-weight: 600; color: var(--so-ink); }
+
+  .meta-mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--so-subtle);
+  }
+
+  .caption {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: var(--so-subtle);
+  }
+
+  /* ---------- SECTION RHYTHM ---------- */
+  section { position: relative; }
+  .beat {
+    padding: 72px 24px;
+  }
+  .beat--tight { padding: 48px 24px; }
+  .beat--wide  { padding: 96px 24px; }
+
+  .beat__head {
+    display: flex; flex-direction: column; gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  /* Reset beat — italic-serif on contrasting band */
+  .reset {
+    padding: 52px 28px;
+    background: var(--so-paper-2);
+    border-top: 1px solid var(--so-line);
+    border-bottom: 1px solid var(--so-line);
+  }
+  .reset p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.18;
+    letter-spacing: -0.005em;
+    color: var(--so-ink);
+    margin: 0;
+    text-wrap: balance;
+  }
+  .reset p .signal { font-style: italic; }
+  .reset .mark {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--so-subtle);
+    margin-bottom: 18px;
+  }
+
+  /* Dark interlude — for the debt section */
+  .dark {
+    background: var(--so-ink);
+    color: #F1EEE7;
+  }
+  .dark .body { color: #C9C5BC; }
+  .dark .display { color: #FBFAF7; }
+  .dark .eyebrow { color: var(--so-signal-2); }
+  .dark .meta-mono { color: #8B8780; }
+  .dark .caption { color: #807C73; }
+
+  /* ---------- HERO ---------- */
+  .hero { padding: 56px 24px 88px; position: relative; overflow: hidden; }
+  .hero__eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--so-subtle);
+    margin-bottom: 36px;
+  }
+  .hero__eyebrow::before {
+    content: ""; width: 18px; height: 1px; background: var(--so-rule);
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(48px, 13vw, 64px);
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    color: var(--so-ink);
+    margin: 0 0 28px;
+    text-wrap: balance;
+  }
+  .hero h1 em { font-style: italic; color: var(--so-signal); }
+  .hero__sub {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--so-muted);
+    max-width: 36ch;
+    margin: 0 0 44px;
+  }
+  .hero__sub em { font-family: var(--font-display); font-style: italic; color: var(--so-ink); font-size: 1.05em; }
+
+  /* Hero metric-strip */
+  .hero__strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 36px;
+    padding-top: 22px;
+    border-top: 1px solid var(--so-line);
+  }
+  .hs__num {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--so-ink);
+    font-feature-settings: "lnum";
+  }
+  .hs__num .ital { font-style: italic; color: var(--so-signal); }
+  .hs__lab {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--so-subtle);
+    margin-top: 10px;
+    line-height: 1.3;
+  }
+
+  /* ---------- METER GRID (hero scene) ---------- */
+  .meter-grid {
+    margin: 8px 0 0;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+  }
+
+  /* ---------- BUSINESS CURRENT (3 rivers) ---------- */
+  .rivers {
+    margin-top: 24px;
+  }
+  .river {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 16px;
+    align-items: start;
+    padding: 22px 0;
+    border-bottom: 1px dashed var(--so-line);
+  }
+  .river:last-child { border-bottom: 0; }
+  .river__id {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--so-subtle);
+    padding-top: 6px;
+  }
+  .river__title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--so-ink);
+    margin: 0 0 6px;
+  }
+  .river__title em { font-style: italic; color: var(--so-signal); }
+  .river__body {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--so-muted);
+    margin: 0;
+  }
+  .river__bar {
+    margin-top: 12px;
+    height: 6px;
+    background: var(--so-paper-3);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+  }
+  .river__bar > span {
+    display: block; height: 100%;
+    background: linear-gradient(90deg, var(--so-signal), var(--so-signal-2));
+    width: 0;
+    transition: width 1.2s var(--ease-out, cubic-bezier(.22,1,.36,1));
+  }
+  .river__bar.cool > span { background: linear-gradient(90deg, var(--so-cool), #5B9CC7); }
+  .river__bar.iris > span { background: linear-gradient(90deg, var(--iris-400), var(--iris-300)); }
+
+  /* ---------- SCALE DIAL ---------- */
+  .dial-wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-top: 8px;
+  }
+  .dial {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+  }
+  .dial-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--so-line);
+  }
+  .dial-stat {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--so-line);
+  }
+  .dial-stat:nth-child(odd)  { padding-right: 14px; border-right: 1px solid var(--so-line); }
+  .dial-stat:nth-child(even) { padding-left: 14px; }
+  .dial-stat__num {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--so-ink);
+  }
+  .dial-stat__num .ital { font-style: italic; color: var(--so-signal); }
+  .dial-stat__lab {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--so-subtle);
+    margin-top: 8px;
+  }
+
+  /* ---------- COSTS BUS-BAR ---------- */
+  .busbar {
+    margin-top: 16px;
+    width: 100%;
+  }
+  .busbar__legend {
+    margin-top: 22px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .leg-row {
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--so-line);
+  }
+  .leg-row:last-child { border-bottom: 0; }
+  .leg-swatch {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    margin-left: 2px;
+  }
+  .leg-label {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--so-ink);
+    line-height: 1.3;
+  }
+  .leg-pct {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1;
+    color: var(--so-ink);
+    font-feature-settings: "lnum";
+    letter-spacing: -0.01em;
+  }
+  .leg-pct .pct-mark {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--so-subtle);
+    margin-left: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ---------- FOOTPRINT MAP ---------- */
+  .map-wrap { width: 100%; aspect-ratio: 5 / 4; margin-top: 6px; }
+  .geo-rows {
+    margin-top: 22px;
+    display: grid;
+    gap: 0;
+  }
+  .geo-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--so-line);
+  }
+  .geo-row:last-child { border-bottom: 0; }
+  .geo-pct {
+    font-family: var(--font-display);
+    font-size: 24px;
+    line-height: 1;
+    color: var(--so-ink);
+    min-width: 70px;
+  }
+  .geo-pct .ital { font-style: italic; color: var(--so-signal); }
+  .geo-name {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    color: var(--so-muted);
+  }
+  .geo-tick {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    color: var(--so-subtle);
+    text-transform: uppercase;
+  }
+
+  /* ---------- THE BET / VOGTLE ---------- */
+  .bet-scene { width: 100%; aspect-ratio: 1 / 1.05; margin: 6px 0 18px; }
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--so-line);
+  }
+  .ledger-row:last-child { border-bottom: 0; }
+  .ledger-row .lab {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    color: var(--so-muted);
+  }
+  .ledger-row .lab strong { color: var(--so-ink); font-weight: 600; }
+  .ledger-row .val {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1;
+    color: var(--so-ink);
+  }
+  .ledger-row .val.neg { color: var(--so-signal); font-style: italic; }
+
+  /* ---------- DARK / DEBT ---------- */
+  .scale-vis { width: 100%; aspect-ratio: 1 / 0.95; margin: 8px 0 18px; }
+
+  /* ---------- COMPETITORS ---------- */
+  .comp-list { margin-top: 12px; display: grid; gap: 0; }
+  .comp {
+    padding: 22px 0;
+    border-bottom: 1px solid var(--so-line);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 18px 12px;
+    align-items: start;
+  }
+  .comp:last-child { border-bottom: 0; }
+  .comp__id { display: flex; flex-direction: column; gap: 6px; }
+  .comp__tk {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--so-subtle);
+  }
+  .comp__name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--so-ink);
+  }
+  .comp__name em { font-style: italic; color: var(--so-signal); }
+  .comp__cap {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1;
+    color: var(--so-ink);
+    text-align: right;
+  }
+  .comp__cap .ital { font-style: italic; color: var(--so-signal); }
+  .comp__cap-sub {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    color: var(--so-subtle);
+    text-align: right;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .comp__bar {
+    grid-column: 1 / -1;
+    height: 4px;
+    background: var(--so-paper-3);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .comp__bar > span {
+    display: block;
+    height: 100%;
+    background: var(--so-ink);
+    width: 0;
+    transition: width 1.4s var(--ease-out, cubic-bezier(.22,1,.36,1));
+  }
+  .comp__bar.is-signal > span { background: var(--so-signal); }
+  .comp__note {
+    grid-column: 1 / -1;
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--so-muted);
+    margin: 8px 0 0;
+  }
+  .comp__note em { font-family: var(--font-display); font-style: italic; color: var(--so-signal); font-size: 1.05em; }
+  .comp__chips {
+    grid-column: 1 / -1;
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 10px;
+  }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--so-muted);
+    border: 1px solid var(--so-line);
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--so-paper);
+  }
+  .chip strong { color: var(--so-ink); font-weight: 500; }
+
+  /* SO row marker */
+  .comp.is-self .comp__name { font-weight: 500; }
+  .comp.is-self .comp__id::before {
+    content: "▸";
+    position: absolute;
+    transform: translateX(-14px);
+    color: var(--so-signal);
+    font-size: 13px;
+    margin-top: -1px;
+  }
+  .comp__id { position: relative; }
+
+  /* ---------- DIVIDEND LEDGER (close) ---------- */
+  .ledger-vis { width: 100%; aspect-ratio: 1 / 0.85; margin-top: 8px; }
+  .takeaway h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(40px, 11vw, 56px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    color: var(--so-ink);
+    margin: 0 0 24px;
+    text-wrap: balance;
+  }
+  .takeaway h2 em { font-style: italic; color: var(--so-signal); }
+
+  /* ---------- FOOTER ---------- */
+  .foot {
+    padding: 36px 24px 56px;
+    background: var(--so-ink);
+    color: #C9C5BC;
+  }
+  .foot__row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 12px;
+    border-top: 1px solid #2A2D33;
+    padding-top: 20px;
+  }
+  .foot__t {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: #8B8780;
+    text-transform: uppercase;
+  }
+  .foot__t .ticker { color: #FBFAF7; }
+  .foot__cap {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: #6F6C66;
+    text-transform: uppercase;
+    line-height: 1.6;
+    margin-top: 14px;
+  }
+
+  /* ---------- SCROLL REVEAL ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 600ms var(--ease-out, cubic-bezier(.22,1,.36,1)),
+                transform 600ms var(--ease-out, cubic-bezier(.22,1,.36,1));
+    transition-delay: var(--rev-d, 0ms);
+  }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* fine selection style */
+  ::selection { background: var(--so-signal); color: #FBFAF7; }
+
+  /* small util */
+  .row { display: flex; align-items: baseline; gap: 8px; }
+  .grow { flex: 1; }
+  .nowrap { white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <!-- ============= PERSISTENT CHROME ============= -->
+  <header class="chrome" aria-label="Recap chrome">
+    <div class="chrome__row">
+      <div class="chrome__id">
+        <span class="chrome__dot" aria-hidden="true"></span>
+        <span class="chrome__ticker">NYSE&nbsp;·&nbsp;SO</span>
+        <span class="chrome__name">Southern Co.</span>
+      </div>
+      <span class="chrome__label">Recap · FY '23</span>
+    </div>
+    <div class="chrome__hairline" id="hairline"></div>
+  </header>
+
+  <!-- ============= 1. HERO / THESIS ============= -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="hero__eyebrow">Atlanta, Georgia · since 1945</div>
+    <h1 class="reveal">
+      Nine&nbsp;million meters.<br/>
+      <em>One bill, every month.</em>
+    </h1>
+    <p class="hero__sub reveal" style="--rev-d: 80ms">
+      Southern Company sells the most regulated commodity in America &mdash; <em>kilowatt-hours and cubic feet</em> &mdash; to nine million homes and businesses across the Southeast. The lights stay on. The check arrives. Rinse, repeat.
+    </p>
+
+    <!-- Meter grid scene -->
+    <svg class="meter-grid reveal" id="meterGrid" viewBox="0 0 360 360" aria-hidden="true" style="--rev-d: 160ms"></svg>
+
+    <div class="hero__strip reveal" style="--rev-d: 240ms">
+      <div>
+        <div class="hs__num" data-count="105.79" data-suffix="B" data-prefix="$" data-decimals="2">$<span class="ital">105.79</span>B</div>
+        <div class="hs__lab">Market cap</div>
+      </div>
+      <div>
+        <div class="hs__num" data-count="25.3" data-suffix="B" data-prefix="$" data-decimals="1">$25.3B</div>
+        <div class="hs__lab">'23 revenue</div>
+      </div>
+      <div>
+        <div class="hs__num" data-count="9" data-suffix="M" data-decimals="0">9M</div>
+        <div class="hs__lab">Customers</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- reset 1 -->
+  <section class="reset" data-screen-label="02 Reset">
+    <span class="mark">— interlude —</span>
+    <p>Three states for power, four for gas. <em class="signal">The grid doesn't care which kind you need.</em></p>
+  </section>
+
+  <!-- ============= 2. THE BUSINESS ============= -->
+  <section class="beat" data-screen-label="03 Business">
+    <div class="beat__head reveal">
+      <span class="eyebrow">The business <span class="num">· three rivers</span></span>
+      <h2 class="display" style="font-size: 36px;">Three currents flow into one ledger. <em>One regulated. One contested. One gas.</em></h2>
+    </div>
+
+    <div class="rivers reveal" style="--rev-d: 80ms">
+      <div class="river">
+        <div class="river__id">01 ·</div>
+        <div>
+          <h3 class="river__title">Regulated <em>electric</em></h3>
+          <p class="river__body">Alabama Power, Georgia Power, Mississippi Power. Retail and wholesale kilowatt-hours sold under state-commission rate orders &mdash; the boring, beautiful business.</p>
+          <div class="river__bar"><span data-fill="78"></span></div>
+          <div class="caption" style="margin-top:8px">≈ 78% of revenue mix</div>
+        </div>
+      </div>
+      <div class="river">
+        <div class="river__id">02 ·</div>
+        <div>
+          <h3 class="river__title">Southern Power <em>(competitive)</em></h3>
+          <p class="river__body">Wholesale generation &mdash; including renewables &mdash; sold to other utilities and large buyers. The merchant sleeve, riding alongside the regulated core.</p>
+          <div class="river__bar iris"><span data-fill="34"></span></div>
+          <div class="caption" style="margin-top:8px">Wholesale + renewables sleeve</div>
+        </div>
+      </div>
+      <div class="river">
+        <div class="river__id">03 ·</div>
+        <div>
+          <h3 class="river__title">Southern Co. <em>Gas</em></h3>
+          <p class="river__body">Natural-gas distribution to homes and businesses across four states. Different molecule, same regulated rhythm.</p>
+          <div class="river__bar cool"><span data-fill="52"></span></div>
+          <div class="caption" style="margin-top:8px">4-state gas LDC footprint</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="body reveal" style="margin-top: 28px; --rev-d: 200ms">
+      Plus distributed-energy and resilience products &mdash; microgrids, telecom &mdash; the small tributaries. <em>Every river is rate-regulated</em>; every river runs at a pace the commission allows.
+    </p>
+  </section>
+
+  <!-- ============= 3. THE SCALE ============= -->
+  <section class="beat" style="background: var(--so-paper-2);" data-screen-label="04 Scale">
+    <div class="beat__head reveal">
+      <span class="eyebrow">The scale <span class="num">· FY '23</span></span>
+      <h2 class="display" style="font-size: 36px;">A quarter ran <span class="signal">$6.04B</span>. The year ran <span class="signal">$25.3B</span>. The dial barely moved.</h2>
+    </div>
+
+    <div class="dial-wrap reveal" style="--rev-d: 80ms">
+      <svg class="dial" id="loadDial" viewBox="0 0 320 320" aria-hidden="true"></svg>
+      <div class="dial-stats">
+        <div class="dial-stat">
+          <div class="dial-stat__num"><span class="ital">$25.3</span>B</div>
+          <div class="dial-stat__lab">Operating revenue</div>
+        </div>
+        <div class="dial-stat">
+          <div class="dial-stat__num">$6.04B</div>
+          <div class="dial-stat__lab">Q4 '23 revenue</div>
+        </div>
+        <div class="dial-stat">
+          <div class="dial-stat__num">$0.64</div>
+          <div class="dial-stat__lab">Q4 adjusted EPS</div>
+        </div>
+        <div class="dial-stat">
+          <div class="dial-stat__num"><span class="ital">27,900</span></div>
+          <div class="dial-stat__lab">Employees</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="body reveal" style="margin-top: 28px; --rev-d: 200ms">
+      Rate-regulated cash flow is what makes a utility a utility: <em>predictable, slow, immense</em>. The commission sets the return; the meters do the rest.
+    </p>
+  </section>
+
+  <!-- reset 2 -->
+  <section class="reset" data-screen-label="05 Reset">
+    <span class="mark">— interlude —</span>
+    <p>Big revenue is the easy half. <em class="signal">Knowing where the dollar goes is the work.</em></p>
+  </section>
+
+  <!-- ============= 4. WHERE THE MONEY GOES ============= -->
+  <section class="beat" data-screen-label="06 Costs">
+    <div class="beat__head reveal">
+      <span class="eyebrow">Where the dollar goes <span class="num">· cost stack</span></span>
+      <h2 class="display" style="font-size: 36px;">A bus bar of obligations. <em>Fuel, wages, wear, interest, gas.</em></h2>
+    </div>
+
+    <!-- bus bar -->
+    <svg class="busbar reveal" id="busbar" viewBox="0 0 360 240" aria-hidden="true" style="--rev-d: 80ms"></svg>
+
+    <div class="busbar__legend reveal" style="--rev-d: 160ms">
+      <!-- populated by JS so colors come straight from data -->
+    </div>
+
+    <p class="body reveal" style="margin-top: 24px; --rev-d: 240ms">
+      Combined, the named lines run <em>about 77¢</em> of every operating dollar. The remaining 23¢ funds taxes, smaller op-ex, and what's left over for <em>shareholders and the rate base</em>.
+    </p>
+  </section>
+
+  <!-- ============= 5. FOOTPRINT ============= -->
+  <section class="beat" style="background: var(--so-paper-2);" data-screen-label="07 Footprint">
+    <div class="beat__head reveal">
+      <span class="eyebrow">Footprint <span class="num">· 80% south of the Mason-Dixon</span></span>
+      <h2 class="display" style="font-size: 36px;">A company shaped like its weather. <em>Hot, humid, growing.</em></h2>
+    </div>
+
+    <svg class="map-wrap reveal" id="footprint" viewBox="0 0 360 290" aria-hidden="true" style="--rev-d: 80ms"></svg>
+
+    <div class="geo-rows reveal" style="--rev-d: 160ms">
+      <div class="geo-row">
+        <div class="geo-pct"><span class="ital">80</span>%</div>
+        <div class="geo-name">Southeast United States &mdash; the regulated heartland</div>
+        <div class="geo-tick">core</div>
+      </div>
+      <div class="geo-row">
+        <div class="geo-pct">18%</div>
+        <div class="geo-name">Other United States &mdash; gas LDCs, Southern Power assets</div>
+        <div class="geo-tick">edge</div>
+      </div>
+      <div class="geo-row">
+        <div class="geo-pct">2%</div>
+        <div class="geo-name">International / other</div>
+        <div class="geo-tick">trace</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- reset 3 -->
+  <section class="reset" data-screen-label="08 Reset">
+    <span class="mark">— interlude —</span>
+    <p>Building Vogtle took fifteen years and twice the budget. <em class="signal">Then the lights came on.</em></p>
+  </section>
+
+  <!-- ============= 6. THE BET ============= -->
+  <section class="beat" data-screen-label="09 The bet">
+    <div class="beat__head reveal">
+      <span class="eyebrow">The bet <span class="num">· Vogtle 3 &amp; 4 + grid mod</span></span>
+      <h2 class="display" style="font-size: 36px;">Two new reactors. <em>One $12.7B capex year.</em> Free cash flow goes the wrong way on purpose.</h2>
+    </div>
+
+    <svg class="bet-scene reveal" id="reactor" viewBox="0 0 360 380" aria-hidden="true" style="--rev-d: 80ms"></svg>
+
+    <div class="reveal" style="--rev-d: 160ms">
+      <div class="ledger-row">
+        <div class="lab"><strong>Capex</strong> &mdash; Vogtle, grid, gas</div>
+        <div class="val">$12.7B</div>
+      </div>
+      <div class="ledger-row">
+        <div class="lab"><strong>Operating cash flow</strong></div>
+        <div class="val">$9.8B</div>
+      </div>
+      <div class="ledger-row">
+        <div class="lab"><strong>Free cash flow</strong> &mdash; the gap</div>
+        <div class="val neg">−$2.9B</div>
+      </div>
+    </div>
+
+    <p class="body reveal" style="margin-top: 24px; --rev-d: 240ms">
+      A regulated utility going FCF-negative isn't a wound &mdash; it's <em>rate base, deferred</em>. Every dollar of capex earns the commission-set return for the next 40 years. <em>Patience is the asset.</em>
+    </p>
+  </section>
+
+  <!-- ============= 7. THE WEIGHT (dark interlude) ============= -->
+  <section class="beat dark" data-screen-label="10 Weight">
+    <div class="beat__head reveal">
+      <span class="eyebrow">The weight <span class="num" style="color:#FBFAF7">· $65.6B</span></span>
+      <h2 class="display" style="font-size: 36px;">Long-lived assets ride on long-lived debt. <em>$65.6B out, $1.6B in cash.</em></h2>
+    </div>
+
+    <svg class="scale-vis reveal" id="scaleVis" viewBox="0 0 360 340" aria-hidden="true" style="--rev-d: 80ms"></svg>
+
+    <div class="reveal" style="--rev-d: 160ms">
+      <div class="ledger-row" style="border-color:#2A2D33">
+        <div class="lab" style="color:#9C9890"><strong style="color:#FBFAF7">Long-term debt</strong></div>
+        <div class="val" style="color:#FBFAF7">$65.6B</div>
+      </div>
+      <div class="ledger-row" style="border-color:#2A2D33">
+        <div class="lab" style="color:#9C9890"><strong style="color:#FBFAF7">Cash on hand</strong></div>
+        <div class="val" style="color:#FBFAF7">$1.6B</div>
+      </div>
+      <div class="ledger-row" style="border-color:#2A2D33">
+        <div class="lab" style="color:#9C9890"><strong style="color:#FBFAF7">Debt-to-equity</strong> &mdash; "utility-typical"</div>
+        <div class="val" style="color:#FBFAF7"><span style="color: var(--so-signal-2); font-style: italic">1.82×</span></div>
+      </div>
+      <div class="ledger-row" style="border-color:#2A2D33">
+        <div class="lab" style="color:#9C9890"><strong style="color:#FBFAF7">FFO-to-debt target</strong></div>
+        <div class="val" style="color:#FBFAF7">≈ 17%</div>
+      </div>
+    </div>
+
+    <p class="body reveal" style="margin-top:24px; color:#C9C5BC; --rev-d: 240ms">
+      Leverage is the price of long-lived infrastructure. The job is to keep <em>investment-grade</em> ratings and let the regulated rate base do the compounding.
+    </p>
+  </section>
+
+  <!-- ============= 8. THE COMPETITION ============= -->
+  <section class="beat" data-screen-label="11 Competition">
+    <div class="beat__head reveal">
+      <span class="eyebrow">The competition <span class="num">· three flavors of rival</span></span>
+      <h2 class="display" style="font-size: 36px;">Same investor base. <em>Different theses.</em></h2>
+    </div>
+
+    <div class="comp-list reveal" style="--rev-d: 80ms">
+
+      <!-- SO marker row -->
+      <div class="comp is-self">
+        <div class="comp__id">
+          <span class="comp__tk">NYSE · SO</span>
+          <span class="comp__name">Southern Company</span>
+        </div>
+        <div>
+          <div class="comp__cap">$<span class="ital">105.79</span>B</div>
+          <div class="comp__cap-sub">Market cap</div>
+        </div>
+        <div class="comp__bar is-signal"><span data-cap="105.79"></span></div>
+        <div class="comp__chips">
+          <span class="chip">Q rev <strong>$6.04B</strong></span>
+          <span class="chip">FY rev <strong>$25.3B</strong></span>
+          <span class="chip">9M customers</span>
+        </div>
+      </div>
+
+      <div class="comp">
+        <div class="comp__id">
+          <span class="comp__tk">NYSE · DUK</span>
+          <span class="comp__name"><em>Direct</em> &mdash; Duke Energy</span>
+        </div>
+        <div>
+          <div class="comp__cap">$99.64B</div>
+          <div class="comp__cap-sub">Market cap</div>
+        </div>
+        <div class="comp__bar"><span data-cap="99.64"></span></div>
+        <p class="comp__note">Vertically integrated electric &amp; gas utility across the Southeast and Midwest &mdash; <em>direct overlap</em> with Southern's regulated heartland.</p>
+        <div class="comp__chips">
+          <span class="chip">Q rev <strong>$7.94B</strong></span>
+          <span class="chip">P/E <strong>20.06</strong></span>
+          <span class="chip">YoY <strong>+6.19%</strong></span>
+        </div>
+      </div>
+
+      <div class="comp">
+        <div class="comp__id">
+          <span class="comp__tk">NASDAQ · AEP</span>
+          <span class="comp__name"><em>Peer</em> &mdash; American Electric Power</span>
+        </div>
+        <div>
+          <div class="comp__cap">$72.65B</div>
+          <div class="comp__cap-sub">Market cap</div>
+        </div>
+        <div class="comp__bar"><span data-cap="72.65"></span></div>
+        <p class="comp__note">Large regulated electric utility competing for the <em>same investor base</em> and same energy-transition headwinds &mdash; smaller market, similar dynamics.</p>
+        <div class="comp__chips">
+          <span class="chip">Q rev <strong>$5.31B</strong></span>
+          <span class="chip">P/E <strong>20.29</strong></span>
+          <span class="chip">YoY <strong>+10.98%</strong></span>
+        </div>
+      </div>
+
+      <div class="comp">
+        <div class="comp__id">
+          <span class="comp__tk">NASDAQ · CEG</span>
+          <span class="comp__name"><em>Threat</em> &mdash; Constellation Energy</span>
+        </div>
+        <div>
+          <div class="comp__cap">$<span class="ital">107.32</span>B</div>
+          <div class="comp__cap-sub">Market cap</div>
+        </div>
+        <div class="comp__bar is-signal"><span data-cap="107.32"></span></div>
+        <p class="comp__note">Largest U.S. producer of carbon-free electricity &mdash; nuclear-heavy &mdash; chasing the same <em>data-center PPAs</em> Southern Power and Vogtle target.</p>
+        <div class="comp__chips">
+          <span class="chip">FY rev <strong>$24.92B</strong></span>
+          <span class="chip">P/E <strong>46.28</strong></span>
+          <span class="chip">YoY <strong>+8.34%</strong></span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- reset 4 -->
+  <section class="reset" data-screen-label="12 Reset">
+    <span class="mark">— interlude —</span>
+    <p>You don't run a utility for surprises. <em class="signal">You run it for the next dividend.</em></p>
+  </section>
+
+  <!-- ============= 9. THE TAKEAWAY ============= -->
+  <section class="beat takeaway" data-screen-label="13 Takeaway">
+    <div class="beat__head reveal">
+      <span class="eyebrow">The takeaway <span class="num">· 78 years, uninterrupted</span></span>
+    </div>
+
+    <h2 class="reveal" style="--rev-d: 60ms">
+      Nine million <em>meters out.</em><br/>
+      One <em>check in</em> &mdash; for seventy-eight years.
+    </h2>
+
+    <svg class="ledger-vis reveal" id="ledger" viewBox="0 0 360 300" aria-hidden="true" style="--rev-d: 140ms"></svg>
+
+    <div class="reveal" style="--rev-d: 220ms">
+      <div class="ledger-row">
+        <div class="lab"><strong>Consecutive years paid</strong></div>
+        <div class="val"><span class="ital" style="color:var(--so-signal); font-family:var(--font-display); font-style:italic">78</span></div>
+      </div>
+      <div class="ledger-row">
+        <div class="lab"><strong>Consecutive annual raises</strong></div>
+        <div class="val">24</div>
+      </div>
+      <div class="ledger-row">
+        <div class="lab"><strong>Customers served</strong></div>
+        <div class="val">≈ 9M</div>
+      </div>
+    </div>
+
+    <p class="body reveal" style="margin-top: 24px; --rev-d: 300ms">
+      The opening was about the bill going out. The close is about <em>the check coming back</em>. Same company. Same machine. Just looked at from the other side of the meter.
+    </p>
+  </section>
+
+  <!-- ============= FOOTER ============= -->
+  <footer class="foot" data-screen-label="14 Foot">
+    <div class="foot__row">
+      <span class="foot__t"><span class="ticker">SO</span> · NYSE · Recap FY '23</span>
+      <span class="foot__t">end ▸</span>
+    </div>
+    <p class="foot__cap">All figures sourced from the company-issued recap dataset. Numerals reflect FY 2023 reporting. Past dividend behavior is not a forecast. Read the prospectus.</p>
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================
+   Scroll engine — progress hairline, reveals, count-ups, fills
+   ============================================================ */
+
+(function () {
+  const hairline = document.getElementById('hairline');
+  const page = document.getElementById('page');
+
+  function onScroll() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const p = Math.max(0, Math.min(1, window.scrollY / Math.max(1, max)));
+    hairline.style.setProperty('--scroll', (p * 100).toFixed(2) + '%');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  /* ---------- reveal observer ---------- */
+  const revs = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        // trigger fills/counts inside
+        e.target.querySelectorAll('[data-fill]').forEach(el => {
+          const v = parseFloat(el.getAttribute('data-fill'));
+          el.style.width = v + '%';
+        });
+        e.target.querySelectorAll('[data-cap]').forEach(el => {
+          const v = parseFloat(el.getAttribute('data-cap'));
+          // scale relative to CEG (107.32) — largest in roster
+          const w = (v / 110) * 100;
+          el.style.width = w.toFixed(1) + '%';
+        });
+        e.target.querySelectorAll('[data-count]').forEach(el => {
+          if (el._counted) return;
+          el._counted = true;
+          const target = parseFloat(el.getAttribute('data-count'));
+          const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+          const prefix = el.getAttribute('data-prefix') || '';
+          const suffix = el.getAttribute('data-suffix') || '';
+          const start = performance.now();
+          const dur = 1100;
+          const inner = el.querySelector('.ital');
+          // discover wrapper around the number
+          function tick(t) {
+            const k = Math.min(1, (t - start) / dur);
+            const eased = 1 - Math.pow(1 - k, 3);
+            const v = (target * eased);
+            const txt = prefix + v.toFixed(decimals) + suffix;
+            // preserve italic span if present (just rewrite text inside)
+            if (inner) {
+              el.innerHTML = prefix + '<span class="ital">' + v.toFixed(decimals) + '</span>' + suffix;
+            } else {
+              el.textContent = txt;
+            }
+            if (k < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        });
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+  revs.forEach(r => io.observe(r));
+})();
+
+/* ============================================================
+   SVG SCENE: meter grid (hero)
+   A 4×4 grid of analog meters; the central one glows; needles
+   slowly sweep on a per-meter offset. Communicates "9M meters,
+   one bill" via repetition.
+   ============================================================ */
+(function () {
+  const svg = document.getElementById('meterGrid');
+  if (!svg) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  const cols = 4, rows = 4, pad = 14, size = 360;
+  const cell = (size - pad * 2) / cols;
+
+  const meters = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const cx = pad + c * cell + cell / 2;
+      const cy = pad + r * cell + cell / 2;
+      const isCenter = (r === 1 && c === 2); // off-center hero meter
+
+      const g = document.createElementNS(NS, 'g');
+      g.setAttribute('transform', `translate(${cx},${cy})`);
+
+      // outer disc
+      const disc = document.createElementNS(NS, 'circle');
+      disc.setAttribute('r', cell * 0.40);
+      disc.setAttribute('fill', isCenter ? 'var(--so-signal-soft)' : 'var(--so-paper-2)');
+      disc.setAttribute('stroke', isCenter ? 'var(--so-signal)' : 'var(--so-line)');
+      disc.setAttribute('stroke-width', isCenter ? 1.5 : 1);
+      g.appendChild(disc);
+
+      // tick marks (12)
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
+        const r1 = cell * 0.34, r2 = cell * 0.39;
+        const t = document.createElementNS(NS, 'line');
+        t.setAttribute('x1', Math.cos(a) * r1);
+        t.setAttribute('y1', Math.sin(a) * r1);
+        t.setAttribute('x2', Math.cos(a) * r2);
+        t.setAttribute('y2', Math.sin(a) * r2);
+        t.setAttribute('stroke', isCenter ? 'var(--so-signal)' : 'var(--so-rule)');
+        t.setAttribute('stroke-width', i % 3 === 0 ? 1.4 : 0.8);
+        t.setAttribute('opacity', isCenter ? 0.9 : 0.7);
+        g.appendChild(t);
+      }
+
+      // dial face dot
+      const center = document.createElementNS(NS, 'circle');
+      center.setAttribute('r', 1.6);
+      center.setAttribute('fill', isCenter ? 'var(--so-signal)' : 'var(--so-ink-2)');
+      g.appendChild(center);
+
+      // needle
+      const needle = document.createElementNS(NS, 'line');
+      needle.setAttribute('x1', 0); needle.setAttribute('y1', 0);
+      needle.setAttribute('x2', 0); needle.setAttribute('y2', -cell * 0.30);
+      needle.setAttribute('stroke', isCenter ? 'var(--so-signal)' : 'var(--so-ink-2)');
+      needle.setAttribute('stroke-width', isCenter ? 1.6 : 1.1);
+      needle.setAttribute('stroke-linecap', 'round');
+      g.appendChild(needle);
+
+      svg.appendChild(g);
+      // record for animation
+      meters.push({ needle, isCenter, phase: Math.random() * Math.PI * 2, speed: 0.0005 + Math.random() * 0.001 });
+    }
+  }
+
+  // soft connecting hairline grid behind meters
+  const grid = document.createElementNS(NS, 'g');
+  grid.setAttribute('opacity', 0.35);
+  for (let i = 1; i < cols; i++) {
+    const x = pad + i * cell;
+    const ln = document.createElementNS(NS, 'line');
+    ln.setAttribute('x1', x); ln.setAttribute('x2', x);
+    ln.setAttribute('y1', pad); ln.setAttribute('y2', size - pad);
+    ln.setAttribute('stroke', 'var(--so-line)');
+    ln.setAttribute('stroke-width', 0.7);
+    ln.setAttribute('stroke-dasharray', '2 6');
+    grid.appendChild(ln);
+    const lh = document.createElementNS(NS, 'line');
+    lh.setAttribute('y1', pad + i * cell); lh.setAttribute('y2', pad + i * cell);
+    lh.setAttribute('x1', pad); lh.setAttribute('x2', size - pad);
+    lh.setAttribute('stroke', 'var(--so-line)');
+    lh.setAttribute('stroke-width', 0.7);
+    lh.setAttribute('stroke-dasharray', '2 6');
+    grid.appendChild(lh);
+  }
+  svg.insertBefore(grid, svg.firstChild);
+
+  // animate needles slowly with scroll velocity influence
+  let lastY = 0, vel = 0;
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    vel = vel * 0.85 + (y - lastY) * 0.15;
+    lastY = y;
+  }, { passive: true });
+
+  function animate(t) {
+    meters.forEach((m, i) => {
+      const base = m.isCenter ? Math.PI * 0.28 : Math.PI * 0.5; // off-perfect for variety
+      const range = m.isCenter ? 0.65 : 0.45;
+      const swirl = Math.sin(t * m.speed + m.phase) * range;
+      const scrollKick = (vel * 0.012) * (m.isCenter ? 1.2 : 0.4);
+      const angle = base + swirl + scrollKick;
+      // needle axis: 0 is straight up; rotate group's needle line via setting x2/y2
+      m.needle.setAttribute('transform', `rotate(${(angle * 180 / Math.PI) - 90})`);
+    });
+    requestAnimationFrame(animate);
+  }
+  requestAnimationFrame(animate);
+})();
+
+/* ============================================================
+   SVG SCENE: load dial — single big analog meter (the scale)
+   ============================================================ */
+(function () {
+  const svg = document.getElementById('loadDial');
+  if (!svg) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  const cx = 160, cy = 170, R = 130;
+
+  // outer arc (load curve, 240°)
+  const start = -210 * Math.PI / 180;
+  const end   = 30  * Math.PI / 180;
+  function arc(rad, a0, a1, big) {
+    const x0 = cx + Math.cos(a0) * rad, y0 = cy + Math.sin(a0) * rad;
+    const x1 = cx + Math.cos(a1) * rad, y1 = cy + Math.sin(a1) * rad;
+    const lg = big ? 1 : 0;
+    return `M${x0},${y0} A${rad},${rad} 0 ${lg} 1 ${x1},${y1}`;
+  }
+
+  // background arc
+  const bg = document.createElementNS(NS, 'path');
+  bg.setAttribute('d', arc(R, start, end, 1));
+  bg.setAttribute('stroke', 'var(--so-line)');
+  bg.setAttribute('stroke-width', 12);
+  bg.setAttribute('fill', 'none');
+  bg.setAttribute('stroke-linecap', 'round');
+  svg.appendChild(bg);
+
+  // active arc (drawn on reveal)
+  const active = document.createElementNS(NS, 'path');
+  const targetK = 0.78; // 78% load — the meter sits high
+  const ang = start + (end - start) * targetK;
+  active.setAttribute('d', arc(R, start, ang, 1));
+  active.setAttribute('stroke', 'var(--so-signal)');
+  active.setAttribute('stroke-width', 12);
+  active.setAttribute('fill', 'none');
+  active.setAttribute('stroke-linecap', 'round');
+  // dash for draw-on
+  const len = (Math.abs(ang - start) * R);
+  active.setAttribute('stroke-dasharray', len);
+  active.setAttribute('stroke-dashoffset', len);
+  active.style.transition = 'stroke-dashoffset 1.6s var(--ease-out, cubic-bezier(.22,1,.36,1))';
+  svg.appendChild(active);
+
+  // tick marks
+  for (let i = 0; i <= 10; i++) {
+    const a = start + (end - start) * (i / 10);
+    const r1 = R - 22, r2 = R - 8;
+    const t = document.createElementNS(NS, 'line');
+    t.setAttribute('x1', cx + Math.cos(a) * r1);
+    t.setAttribute('y1', cy + Math.sin(a) * r1);
+    t.setAttribute('x2', cx + Math.cos(a) * r2);
+    t.setAttribute('y2', cy + Math.sin(a) * r2);
+    t.setAttribute('stroke', i === 7 || i === 8 ? 'var(--so-signal)' : 'var(--so-ink-2)');
+    t.setAttribute('stroke-width', i % 5 === 0 ? 1.6 : 0.9);
+    svg.appendChild(t);
+  }
+
+  // tick labels (mono)
+  const labels = ['0', '$10B', '$25B'];
+  const positions = [0, 0.4, 1];
+  labels.forEach((lab, i) => {
+    const a = start + (end - start) * positions[i];
+    const r = R - 38;
+    const tx = document.createElementNS(NS, 'text');
+    tx.setAttribute('x', cx + Math.cos(a) * r);
+    tx.setAttribute('y', cy + Math.sin(a) * r + 4);
+    tx.setAttribute('text-anchor', 'middle');
+    tx.setAttribute('font-family', 'var(--font-mono)');
+    tx.setAttribute('font-size', '10');
+    tx.setAttribute('letter-spacing', '0.08em');
+    tx.setAttribute('fill', 'var(--so-subtle)');
+    tx.textContent = lab;
+    svg.appendChild(tx);
+  });
+
+  // needle (drawn on reveal)
+  const needle = document.createElementNS(NS, 'line');
+  needle.setAttribute('x1', cx); needle.setAttribute('y1', cy);
+  needle.setAttribute('x2', cx + Math.cos(start) * (R - 18));
+  needle.setAttribute('y2', cy + Math.sin(start) * (R - 18));
+  needle.setAttribute('stroke', 'var(--so-ink)');
+  needle.setAttribute('stroke-width', 2.2);
+  needle.setAttribute('stroke-linecap', 'round');
+  needle.style.transition = 'transform 1.6s var(--ease-out, cubic-bezier(.34, 1.56, 0.64, 1))';
+  needle.style.transformOrigin = `${cx}px ${cy}px`;
+  needle.style.transformBox = 'fill-box';
+  svg.appendChild(needle);
+
+  // hub
+  const hub = document.createElementNS(NS, 'circle');
+  hub.setAttribute('cx', cx); hub.setAttribute('cy', cy); hub.setAttribute('r', 7);
+  hub.setAttribute('fill', 'var(--so-ink)');
+  svg.appendChild(hub);
+  const hub2 = document.createElementNS(NS, 'circle');
+  hub2.setAttribute('cx', cx); hub2.setAttribute('cy', cy); hub2.setAttribute('r', 2.5);
+  hub2.setAttribute('fill', 'var(--so-paper)');
+  svg.appendChild(hub2);
+
+  // center label
+  const lab = document.createElementNS(NS, 'text');
+  lab.setAttribute('x', cx);
+  lab.setAttribute('y', cy + 56);
+  lab.setAttribute('text-anchor', 'middle');
+  lab.setAttribute('font-family', 'var(--font-mono)');
+  lab.setAttribute('font-size', '10');
+  lab.setAttribute('letter-spacing', '0.16em');
+  lab.setAttribute('fill', 'var(--so-subtle)');
+  lab.textContent = 'FY \'23 LOAD · GW';
+  svg.appendChild(lab);
+
+  // animate when SVG enters viewport
+  const obs = new IntersectionObserver((es) => {
+    es.forEach(e => {
+      if (e.isIntersecting) {
+        // sweep needle to angle ~ targetK
+        const deg = ((ang - start) * 180 / Math.PI) - 30; // small offset so needle starts at start angle
+        // recompute from start orientation: place needle initially at start, rotate by (target - 0)
+        const deltaDeg = (ang - start) * 180 / Math.PI;
+        needle.style.transform = `rotate(${deltaDeg}deg)`;
+        active.setAttribute('stroke-dashoffset', 0);
+        obs.unobserve(svg);
+      }
+    });
+  }, { threshold: 0.3 });
+  obs.observe(svg);
+})();
+
+/* ============================================================
+   SVG SCENE: bus bar — costs as parallel current lines
+   Five horizontal "bus bars" of varying length per pct,
+   with the supplied hex colors. Each bar is a current line
+   that draws on as the section enters.
+   ============================================================ */
+(function () {
+  const svg = document.getElementById('busbar');
+  const legend = document.querySelector('.busbar__legend');
+  if (!svg || !legend) return;
+  const NS = 'http://www.w3.org/2000/svg';
+
+  const data = [
+    { pct: 28, color: '#E86B3E', label: 'Fuel & purchased power' },
+    { pct: 18, color: '#4A90D9', label: 'Operations & maintenance' },
+    { pct: 12, color: '#7B68EE', label: 'Depreciation & amortization' },
+    { pct: 10, color: '#50C878', label: 'Cost of natural gas' },
+    { pct:  9, color: '#F5A623', label: 'Interest expense' }
+  ];
+
+  const W = 360, H = 240;
+  const padL = 56, padR = 18, padT = 16, padB = 18;
+  const lanes = data.length;
+  const laneH = (H - padT - padB) / lanes;
+  const maxPx = W - padL - padR;
+  const scaleMax = 30; // max axis tick
+
+  // axis vertical line (left)
+  const axis = document.createElementNS(NS, 'line');
+  axis.setAttribute('x1', padL); axis.setAttribute('x2', padL);
+  axis.setAttribute('y1', padT - 4); axis.setAttribute('y2', H - padB + 4);
+  axis.setAttribute('stroke', 'var(--so-line-strong, #CFCBC0)');
+  axis.setAttribute('stroke-width', 1);
+  svg.appendChild(axis);
+
+  // axis ticks at top
+  [0, 10, 20, 30].forEach((tick) => {
+    const x = padL + (tick / scaleMax) * maxPx;
+    const ln = document.createElementNS(NS, 'line');
+    ln.setAttribute('x1', x); ln.setAttribute('x2', x);
+    ln.setAttribute('y1', padT - 8); ln.setAttribute('y2', padT - 2);
+    ln.setAttribute('stroke', 'var(--so-rule)');
+    ln.setAttribute('stroke-width', 0.8);
+    svg.appendChild(ln);
+    const tx = document.createElementNS(NS, 'text');
+    tx.setAttribute('x', x); tx.setAttribute('y', padT - 12);
+    tx.setAttribute('text-anchor', 'middle');
+    tx.setAttribute('font-family', 'var(--font-mono)');
+    tx.setAttribute('font-size', '9');
+    tx.setAttribute('letter-spacing', '0.12em');
+    tx.setAttribute('fill', 'var(--so-subtle)');
+    tx.textContent = tick + '%';
+    svg.appendChild(tx);
+  });
+
+  data.forEach((d, i) => {
+    const y = padT + laneH * i + laneH / 2;
+
+    // lane label (mono, left of axis)
+    const ix = document.createElementNS(NS, 'text');
+    ix.setAttribute('x', padL - 10); ix.setAttribute('y', y + 3);
+    ix.setAttribute('text-anchor', 'end');
+    ix.setAttribute('font-family', 'var(--font-mono)');
+    ix.setAttribute('font-size', '10');
+    ix.setAttribute('letter-spacing', '0.08em');
+    ix.setAttribute('fill', 'var(--so-subtle)');
+    ix.textContent = String(i + 1).padStart(2, '0');
+    svg.appendChild(ix);
+
+    // background lane
+    const bg = document.createElementNS(NS, 'line');
+    bg.setAttribute('x1', padL); bg.setAttribute('x2', padL + maxPx);
+    bg.setAttribute('y1', y); bg.setAttribute('y2', y);
+    bg.setAttribute('stroke', 'var(--so-paper-3)');
+    bg.setAttribute('stroke-width', 14);
+    bg.setAttribute('stroke-linecap', 'round');
+    svg.appendChild(bg);
+
+    // foreground bar — animated
+    const fg = document.createElementNS(NS, 'line');
+    const tx2 = padL + (d.pct / scaleMax) * maxPx;
+    fg.setAttribute('x1', padL); fg.setAttribute('x2', padL); // start collapsed
+    fg.setAttribute('y1', y); fg.setAttribute('y2', y);
+    fg.setAttribute('stroke', d.color);
+    fg.setAttribute('stroke-width', 14);
+    fg.setAttribute('stroke-linecap', 'round');
+    fg.style.transition = 'all 1.2s var(--ease-out, cubic-bezier(.22,1,.36,1))';
+    fg.style.transitionDelay = (i * 90) + 'ms';
+    fg.dataset.x = tx2;
+    svg.appendChild(fg);
+
+    // pct label, right side, on-bar
+    const pl = document.createElementNS(NS, 'text');
+    pl.setAttribute('x', tx2 + 10);
+    pl.setAttribute('y', y + 4);
+    pl.setAttribute('font-family', 'var(--font-display)');
+    pl.setAttribute('font-size', '16');
+    pl.setAttribute('fill', 'var(--so-ink)');
+    pl.textContent = d.pct + '%';
+    pl.style.opacity = '0';
+    pl.style.transition = 'opacity 600ms var(--ease-out, cubic-bezier(.22,1,.36,1))';
+    pl.style.transitionDelay = (i * 90 + 600) + 'ms';
+    svg.appendChild(pl);
+    fg._pl = pl;
+
+    // legend entry
+    const row = document.createElement('div');
+    row.className = 'leg-row';
+    row.innerHTML = `
+      <span class="leg-swatch" style="background:${d.color}"></span>
+      <span class="leg-label">${d.label}</span>
+      <span class="leg-pct">${d.pct}<span class="pct-mark">%</span></span>
+    `;
+    legend.appendChild(row);
+  });
+
+  // total row
+  const total = data.reduce((a, b) => a + b.pct, 0);
+  const totalRow = document.createElement('div');
+  totalRow.className = 'leg-row';
+  totalRow.style.borderTop = '1px solid var(--so-rule)';
+  totalRow.style.marginTop = '4px';
+  totalRow.innerHTML = `
+    <span class="leg-swatch" style="background:transparent; border:1px solid var(--so-rule); border-radius:2px"></span>
+    <span class="leg-label" style="color:var(--so-muted)"><em style="font-family:var(--font-display); font-style:italic; color:var(--so-signal)">Combined</em> &mdash; named cost lines</span>
+    <span class="leg-pct">${total}<span class="pct-mark">%</span></span>
+  `;
+  legend.appendChild(totalRow);
+
+  // observe and animate
+  const obs = new IntersectionObserver((es) => {
+    es.forEach(e => {
+      if (e.isIntersecting) {
+        svg.querySelectorAll('line').forEach((ln) => {
+          if (ln.dataset.x) {
+            ln.setAttribute('x2', ln.dataset.x);
+            if (ln._pl) ln._pl.style.opacity = '1';
+          }
+        });
+        obs.unobserve(svg);
+      }
+    });
+  }, { threshold: 0.25 });
+  obs.observe(svg);
+})();
+
+/* ============================================================
+   SVG SCENE: footprint — abstracted Southeast US territory.
+   A stylized regional shape (not a literal map) where 80%
+   glows in the signal color, with concentric "service radius"
+   rings. Annotation pins pop on reveal.
+   ============================================================ */
+(function () {
+  const svg = document.getElementById('footprint');
+  if (!svg) return;
+  const NS = 'http://www.w3.org/2000/svg';
+
+  // soft regional silhouette (abstracted Southeast: AL/GA/MS/TN/SC strip)
+  // hand-drawn path; not literal geography.
+  const region = document.createElementNS(NS, 'path');
+  region.setAttribute('d', `
+    M 60 40
+    C 100 26, 170 22, 230 42
+    C 290 60, 320 92, 312 132
+    C 308 156, 280 178, 250 188
+    C 220 198, 200 226, 178 238
+    C 150 252, 120 250, 102 232
+    C 84 214, 80 188, 70 160
+    C 60 132, 44 104, 50 76
+    C 54 56, 58 46, 60 40 Z
+  `);
+  region.setAttribute('fill', 'var(--so-paper)');
+  region.setAttribute('stroke', 'var(--so-rule)');
+  region.setAttribute('stroke-width', 1);
+  svg.appendChild(region);
+
+  // 80% core fill — overlapped, drawn with mask (a smaller blob)
+  const core = document.createElementNS(NS, 'path');
+  core.setAttribute('d', `
+    M 80 70
+    C 130 56, 200 60, 250 80
+    C 296 98, 308 130, 290 158
+    C 274 182, 240 188, 210 198
+    C 180 208, 152 220, 130 210
+    C 110 200, 96 178, 90 154
+    C 84 130, 72 100, 80 70 Z
+  `);
+  core.setAttribute('fill', 'var(--so-signal-soft)');
+  core.setAttribute('stroke', 'var(--so-signal)');
+  core.setAttribute('stroke-width', 1.4);
+  core.setAttribute('opacity', '0');
+  core.style.transition = 'opacity 900ms var(--ease-out, cubic-bezier(.22,1,.36,1))';
+  svg.appendChild(core);
+
+  // dot density for customers
+  function dot(x, y, r, fill, opa) {
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('r', r);
+    c.setAttribute('fill', fill);
+    c.setAttribute('opacity', opa);
+    return c;
+  }
+  // pseudo-random dots inside core for "service density"
+  const dots = [];
+  let seed = 1;
+  function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  for (let i = 0; i < 90; i++) {
+    const x = 90 + rand() * 200;
+    const y = 80 + rand() * 130;
+    const r = 1.2 + rand() * 1.6;
+    const d = dot(x, y, r, 'var(--so-signal)', 0);
+    d.style.transition = 'opacity 800ms var(--ease-out, cubic-bezier(.22,1,.36,1))';
+    d.style.transitionDelay = (200 + rand() * 800) + 'ms';
+    svg.appendChild(d);
+    dots.push(d);
+  }
+
+  // pinned cities
+  function pin(x, y, label, mono) {
+    const g = document.createElementNS(NS, 'g');
+    const r = document.createElementNS(NS, 'circle');
+    r.setAttribute('cx', x); r.setAttribute('cy', y); r.setAttribute('r', 4.5);
+    r.setAttribute('fill', 'var(--so-ink)');
+    g.appendChild(r);
+    const r2 = document.createElementNS(NS, 'circle');
+    r2.setAttribute('cx', x); r2.setAttribute('cy', y); r2.setAttribute('r', 1.6);
+    r2.setAttribute('fill', 'var(--so-paper)');
+    g.appendChild(r2);
+    const tx = document.createElementNS(NS, 'text');
+    tx.setAttribute('x', x + 10);
+    tx.setAttribute('y', y + 4);
+    tx.setAttribute('font-family', mono ? 'var(--font-mono)' : 'var(--font-sans)');
+    tx.setAttribute('font-size', mono ? '10' : '12');
+    tx.setAttribute('font-weight', '500');
+    tx.setAttribute('fill', 'var(--so-ink)');
+    tx.setAttribute('letter-spacing', mono ? '0.1em' : '0');
+    tx.textContent = label;
+    g.appendChild(tx);
+    g.style.opacity = 0;
+    g.style.transition = 'opacity 700ms var(--ease-out, cubic-bezier(.22,1,.36,1))';
+    return g;
+  }
+  const pAtl = pin(186, 132, 'Atlanta · HQ');
+  const pBir = pin(120, 158, 'Birmingham');
+  const pJax = pin(244, 196, 'Jackson, MS', true);
+  svg.appendChild(pAtl); svg.appendChild(pBir); svg.appendChild(pJax);
+
+  // legend at bottom
+  const legend = document.createElementNS(NS, 'g');
+  legend.setAttribute('transform', 'translate(0, 256)');
+  const legBoxes = [
+    { x: 14,  fill: 'var(--so-signal-soft)', stroke: 'var(--so-signal)', label: '80% · Southeast core' },
+    { x: 192, fill: 'var(--so-paper)',       stroke: 'var(--so-rule)',   label: '20% · everywhere else' }
+  ];
+  legBoxes.forEach(l => {
+    const b = document.createElementNS(NS, 'rect');
+    b.setAttribute('x', l.x); b.setAttribute('y', -8);
+    b.setAttribute('width', 14); b.setAttribute('height', 10);
+    b.setAttribute('fill', l.fill); b.setAttribute('stroke', l.stroke);
+    b.setAttribute('stroke-width', 1);
+    legend.appendChild(b);
+    const tx = document.createElementNS(NS, 'text');
+    tx.setAttribute('x', l.x + 20); tx.setAttribute('y', 1);
+    tx.setAttribute('font-family', 'var(--font-mono)');
+    tx.setAttribute('font-size', '10');
+    tx.setAttribute('letter-spacing', '0.08em');
+    tx.setAttribute('fill', 'var(--so-subtle)');
+    tx.textContent = l.label;
+    legend.appendChild(tx);
+  });
+  svg.appendChild(legend);
+
+  const obs = new IntersectionObserver((es) => {
+    es.forEach(e => {
+      if (e.isIntersecting) {
+        core.setAttribute('opacity', '1');
+        dots.forEach(d => d.setAttribute('opacity', 0.55));
+        [pAtl, pBir, pJax].forEach((p, i) => {
+          setTimeout(() => p.style.opacity = 1, 600 + i * 180);
+        });
+        obs.unobserve(svg);
+      }
+    });
+  }, { threshold: 0.3 });
+  obs.observe(svg);
+})();
+
+/* ============================================================
+   SVG SCENE: reactor / capex
+   Two reactor vessels (Vogtle 3 & 4). The first is "online"
+   (signal-glowing) — the second fills as you scroll.
+   With a capex column rising alongside.
+   ============================================================ */
+(function () {
+  const svg = document.getElementById('reactor');
+  if (!svg) return;
+  const NS = 'http://www.w3.org/2000/svg';
+
+  const W = 360, H = 380;
+
+  // floor / baseplate
+  const floor = document.createElementNS(NS, 'line');
+  floor.setAttribute('x1', 24); floor.setAttribute('x2', W - 24);
+  floor.setAttribute('y1', 280); floor.setAttribute('y2', 280);
+  floor.setAttribute('stroke', 'var(--so-rule)');
+  floor.setAttribute('stroke-width', 1.2);
+  svg.appendChild(floor);
+
+  // reactor unit factory
+  function reactor(x, label, fillPct, online) {
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('transform', `translate(${x},0)`);
+
+    // containment dome
+    const dome = document.createElementNS(NS, 'path');
+    dome.setAttribute('d', `M 0 280 V 130 A 56 56 0 0 1 112 130 V 280 Z`);
+    dome.setAttribute('fill', 'var(--so-paper-2)');
+    dome.setAttribute('stroke', 'var(--so-ink)');
+    dome.setAttribute('stroke-width', 1.4);
+    g.appendChild(dome);
+
+    // top spire
+    const spire = document.createElementNS(NS, 'line');
+    spire.setAttribute('x1', 56); spire.setAttribute('x2', 56);
+    spire.setAttribute('y1', 78); spire.setAttribute('y2', 56);
+    spire.setAttribute('stroke', 'var(--so-ink)');
+    spire.setAttribute('stroke-width', 1.4);
+    g.appendChild(spire);
+    const spireTop = document.createElementNS(NS, 'circle');
+    spireTop.setAttribute('cx', 56); spireTop.setAttribute('cy', 56); spireTop.setAttribute('r', 3);
+    spireTop.setAttribute('fill', online ? 'var(--so-signal)' : 'var(--so-rule)');
+    if (online) {
+      spireTop.setAttribute('filter', 'url(#glow)');
+    }
+    g.appendChild(spireTop);
+
+    // inner core (clipped fill)
+    const clipId = 'rx-clip-' + Math.random().toString(36).slice(2);
+    const clip = document.createElementNS(NS, 'clipPath');
+    clip.setAttribute('id', clipId);
+    const clipPath = document.createElementNS(NS, 'path');
+    clipPath.setAttribute('d', `M 14 280 V 138 A 42 42 0 0 1 98 138 V 280 Z`);
+    clip.appendChild(clipPath);
+    g.appendChild(clip);
+
+    // fill rectangle — animated height
+    const fillRect = document.createElementNS(NS, 'rect');
+    fillRect.setAttribute('x', 14);
+    fillRect.setAttribute('width', 84);
+    fillRect.setAttribute('y', 280); // start collapsed bottom
+    fillRect.setAttribute('height', 0);
+    fillRect.setAttribute('fill', online ? 'var(--so-signal)' : 'var(--so-signal-2)');
+    fillRect.setAttribute('opacity', online ? 0.85 : 0.5);
+    fillRect.setAttribute('clip-path', `url(#${clipId})`);
+    fillRect.style.transition = 'all 1.6s var(--ease-out, cubic-bezier(.22,1,.36,1))';
+    g.appendChild(fillRect);
+
+    // fuel rod marks
+    for (let i = 0; i < 5; i++) {
+      const rx = 22 + i * 14;
+      const ln = document.createElementNS(NS, 'line');
+      ln.setAttribute('x1', rx); ln.setAttribute('x2', rx);
+      ln.setAttribute('y1', 160); ln.setAttribute('y2', 270);
+      ln.setAttribute('stroke', online ? '#FFFFFF' : 'var(--so-ink-2)');
+      ln.setAttribute('stroke-width', 1);
+      ln.setAttribute('stroke-dasharray', '3 4');
+      ln.setAttribute('opacity', 0.55);
+      ln.setAttribute('clip-path', `url(#${clipId})`);
+      g.appendChild(ln);
+    }
+
+    // base plinth
+    const plinth = document.createElementNS(NS, 'rect');
+    plinth.setAttribute('x', -8); plinth.setAttribute('y', 280);
+    plinth.setAttribute('width', 128); plinth.setAttribute('height', 8);
+    plinth.setAttribute('fill', 'var(--so-ink)');
+    g.appendChild(plinth);
+
+    // labels
+    const t1 = document.createElementNS(NS, 'text');
+    t1.setAttribute('x', 56); t1.setAttribute('y', 308);
+    t1.setAttribute('text-anchor', 'middle');
+    t1.setAttribute('font-family', 'var(--font-mono)');
+    t1.setAttribute('font-size', '10');
+    t1.setAttribute('letter-spacing', '0.14em');
+    t1.setAttribute('fill', 'var(--so-subtle)');
+    t1.textContent = label;
+    g.appendChild(t1);
+
+    const t2 = document.createElementNS(NS, 'text');
+    t2.setAttribute('x', 56); t2.setAttribute('y', 326);
+    t2.setAttribute('text-anchor', 'middle');
+    t2.setAttribute('font-family', 'var(--font-display)');
+    t2.setAttribute('font-size', '15');
+    t2.setAttribute('font-style', 'italic');
+    t2.setAttribute('fill', online ? 'var(--so-signal)' : 'var(--so-ink)');
+    t2.textContent = online ? 'online' : 'commissioned';
+    g.appendChild(t2);
+
+    return { g, fillRect, fillPct };
+  }
+
+  // glow filter
+  const defs = document.createElementNS(NS, 'defs');
+  defs.innerHTML = `
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  `;
+  svg.appendChild(defs);
+
+  const r1 = reactor(50,  'VOGTLE · 3', 0.95, true);
+  const r2 = reactor(200, 'VOGTLE · 4', 0.9,  true);
+  svg.appendChild(r1.g);
+  svg.appendChild(r2.g);
+
+  // capex annotation across the top
+  const capLine = document.createElementNS(NS, 'line');
+  capLine.setAttribute('x1', 30); capLine.setAttribute('x2', W - 30);
+  capLine.setAttribute('y1', 30); capLine.setAttribute('y2', 30);
+  capLine.setAttribute('stroke', 'var(--so-rule)');
+  capLine.setAttribute('stroke-width', 0.8);
+  capLine.setAttribute('stroke-dasharray', '2 4');
+  svg.appendChild(capLine);
+
+  const capLab = document.createElementNS(NS, 'text');
+  capLab.setAttribute('x', 30); capLab.setAttribute('y', 22);
+  capLab.setAttribute('font-family', 'var(--font-mono)');
+  capLab.setAttribute('font-size', '10');
+  capLab.setAttribute('letter-spacing', '0.14em');
+  capLab.setAttribute('fill', 'var(--so-subtle)');
+  capLab.textContent = 'CAPEX · FY \'23 ↘';
+  svg.appendChild(capLab);
+
+  const capVal = document.createElementNS(NS, 'text');
+  capVal.setAttribute('x', W - 30); capVal.setAttribute('y', 22);
+  capVal.setAttribute('text-anchor', 'end');
+  capVal.setAttribute('font-family', 'var(--font-display)');
+  capVal.setAttribute('font-size', '20');
+  capVal.setAttribute('font-style', 'italic');
+  capVal.setAttribute('fill', 'var(--so-signal)');
+  capVal.textContent = '$12.7B';
+  svg.appendChild(capVal);
+
+  // observe & animate fills
+  const obs = new IntersectionObserver((es) => {
+    es.forEach(e => {
+      if (e.isIntersecting) {
+        [r1, r2].forEach((r, i) => {
+          const max = 280 - 138; // available fill area
+          const h = max * r.fillPct;
+          setTimeout(() => {
+            r.fillRect.setAttribute('y', 280 - h);
+            r.fillRect.setAttribute('height', h);
+          }, i * 280);
+        });
+        obs.unobserve(svg);
+      }
+    });
+  }, { threshold: 0.3 });
+  obs.observe(svg);
+})();
+
+/* ============================================================
+   SVG SCENE: scale (debt vs cash) — for the dark interlude.
+   A literal balance scale. Left pan is heavy with $65.6B.
+   The right pan is nearly empty with $1.6B.
+   ============================================================ */
+(function () {
+  const svg = document.getElementById('scaleVis');
+  if (!svg) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  const W = 360, H = 340;
+
+  // central pillar
+  const pillar = document.createElementNS(NS, 'line');
+  pillar.setAttribute('x1', W / 2); pillar.setAttribute('x2', W / 2);
+  pillar.setAttribute('y1', 60); pillar.setAttribute('y2', 290);
+  pillar.setAttribute('stroke', '#3B3835');
+  pillar.setAttribute('stroke-width', 2);
+  svg.appendChild(pillar);
+
+  // base
+  const base = document.createElementNS(NS, 'rect');
+  base.setAttribute('x', W / 2 - 64); base.setAttribute('y', 290);
+  base.setAttribute('width', 128); base.setAttribute('height', 8);
+  base.setAttribute('fill', '#3B3835');
+  svg.appendChild(base);
+
+  // beam — tilts toward debt side
+  const beamTilt = -10; // degrees, debt heavier => left side down
+  const beam = document.createElementNS(NS, 'g');
+  beam.setAttribute('transform', `translate(${W / 2}, 60) rotate(0)`);
+  beam.style.transition = 'transform 1.4s var(--ease-out, cubic-bezier(.34, 1.56, 0.64, 1))';
+  // beam line
+  const beamLine = document.createElementNS(NS, 'line');
+  beamLine.setAttribute('x1', -120); beamLine.setAttribute('x2', 120);
+  beamLine.setAttribute('y1', 0); beamLine.setAttribute('y2', 0);
+  beamLine.setAttribute('stroke', '#9C9890');
+  beamLine.setAttribute('stroke-width', 2);
+  beam.appendChild(beamLine);
+
+  // pivot
+  const pivot = document.createElementNS(NS, 'circle');
+  pivot.setAttribute('cx', 0); pivot.setAttribute('cy', 0); pivot.setAttribute('r', 5);
+  pivot.setAttribute('fill', '#FBFAF7');
+  beam.appendChild(pivot);
+
+  // pan factory
+  function pan(side, weightLabel, valueLabel, big) {
+    const g = document.createElementNS(NS, 'g');
+    const x = side * 120;
+    g.setAttribute('transform', `translate(${x}, 0)`);
+
+    // chain
+    const ch = document.createElementNS(NS, 'line');
+    ch.setAttribute('x1', 0); ch.setAttribute('x2', 0);
+    ch.setAttribute('y1', 0); ch.setAttribute('y2', 50);
+    ch.setAttribute('stroke', '#9C9890');
+    ch.setAttribute('stroke-width', 1);
+    ch.setAttribute('stroke-dasharray', '3 3');
+    g.appendChild(ch);
+
+    // pan plate
+    const plate = document.createElementNS(NS, 'path');
+    const w = 90;
+    plate.setAttribute('d', `M ${-w/2} 50 Q 0 ${big ? 86 : 70}, ${w/2} 50 L ${w/2 - 6} 56 L ${-w/2 + 6} 56 Z`);
+    plate.setAttribute('fill', big ? 'var(--so-signal)' : 'var(--so-paper-3)');
+    plate.setAttribute('stroke', big ? 'var(--so-signal-2)' : '#9C9890');
+    plate.setAttribute('stroke-width', 1.2);
+    g.appendChild(plate);
+
+    // label above
+    const tx = document.createElementNS(NS, 'text');
+    tx.setAttribute('x', 0); tx.setAttribute('y', -12);
+    tx.setAttribute('text-anchor', 'middle');
+    tx.setAttribute('font-family', 'var(--font-mono)');
+    tx.setAttribute('font-size', '10');
+    tx.setAttribute('letter-spacing', '0.14em');
+    tx.setAttribute('fill', '#9C9890');
+    tx.textContent = weightLabel;
+    g.appendChild(tx);
+
+    // value below
+    const v = document.createElementNS(NS, 'text');
+    v.setAttribute('x', 0); v.setAttribute('y', 80 + (big ? 14 : 0));
+    v.setAttribute('text-anchor', 'middle');
+    v.setAttribute('font-family', 'var(--font-display)');
+    v.setAttribute('font-size', big ? '26' : '20');
+    v.setAttribute('font-style', big ? 'italic' : 'normal');
+    v.setAttribute('fill', big ? 'var(--so-signal-2)' : '#FBFAF7');
+    v.textContent = valueLabel;
+    g.appendChild(v);
+
+    return g;
+  }
+  const left = pan(-1, 'DEBT', '$65.6B', true);
+  const right = pan(+1, 'CASH', '$1.6B', false);
+  beam.appendChild(left);
+  beam.appendChild(right);
+  svg.appendChild(beam);
+
+  // observe and tilt
+  const obs = new IntersectionObserver((es) => {
+    es.forEach(e => {
+      if (e.isIntersecting) {
+        beam.setAttribute('transform', `translate(${W / 2}, 60) rotate(${beamTilt})`);
+        obs.unobserve(svg);
+      }
+    });
+  }, { threshold: 0.3 });
+  obs.observe(svg);
+})();
+
+/* ============================================================
+   SVG SCENE: dividend ledger — final close
+   A vertical timeline of 78 ticks (years), each a small bar
+   in coral that grows; the last 24 are slightly taller (raises).
+   ============================================================ */
+(function () {
+  const svg = document.getElementById('ledger');
+  if (!svg) return;
+  const NS = 'http://www.w3.org/2000/svg';
+
+  const W = 360, H = 300;
+  const padL = 28, padR = 28, padT = 30, padB = 60;
+  const N = 78;
+  const colW = (W - padL - padR) / N;
+  const baseY = H - padB;
+
+  // axis
+  const ax = document.createElementNS(NS, 'line');
+  ax.setAttribute('x1', padL); ax.setAttribute('x2', W - padR);
+  ax.setAttribute('y1', baseY); ax.setAttribute('y2', baseY);
+  ax.setAttribute('stroke', 'var(--so-rule)');
+  ax.setAttribute('stroke-width', 1);
+  svg.appendChild(ax);
+
+  // year labels
+  const labels = [{ i: 0, t: '1948' }, { i: 53, t: '\'01 · raises begin' }, { i: 77, t: '\'25' }];
+  labels.forEach(l => {
+    const x = padL + l.i * colW + colW / 2;
+    const tx = document.createElementNS(NS, 'text');
+    tx.setAttribute('x', x);
+    tx.setAttribute('y', baseY + 18);
+    tx.setAttribute('text-anchor', l.i === 0 ? 'start' : (l.i === 77 ? 'end' : 'middle'));
+    tx.setAttribute('font-family', 'var(--font-mono)');
+    tx.setAttribute('font-size', '10');
+    tx.setAttribute('letter-spacing', '0.1em');
+    tx.setAttribute('fill', 'var(--so-subtle)');
+    tx.textContent = l.t;
+    svg.appendChild(tx);
+
+    if (l.i === 53) {
+      const tk = document.createElementNS(NS, 'line');
+      tk.setAttribute('x1', x); tk.setAttribute('x2', x);
+      tk.setAttribute('y1', baseY); tk.setAttribute('y2', baseY + 6);
+      tk.setAttribute('stroke', 'var(--so-signal)');
+      tk.setAttribute('stroke-width', 1);
+      svg.appendChild(tk);
+    }
+  });
+
+  // bars
+  const bars = [];
+  for (let i = 0; i < N; i++) {
+    const x = padL + i * colW + 1;
+    const isRaise = i >= N - 24;
+    const targetH = 14 + (isRaise ? (i - (N - 24)) * 1.2 : i * 0.8);
+    const r = document.createElementNS(NS, 'rect');
+    r.setAttribute('x', x);
+    r.setAttribute('width', colW - 2);
+    r.setAttribute('y', baseY);
+    r.setAttribute('height', 0);
+    r.setAttribute('fill', isRaise ? 'var(--so-signal)' : 'var(--so-signal-soft)');
+    r.setAttribute('stroke', 'none');
+    r.style.transition = `all 1100ms var(--ease-out, cubic-bezier(.22,1,.36,1))`;
+    r.style.transitionDelay = (i * 12) + 'ms';
+    svg.appendChild(r);
+    bars.push({ el: r, h: targetH });
+  }
+
+  // headline annotations
+  const a1 = document.createElementNS(NS, 'text');
+  a1.setAttribute('x', padL); a1.setAttribute('y', padT - 6);
+  a1.setAttribute('font-family', 'var(--font-mono)');
+  a1.setAttribute('font-size', '10');
+  a1.setAttribute('letter-spacing', '0.14em');
+  a1.setAttribute('fill', 'var(--so-subtle)');
+  a1.textContent = 'DIVIDEND · UNINTERRUPTED ↘';
+  svg.appendChild(a1);
+
+  const a2 = document.createElementNS(NS, 'text');
+  a2.setAttribute('x', W - padR); a2.setAttribute('y', padT - 6);
+  a2.setAttribute('text-anchor', 'end');
+  a2.setAttribute('font-family', 'var(--font-display)');
+  a2.setAttribute('font-size', '22');
+  a2.setAttribute('font-style', 'italic');
+  a2.setAttribute('fill', 'var(--so-signal)');
+  a2.textContent = '78 yrs';
+  svg.appendChild(a2);
+
+  // observe
+  const obs = new IntersectionObserver((es) => {
+    es.forEach(e => {
+      if (e.isIntersecting) {
+        bars.forEach(b => {
+          b.el.setAttribute('y', baseY - b.h);
+          b.el.setAttribute('height', b.h);
+        });
+        obs.unobserve(svg);
+      }
+    });
+  }, { threshold: 0.3 });
+  obs.observe(svg);
+})();
+
+/* speaker-notes-style slide index hook (none here, but stub for host) */
+window.postMessage({ slideIndexChanged: 0 }, '*');
+</script>
+</body>
+</html>
